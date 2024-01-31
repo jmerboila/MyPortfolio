@@ -3,17 +3,13 @@ jmerboila/jmerboila is a ✨ special ✨ repository because its `README.md` (thi
 You can click the Preview link to take a look at your changes.
 --->
 
-Hi ![](https://user-images.githubusercontent.com/18350557/176309783-0785949b-9127-417c-8b55-ab5a4333674e.gif)My name is Jayson Mercado Erboila
+Hi! <img src="https://user-images.githubusercontent.com/18350557/176309783-0785949b-9127-417c-8b55-ab5a4333674e.gif" width="30" height="30"> My name is Jayson Mercado Erboila
+
 ==============================================================================================================================================
 
-Senior Software QA Engineer, Team Lead, Web, UI/UX Designer
------------------------------------------------------------
-
-I am a software QA engineer who started as a Web Designer, and I love to be part of a team creating awesome software solutions or products.
-
 * 🌍  I'm based in Toronto, Ontario, Canada
-* ✉️  You can contact me at [jmerboila@gmail.com](mailto:jmerboila@gmail.com)
 * 🌱 I’m currently learning Cypress.io
+* ✉️  You can contact me at [jmerboila@gmail.com](mailto:jmerboila@gmail.com)
 
 ### Skills
 <p align="left">
