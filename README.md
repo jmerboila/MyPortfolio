@@ -17,7 +17,6 @@ Senior Software QA Engineer, Team Lead, Web, UI/UX Designer
 <p align="left">
 
 <a href="https://jmerboila.atlassian.net/jira/software/projects/MJB/boards/1" target="_blank" rel="noreferrer"><img src="https://github.com/ragnarveermae/AtlassianIcons/blob/master/jira_icon.png" width="36" height="36" alt="JIRA" /></a>
-
 <a href="https://jmerboila.atlassian.net/wiki/spaces/~7120203aa0eef4cb18491185511ec8937bcdea/overview?homepageId=33229" target="_blank" rel="noreferrer"><img src="https://github.com/ragnarveermae/AtlassianIcons/blob/master/confluence_icon.png" width="36" height="36" alt="Confluence" /></a>
 <a href="https://bitbucket.org/" target="_blank" rel="noreferrer"><img src="https://github.com/ragnarveermae/AtlassianIcons/blob/master/bitbucket_icon.png" width="36" height="36" alt="BitBucket" /></a>
   
