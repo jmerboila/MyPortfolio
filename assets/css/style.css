@@ -29,9 +29,9 @@ i {
     color: black;
 }
 
-img {
+/* img {
     filter: grayscale(1);
-}
+} */
 
 .img-hero {
     height: auto;
