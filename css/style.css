@@ -436,7 +436,7 @@ nav.scrolled {
   inset: 0;
   background: linear-gradient(135deg, rgba(200,169,110,0.08), transparent);
 }
-.about-img-placeholder {
+/* .about-img-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -444,7 +444,7 @@ nav.scrolled {
   opacity: 0.35;
 }
 .about-img-placeholder svg { width: 60px; opacity: 0.5; }
-.about-img-placeholder p { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; }
+.about-img-placeholder p { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; } */
 .about-img-frame img {
   width: 100%; height: 100%;
   object-fit: cover;
@@ -814,7 +814,7 @@ footer {
   pointer-events: all;
 }
 .modal-inner {
-  max-width: 960px;
+  max-width: 1400px;
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -859,6 +859,27 @@ footer {
   border: 1px solid var(--border); color: var(--cream-dim);
   padding: 0.35rem 0.75rem;
 }
+.modal-link {
+  display: none;               /* shown by JS only when a project has a link */
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--bg);
+  background: var(--gold);
+  padding: 0.9rem 1.8rem;
+  transition: background 0.3s, transform 0.3s var(--ease-out-expo);
+}
+.modal-link:hover {
+  background: var(--cream);
+  transform: translateY(-3px);
+}
+.modal-link svg { transition: transform 0.3s var(--ease-out-expo); }
+.modal-link:hover svg { transform: translate(3px, -3px); }
 .modal-close {
   position: absolute;
   top: 2rem; right: 2rem;

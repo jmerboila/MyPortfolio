@@ -11,23 +11,31 @@
      desc             Short one-liner shown on the card
      longDesc         Longer description shown in the pop-up modal
      tags             Array of tags, e.g. ["Branding", "Print"]
-     image            Path to image, e.g. "projects/lumino.jpg"
+     image            Path to the SMALL preview image shown on the card,
+                        e.g. "projects/lumino-thumb.jpg"
                         → leave as "" to show a placeholder icon instead
+     imageFull        (optional) Path to the LARGE image shown in the pop-up modal,
+                        e.g. "projects/lumino-full.jpg"
+                        → if omitted, the modal reuses "image"
      icon             Placeholder icon when no image:
                         "logo" | "mobile" | "graphic" | "web" | "brand" | "campaign"
      placeholderLabel Small label under the placeholder icon
      size             ""  (normal) | "wide" (2 columns) | "tall" (2 rows)
+     link             (optional) URL to the live project / case study. When set,
+                        a "View Project" button appears in the modal and opens
+                        it in a new tab. e.g. "https://behance.net/gallery/..."
    ============================================================================ */
 
 const PROJECTS = [
   {
     cat: "logo",
     category: "Logo & Identity",
-    title: "Lumino Co. Brand Identity",
-    desc: "Full brand system — wordmark, symbol & guidelines",
-    longDesc: "A full brand identity system built around the concept of clarity and light. Includes wordmark, symbol, color palette, and usage guidelines.",
+    title: "Devsign8",
+    desc: "Infinite Creativity. Limitless Digital Solutions.",
+    longDesc: "Devsign8 was built on one idea: limitless creativity. From websites and branding to digital marketing, we help businesses transform ideas into impactful digital experiences that inspire, connect, and grow.",
     tags: ["Logo Design", "Branding", "Typography"],
-    image: "",
+    image: "projects/Devsign8-Logo.png",
+    imageFull: "projects/Devsign8-Logo-Full.png",
     icon: "logo",
     placeholderLabel: "Logo Design",
     size: "wide"
@@ -59,13 +67,14 @@ const PROJECTS = [
   {
     cat: "web",
     category: "Web Design",
-    title: "Volta SaaS Landing",
-    desc: "Conversion-focused design & component system",
-    longDesc: "High-conversion landing page design for a SaaS fintech product. Includes design system, component library and responsive layout.",
-    tags: ["Web Design", "UI", "Design System"],
+    title: "Orange Magazine",
+    desc: "A responsive editorial platform for pop culture.",
+    longDesc: "A responsive editorial platform for pop culture — K-pop, music, film & TV, and the people shaping it. Desktop & mobile, light & dark, built on one bold orange system.",
+    tags: ["Web Design", "UI", "Mobile"],
     image: "",
     icon: "web",
     placeholderLabel: "Web Design",
+    link: "https://jmerboila.github.io/MyPortfolio/OrangeMagazine.html",
     size: ""
   },
   {
@@ -201,11 +210,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalTitle = document.getElementById('modalTitle');
   const modalDesc  = document.getElementById('modalDesc');
   const modalTags  = document.getElementById('modalTags');
+  const modalLink  = document.getElementById('modalLink');
   let lastFocused  = null;
 
   function openModal(project) {
-    if (project.image) {
-      modalImg.src = project.image;
+    // Use the large image (imageFull) in the modal if provided,
+    // otherwise fall back to the card image. Either one works.
+    const modalSrc = project.imageFull || project.image;
+    if (modalSrc) {
+      modalImg.src = modalSrc;
       modalImg.alt = project.title;
       modalImg.style.display = 'block';
     } else {
@@ -223,6 +236,15 @@ document.addEventListener('DOMContentLoaded', () => {
       span.textContent = tag;
       modalTags.appendChild(span);
     });
+
+    // Show the "View Project" button only if this project has a link
+    if (project.link) {
+      modalLink.href = project.link;
+      modalLink.style.display = 'inline-flex';
+    } else {
+      modalLink.removeAttribute('href');
+      modalLink.style.display = 'none';
+    }
 
     lastFocused = document.activeElement;
     overlay.classList.add('open');
