@@ -5,9 +5,7 @@
      Add a new object, and a new card appears automatically — no HTML needed.
 
    Each project supports these fields:
-     cat              One category as a string ("logo"), OR several as an array
-                        (["logo", "web"]). Must match a filter button's
-                        data-filter value. Options: "logo" | "graphic" | "web" | "mobile"
+     cat              "logo" | "graphic" | "web"   (used by the filter buttons)
      category         Label shown on the card (e.g. "Logo & Identity")
      title            Project name (card heading + modal heading)
      desc             Short one-liner shown on the card
@@ -26,8 +24,6 @@
      link             (optional) URL to the live project / case study. When set,
                         a "View Project" button appears in the modal and opens
                         it in a new tab. e.g. "https://behance.net/gallery/..."
-     modalSize        (optional) "large" makes the pop-up modal wider with a
-                        bigger image — good for flagship projects. Omit for normal.
    ============================================================================ */
 
 const PROJECTS = [
@@ -42,36 +38,19 @@ const PROJECTS = [
     imageFull: "projects/Devsign8-Logo-Full.png",
     icon: "logo",
     placeholderLabel: "Logo Design",
-    size: ""
-  },
-  {
-    cat: ["web", "mobile"],
-    category: "Web & Mobile Design",
-    title: "Orange Magazine",
-    desc: "A responsive editorial platform for pop culture.",
-    longDesc: "A responsive editorial platform for pop culture — K-pop, music, film & TV, and the people shaping it. Desktop & mobile, light & dark, built on one bold orange system.",
-    tags: ["Web Design", "UI", "Mobile"],
-    image: "projects/OrangeMagazine-Preview.png",
-    imageFull: "projects/OrangeMagazine-Full.png",
-    icon: "web",
-    placeholderLabel: "Web Design",
-    link: "https://jmerboila.github.io/MyPortfolio/OrangeMagazine.html",
-    modalSize: "large",
     size: "wide"
   },
   {
-    cat: ["mobile", "UX"],
+    cat: "mobile",
     category: "UI / UX Design",
-    title: "DigiSkills",
+    title: "Aurora Wellness App",
     desc: "End-to-end mobile app design system",
     longDesc: "UI/UX design for a wellness mobile application. Covers onboarding, dashboard, and progress tracking screens.",
-    tags: ["Mobile","UI Design", "UX Research"],
-    image: "projects/DigiSkills-Preview.png",
-    imageFull: "projects/DigiSkills-Full.png",   
+    tags: ["Mobile","UI", "UX Research"],
+    image: "",
     icon: "mobile",
     placeholderLabel: "Mobile UI",
-    modalSize: "large",
-    size: "tall"
+    size: ""
   },
   {
     cat: "graphic",
@@ -83,6 +62,19 @@ const PROJECTS = [
     image: "",
     icon: "graphic",
     placeholderLabel: "Graphic Design",
+    size: "tall"
+  },
+  {
+    cat: "web",
+    category: "Web Design",
+    title: "Orange Magazine",
+    desc: "A responsive editorial platform for pop culture.",
+    longDesc: "A responsive editorial platform for pop culture — K-pop, music, film & TV, and the people shaping it. Desktop & mobile, light & dark, built on one bold orange system.",
+    tags: ["Web Design", "UI", "Mobile"],
+    image: "",
+    icon: "web",
+    placeholderLabel: "Web Design",
+    link: "https://jmerboila.github.io/MyPortfolio/OrangeMagazine.html",
     size: ""
   },
   {
@@ -138,10 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function buildCard(project) {
     const card = document.createElement('article');
     card.className = 'project-card' + (project.size ? ' ' + project.size : '');
-    // cat can be a single string ("logo") or an array (["logo","web"]).
-    // Store them space-separated, e.g. data-cat="logo web".
-    const cats = Array.isArray(project.cat) ? project.cat : [project.cat];
-    card.dataset.cat = cats.join(' ');
+    card.dataset.cat = project.cat;
     card.tabIndex = 0;                       // keyboard focusable
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', 'View project: ' + project.title);
@@ -188,9 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function applyFilter(filter) {
     let visibleCount = 0;
     cards.forEach(card => {
-      // A card's data-cat may hold several space-separated categories.
-      const cardCats = card.dataset.cat.split(' ');
-      const match = filter === 'all' || cardCats.includes(filter);
+      const match = filter === 'all' || card.dataset.cat === filter;
       if (match) {
         card.style.display = '';
         // next frame so the transition runs
@@ -227,9 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastFocused  = null;
 
   function openModal(project) {
-    // Optional larger modal layout for flagship projects (modalSize: "large")
-    overlay.classList.toggle('size-large', project.modalSize === 'large');
-
     // Use the large image (imageFull) in the modal if provided,
     // otherwise fall back to the card image. Either one works.
     const modalSrc = project.imageFull || project.image;

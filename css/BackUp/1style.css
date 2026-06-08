@@ -27,8 +27,6 @@
   --grid-line: rgba(200,169,110,0.04);
   --modal-bg:  rgba(11,11,11,0.96);
   --nav-bg: rgba(11,11,11,0.88);
-  --card-rest-veil: rgba(11,11,11,0.30);   /* subtle dimming so the title reads at rest */
-  --card-scrim:     rgba(11,11,11,0.92);   /* stronger gradient that fades in on hover */
 }
 
 /* LIGHT theme — blue & white */
@@ -48,8 +46,6 @@
   --grid-line: rgba(30,84,255,0.06);
   --modal-bg:  rgba(255,255,255,0.96);
   --nav-bg: rgba(255,255,255,0.88);
-  --card-rest-veil: rgba(255,255,255,0.35); /* light veil so dark title reads at rest */
-  --card-scrim:     rgba(255,255,255,0.94);  /* light gradient that fades in on hover */
 }
 
 /* Smooth theme transition */
@@ -440,15 +436,6 @@ nav.scrolled {
   inset: 0;
   background: linear-gradient(135deg, rgba(200,169,110,0.08), transparent);
 }
-/* .about-img-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  opacity: 0.35;
-}
-.about-img-placeholder svg { width: 60px; opacity: 0.5; }
-.about-img-placeholder p { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; } */
 .about-img-frame img {
   width: 100%; height: 100%;
   object-fit: cover;
@@ -605,13 +592,13 @@ nav.scrolled {
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
-/* Subtle theme-aware veil over image cards so the always-visible title stays
-   readable at rest. Invisible over the solid placeholder background. */
+/* Subtle solid overlay only when an actual image is loaded — keeps text readable.
+   Has no visible effect over the solid placeholder background. */
 .card-image:has(img)::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--card-rest-veil);
+  background: rgba(0,0,0,0.35);
   transition: opacity 0.4s;
   pointer-events: none;
 }
@@ -628,20 +615,6 @@ nav.scrolled {
   justify-content: flex-end;
   padding: 1.8rem;
 }
-/* Gradient scrim behind the text — transparent at top, theme colour at bottom.
-   Hidden at rest, fades in on hover/focus so the revealed text stays readable. */
-.card-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(to top, var(--card-scrim) 0%, transparent 65%);
-  opacity: 0;
-  transition: opacity 0.4s var(--ease-out-expo);
-  pointer-events: none;
-}
-.project-card:hover .card-overlay::before,
-.project-card:focus-visible .card-overlay::before { opacity: 1; }
 .card-category {
   font-size: 0.65rem;
   font-weight: 700;
@@ -842,20 +815,6 @@ footer {
   transition: transform 0.5s var(--ease-out-expo);
 }
 .modal-overlay.open .modal-inner { transform: none; }
-
-/* Large modal variant — opt in per project with modalSize: "large".
-   Wider overall, with a bigger image column. */
-.modal-overlay.size-large .modal-inner {
-  max-width: 1700px;
-  grid-template-columns: 1.6fr 1fr;
-  gap: 3.5rem;
-}
-.modal-overlay.size-large .modal-img-wrap {
-  aspect-ratio: 16/10;
-}
-.modal-overlay.size-large .modal-title {
-  font-size: 2.9rem;
-}
 .modal-img-wrap {
   aspect-ratio: 4/3;
   background: var(--bg3);
@@ -957,8 +916,7 @@ footer {
   .about-frame-border { display: none; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); }
   .project-card.wide { grid-column: span 2; }
-  .modal-inner,
-  .modal-overlay.size-large .modal-inner { grid-template-columns: 1fr; }
+  .modal-inner { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .nav-links { display: none; flex-direction: column; gap: 1.5rem; }

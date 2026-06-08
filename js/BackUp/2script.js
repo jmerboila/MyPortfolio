@@ -26,8 +26,6 @@
      link             (optional) URL to the live project / case study. When set,
                         a "View Project" button appears in the modal and opens
                         it in a new tab. e.g. "https://behance.net/gallery/..."
-     modalSize        (optional) "large" makes the pop-up modal wider with a
-                        bigger image — good for flagship projects. Omit for normal.
    ============================================================================ */
 
 const PROJECTS = [
@@ -46,7 +44,7 @@ const PROJECTS = [
   },
   {
     cat: ["web", "mobile"],
-    category: "Web & Mobile Design",
+    category: "Web Design",
     title: "Orange Magazine",
     desc: "A responsive editorial platform for pop culture.",
     longDesc: "A responsive editorial platform for pop culture — K-pop, music, film & TV, and the people shaping it. Desktop & mobile, light & dark, built on one bold orange system.",
@@ -56,21 +54,18 @@ const PROJECTS = [
     icon: "web",
     placeholderLabel: "Web Design",
     link: "https://jmerboila.github.io/MyPortfolio/OrangeMagazine.html",
-    modalSize: "large",
     size: "wide"
   },
   {
-    cat: ["mobile", "UX"],
+    cat: "mobile",
     category: "UI / UX Design",
-    title: "DigiSkills",
+    title: "Aurora Wellness App",
     desc: "End-to-end mobile app design system",
     longDesc: "UI/UX design for a wellness mobile application. Covers onboarding, dashboard, and progress tracking screens.",
-    tags: ["Mobile","UI Design", "UX Research"],
-    image: "projects/DigiSkills-Preview.png",
-    imageFull: "projects/DigiSkills-Full.png",   
+    tags: ["Mobile","UI", "UX Research"],
+    image: "",
     icon: "mobile",
     placeholderLabel: "Mobile UI",
-    modalSize: "large",
     size: "tall"
   },
   {
@@ -227,9 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastFocused  = null;
 
   function openModal(project) {
-    // Optional larger modal layout for flagship projects (modalSize: "large")
-    overlay.classList.toggle('size-large', project.modalSize === 'large');
-
     // Use the large image (imageFull) in the modal if provided,
     // otherwise fall back to the card image. Either one works.
     const modalSrc = project.imageFull || project.image;
