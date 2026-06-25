@@ -42,6 +42,8 @@ const PROJECTS = [
     imageFull: "projects/Devsign8-Logo-Full.png",
     icon: "logo",
     placeholderLabel: "Logo Design",
+    link: "https://jmerboila.github.io/MyPortfolio/Devsign8-Showcase.html",
+    modalSize: "",
     size: ""
   },
   {
@@ -60,20 +62,6 @@ const PROJECTS = [
     size: "wide"
   },
   {
-    cat: ["mobile", "UX"],
-    category: "UI / UX Design",
-    title: "DigiSkills",
-    desc: "End-to-end mobile app design system",
-    longDesc: "UI/UX design for a wellness mobile application. Covers onboarding, dashboard, and progress tracking screens.",
-    tags: ["Mobile","UI Design", "UX Research"],
-    image: "projects/DigiSkills-Preview.png",
-    imageFull: "projects/DigiSkills-Full.png",   
-    icon: "mobile",
-    placeholderLabel: "Mobile UI",
-    modalSize: "large",
-    size: "tall"
-  },
-  {
     cat: "graphic",
     category: "Graphic Design",
     title: "Terra Poster Series",
@@ -84,6 +72,20 @@ const PROJECTS = [
     icon: "graphic",
     placeholderLabel: "Graphic Design",
     size: ""
+  },
+  {
+    cat: ["mobile", "UX"],
+    category: "UI / UX Design",
+    title: "DigiSkills",
+    desc: "A free, offline digital-safety app that teaches kids 7–11 how to stay safe online — through play, not lectures.",
+    longDesc: "DigiSkills — Be Safe Online is a free, offline-first mobile app that teaches children aged 7–11 how to stay safe on the internet through playful, audio-guided lessons. No ads, no data collection, no typing required.",
+    tags: ["Mobile","UI Design", "UX Research"],
+    image: "projects/DigiSkills-Preview.png",
+    imageFull: "projects/DigiSkills-Full.png",
+    icon: "mobile",
+    placeholderLabel: "Mobile UI",
+    modalSize: "large",
+    size: "tall"
   },
   {
     cat: "logo",

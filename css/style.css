@@ -27,8 +27,6 @@
   --grid-line: rgba(200,169,110,0.04);
   --modal-bg:  rgba(11,11,11,0.96);
   --nav-bg: rgba(11,11,11,0.88);
-  --card-rest-veil: rgba(11,11,11,0.30);   /* subtle dimming so the title reads at rest */
-  --card-scrim:     rgba(11,11,11,0.92);   /* stronger gradient that fades in on hover */
 }
 
 /* LIGHT theme — blue & white */
@@ -48,8 +46,6 @@
   --grid-line: rgba(30,84,255,0.06);
   --modal-bg:  rgba(255,255,255,0.96);
   --nav-bg: rgba(255,255,255,0.88);
-  --card-rest-veil: rgba(255,255,255,0.35); /* light veil so dark title reads at rest */
-  --card-scrim:     rgba(255,255,255,0.94);  /* light gradient that fades in on hover */
 }
 
 /* Smooth theme transition */
@@ -140,7 +136,7 @@ nav.scrolled {
   display: block;
 }
 .footer-logo img {
-  height: 28px;
+  height: 44px;
   width: auto;
   display: block;
 }
@@ -549,33 +545,40 @@ nav.scrolled {
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5px;
+  gap: 1rem;
 }
 
-/* Each project card */
+/* Each project card — image on top, solid caption bar below (Option 2).
+   The image is never covered, so the real project colours show through. */
 .project-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  aspect-ratio: 4/3;
-  background: var(--bg3);
+  background: var(--bg2);
+  border: 1px solid var(--border);
   cursor: pointer;
-  transition: opacity 0.5s var(--ease-in-out), transform 0.5s var(--ease-in-out);
+  transition: opacity 0.5s var(--ease-in-out), transform 0.5s var(--ease-in-out), border-color 0.4s;
 }
+.project-card:hover,
+.project-card:focus-visible { border-color: var(--gold-dim); }
 /* Hidden by the category filter */
 .project-card.is-hidden {
   opacity: 0;
   transform: scale(0.95);
   pointer-events: none;
 }
-.project-card.wide { grid-column: span 2; aspect-ratio: 8/3; }
-.project-card.tall { grid-row: span 2; aspect-ratio: 4/6; }
+/* Span variants — aspect ratio now lives on the image, not the whole card. */
+.project-card.wide { grid-column: span 2; }
+.project-card.tall { grid-row: span 2; }
+.project-card.wide .card-image { aspect-ratio: 16/7; }
+.project-card.tall .card-image { aspect-ratio: 3/4; }
 
 /* Placeholder image fill */
 .card-image {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  aspect-ratio: 4/3;
   background: var(--bg3);
-  transition: transform 0.7s var(--ease-out-expo);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -605,76 +608,49 @@ nav.scrolled {
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
-/* Subtle theme-aware veil over image cards so the always-visible title stays
-   readable at rest. Invisible over the solid placeholder background. */
-.card-image:has(img)::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--card-rest-veil);
-  transition: opacity 0.4s;
-  pointer-events: none;
-}
-
 .project-card:hover .card-image img { transform: scale(1.06); }
 
-/* Overlay */
+/* Caption bar — sits below the image, always visible, solid background. */
 .card-overlay {
-  position: absolute;
-  inset: 0;
+  position: relative;
   z-index: 2;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 1.8rem;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 1.05rem 1.3rem 1.15rem;
+  background: var(--bg2);
 }
-/* Gradient scrim behind the text — transparent at top, theme colour at bottom.
-   Hidden at rest, fades in on hover/focus so the revealed text stays readable. */
-.card-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(to top, var(--card-scrim) 0%, transparent 65%);
-  opacity: 0;
-  transition: opacity 0.4s var(--ease-out-expo);
-  pointer-events: none;
-}
-.project-card:hover .card-overlay::before,
-.project-card:focus-visible .card-overlay::before { opacity: 1; }
 .card-category {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold);
-  margin-bottom: 0.5rem;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.35s 0.05s, transform 0.35s 0.05s var(--ease-out-expo);
 }
 .card-title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.15;
   color: var(--cream);
-  margin-bottom: 0.5rem;
-  transform: translateY(8px);
-  transition: transform 0.35s var(--ease-out-expo);
 }
 .card-desc {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
   color: var(--cream-dim);
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.35s 0.08s, transform 0.35s 0.08s var(--ease-out-expo);
-  max-width: 320px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
+/* Arrow chip — floats over the image, fades in on hover/focus. */
 .card-arrow {
   position: absolute;
-  top: 1.4rem; right: 1.4rem;
+  top: 1rem; right: 1rem;
   width: 36px; height: 36px;
+  background: var(--bg2);
   border: 1px solid var(--border);
   color: var(--gold);
   display: flex; align-items: center; justify-content: center;
@@ -682,15 +658,8 @@ nav.scrolled {
   transform: scale(0.8) rotate(-45deg);
   transition: opacity 0.3s, transform 0.35s var(--ease-out-expo);
 }
-
-.project-card:hover .card-category,
-.project-card:hover .card-desc,
 .project-card:hover .card-arrow,
-.project-card:focus-visible .card-category,
-.project-card:focus-visible .card-desc,
 .project-card:focus-visible .card-arrow { opacity: 1; transform: none; }
-.project-card:hover .card-title,
-.project-card:focus-visible .card-title { transform: none; }
 
 /* Gallery empty state */
 .gallery-empty {
@@ -965,8 +934,10 @@ footer {
   .nav-links.open { display: flex; position: fixed; top: 70px; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(16px); padding: 2rem 5vw; border-top: 1px solid var(--border); }
   .nav-burger { display: flex; }
   .gallery-grid { grid-template-columns: 1fr; }
-  .project-card.wide { grid-column: span 1; aspect-ratio: 4/3; }
-  .project-card.tall { grid-row: span 1; aspect-ratio: 4/3; }
+  .project-card.wide { grid-column: span 1; }
+  .project-card.tall { grid-row: span 1; }
+  .project-card.wide .card-image,
+  .project-card.tall .card-image { aspect-ratio: 4/3; }
   .modal-inner { grid-template-columns: 1fr; }
   .skills-grid { grid-template-columns: repeat(2, 1fr); }
   .contact-heading { font-size: 2.8rem; }
