@@ -68,7 +68,7 @@ const PROJECTS = [
     desc: "A bold, geometric wordmark paired with a simple circular icon.",
     longDesc: "The Orange Magazine logo is a combination mark that pairs a bold, geometric wordmark with a simple, circular icon. The orange color reflects the brand's energy and creativity, while the clean lines convey modernity and clarity.",
     tags: ["Logo Design", "Hybrid", "Combination Mark"],
-    image: "projects/OrangeMagazine-Logo-Black.svg",
+    image: "projects/OrangeMagazine-Logo-Preview.png",
     imageFull: "projects/OrangeMagazine-Logo-Full.png",
     icon: "brand",
     placeholderLabel: "Brand Identity",
@@ -76,7 +76,7 @@ const PROJECTS = [
     size: ""
   },
   {
-    cat: ["mobile", "UX"],
+    cat: ["mobile", "graphic"],
     category: "UI / UX Design",
     title: "DigiSkills",
     desc: "A free, offline digital-safety app that teaches kids 7–11 how to stay safe online — through play, not lectures.",
@@ -105,15 +105,18 @@ const PROJECTS = [
     size: ""
   },
   {
-    cat: "graphic",
-    category: "Graphic Design",
-    title: "NOVA Festival Campaign",
-    desc: "Stage, social media kit & merchandise system",
-    longDesc: "Full visual campaign for an independent music festival — including stage backdrops, social media kit, and merchandise design.",
-    tags: ["Graphic Design", "Campaign", "Merch"],
-    image: "",
-    icon: "campaign",
-    placeholderLabel: "Campaign Design",
+    cat: "logo",
+    category: "Logo & Branding",
+    title: "DigiSkills App Logo",
+    desc: "A playful, friendly logo for a digital-safety app for kids.",
+    longDesc: "The DigiSkills logo is a playful, friendly design that appeals to children while conveying the app's focus on digital safety. The bright colors and simple shapes make it approachable and memorable.",
+    tags: ["Logo Design", "Mobile App", "Symbol"],
+    image: "projects/DigiSkills-Logo-Preview.png",
+    imageFull: "projects/DigiSkills-Logo-Full.png",
+    icon: "brand",
+    placeholderLabel: "Brand Identity",
+    link: "https://jmerboila.github.io/MyPortfolio/DigiSkills-Showcase.html",
+    modalSize: "large",
     size: ""
   }
   // ★ Add a new project here — copy the block above, change the values.
