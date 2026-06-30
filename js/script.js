@@ -62,15 +62,17 @@ const PROJECTS = [
     size: "wide"
   },
   {
-    cat: "graphic",
-    category: "Graphic Design",
-    title: "Terra Poster Series",
-    desc: "6-piece editorial print campaign",
-    longDesc: "A 6-piece editorial poster series exploring themes of nature, texture, and organic form using layered photography and typography.",
-    tags: ["Graphic Design", "Print", "Typography"],
-    image: "",
-    icon: "graphic",
-    placeholderLabel: "Graphic Design",
+    cat: "logo",
+    category: "Logo Design",
+    title: "Orange Magazine Logo",
+    desc: "A bold, geometric wordmark paired with a simple circular icon.",
+    longDesc: "The Orange Magazine logo is a combination mark that pairs a bold, geometric wordmark with a simple, circular icon. The orange color reflects the brand's energy and creativity, while the clean lines convey modernity and clarity.",
+    tags: ["Logo Design", "Hybrid", "Combination Mark"],
+    image: "projects/OrangeMagazine-Logo-Black.svg",
+    imageFull: "projects/OrangeMagazine-Logo-Full.png",
+    icon: "brand",
+    placeholderLabel: "Brand Identity",
+    link: "https://jmerboila.github.io/MyPortfolio/OrangeMagazine-Showcase.html",
     size: ""
   },
   {
