@@ -38,6 +38,71 @@
       '.kick,.eyebrow,.cat,.label-orange{color:#bf4808 !important}'
   };
 
+  /* The shell's stylesheet. These pages DO carry a <link> to css/chrome.css
+     in their source, but it sits inside a JavaScript string rather than the
+     real <head>, so the browser never sees it — which is why the bar rendered
+     unstyled. Add it for real. */
+  function ensureStylesheet() {
+    var have = Array.prototype.some.call(document.head.querySelectorAll('link[rel="stylesheet"]'),
+      function (l) { return /css\/chrome\.css/.test(l.getAttribute('href') || ''); });
+    if (have) return;
+    var l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = 'css/chrome.css';
+    document.head.appendChild(l);
+  }
+
+  /* Move the app into a wrapper before adding the bar and footer.
+
+     DigiSkills.html sets `body { display: flex }` to centre its phone stage.
+     Dropping a <header> and <footer> straight into that body makes them flex
+     ITEMS — they line up beside the app, shrink to their content width, and
+     the whole layout collapses. Wrapping the app in its own element and
+     handing that element the body's layout keeps the app's formatting context
+     intact while the body becomes a simple vertical stack. */
+  function wrapPage() {
+    var existing = document.querySelector('.d8-page');
+    if (existing) return existing;
+
+    var bs = getComputedStyle(document.body);
+    var wrap = document.createElement('div');
+    wrap.className = 'd8-page';
+
+    if (bs.display === 'flex' || bs.display === 'inline-flex' || bs.display === 'grid') {
+      wrap.style.display = bs.display === 'inline-flex' ? 'flex' : bs.display;
+      wrap.style.flexDirection = bs.flexDirection;
+      wrap.style.flexWrap = bs.flexWrap;
+      wrap.style.alignItems = bs.alignItems;
+      wrap.style.justifyContent = bs.justifyContent;
+      wrap.style.gap = bs.gap;
+      if (bs.display === 'grid') {
+        wrap.style.gridTemplateColumns = bs.gridTemplateColumns;
+        wrap.style.gridTemplateRows = bs.gridTemplateRows;
+      }
+      wrap.style.minHeight = '100vh';
+      // the body becomes a plain block so the shell stacks above and below
+      document.body.style.display = 'block';
+    }
+    /* Hand the body's own padding/margin to the wrapper. Left on the body it
+       would inset the bar and footer, so the shell floats instead of sitting
+       flush to the window edge — DigiSkills pads its body to centre the phone
+       stage. The app keeps the spacing it was designed with either way. */
+    ['padding', 'margin'].forEach(function (prop) {
+      var val = bs[prop];
+      if (val && val !== '0px') {
+        wrap.style[prop] = val;
+        document.body.style[prop] = '0';
+      }
+    });
+
+    wrap.style.width = 'auto';
+    document.body.style.height = 'auto';
+
+    while (document.body.firstChild) wrap.appendChild(document.body.firstChild);
+    document.body.appendChild(wrap);
+    return wrap;
+  }
+
   function injectCss() {
     var page = location.pathname.split('/').pop();
     var css = A11Y_CSS[page];
@@ -74,16 +139,17 @@
     }
     var m = document.querySelector('main, [role="main"]');
     if (!m) {
-      var root = document.getElementById('root') ||
-                 document.querySelector('body > div:not(.d8-bar):not(.d8-foot)');
+      var root = document.getElementById('root') || document.querySelector('.d8-page');
       if (root) root.setAttribute('role', 'main');
     }
   }
 
   function build() {
+    ensureStylesheet();
     injectCss();
     annotate();
     if (document.querySelector('.d8-bar')) return;   // bar already there
+    var page = wrapPage();
 
     // ---- skip link (WCAG 2.4.1) ----
     var skip = el('a', { class: 'd8-skip', href: '#main' }, 'Skip to main content');
@@ -120,7 +186,7 @@
         '</div>' +
       '</div>');
 
-    document.body.insertBefore(bar, document.body.firstChild);
+    document.body.insertBefore(bar, page);
     document.body.insertBefore(skip, bar);
     document.body.appendChild(foot);
 
@@ -128,8 +194,7 @@
     // The app's own root becomes the main landmark rather than being moved,
     // so React keeps the node it mounted on.
     if (!document.querySelector('main, [role="main"]')) {
-      var root = document.getElementById('root') ||
-                 document.querySelector('body > div:not(.d8-bar):not(.d8-foot)');
+      var root = document.getElementById('root') || document.querySelector('.d8-page');
       if (root) { root.setAttribute('role', 'main'); root.id = root.id || 'main'; }
     }
     var m = document.querySelector('main, [role="main"]');
