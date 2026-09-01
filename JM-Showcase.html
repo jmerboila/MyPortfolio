@@ -219,8 +219,42 @@
   <!-- End Google Tag Manager -->
 
 </style>
+<!-- ===== Devsign8 shell: shared brand fonts, favicon and stylesheet ===== -->
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/chrome.css">
+
+<style id="a11y-overrides">
+/* WCAG 2.1 AA contrast corrections (AODA). Only caption, label and badge
+   colours are darkened, each to ~4.75:1 so sub-pixel rounding cannot drop
+   it under the 4.5:1 line. Brand swatches and logo artwork are untouched,
+   so the palette this page documents stays accurate. */
+.slide-num, .kicker, .nm, .tick, .ttl{color:#7e6633 !important}
+.use{color:#70695b !important}
+.cross{color:#7c6e52 !important}
+.badge.no{background:#737373 !important}
+.badge.ok{background:#897037 !important}
+</style>
 </head>
 <body>
+<!-- ===== Devsign8 shell: top bar ===== -->
+<a class="d8-skip" href="#main">Skip to main content</a>
+<header class="d8-bar">
+  <a class="d8-bar__logo" href="index.html" aria-label="Jayson Mercado Erboila — home">
+    <img src="images/jmlogowhite.svg" alt="Jayson Mercado Erboila">
+  </a>
+  <nav aria-label="Portfolio">
+    <ul class="d8-bar__nav">
+      <li><a class="is-optional" href="index.html">Portfolio</a></li>
+      <li><a href="work/">All Work</a></li>
+      <li><a class="is-cta" href="index.html#contact">Let's Connect</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main">
+
 
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TSQXJVC5"
@@ -228,7 +262,7 @@
   <!-- End Google Tag Manager (noscript) -->
 
 <div class="progress" id="prog"></div>
-<nav class="nav" id="nav"></nav>
+<nav class="nav" aria-label="Sections" id="nav"></nav>
 
 <!-- 01 COVER -->
 <section class="slide" id="cover">
@@ -278,9 +312,9 @@
   <div class="two">
     <div class="stage"><div class="mark"></div></div>
     <div style="margin-top:6px">
-      <div class="note"><div class="num">i</div><div><h4>Interlocking letterforms</h4><p>The descending tail of the <strong>J</strong> threads through the heart of the <strong>M</strong>, fusing two initials into a single graphic unit rather than two letters sitting side by side. That fusion is what elevates a lettermark into a true monogram.</p></div></div>
-      <div class="note"><div class="num">ii</div><div><h4>High-contrast Didone serif</h4><p>Dramatic thick-to-thin stroke modulation and crisp bracketed serifs evoke heritage, fashion and editorial prestige — the visual language of luxury houses.</p></div></div>
-      <div class="note"><div class="num">iii</div><div><h4>Vertical, portrait balance</h4><p>The tall composition reads like a wax seal or a maker's stamp — perfect for spine prints, social avatars and embossing, where a compact, centred mark outperforms a wide wordmark.</p></div></div>
+      <div class="note"><div class="num">i</div><div><h4 role="heading" aria-level="3">Interlocking letterforms</h4><p>The descending tail of the <strong>J</strong> threads through the heart of the <strong>M</strong>, fusing two initials into a single graphic unit rather than two letters sitting side by side. That fusion is what elevates a lettermark into a true monogram.</p></div></div>
+      <div class="note"><div class="num">ii</div><div><h4 role="heading" aria-level="3">High-contrast Didone serif</h4><p>Dramatic thick-to-thin stroke modulation and crisp bracketed serifs evoke heritage, fashion and editorial prestige — the visual language of luxury houses.</p></div></div>
+      <div class="note"><div class="num">iii</div><div><h4 role="heading" aria-level="3">Vertical, portrait balance</h4><p>The tall composition reads like a wax seal or a maker's stamp — perfect for spine prints, social avatars and embossing, where a compact, centred mark outperforms a wide wordmark.</p></div></div>
     </div>
   </div>
 </section>
@@ -436,5 +470,26 @@
   const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting)idx=slides.indexOf(en.target);});},{threshold:.5});
   slides.forEach(s=>io.observe(s));
 </script>
+</main>
+<!-- ===== Devsign8 shell: footer ===== -->
+<footer class="d8-foot">
+  <p class="d8-foot__cta">Let's make <em>something great</em></p>
+  <p class="d8-foot__sub">Have a project in mind? Whether it's a brand, a product, or just an idea — I'd love to hear about it.</p>
+  <div class="d8-foot__actions">
+    <a class="is-primary" href="mailto:jmerboila@gmail.com">Say Hello</a>
+    <a class="is-ghost" href="work/">See All Work</a>
+  </div>
+  <div class="d8-foot__base">
+    <a href="index.html" aria-label="Jayson Mercado Erboila — home">
+      <img src="images/jmlogowhite.svg" alt="Jayson Mercado Erboila">
+    </a>
+    <p class="d8-foot__copy">&copy; 2026 Jayson Mercado Erboila. All rights reserved.</p>
+    <div class="d8-foot__social">
+      <a href="https://www.linkedin.com/in/jayson-erboila/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://www.behance.net/jaysonerboila" target="_blank" rel="noopener">Behance</a>
+      <a href="https://www.instagram.com/hello.devsign8/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+</footer>
 </body>
 </html>

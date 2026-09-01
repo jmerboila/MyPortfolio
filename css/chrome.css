@@ -1,0 +1,184 @@
+/* ============================================================================
+   chrome.css — the shared Devsign8 / JM shell
+   ----------------------------------------------------------------------------
+   WHY THIS IS SEPARATE FROM style.css
+
+   The showcase pages each present a DIFFERENT brand — Orange Magazine's
+   Anton, DigiSkills' Sora, Devsign8's Inter Tight. That variety is correct:
+   a brand showcase should look like the brand it is showcasing, not like
+   your portfolio. Forcing one typeface across all of them would make the
+   work worse.
+
+   What must be consistent is the SHELL around the work — the bar you arrive
+   through and the footer you leave through. That is what this file styles,
+   in the portfolio's own identity: Cormorant Garamond + Syne, black + gold.
+   A persistent frame around a variable canvas.
+
+   Every class is namespaced `d8-` and every value is declared outright, so
+   this cannot collide with, or be overridden by, a showcase page's own CSS.
+   ========================================================================= */
+
+.d8-bar, .d8-bar *, .d8-foot, .d8-foot * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- top bar ---- */
+.d8-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.85rem 5vw;
+  background: #0b0b0b;
+  border-bottom: 1px solid rgba(200, 169, 110, 0.22);
+  font-family: 'Syne', system-ui, sans-serif;
+  position: relative;
+  z-index: 40;
+}
+.d8-bar__logo { display: flex; align-items: center; flex-shrink: 0; }
+.d8-bar__logo img { height: 30px; width: auto; display: block; }
+
+.d8-bar__nav {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  list-style: none;
+}
+.d8-bar__nav a {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a89880;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+.d8-bar__nav a:hover,
+.d8-bar__nav a:focus-visible { color: #c8a96e; }
+.d8-bar__nav a.is-cta {
+  color: #0b0b0b;
+  background: #c8a96e;
+  padding: 0.5rem 1rem;
+  border-radius: 2px;
+}
+.d8-bar__nav a.is-cta:hover { background: #f0e8d8; color: #0b0b0b; }
+
+/* ---- footer ---- */
+.d8-foot {
+  background: #0b0b0b;
+  border-top: 1px solid rgba(200, 169, 110, 0.22);
+  padding: 4rem 5vw 3rem;
+  font-family: 'Syne', system-ui, sans-serif;
+  color: #a89880;
+  text-align: center;
+}
+.d8-foot__cta {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: #f0e8d8;
+  margin-bottom: 0.9rem;
+}
+.d8-foot__cta em { font-style: italic; color: #c8a96e; }
+.d8-foot__sub {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #a89880;
+  max-width: 46ch;
+  margin: 0 auto 2rem;
+}
+.d8-foot__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+.d8-foot__actions a {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.85rem 1.7rem;
+  border: 1px solid #c8a96e;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.d8-foot__actions a.is-primary { background: #c8a96e; color: #0b0b0b; }
+.d8-foot__actions a.is-primary:hover { background: #f0e8d8; border-color: #f0e8d8; }
+.d8-foot__actions a.is-ghost { color: #c8a96e; background: none; }
+.d8-foot__actions a.is-ghost:hover { background: rgba(200, 169, 110, 0.12); }
+
+.d8-foot__base {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(200, 169, 110, 0.16);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.d8-foot__base img { height: 28px; width: auto; display: block; }
+/* #7d7060 measured 4.09:1 on #0b0b0b — below the 4.5:1 minimum. */
+.d8-foot__copy { font-size: 0.72rem; letter-spacing: 0.04em; color: #93856f; }
+.d8-foot__social { display: flex; gap: 1.4rem; }
+.d8-foot__social a {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a89880;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.d8-foot__social a:hover { color: #c8a96e; }
+
+/* ---- responsive ---- */
+@media (max-width: 700px) {
+  .d8-bar { padding: 0.7rem 5vw; gap: 0.9rem; }
+  .d8-bar__logo img { height: 24px; }
+  .d8-bar__nav { gap: 0.9rem; }
+  .d8-bar__nav a { font-size: 0.6rem; letter-spacing: 0.1em; }
+  .d8-bar__nav a.is-cta { padding: 0.45rem 0.75rem; }
+  .d8-bar__nav .is-optional { display: none; }
+  .d8-foot { padding: 3rem 5vw 2.25rem; }
+  .d8-foot__base { justify-content: center; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .d8-bar__nav a, .d8-foot__actions a, .d8-foot__social a { transition: none; }
+}
+
+
+/* ============================================================================
+   SKIP LINK (WCAG 2.4.1 Bypass Blocks)
+   Hidden until focused, then pinned to the top-left. Never display:none —
+   that would take it out of the tab order entirely, defeating the point.
+   ========================================================================= */
+.d8-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 2000;
+  padding: 0.85rem 1.4rem;
+  background: #c8a96e;
+  color: #0b0b0b;
+  font-family: 'Syne', system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 0 0 3px 0;
+}
+.d8-skip:focus {
+  left: 0;
+  outline: 3px solid #0b0b0b;
+  outline-offset: -3px;
+}

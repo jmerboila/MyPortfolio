@@ -1,0 +1,347 @@
+/* ============================================================================
+   work.css — styles for the generated project pages (/work/…)
+   Layers on top of style.css and reuses its theme variables, so the light /
+   dark toggle works here with no extra colour definitions.
+   ========================================================================= */
+
+/* style.css hides the cursor for the homepage's custom cursor. These pages
+   don't run that script, so give the real cursor back. */
+.work-page,
+.work-page a,
+.work-page button { cursor: auto; }
+.work-page a,
+.work-page button { cursor: pointer; }
+
+.work-page { padding-top: 90px; }
+
+.cs, .wi {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 6vw 8rem;
+}
+
+/* style.css positions the bare `nav` element as the fixed site header, so
+   ANY <nav> on the page inherits position:fixed. The breadcrumb and the
+   pager below are both <nav> landmarks that belong in the document flow —
+   put them back. */
+.work-page nav.cs-crumbs,
+.work-page nav.cs-pager {
+  position: static;
+  z-index: auto;
+  background: none;
+  backdrop-filter: none;
+}
+
+/* -- breadcrumb ---------------------------------------------------------- */
+.cs-crumbs {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  padding: 2.5rem 0 3rem;
+}
+.cs-crumbs a { color: var(--cream-dim); text-decoration: none; }
+.cs-crumbs a:hover { color: var(--gold); }
+.cs-crumbs span { margin: 0 0.5rem; }
+.cs-crumbs span[aria-current] { color: var(--cream); margin-left: 0; }
+
+/* -- hero ---------------------------------------------------------------- */
+.cs-hero { max-width: 780px; margin-bottom: 3.5rem; }
+.cs-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+.cs-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 7vw, 4.6rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin-bottom: 1.4rem;
+}
+.cs-lede {
+  font-size: clamp(1rem, 1.6vw, 1.18rem);
+  line-height: 1.75;
+  color: var(--cream-dim);
+  max-width: 62ch;
+}
+.cs-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.8rem; }
+.cs-actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
+
+/* -- meta table ---------------------------------------------------------- */
+.cs-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.75rem 2rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 3.5rem;
+}
+.cs-meta dt {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  margin-bottom: 0.5rem;
+}
+.cs-meta dd { font-size: 0.95rem; color: var(--cream); }
+
+/* -- main figure --------------------------------------------------------- */
+.cs-figure {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4.5rem;
+}
+.cs-figure img { display: block; width: 100%; height: auto; }
+.cs-figure .placeholder-fill {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.9rem; min-height: 380px; color: var(--gold-dim);
+}
+.cs-figure .placeholder-fill svg { width: 52px; height: 52px; }
+.cs-figure .placeholder-fill span {
+  font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+}
+
+/* Social / platform crops — keeps a post looking like a post. */
+.ratio-1x1  .cs-img, .ratio-1x1  .wi-media img { aspect-ratio: 1 / 1;  object-fit: cover; }
+.ratio-4x5  .cs-img, .ratio-4x5  .wi-media img { aspect-ratio: 4 / 5;  object-fit: cover; }
+.ratio-9x16 .cs-img, .ratio-9x16 .wi-media img { aspect-ratio: 9 / 16; object-fit: cover; }
+.ratio-16x9 .cs-img, .ratio-16x9 .wi-media img { aspect-ratio: 16 / 9; object-fit: cover; }
+.cs-figure.ratio-4x5, .cs-figure.ratio-9x16 { max-width: 520px; margin-inline: auto; }
+
+/* -- case-study prose ---------------------------------------------------- */
+.cs-block { max-width: 68ch; margin-bottom: 4rem; }
+.cs-label {
+  font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.9rem;
+}
+.cs-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+  font-weight: 400; line-height: 1.15; color: var(--cream);
+  margin-bottom: 1.4rem;
+}
+.cs-heading em { font-style: italic; color: var(--gold); }
+.cs-text { color: var(--cream-dim); line-height: 1.85; margin-bottom: 1.2rem; }
+
+.cs-constraints { list-style: none; display: grid; gap: 0.9rem; }
+.cs-constraints li {
+  position: relative; padding-left: 1.9rem;
+  color: var(--cream); line-height: 1.7;
+}
+.cs-constraints li::before {
+  content: ''; position: absolute; left: 0; top: 0.62em;
+  width: 10px; height: 1px; background: var(--gold);
+}
+
+/* -- gallery ------------------------------------------------------------- */
+.cs-gallery { margin-bottom: 4.5rem; }
+.cs-gallery__track { display: grid; gap: 1.5rem; }
+.cs-gallery img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--border); border-radius: 4px;
+}
+@media (min-width: 760px) {
+  .cs-gallery__track { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Seamless carousel: panels butt together with no gap and no border, so the
+   artwork reads as the single continuous image it was built as. On narrow
+   screens the strip scrolls horizontally rather than stacking, because
+   stacking is exactly what destroys the effect. */
+.cs-gallery.is-seamless { margin-inline: auto; }
+.cs-gallery.is-seamless .cs-gallery__track {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.cs-gallery.is-seamless img {
+  border: 0;
+  border-radius: 0;
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  max-height: 62vh;
+  scroll-snap-align: start;
+}
+.cs-gallery__cap {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--cream-dim);
+  text-align: center;
+}
+@media (min-width: 900px) {
+  /* Wide enough to show the whole strip at once — let it fit the column.
+     min-width:0 is required: flex items default to min-width:auto and refuse
+     to shrink below their intrinsic 1080px, which would overflow the page. */
+  .cs-gallery.is-seamless .cs-gallery__track { overflow-x: hidden; }
+  .cs-gallery.is-seamless img {
+    flex: 1 1 0;
+    min-width: 0;
+    width: 100%;
+    max-height: none;
+  }
+}
+
+/* -- pager --------------------------------------------------------------- */
+.cs-pager {
+  display: flex; justify-content: space-between; gap: 2rem;
+  padding: 2.5rem 0; border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); margin-bottom: 4rem;
+}
+.cs-pager a { text-decoration: none; display: block; max-width: 45%; }
+.cs-pager .cs-next { text-align: right; margin-left: auto; }
+.cs-pager span {
+  display: block; font-size: 0.68rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--cream-dim); margin-bottom: 0.4rem;
+}
+.cs-pager strong {
+  font-family: var(--font-display); font-size: 1.35rem; font-weight: 400;
+  color: var(--cream); transition: color 0.3s ease;
+}
+.cs-pager a:hover strong { color: var(--gold); }
+
+/* -- closing CTA --------------------------------------------------------- */
+.cs-cta { text-align: center; padding: 2rem 0; }
+.cs-cta h2 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(1.8rem, 4vw, 2.6rem); color: var(--cream); margin-bottom: 0.7rem;
+}
+.cs-cta p { color: var(--cream-dim); margin-bottom: 1.8rem; }
+.cs-cta .cs-actions { justify-content: center; }
+
+/* ============================================================================
+   /work/ index
+   ========================================================================= */
+.wi-head { padding: 3.5rem 0 3rem; max-width: 720px; }
+.wi-head .section-title { margin-bottom: 1.2rem; }
+.wi-lede { color: var(--cream-dim); line-height: 1.8; }
+
+.wi-grid {
+  display: grid;
+  /* min(310px, 100%) rather than a bare 310px: a fixed minimum wider than the
+     available column forces the grid past the viewport, which fails WCAG
+     1.4.10 Reflow at 320px. This lets the track shrink instead. */
+  grid-template-columns: repeat(auto-fill, minmax(min(310px, 100%), 1fr));
+  gap: 2.5rem 2rem;
+}
+.wi-card { text-decoration: none; display: block; }
+.wi-media {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+  overflow: hidden; aspect-ratio: 4 / 3; margin-bottom: 1.2rem;
+}
+.wi-media img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.7s var(--ease-out-expo);
+}
+.wi-card:hover .wi-media img { transform: scale(1.04); }
+.wi-media .placeholder-fill {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.7rem; height: 100%; color: var(--gold-dim);
+}
+.wi-media .placeholder-fill svg { width: 40px; height: 40px; }
+.wi-media .placeholder-fill span {
+  font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase;
+}
+.wi-cat {
+  font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.6rem;
+}
+.wi-title {
+  font-family: var(--font-display); font-size: 1.6rem; font-weight: 400;
+  color: var(--cream); margin-bottom: 0.5rem; transition: color 0.3s ease;
+}
+.wi-card:hover .wi-title { color: var(--gold); }
+.wi-desc { font-size: 0.9rem; color: var(--cream-dim); line-height: 1.65; }
+
+/* -- responsive ---------------------------------------------------------- */
+@media (max-width: 640px) {
+  .work-page { padding-top: 76px; }
+  .cs, .wi { padding-bottom: 5rem; }
+  .cs-pager { flex-direction: column; gap: 1.75rem; }
+  .cs-pager a, .cs-pager .cs-next { max-width: 100%; text-align: left; margin-left: 0; }
+  .cs-figure .placeholder-fill { min-height: 240px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wi-media img, .wi-title, .cs-pager strong { transition: none; }
+  .wi-card:hover .wi-media img { transform: none; }
+}
+
+/* -- motion / video ------------------------------------------------------ */
+.cs-motion { margin-bottom: 4.5rem; }
+.cs-motion .cs-text { max-width: 62ch; margin-bottom: 1.8rem; }
+
+/* Credits under a section reuse .cs-meta exactly — same renderer in
+   build.js, same styles here — so section credits and the project meta
+   strip can never drift apart. `is-compact` only tightens the spacing and
+   drops the top rule, since it sits inside a section rather than under the
+   page header. */
+.cs-meta.is-compact {
+  border-top: 0;
+  padding-top: 0;
+  padding-bottom: 1.75rem;
+  margin-bottom: 2rem;
+  gap: 1.25rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 220px));
+  justify-content: start;
+}
+
+.cs-video {
+  background: #000;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  line-height: 0;          /* kills the inline-element gap under <video> */
+}
+.cs-video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #000;
+}
+
+/* A 9:16 Reel at full column width is absurdly tall on a desktop monitor,
+   so cap it to something a person can actually watch without scrolling. */
+.cs-motion.ratio-9x16 .cs-video { max-width: 420px; margin-inline: auto; }
+.cs-motion.ratio-1x1  .cs-video { max-width: 640px; margin-inline: auto; }
+.cs-motion.ratio-4x5  .cs-video { max-width: 560px; margin-inline: auto; }
+
+
+/* -- accessibility ------------------------------------------------------- */
+.work-page .skip-link { position: absolute; left: -9999px; top: 0; z-index: 2000;
+  padding: 0.85rem 1.4rem; background: var(--gold); color: var(--bg);
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; text-decoration: none; }
+.work-page .skip-link:focus { left: 0; outline: 3px solid var(--cream); outline-offset: -3px; }
+
+.work-page a:focus-visible,
+.work-page button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* The video's text alternative (WCAG 1.2.1) — visible, not hidden, because
+   a description of what happens on screen is useful to everyone. */
+.cs-video-alt {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--cream-dim);
+  max-width: 62ch;
+}
+.cs-video-alt strong { color: var(--cream); font-weight: 600; }

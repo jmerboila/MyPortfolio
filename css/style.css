@@ -546,6 +546,10 @@ nav.scrolled {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+  /* Cards size to their own content instead of stretching to the tallest in
+     the row. Without this, a 4:5 card sitting beside a 9:16 one gets a band
+     of dead space between its image and its caption. */
+  align-items: start;
 }
 
 /* Each project card — image on top, solid caption bar below (Option 2).
@@ -570,7 +574,7 @@ nav.scrolled {
 }
 /* Span variants — aspect ratio now lives on the image, not the whole card. */
 .project-card.wide { grid-column: span 2; }
-.project-card.tall { grid-row: span 2; }
+.project-card.tall { grid-row: span 2; align-self: stretch; }
 .project-card.wide .card-image { aspect-ratio: 16/7; }
 .project-card.tall .card-image { aspect-ratio: 3/4; }
 
@@ -968,4 +972,152 @@ footer {
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* ============================================================
+   PROJECT CARDS AS REAL LINKS
+   The card now wraps its content in an <a> pointing at the
+   generated /work/<slug>/ page, so every project is crawlable
+   and linkable. The anchor takes over the card's column layout.
+============================================================ */
+.card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+.card-link:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+
+.project-card.ratio-4x5  .card-image { aspect-ratio: 4 / 5; }
+.project-card.ratio-9x16 .card-image { aspect-ratio: 9 / 16; }
+.project-card.ratio-16x9 .card-image { aspect-ratio: 16 / 9; }
+
+/* A filter tab with no projects behind it is hidden by script.js */
+.filter-btn[hidden] { display: none; }
+
+/* "View all work" link under the gallery */
+.works-all {
+  max-width: 1200px;
+  margin: 3rem auto 0;
+  text-align: center;
+}
+.works-all a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.works-all a:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+
+
+
+/* ============================================================
+   CARD VIDEO
+   A project with a `video` plays it inline on the card, muted
+   and looping. js/script.js only attaches the source once the
+   card scrolls into view, and pauses it again on the way out.
+============================================================ */
+.card-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #000;
+  transition: transform 0.7s var(--ease-out-expo);
+}
+.project-card:hover .card-video { transform: scale(1.06); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card-video { transition: none; }
+  .project-card:hover .card-video { transform: none; }
+}
+
+/* The modal/lightbox was removed — cards now link straight to their
+   /work/<slug>/ page. Its styles below are left in place only because
+   nothing renders them; delete the .modal-* rules whenever you like. */
+
+
+/* ============================================================
+   ACCESSIBILITY (WCAG 2.1 AA / AODA)
+============================================================ */
+
+/* 2.4.1 Bypass Blocks — visible only on keyboard focus */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 2000;
+  padding: 0.85rem 1.4rem;
+  background: var(--gold);
+  color: var(--bg);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.skip-link:focus { left: 0; outline: 3px solid var(--cream); outline-offset: -3px; }
+
+/* 1.4.3 Contrast — the scroll cue was 4.11:1 on dark and 3.87:1 on light,
+   both under the 4.5:1 minimum for text this size. */
+.hero-scroll-indicator span { color: var(--cream-dim); }
+
+/* 2.2.2 Pause, Stop, Hide — a looping card video must be stoppable.
+   The button sits OUTSIDE the card's <a> (a button inside a link is invalid
+   and unreachable), pinned over the media. */
+.project-card { position: relative; }
+.card-video-toggle {
+  position: absolute;
+  bottom: 0.7rem;
+  right: 0.7rem;
+  z-index: 5;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(240, 232, 216, 0.35);
+  border-radius: 50%;
+  background: rgba(11, 11, 11, 0.72);
+  backdrop-filter: blur(6px);
+  color: #f0e8d8;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.card-video-toggle:hover { background: rgba(11, 11, 11, 0.9); border-color: var(--gold); }
+.card-video-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.card-video-toggle svg { display: block; }
+
+/* 2.4.7 Focus Visible — one consistent, high-contrast focus ring */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Screen-reader-only text that still gets announced */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }

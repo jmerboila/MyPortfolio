@@ -1,136 +1,19 @@
 /* ============================================================================
    JAYSON MERCADO ERBOILA — PORTFOLIO SCRIPT
    ----------------------------------------------------------------------------
-   ★ TO ADD / EDIT A PROJECT: just edit the PROJECTS list directly below.
-     Add a new object, and a new card appears automatically — no HTML needed.
+   ★ TO ADD OR EDIT A PROJECT, edit  js/projects.js  — not this file.
+     Then run  node build.js  to regenerate the /work/ pages and sitemap.
 
-   Each project supports these fields:
-     cat              One category as a string ("logo"), OR several as an array
-                        (["logo", "web"]). Must match a filter button's
-                        data-filter value. Options: "logo" | "graphic" | "web" | "mobile"
-     category         Label shown on the card (e.g. "Logo & Identity")
-     title            Project name (card heading + modal heading)
-     desc             Short one-liner shown on the card
-     longDesc         Longer description shown in the pop-up modal
-     tags             Array of tags, e.g. ["Branding", "Print"]
-     image            Path to the SMALL preview image shown on the card,
-                        e.g. "projects/lumino-thumb.jpg"
-                        → leave as "" to show a placeholder icon instead
-     imageFull        (optional) Path to the LARGE image shown in the pop-up modal,
-                        e.g. "projects/lumino-full.jpg"
-                        → if omitted, the modal reuses "image"
-     icon             Placeholder icon when no image:
-                        "logo" | "mobile" | "graphic" | "web" | "brand" | "campaign"
-     placeholderLabel Small label under the placeholder icon
-     size             ""  (normal) | "wide" (2 columns) | "tall" (2 rows)
-     link             (optional) URL to the live project / case study. When set,
-                        a "View Project" button appears in the modal and opens
-                        it in a new tab. e.g. "https://behance.net/gallery/..."
-     modalSize        (optional) "large" makes the pop-up modal wider with a
-                        bigger image — good for flagship projects. Omit for normal.
+   This file only renders the homepage gallery. PROJECTS and ICONS are
+   defined in js/projects.js, which must be loaded BEFORE this script.
    ============================================================================ */
 
-const PROJECTS = [
-  {
-    cat: "logo",
-    category: "Logo & Identity",
-    title: "Devsign8",
-    desc: "Infinite Creativity. Limitless Digital Solutions.",
-    longDesc: "Devsign8 was built on one idea: limitless creativity. From websites and branding to digital marketing, we help businesses transform ideas into impactful digital experiences that inspire, connect, and grow.",
-    tags: ["Logo Design", "Branding", "Wordmark"],
-    image: "projects/Devsign8-Logo.png",
-    imageFull: "projects/Devsign8-Logo-Full.png",
-    icon: "logo",
-    placeholderLabel: "Logo Design",
-    link: "https://jmerboila.github.io/MyPortfolio/Devsign8-Showcase.html",
-    modalSize: "",
-    size: ""
-  },
-  {
-    cat: ["web", "mobile"],
-    category: "Web & Mobile Design",
-    title: "Orange Magazine",
-    desc: "A responsive editorial platform for pop culture.",
-    longDesc: "A responsive editorial platform for pop culture — K-pop, music, film & TV, and the people shaping it. Desktop & mobile, light & dark, built on one bold orange system.",
-    tags: ["Web Design", "UI", "Mobile"],
-    image: "projects/OrangeMagazine-Preview.png",
-    imageFull: "projects/OrangeMagazine-Full.png",
-    icon: "web",
-    placeholderLabel: "Web Design",
-    link: "https://jmerboila.github.io/MyPortfolio/OrangeMagazine.html",
-    modalSize: "large",
-    size: "wide"
-  },
-  {
-    cat: "logo",
-    category: "Logo Design",
-    title: "Orange Magazine Logo",
-    desc: "A bold, geometric wordmark paired with a simple circular icon.",
-    longDesc: "The Orange Magazine logo is a combination mark that pairs a bold, geometric wordmark with a simple, circular icon. The orange color reflects the brand's energy and creativity, while the clean lines convey modernity and clarity.",
-    tags: ["Logo Design", "Hybrid", "Combination Mark"],
-    image: "projects/OrangeMagazine-Logo-Preview.png",
-    imageFull: "projects/OrangeMagazine-Logo-Full.png",
-    icon: "brand",
-    placeholderLabel: "Brand Identity",
-    link: "https://jmerboila.github.io/MyPortfolio/OrangeMagazine-Showcase.html",
-    size: ""
-  },
-  {
-    cat: ["mobile", "graphic"],
-    category: "UI / UX Design",
-    title: "DigiSkills",
-    desc: "A free, offline digital-safety app that teaches kids 7–11 how to stay safe online — through play, not lectures.",
-    longDesc: "DigiSkills — Be Safe Online is a free, offline-first mobile app that teaches children aged 7–11 how to stay safe on the internet through playful, audio-guided lessons. No ads, no data collection, no typing required.",
-    tags: ["Mobile","UI Design", "UX Research"],
-    image: "projects/DigiSkills-Preview.png",
-    imageFull: "projects/DigiSkills-Full.png",
-    icon: "mobile",
-    placeholderLabel: "Mobile UI",
-    modalSize: "large",
-    size: "tall"
-  },
-  {
-    cat: "logo",
-    category: "Logo & Branding",
-    title: "JM Design",
-    desc: "The interlocking JM monogram is the heart of the identity",
-    longDesc: "JM Design is the personal brand of Jayson Mercado Erboila — designer, developer and founder of the digital agency Devsign8.",
-    tags: ["Logo Design", "Branding", "Monogram"],
-    image: "projects/JMDesign-Preview.png",
-    imageFull: "projects/JMDesign-Full.png",
-    icon: "brand",
-    placeholderLabel: "Brand Identity",
-    link: "https://jmerboila.github.io/MyPortfolio/JM-Showcase.html",
-    modalSize: "large",
-    size: ""
-  },
-  {
-    cat: "logo",
-    category: "Logo & Branding",
-    title: "DigiSkills App Logo",
-    desc: "A playful, friendly logo for a digital-safety app for kids.",
-    longDesc: "The DigiSkills logo is a playful, friendly design that appeals to children while conveying the app's focus on digital safety. The bright colors and simple shapes make it approachable and memorable.",
-    tags: ["Logo Design", "Mobile App", "Symbol"],
-    image: "projects/DigiSkills-Logo-Preview.png",
-    imageFull: "projects/DigiSkills-Logo-Full.png",
-    icon: "brand",
-    placeholderLabel: "Brand Identity",
-    link: "https://jmerboila.github.io/MyPortfolio/DigiSkills-Showcase.html",
-    modalSize: "large",
-    size: ""
-  }
-  // ★ Add a new project here — copy the block above, change the values.
-];
-
-/* Placeholder icons (inner SVG). Used only when a project has no image. */
-const ICONS = {
-  logo:     '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke-linecap="round"/>',
-  mobile:   '<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 7h6M9 11h4M12 19h.01" stroke-linecap="round"/>',
-  graphic:  '<rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9" stroke-linecap="round"/>',
-  web:      '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20M6 12h4M6 15h6" stroke-linecap="round"/>',
-  brand:    '<path d="M12 2C8 2 4 6 4 10c0 5.5 8 12 8 12s8-6.5 8-12c0-4-4-8-8-8z"/><circle cx="12" cy="10" r="2.5"/>',
-  campaign: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'
-};
+const ICON_PAUSE =
+  '<svg width="11" height="12" viewBox="0 0 11 12" fill="currentColor" aria-hidden="true">' +
+  '<rect x="0" y="0" width="3.6" height="12" rx="1"/><rect x="7.4" y="0" width="3.6" height="12" rx="1"/></svg>';
+const ICON_PLAY =
+  '<svg width="11" height="12" viewBox="0 0 11 12" fill="currentColor" aria-hidden="true">' +
+  '<path d="M0 1.1v9.8a.5.5 0 0 0 .77.42l7.7-4.9a.5.5 0 0 0 0-.84L.77.68A.5.5 0 0 0 0 1.1z"/></svg>';
 
 const ARROW_SVG =
   '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
@@ -145,55 +28,86 @@ document.addEventListener('DOMContentLoaded', () => {
   const galleryGrid = document.getElementById('galleryGrid');
   const emptyEl     = document.getElementById('galleryEmpty');
 
-  function buildCard(project) {
+  function buildCard(project, card_) {
     const card = document.createElement('article');
-    card.className = 'project-card' + (project.size ? ' ' + project.size : '');
+    card.className = 'project-card' + (card_.size ? ' ' + card_.size : '')
+                   + (card_.ratio ? ' ratio-' + card_.ratio : '');
     // cat can be a single string ("logo") or an array (["logo","web"]).
     // Store them space-separated, e.g. data-cat="logo web".
     const cats = Array.isArray(project.cat) ? project.cat : [project.cat];
     card.dataset.cat = cats.join(' ');
-    card.tabIndex = 0;                       // keyboard focusable
-    card.setAttribute('role', 'button');
-    card.setAttribute('aria-label', 'View project: ' + project.title);
 
-    // Image OR placeholder
-    const media = project.image
-      ? `<img src="${project.image}" alt="${project.title}" loading="lazy" />`
+    // Video, image, or placeholder — in that order of preference.
+    // A card with a `video` plays it inline: muted, looping, and with
+    // preload="none" and no src until it scrolls into view (see the observer
+    // further down), so an off-screen card costs nothing.
+    const media = card_.video
+      ? `<video class="card-video"
+                muted loop playsinline preload="none" tabindex="-1" aria-hidden="true"
+                ${card_.videoPoster ? `poster="${card_.videoPoster}"` : ''}
+                data-src="${card_.video}"></video>`
+      : card_.image
+      ? `<img src="${card_.image}" alt="${card_.title}" loading="lazy" />`
       : `<div class="placeholder-fill">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">${ICONS[project.icon] || ICONS.logo}</svg>
            <span>${project.placeholderLabel || project.category}</span>
          </div>`;
 
+    // The card IS a link. That is what makes each project crawlable,
+    // shareable and openable in a new tab. Where a project defines several
+    // cards, every one of them points at the same project page.
     card.innerHTML = `
-      <div class="card-image">${media}</div>
-      <div class="card-overlay">
-        <span class="card-category">${project.category}</span>
-        <h3 class="card-title">${project.title}</h3>
-        <p class="card-desc">${project.desc}</p>
-      </div>
-      <div class="card-arrow">${ARROW_SVG}</div>
+      <a class="card-link" href="work/${project.slug}/" aria-label="View project: ${card_.title}">
+        <div class="card-image">${media}</div>
+        <div class="card-overlay">
+          <span class="card-category">${project.category}</span>
+          <h3 class="card-title">${card_.title}</h3>
+          <p class="card-desc">${card_.desc}</p>
+        </div>
+        <div class="card-arrow">${ARROW_SVG}</div>
+      </a>
+      ${card_.video ? `
+      <button class="card-video-toggle" type="button" data-video-toggle
+              aria-label="Pause the ${card_.title} video">${ICON_PAUSE}</button>` : ''}
     `;
-
-    // Open the modal on click or keyboard (Enter / Space)
-    card.addEventListener('click', () => openModal(project));
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openModal(project);
-      }
-    });
 
     return card;
   }
 
+  /* A project normally yields one card. A project with a `cards` array
+     yields one per entry — same project page, different media. That is how
+     the Mustang campaign shows its carousel and its Reel side by side
+     without duplicating the project itself. */
+  function cardsFor(p) {
+    if (Array.isArray(p.cards) && p.cards.length) {
+      return p.cards.map(c => Object.assign({
+        title: p.title, desc: p.desc, ratio: p.ratio, size: p.size
+      }, c));
+    }
+    return [{
+      title: p.title, desc: p.desc, ratio: p.ratio, size: p.size,
+      image: p.image, video: p.video, videoPoster: p.videoPoster
+    }];
+  }
+
   // Insert every card before the empty-state element
-  PROJECTS.forEach(p => galleryGrid.insertBefore(buildCard(p), emptyEl));
+  PROJECTS.forEach(p => cardsFor(p).forEach(c =>
+    galleryGrid.insertBefore(buildCard(p, c), emptyEl)));
 
   const cards = Array.from(galleryGrid.querySelectorAll('.project-card'));
 
 
   /* ---- Gallery category filter ---- */
   const filterBtns = document.querySelectorAll('.filter-btn');
+
+  // A tab that filters to nothing is a promise the gallery can't keep, so
+  // hide it until there is work in that category. Adding a project with
+  // cat: "social" makes the Social tab appear on its own.
+  const presentCats = new Set(PROJECTS.flatMap(p => Array.isArray(p.cat) ? p.cat : [p.cat]));
+  filterBtns.forEach(btn => {
+    const f = btn.dataset.filter;
+    if (f !== 'all' && !presentCats.has(f)) btn.hidden = true;
+  });
 
   function applyFilter(filter) {
     let visibleCount = 0;
@@ -222,72 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
       applyFilter(btn.dataset.filter);
     });
-  });
-
-
-  /* ---- Project modal / lightbox ---- */
-  const overlay    = document.getElementById('modalOverlay');
-  const modalClose = document.getElementById('modalClose');
-  const modalImg   = document.getElementById('modalImg');
-  const modalCat   = document.getElementById('modalCat');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalDesc  = document.getElementById('modalDesc');
-  const modalTags  = document.getElementById('modalTags');
-  const modalLink  = document.getElementById('modalLink');
-  let lastFocused  = null;
-
-  function openModal(project) {
-    // Optional larger modal layout for flagship projects (modalSize: "large")
-    overlay.classList.toggle('size-large', project.modalSize === 'large');
-
-    // Use the large image (imageFull) in the modal if provided,
-    // otherwise fall back to the card image. Either one works.
-    const modalSrc = project.imageFull || project.image;
-    if (modalSrc) {
-      modalImg.src = modalSrc;
-      modalImg.alt = project.title;
-      modalImg.style.display = 'block';
-    } else {
-      modalImg.removeAttribute('src');
-      modalImg.style.display = 'none';
-    }
-    modalCat.textContent   = project.category;
-    modalTitle.textContent = project.title;
-    modalDesc.textContent  = project.longDesc || project.desc;
-
-    modalTags.innerHTML = '';
-    (project.tags || []).forEach(tag => {
-      const span = document.createElement('span');
-      span.className = 'modal-tag';
-      span.textContent = tag;
-      modalTags.appendChild(span);
-    });
-
-    // Show the "View Project" button only if this project has a link
-    if (project.link) {
-      modalLink.href = project.link;
-      modalLink.style.display = 'inline-flex';
-    } else {
-      modalLink.removeAttribute('href');
-      modalLink.style.display = 'none';
-    }
-
-    lastFocused = document.activeElement;
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    modalClose.focus();                       // move focus into the modal
-  }
-
-  function closeModal() {
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-    if (lastFocused) lastFocused.focus();     // restore focus
-  }
-
-  modalClose.addEventListener('click', closeModal);
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
   });
 
 
@@ -326,6 +174,77 @@ document.addEventListener('DOMContentLoaded', () => {
       burger.setAttribute('aria-expanded', 'false');
     })
   );
+
+
+  /* ---- Card video (Reels etc.) ----
+     Cards with a `video` play it inline, muted and looping. Two rules keep
+     that from being expensive or annoying:
+       1. Nothing is fetched until the card is actually on screen — the
+          <video> ships with preload="none" and no src; the observer sets it.
+       2. Off-screen cards pause, so a long gallery never runs six videos
+          at once.
+     Anyone who has asked for reduced motion keeps the poster frame instead. */
+  const cardVideos = galleryGrid.querySelectorAll('.card-video');
+  if (cardVideos.length) {
+    const stillOnly = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (stillOnly) {
+      // Leave the poster showing. Nothing loads, nothing moves — so the
+      // pause control has nothing to control and is removed.
+      cardVideos.forEach(v => v.removeAttribute('data-src'));
+      galleryGrid.querySelectorAll('[data-video-toggle]').forEach(b => b.remove());
+    } else {
+      const vidObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const v = entry.target;
+          // A visitor who pressed pause stays paused, even after scrolling
+          // away and back. Their choice outranks the observer.
+          if (v.dataset.userPaused === 'true') return;
+          if (entry.isIntersecting) {
+            if (v.dataset.src) {          // first time on screen: attach + load
+              v.src = v.dataset.src;
+              delete v.dataset.src;
+            }
+            const played = v.play();
+            if (played && played.catch) played.catch(() => {});  // autoplay refused
+          } else if (!v.paused) {
+            v.pause();
+          }
+        });
+      }, { threshold: 0.25 });
+
+      cardVideos.forEach(v => vidObs.observe(v));
+
+      /* WCAG 2.2.2 Pause, Stop, Hide — moving content that starts on its own
+         and runs longer than five seconds must be stoppable. Each card with a
+         video gets a real button for that. */
+      galleryGrid.querySelectorAll('[data-video-toggle]').forEach(btn => {
+        const v = btn.parentElement.querySelector('.card-video');
+        if (!v) return;
+        const label = btn.getAttribute('aria-label').replace(/^(Pause|Play) the /, '').replace(/ video$/, '');
+        const sync = () => {
+          const paused = v.paused;
+          btn.innerHTML = paused ? ICON_PLAY : ICON_PAUSE;
+          btn.setAttribute('aria-label', (paused ? 'Play the ' : 'Pause the ') + label + ' video');
+        };
+        btn.addEventListener('click', () => {
+          if (v.paused) {
+            delete v.dataset.userPaused;
+            if (v.dataset.src) { v.src = v.dataset.src; delete v.dataset.src; }
+            const pl = v.play();
+            if (pl && pl.catch) pl.catch(() => {});
+          } else {
+            v.dataset.userPaused = 'true';
+            v.pause();
+          }
+          sync();
+        });
+        v.addEventListener('play', sync);
+        v.addEventListener('pause', sync);
+        sync();
+      });
+    }
+  }
 
 
   /* ---- Scroll reveal ---- */

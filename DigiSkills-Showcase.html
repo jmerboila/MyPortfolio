@@ -217,8 +217,40 @@
   <!-- End Google Tag Manager -->
 
 </style>
+<!-- ===== Devsign8 shell: shared brand fonts, favicon and stylesheet ===== -->
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/chrome.css">
+
+<style id="a11y-overrides">
+/* WCAG 2.1 AA contrast corrections (AODA). Only caption, label and badge
+   colours are darkened, each to ~4.75:1 so sub-pixel rounding cannot drop
+   it under the 4.5:1 line. Brand swatches and logo artwork are untouched,
+   so the palette this page documents stays accurate. */
+.slide-num, .kicker, .nm{color:#9b6208 !important}
+.use{color:#6a6d8b !important}
+.x{background:#e02228 !important}
+</style>
 </head>
 <body>
+<!-- ===== Devsign8 shell: top bar ===== -->
+<a class="d8-skip" href="#main">Skip to main content</a>
+<header class="d8-bar">
+  <a class="d8-bar__logo" href="index.html" aria-label="Jayson Mercado Erboila — home">
+    <img src="images/jmlogowhite.svg" alt="Jayson Mercado Erboila">
+  </a>
+  <nav aria-label="Portfolio">
+    <ul class="d8-bar__nav">
+      <li><a class="is-optional" href="index.html">Portfolio</a></li>
+      <li><a href="work/">All Work</a></li>
+      <li><a class="is-cta" href="index.html#contact">Let's Connect</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main">
+
   
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TSQXJVC5"
@@ -226,7 +258,7 @@
   <!-- End Google Tag Manager (noscript) -->
   
 <div class="progress" id="prog"></div>
-<nav class="nav" id="nav"></nav>
+<nav class="nav" aria-label="Sections" id="nav"></nav>
 
 <div class="deck" id="deck">
 
@@ -280,9 +312,9 @@
     <div class="anatomy-stage">
       <div class="anatomy-visual"><img src="DigiSkills-Logo.svg" alt="Anatomy of the DigiSkills mark"></div>
       <div>
-        <div class="note"><div class="dot">1</div><div><h4>The open book</h4><p>The foundation of the mark — instantly legible as learning, knowledge and study. A wide, confident V grounds the whole identity.</p></div></div>
-        <div class="note"><div class="dot">2</div><div><h4>Pixels in flight</h4><p>The top pages break away into amber squares — knowledge digitised, ideas sparking, skills levelling up. The single visual move that makes it <em>Digi</em>Skills, not just a book.</p></div></div>
-        <div class="note"><div class="dot">3</div><div><h4>Two-colour clarity</h4><p>Deep navy for trust and depth; warm amber for energy and optimism. The contrast keeps the mark punchy at any size.</p></div></div>
+        <div class="note"><div class="dot">1</div><div><h4 role="heading" aria-level="3">The open book</h4><p>The foundation of the mark — instantly legible as learning, knowledge and study. A wide, confident V grounds the whole identity.</p></div></div>
+        <div class="note"><div class="dot">2</div><div><h4 role="heading" aria-level="3">Pixels in flight</h4><p>The top pages break away into amber squares — knowledge digitised, ideas sparking, skills levelling up. The single visual move that makes it <em>Digi</em>Skills, not just a book.</p></div></div>
+        <div class="note"><div class="dot">3</div><div><h4 role="heading" aria-level="3">Two-colour clarity</h4><p>Deep navy for trust and depth; warm amber for energy and optimism. The contrast keeps the mark punchy at any size.</p></div></div>
       </div>
     </div>
   </section>
@@ -449,5 +481,26 @@
   const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting)idx=slides.indexOf(en.target);});},{threshold:.5});
   slides.forEach(s=>io.observe(s));
 </script>
+</main>
+<!-- ===== Devsign8 shell: footer ===== -->
+<footer class="d8-foot">
+  <p class="d8-foot__cta">Let's make <em>something great</em></p>
+  <p class="d8-foot__sub">Have a project in mind? Whether it's a brand, a product, or just an idea — I'd love to hear about it.</p>
+  <div class="d8-foot__actions">
+    <a class="is-primary" href="mailto:jmerboila@gmail.com">Say Hello</a>
+    <a class="is-ghost" href="work/">See All Work</a>
+  </div>
+  <div class="d8-foot__base">
+    <a href="index.html" aria-label="Jayson Mercado Erboila — home">
+      <img src="images/jmlogowhite.svg" alt="Jayson Mercado Erboila">
+    </a>
+    <p class="d8-foot__copy">&copy; 2026 Jayson Mercado Erboila. All rights reserved.</p>
+    <div class="d8-foot__social">
+      <a href="https://www.linkedin.com/in/jayson-erboila/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://www.behance.net/jaysonerboila" target="_blank" rel="noopener">Behance</a>
+      <a href="https://www.instagram.com/hello.devsign8/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+</footer>
 </body>
 </html>

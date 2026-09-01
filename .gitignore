@@ -1,0 +1,16 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.psd
+*.ai
+
+# Local preview server helper (Windows only — harmless if you'd rather commit it)
+# preview.cmd
+
+# Working source that doesn't belong on the live site.
+# 14 MB of mockup source, referenced by nothing on the site.
+Devsign8 MockUps/
+
+# Old backups — restore from git history instead
+**/BackUp/

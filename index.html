@@ -16,8 +16,12 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Jayson Mercado Erboila — Digital Marketing Specialist &amp; Designer" />
   <meta property="og:description" content="Digital marketing strategy + design — logo, brand identity, graphic, web design & UI/UX experiences that grow brands." />
-  <meta property="og:image" content="images/og-preview.jpg" />
-  <!-- ✏️ Create a 1200×630px image at images/og-preview.jpg for a nice link preview -->
+  <meta property="og:image" content="https://jmerboila.github.io/MyPortfolio/images/og-preview.jpg" />
+  <meta property="og:url" content="https://jmerboila.github.io/MyPortfolio/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Jayson Mercado Erboila — Digital Marketing Specialist &amp; Designer" />
+  <meta name="twitter:description" content="Digital marketing strategy + design — logo, brand identity, graphic, web design &amp; UI/UX experiences that grow brands." />
+  <meta name="twitter:image" content="https://jmerboila.github.io/MyPortfolio/images/og-preview.jpg" />
    <!-- Person Schema -->
     <script type="application/ld+json">
     {
@@ -29,7 +33,7 @@
       "email": "mailto:jmerboila@gmail.com",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Markham",
+        "addressLocality": "Toronto",
         "addressRegion": "Ontario",
         "addressCountry": "Canada"
       },
@@ -45,16 +49,17 @@
       ],
       "sameAs": [
         "https://www.linkedin.com/in/jayson-erboila/",
-        "https://www.behance.net/jaysonerboila"
+        "https://www.behance.net/jaysonerboila",
+        "https://www.instagram.com/hello.devsign8/"
       ]
     }
     </script>
-  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" href="images/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="shortcut icon" href="images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-title" content="JM Design" />
-  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="manifest" href="images/site.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png" />
   <!-- Google Fonts -->
@@ -73,7 +78,9 @@
   })(window,document,'script','dataLayer','GTM-TSQXJVC5');</script>
   <!-- End Google Tag Manager -->
 
-  <!-- App script (deferred so it runs after the page is parsed) -->
+  <!-- Project data first, then the renderer. Both deferred, and deferred
+       scripts run in order, so PROJECTS is always defined in time. -->
+  <script src="js/projects.js" defer></script>
   <script src="js/script.js" defer></script>
 </head>
 
@@ -83,6 +90,8 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
+  <a class="skip-link" href="#main">Skip to main content</a>
+
   <!-- Custom Cursor -->
   <div class="cursor-dot" id="cursorDot"></div>
   <div class="cursor-ring" id="cursorRing"></div>
@@ -90,7 +99,7 @@
   <!-- ============================================================
        NAVIGATION
   ============================================================ -->
-  <nav id="navbar">
+  <nav id="navbar" aria-label="Main">
     <a href="#" class="nav-logo" aria-label="Home">
       <img class="logo-dark"  src="images/jmlogowhite.svg" alt="Jayson Mercado Erboila logo" />
       <img class="logo-light" src="images/jmlogoblack.svg" alt="Jayson Mercado Erboila logo" />
@@ -115,6 +124,8 @@
       <span></span><span></span><span></span>
     </button>
   </nav>
+
+  <main id="main">
 
   <!-- ============================================================
        HERO SECTION
@@ -179,7 +190,7 @@
 
     <div class="about-visual reveal reveal-delay-2">
       <div class="about-img-frame">
-        <img src="images/jayson-portrait.png" alt="Portrait of Jayson Mercado Erboila" />
+        <img src="images/jayson-portrait.webp" width="800" height="1000" loading="lazy" alt="Portrait of Jayson Mercado Erboila" />
       </div>
       <div class="about-frame-border"></div>
       <!-- <div class="about-stats">
@@ -218,6 +229,8 @@
         <button class="filter-btn" data-filter="graphic">Graphic</button>
         <button class="filter-btn" data-filter="web">Web</button>
         <button class="filter-btn" data-filter="mobile">Mobile</button>
+        <!-- Appears automatically once js/projects.js has a cat:"social" entry -->
+        <button class="filter-btn" data-filter="social">Social</button>
       </div>
     </div>
 
@@ -226,6 +239,13 @@
       <div class="gallery-empty" id="galleryEmpty">
         No projects in this category yet.
       </div>
+    </div>
+
+    <div class="works-all">
+      <a href="work/">
+        Browse all projects
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
     </div>
   </section>
 
@@ -250,6 +270,8 @@
     </div>
   </section>
 
+  </main>
+
   <!-- ============================================================
        FOOTER
   ============================================================ -->
@@ -260,34 +282,11 @@
     </a>
     <p class="footer-copy" id="footerYear">&copy; 2026 Jayson Mercado Erboila. All rights reserved.</p>
     <div class="footer-socials">
-      <!-- <a href="https://www.behance.net/jaysonerboila" target="_blank" rel="noopener">Behance</a>
-      <a href="https://www.linkedin.com/in/jayson-erboila/" target="_blank" rel="noopener">LinkedIn</a> -->
+      <a href="https://www.linkedin.com/in/jayson-erboila/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://www.behance.net/jaysonerboila" target="_blank" rel="noopener">Behance</a>
+      <a href="https://www.instagram.com/hello.devsign8/" target="_blank" rel="noopener">Instagram</a>
     </div>
   </footer>
-
-  <!-- ============================================================
-       PROJECT MODAL / LIGHTBOX
-  ============================================================ -->
-  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <button class="modal-close" id="modalClose" aria-label="Close">&#x2715;</button>
-    <div class="modal-inner">
-      <div class="modal-img-wrap">
-        <img id="modalImg" src="" alt="" />
-      </div>
-      <div class="modal-info">
-        <p class="modal-cat" id="modalCat"></p>
-        <h2 class="modal-title" id="modalTitle"></h2>
-        <p class="modal-desc" id="modalDesc"></p>
-        <div class="modal-tags" id="modalTags"></div>
-        <a id="modalLink" class="modal-link" href="#" target="_blank" rel="noopener">
-          View Project
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
 
 </body>
 </html>
