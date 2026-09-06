@@ -1,6 +1,6 @@
 ---
 /* ============================================================================
-   DotGrid.astro — the site-wide dot field. Pointer-reactive, nothing else.
+   DotGrid.astro — the hero's dot field. Pointer-reactive, nothing else.
    ----------------------------------------------------------------------------
    A vanilla port of React Bits' DotGrid, which is React + GSAP + InertiaPlugin.
    GSAP alone is ~27 kB gzipped before the plugin, several times what this whole
@@ -8,10 +8,18 @@
    return — about forty lines. So the behaviour is reproduced, the dependency
    is not.
 
-   FIXED, NOT TALL. The canvas is `position: fixed` and viewport-sized, so a
-   10,000px page costs exactly what a 1,000px page costs. It does not scroll
-   with the document and it does not parallax: the field is a still ground that
-   reacts to the pointer, and that is the whole of it.
+   SCOPED TO THE HERO, AND CLEAR OF THE NAV. It was briefly a viewport-fixed
+   layer for the whole page; it now lives inside .hero and is inset from the
+   top by --header-height so no dot ever sits behind the navigation. The header
+   is transparent over the hero at scroll-top, so without that inset the field
+   would read as texture behind the logo and links.
+
+   --header-height is published by SiteHeader from a ResizeObserver, which is
+   why the inset tracks a real measured bar rather than a guessed number. The
+   4.5rem fallback only applies for the frame before that lands.
+
+   Because the hero scrolls away, the loop stops when the section leaves the
+   viewport — there is no reason to burn frames on a field nobody can see.
 
    VISIBILITY AND CONTRAST, RESOLVED TOGETHER. An earlier pass masked the dots
    out of the middle of the viewport to protect text, which worked so well the
@@ -44,10 +52,10 @@ interface Props {
 }
 
 const {
-  /* 4px, not the 2px of the React Bits example. At 2px on a dark ground the
-     field is invisible at any alpha the contrast budget permits — size is the
-     lever that buys presence without costing legibility. */
-  dotSize = 4,
+  /* Size is the free lever: it drives visibility and does not enter the
+     contrast maths at all, since alpha is what tints the ground under a glyph.
+     Raise this before touching the alphas below, which are at their ceiling. */
+  dotSize = 2,
   gap = 22,
   proximity = 120,
   shockRadius = 200,
@@ -77,11 +85,18 @@ const config = {
 
 <style>
   .dotgrid {
-    position: fixed;
+    position: absolute;
+    /* Plain inset: 0 — filling the hero is already enough to clear the nav.
+       .site-header is `position: sticky`, which unlike `fixed` DOES reserve
+       its space in normal flow, so the hero starts below the bar rather than
+       underneath it. An explicit --header-height inset here would push the
+       field a second header-height down and open a dead band across the top
+       of the section.
+
+       Once scrolled, the bar gains a background and a backdrop-filter, so the
+       dots passing beneath it are covered by the header's own surface. */
     inset: 0;
-    /* Above the body's background, below every positioned section. A negative
-       z-index would drop it BEHIND the body background and make it invisible —
-       0 is the value that works. base.css lifts main and footer to 1. */
+    /* Above the hero's background, below .hero__content (--z-raised). */
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
@@ -206,6 +221,16 @@ const config = {
     let width = 0;
     let height = 0;
     let running = false;
+    let visible = true;
+    /* The canvas is absolutely positioned inside a section that scrolls, so
+       its viewport offset changes. Cached rather than measured on every
+       pointermove, and refreshed on the three things that can move it. */
+    let rect = { left: 0, top: 0, right: 0, bottom: 0 };
+
+    function refreshRect() {
+      const r = canvas!.getBoundingClientRect();
+      rect = { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+    }
 
     const pointer = { x: -9999, y: -9999, lastX: 0, lastY: 0, lastT: 0, moved: false };
 
@@ -326,7 +351,7 @@ const config = {
       last = now;
       const busy = step(dt);
       draw();
-      if ((busy || pointer.moved) && !motionReduced()) {
+      if ((busy || pointer.moved) && visible && !motionReduced()) {
         pointer.moved = false;
         requestAnimationFrame(loop);
       } else {
@@ -335,7 +360,7 @@ const config = {
     }
 
     function wake() {
-      if (running) return;
+      if (running || !visible) return;
       running = true;
       last = 0;
       requestAnimationFrame(loop);
@@ -348,7 +373,25 @@ const config = {
     /* -- Pointer. The canvas is fixed at the viewport origin, so client
        coordinates ARE canvas coordinates — no rect maths needed. ---------- */
     function onMove(e: PointerEvent) {
-      if (e.pointerType !== 'mouse' || motionReduced()) return;
+      if (e.pointerType !== 'mouse' || motionReduced() || !visible) return;
+
+      /* Outside the section (plus a proximity margin) there is nothing this
+         field can react to. Park the pointer and repaint once, so any dots
+         left glowing from the last pass return to base instead of freezing
+         lit when the cursor leaves the hero. */
+      const pad = cfg.proximity;
+      if (
+        e.clientX < rect.left - pad || e.clientX > rect.right + pad ||
+        e.clientY < rect.top - pad || e.clientY > rect.bottom + pad
+      ) {
+        if (pointer.x !== -9999) {
+          pointer.x = pointer.y = -9999;
+          pointer.moved = true;
+          wake();
+        }
+        return;
+      }
+
       const now = performance.now();
       const dt = pointer.lastT ? now - pointer.lastT : 16;
 
@@ -362,8 +405,8 @@ const config = {
       pointer.lastT = now;
       pointer.lastX = e.clientX;
       pointer.lastY = e.clientY;
-      pointer.x = e.clientX;
-      pointer.y = e.clientY;
+      pointer.x = e.clientX - rect.left;
+      pointer.y = e.clientY - rect.top;
       pointer.moved = true;
 
       if (speed > cfg.speedTrigger) {
@@ -380,10 +423,12 @@ const config = {
     }
 
     function onDown(e: PointerEvent) {
-      if (motionReduced()) return;
+      if (motionReduced() || !visible) return;
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
       for (const d of dots) {
-        const dx = d.cx - e.clientX;
-        const dy = d.cy - e.clientY;
+        const dx = d.cx - px;
+        const dy = d.cy - py;
         const dist = Math.hypot(dx, dy);
         if (dist < cfg.shockRadius) {
           const falloff = Math.max(0, 1 - dist / cfg.shockRadius);
@@ -396,14 +441,30 @@ const config = {
     /* -- Wiring ---------------------------------------------------------- */
     readColors();
     build();
+    refreshRect();
     draw();
 
     new ResizeObserver(() => {
       build();
+      refreshRect();
       draw();
       wake();
     }).observe(host);
 
+    /* The hero scrolls away, so there is no reason to burn frames on a field
+       nobody can see. This also keeps the cached rect honest. */
+    new IntersectionObserver(
+      (entries) => {
+        visible = entries.some((en) => en.isIntersecting);
+        if (visible) {
+          refreshRect();
+          wake();
+        }
+      },
+      { threshold: 0 },
+    ).observe(host);
+
+    window.addEventListener('scroll', refreshRect, { passive: true });
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('pointerdown', onDown, { passive: true });
 

@@ -21,16 +21,22 @@
       up front, and the animating text is overlaid on top of it. The box never
       changes size.
 
-   THE BACKDROP IS NOT HERE any more. The dot field and its scroll parallax
-   moved to BaseLayout as one viewport-fixed layer for the whole site, so the
-   hero owns only its own content. What remains local is the magnetic pull on
-   the two CTAs at the bottom of this file.
+   THE BACKDROP is the dot field, scoped to this section and inset below the
+   sticky header so nothing paints behind the navigation. It was briefly a
+   site-wide fixed layer; scoping it back here keeps the effect where the
+   attention is and leaves the content sections clean.
    ========================================================================= */
 import { PERSON } from '../config/site';
 import { href } from '../lib/url';
+import DotGrid from './DotGrid.astro';
 ---
 
 <section class="hero" aria-labelledby="hero-heading">
+  {/* Decorative and inert: aria-hidden, pointer-events:none. It reads the
+      pointer from a window listener, so it never intercepts a click on the
+      CTAs sitting above it. */}
+  <DotGrid />
+
   <div class="hero__content container">
     <p class="hero__eyebrow">{PERSON.tagline}</p>
 
@@ -75,8 +81,10 @@ import { href } from '../lib/url';
     align-items: center;
     min-block-size: 100svh;
     overflow: hidden;
-    /* The sticky header sits transparent over this, so the hero pads itself
-       clear of it rather than the header reserving space in the flow. */
+    /* NOTE: a sticky header DOES reserve its space in normal flow, so this
+       section already starts below the bar — this padding is breathing room
+       on top of that, not clearance. Worth knowing before tuning it: the
+       first line of the hero currently sits about two header-heights down. */
     padding-block: calc(var(--header-height, 4.5rem) + var(--space-xl))
       var(--space-2xl);
     background-color: var(--bg);

@@ -17,7 +17,6 @@
    ========================================================================= */
 import { PERSON, SOCIALS, SEO, ANALYTICS, absoluteUrl } from '../config/site';
 import { asset } from '../lib/url';
-import DotGrid from '../components/DotGrid.astro';
 /* One family, two faces — roman and a true drawn italic.
 
    The weight-only build, not the optical-size one. Inter DOES ship an opsz
@@ -179,11 +178,6 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
 
-    {/* Site-wide, viewport-fixed and decorative. It sits at the top of the
-        body so it paints behind everything; base.css lifts main and footer
-        above it. One instance for the whole page — it is fixed, so it never
-        grows with the document and never scrolls with it either. */}
-    <DotGrid />
 
     <slot name="header" />
 

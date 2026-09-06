@@ -171,20 +171,6 @@ figcaption a[href] {
   grid-area: 1 / 1;
 }
 
-/* -- Stacking -------------------------------------------------------------- */
-/* The dot field is `position: fixed; z-index: 0`, which paints it above the
-   body's background but below anything positioned. These two need a stacking
-   context of their own so content is never behind it — the header already has
-   one via --z-sticky.
-
-   z-index: 0 rather than -1 on the field itself is deliberate: a negative
-   z-index would drop it behind the body background and make it invisible. */
-main,
-footer {
-  position: relative;
-  z-index: 1;
-}
-
 /* -- Typography ----------------------------------------------------------- */
 h1,
 h2,
