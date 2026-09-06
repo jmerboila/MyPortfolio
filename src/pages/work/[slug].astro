@@ -1,0 +1,416 @@
+---
+/* ============================================================================
+   /work/[slug] — one page per project.
+   ----------------------------------------------------------------------------
+   v1 generated these with a hand-written build.js that had to be re-run by
+   hand after every content edit, and silently went stale if you forgot. Here
+   the routes ARE the collection: add a markdown file and the page exists.
+
+   EVERY SECTION IS CONDITIONAL. The case-study fields are empty on six of the
+   seven entries today, so this page renders only what has content rather than
+   printing empty headings. A project with nothing but a cover still produces
+   a clean page; the same template gets richer as the writing lands, with no
+   markup change.
+   ========================================================================= */
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { href } from '../../lib/url';
+import { absoluteUrl } from '../../config/site';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('work', ({ data }) => !data.draft);
+  const sorted = entries.sort((a, b) =>
+    a.data.order !== b.data.order
+      ? a.data.order - b.data.order
+      : a.data.title.localeCompare(b.data.title),
+  );
+
+  return sorted.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      /* Wraps around, so the last project leads back to the first rather than
+         dead-ending the reader at the bottom of the site. */
+      prev: sorted[(i - 1 + sorted.length) % sorted.length],
+      next: sorted[(i + 1) % sorted.length],
+    },
+  }));
+}
+
+const { entry, prev, next } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+const hasCaseStudy = Boolean(d.problem || d.approach || d.outcome || d.constraints.length);
+const meta = [
+  ['Role', d.role],
+  ['Client', d.client],
+  ['Year', d.year],
+  ['Tools', d.tools.length ? d.tools.join(', ') : ''],
+].filter(([, v]) => v) as [string, string][];
+
+/* CreativeWork rather than Article: this is a piece of design work, not a
+   piece of writing, and answer engines resolve the distinction. */
+const schema = [
+  {
+    '@type': 'CreativeWork',
+    '@id': `${absoluteUrl(`/work/${entry.id}/`)}#work`,
+    name: d.title,
+    description: d.summary,
+    creator: { '@id': `${absoluteUrl('/')}#person` },
+    ...(d.year ? { dateCreated: d.year } : {}),
+    ...(d.tools.length ? { keywords: [...d.tags, ...d.tools].join(', ') } : {}),
+    genre: d.category,
+  },
+];
+---
+
+<BaseLayout
+  title={d.title}
+  description={d.summary}
+  path={`/work/${entry.id}/`}
+  schema={schema}
+>
+  <SiteHeader slot="header" />
+  <SiteFooter slot="footer" />
+
+  <article class="project">
+    <header class="project__head container">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href={href('/')}>Home</a>
+        <span aria-hidden="true">/</span>
+        <a href={href('/#work')}>Work</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{d.shortTitle ?? d.title}</span>
+      </nav>
+
+      <p class="project__cat">{d.category}</p>
+      <h1 class="project__title">{d.title}</h1>
+      {d.intro && <p class="project__intro prose">{d.intro}</p>}
+
+      {
+        meta.length > 0 && (
+          <dl class="project__meta">
+            {meta.map(([k, v]) => (
+              <div>
+                <dt>{k}</dt>
+                <dd>{v}</dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+    </header>
+
+    <div class="project__cover container">
+      <Image
+        src={d.cover}
+        alt={d.coverAlt}
+        widths={[640, 1024, 1600]}
+        sizes="(min-width: 78rem) 74rem, 92vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+
+    {
+      hasCaseStudy && (
+        <section class="project__case container" aria-labelledby="case-heading">
+          <h2 id="case-heading" class="visually-hidden">
+            Case study
+          </h2>
+          <div class="case">
+            {d.problem && (
+              <div class="case__block">
+                <h3>The problem</h3>
+                <p class="prose">{d.problem}</p>
+              </div>
+            )}
+            {d.constraints.length > 0 && (
+              <div class="case__block">
+                <h3>Constraints</h3>
+                <ul class="case__list">
+                  {d.constraints.map((c) => (
+                    <li>{c}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {d.approach && (
+              <div class="case__block">
+                <h3>Approach</h3>
+                <p class="prose">{d.approach}</p>
+              </div>
+            )}
+            {d.outcome && (
+              <div class="case__block">
+                <h3>Outcome</h3>
+                <p class="prose">{d.outcome}</p>
+              </div>
+            )}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      d.video && (
+        <section class="project__video container" aria-labelledby="video-heading">
+          <h2 id="video-heading" class="project__sub">
+            Motion
+          </h2>
+          {d.video.caption && <p class="prose">{d.video.caption}</p>}
+          {/* controls, not autoplay. muted+loop is fine; a silent clip that
+              starts itself and cannot be stopped fails WCAG 2.2.2, and one
+              with sound fails 1.4.2. */}
+          <video
+            class={`project__player is-${d.video.ratio}`}
+            src={href(d.video.src)}
+            poster={href(d.video.poster)}
+            controls
+            muted
+            loop
+            playsinline
+            preload="none"
+            aria-label={d.video.alt}
+          />
+          {/* WCAG 1.2.1: silent video is video-only prerecorded content and
+              needs a text alternative that is actually readable, not just an
+              aria-label nobody can reach. */}
+          <details class="project__desc">
+            <summary>Describe this video</summary>
+            <p class="prose">{d.video.alt}</p>
+          </details>
+          {d.video.tools.length > 0 && (
+            <p class="project__tools">{d.video.tools.join(' · ')}</p>
+          )}
+        </section>
+      )
+    }
+
+    {
+      d.gallery.length > 0 && (
+        <section class="project__gallery container" aria-labelledby="gallery-heading">
+          <h2 id="gallery-heading" class="project__sub">
+            Gallery
+          </h2>
+          <ul role="list">
+            {d.gallery.map((g) => (
+              <li>
+                <Image
+                  src={g.src}
+                  alt={g.alt}
+                  widths={[640, 1024, 1600]}
+                  sizes="(min-width: 78rem) 74rem, 92vw"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <div class="project__body container prose">
+      <Content />
+    </div>
+
+    <nav class="project__nav container" aria-label="More projects">
+      <a class="project__nav-link" href={href(`/work/${prev.id}/`)} rel="prev">
+        <span>Previous</span>
+        <strong>{prev.data.shortTitle ?? prev.data.title}</strong>
+      </a>
+      <a class="project__nav-link project__nav-link--next" href={href(`/work/${next.id}/`)} rel="next">
+        <span>Next</span>
+        <strong>{next.data.shortTitle ?? next.data.title}</strong>
+      </a>
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .project {
+    padding-block: var(--space-2xl) var(--space-section);
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-size: var(--step--1);
+    color: var(--text-dim);
+    margin-block-end: var(--space-l);
+  }
+
+  .crumbs a {
+    color: inherit;
+  }
+
+  .crumbs a:hover {
+    color: var(--accent);
+  }
+
+  .project__cat {
+    font-size: var(--step--1);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-block-end: var(--space-xs);
+  }
+
+  .project__title {
+    font-size: var(--step-6);
+    max-inline-size: 20ch;
+    margin-block-end: var(--space-m);
+  }
+
+  .project__intro {
+    font-size: var(--step-1);
+    color: var(--text-dim);
+  }
+
+  .project__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m) var(--space-xl);
+    margin-block-start: var(--space-l);
+    padding-block-start: var(--space-m);
+    border-block-start: 1px solid var(--border);
+  }
+
+  .project__meta dt {
+    font-size: var(--step--1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-block-end: 0.2em;
+  }
+
+  .project__meta dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .project__cover img,
+  .project__gallery img {
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: var(--radius-l);
+    border: 1px solid var(--border);
+  }
+
+  .project__sub {
+    font-size: var(--step-3);
+    margin-block-end: var(--space-s);
+  }
+
+  .case {
+    display: grid;
+    gap: var(--space-l);
+    grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+  }
+
+  .case__block h3 {
+    font-size: var(--step-1);
+    margin-block-end: var(--space-2xs);
+    color: var(--accent);
+  }
+
+  .case__list {
+    padding-inline-start: 1.1em;
+    color: var(--text-dim);
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .project__player {
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: var(--radius-l);
+    border: 1px solid var(--border);
+    background-color: var(--bg-3);
+    margin-block: var(--space-s);
+  }
+
+  .project__player.is-9x16 {
+    max-inline-size: 24rem;
+    aspect-ratio: 9 / 16;
+  }
+
+  .project__player.is-1x1 {
+    aspect-ratio: 1;
+  }
+
+  .project__player.is-4x5 {
+    max-inline-size: 30rem;
+    aspect-ratio: 4 / 5;
+  }
+
+  .project__player.is-16x9 {
+    aspect-ratio: 16 / 9;
+  }
+
+  .project__desc summary {
+    cursor: pointer;
+    font-size: var(--step--1);
+    color: var(--text-dim);
+    padding-block: var(--space-2xs);
+  }
+
+  .project__desc summary:hover {
+    color: var(--accent);
+  }
+
+  .project__tools {
+    font-size: var(--step--1);
+    color: var(--text-dim);
+    margin-block-start: var(--space-2xs);
+  }
+
+  .project__gallery ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  .project__nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding-block-start: var(--space-l);
+    border-block-start: 1px solid var(--border);
+  }
+
+  .project__nav-link {
+    display: grid;
+    gap: 0.15em;
+    text-decoration: none;
+    color: var(--text);
+    max-inline-size: 20ch;
+  }
+
+  .project__nav-link--next {
+    text-align: end;
+  }
+
+  .project__nav-link span {
+    font-size: var(--step--1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .project__nav-link:hover strong {
+    color: var(--accent);
+  }
+</style>

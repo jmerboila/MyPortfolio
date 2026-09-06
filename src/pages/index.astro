@@ -12,6 +12,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import Hero from '../components/Hero.astro';
+import WorkGrid from '../components/WorkGrid.astro';
 ---
 
 <BaseLayout>
@@ -25,11 +26,7 @@ import Hero from '../components/Hero.astro';
   <section class="section container" id="work" aria-labelledby="work-heading">
     <p class="section__label">Selected work</p>
     <h2 class="section__title" id="work-heading">My <em>projects</em></h2>
-    <p class="prose">
-      Project grid lands next, generated from a content collection so each
-      case study is one file and the light and dark artwork are both required
-      by schema.
-    </p>
+    <WorkGrid />
   </section>
 
   <section class="section container" id="about" aria-labelledby="about-heading">

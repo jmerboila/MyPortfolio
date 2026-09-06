@@ -30,16 +30,38 @@ import { glob } from 'astro/loaders';
    single use — 39 of them here. The zod re-export moved to 'astro/zod'. */
 import { z } from 'astro/zod';
 
-/* The filter keys the work grid offers. Kept as a tuple so a typo in a
-   project's frontmatter is a build error rather than a category that silently
-   matches nothing. */
+/* The filter keys the work grid offers, in the order they appear as buttons.
+   Kept as a tuple so a typo in a project's frontmatter is a build error rather
+   than a category that silently matches nothing.
+
+   Keys stay short and stable because they are baked into published URLs and
+   into every entry's frontmatter; the label is what changes when the wording
+   changes. "social" reads as "Social Media Creatives" without seven files
+   needing an edit.
+
+   "marketing" has no projects yet. That is fine and deliberate: the grid
+   derives its buttons from the categories actually present in the data, so
+   Digital Marketing stays hidden until the first project claims it and then
+   appears on its own. Same behaviour v1 had. */
 export const WORK_CATEGORIES = [
   'logo',
   'graphic',
   'web',
   'mobile',
   'social',
+  'marketing',
 ] as const;
+
+export type WorkCategory = (typeof WORK_CATEGORIES)[number];
+
+export const CATEGORY_LABELS: Record<WorkCategory, string> = {
+  logo: 'Logo',
+  graphic: 'Graphic',
+  web: 'Web',
+  mobile: 'Mobile',
+  social: 'Social Media Creatives',
+  marketing: 'Digital Marketing',
+};
 
 const work = defineCollection({
   loader: glob({ base: './src/content/work', pattern: '**/*.md' }),
