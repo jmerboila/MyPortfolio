@@ -17,14 +17,21 @@
    ========================================================================= */
 import { PERSON, SOCIALS, SEO, ANALYTICS, absoluteUrl } from '../config/site';
 import { asset } from '../lib/url';
-/* One family, two faces — roman and a true drawn italic.
+import DotGrid from '../components/DotGrid.astro';
+/* The Devsign8 brand faces, matched to devsign8.com.
 
-   The weight-only build, not the optical-size one. Inter DOES ship an opsz
-   axis, but its range is 14-32: at the 5rem hero heading it is clamped at the
-   top and does nothing, so the axis only earns its keep at body sizes. That is
-   24 KB extra for a refinement almost nobody would name. 47 + 51 KB latin. */
-import '@fontsource-variable/inter/wght.css';
-import '@fontsource-variable/inter/wght-italic.css';
+   Inter Tight carries everything; Instrument Serif italic is the accent word
+   inside headings. That is exactly how the brand site uses them — the serif
+   appears only as <span class="serif"> inside display type, never as body
+   copy.
+
+   Only the ITALIC of Instrument Serif is imported, because the accent is the
+   only thing using it. The brand site also sets its 01/02/03 card numerals in
+   the upright cut; add `@fontsource/instrument-serif/400.css` when the Work
+   and Services sections land, not before. */
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource-variable/inter-tight/wght-italic.css';
+import '@fontsource/instrument-serif/400-italic.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
 
@@ -177,6 +184,10 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
 
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
+
+    {/* One field for the whole site, behind every section. Viewport-fixed
+        and inset below the header, so it never paints behind the nav. */}
+    <DotGrid />
 
 
     <slot name="header" />

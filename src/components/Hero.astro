@@ -21,22 +21,15 @@
       up front, and the animating text is overlaid on top of it. The box never
       changes size.
 
-   THE BACKDROP is the dot field, scoped to this section and inset below the
-   sticky header so nothing paints behind the navigation. It was briefly a
-   site-wide fixed layer; scoping it back here keeps the effect where the
-   attention is and leaves the content sections clean.
+   THE BACKDROP is not owned here. The dot field is one viewport-fixed layer
+   mounted in BaseLayout, behind every section of the site. This component only
+   has to avoid painting over it, which is why .hero sets no background.
    ========================================================================= */
 import { PERSON } from '../config/site';
 import { href } from '../lib/url';
-import DotGrid from './DotGrid.astro';
 ---
 
 <section class="hero" aria-labelledby="hero-heading">
-  {/* Decorative and inert: aria-hidden, pointer-events:none. It reads the
-      pointer from a window listener, so it never intercepts a click on the
-      CTAs sitting above it. */}
-  <DotGrid />
-
   <div class="hero__content container">
     <p class="hero__eyebrow">{PERSON.tagline}</p>
 
@@ -87,7 +80,9 @@ import DotGrid from './DotGrid.astro';
        first line of the hero currently sits about two header-heights down. */
     padding-block: calc(var(--header-height, 4.5rem) + var(--space-xl))
       var(--space-2xl);
-    background-color: var(--bg);
+    /* No background of its own. The dot field is a viewport-fixed layer behind
+       every section, and an opaque background here would hide it. The body
+       ground shows through instead. */
   }
 
   /* -- Content ------------------------------------------------------------ */

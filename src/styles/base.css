@@ -171,6 +171,20 @@ figcaption a[href] {
   grid-area: 1 / 1;
 }
 
+/* -- Stacking -------------------------------------------------------------- */
+/* The dot field is `position: fixed; z-index: 0`, which paints above the body
+   background but below anything positioned. These need a stacking context of
+   their own so content never sits behind it; the header already has one via
+   --z-sticky.
+
+   z-index 0 rather than -1 on the field itself is deliberate: a negative
+   z-index drops it behind the body background and makes it invisible. */
+main,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
 /* -- Typography ----------------------------------------------------------- */
 h1,
 h2,
@@ -181,15 +195,9 @@ h6 {
   font-family: var(--font-ui);
   font-weight: 700;
   line-height: var(--leading-tight);
-  /* Inter sets wider than the Inter Tight it replaced, so headings need
-     slightly more negative tracking to hold together.
-
-     One value for every heading level is a compromise, and worth naming: an
-     optical-size axis would tighten the big steps and leave the small ones
-     alone automatically. Inter has one, but its range stops at 32 — useless at
-     a 5rem hero — so this is set by hand instead. If h4-h6 ever start looking
-     cramped, split this per step rather than loosening it everywhere. */
-  letter-spacing: -0.022em;
+  /* Back to -0.02em now that Inter Tight is the face again: it is drawn with
+     tighter sidebearings than Inter, so it needs less help. */
+  letter-spacing: -0.02em;
   /* Avoids a one-word last line on multi-line headings. */
   text-wrap: balance;
 }
@@ -198,13 +206,14 @@ h6 {
    <h1>Marketing that <em>moves</em> brands</h1>. It is the one typographic
    flourish the site repeats, in both themes.
 
-   This used to be a second family (Cormorant inside Syne). It is now the same
-   family as the heading, so the contrast has to be manufactured from the
-   design space instead — that is the whole trade of a single-typeface system.
-   Three things do the work at once: a true drawn italic, a drop from the
-   heading's 700 down to 400, and the accent colour. Inter ships a real drawn
-   italic rather than a slanted roman, which is why this still reads as a
-   deliberate change of voice and not as tilted text.
+   This is Instrument Serif italic inside an Inter Tight heading — the same
+   move devsign8.com makes with <span class="serif">, so the two sites read as
+   one brand. Three things separate it from the surrounding type at once: a
+   different family, a drop to 400, and the accent colour.
+
+   Instrument Serif is a condensed, high-contrast display serif. It belongs at
+   heading sizes and nowhere near body copy, which is why this selector is
+   scoped to headings and .display rather than applied broadly.
 
    Never let the browser synthesise this. If the italic face fails to load,
    font-synthesis: none makes the word render upright — visibly wrong, and
