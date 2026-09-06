@@ -1,0 +1,506 @@
+---
+/* ============================================================================
+   DotGrid.astro — interactive dot grid, ported from React Bits to vanilla.
+   ----------------------------------------------------------------------------
+   WHY A PORT RATHER THAN THE ORIGINAL
+   The React Bits component is React + GSAP + InertiaPlugin. This site is Astro
+   with no framework runtime, and GSAP is ~27 kB gzipped before the plugin —
+   roughly four times the JavaScript the entire site currently ships, for a
+   background. The physics it needs is a decaying glide plus an elastic return,
+   which is about forty lines. So the behaviour is reproduced exactly and the
+   dependency is not.
+
+   WHAT WAS KEPT, EXACTLY
+   - The grid maths: cols/rows from (size + gap), centred by distributing the
+     remainder, so the field never sits flush against one edge.
+   - Proximity colouring: linear base->active interpolation on t = 1 - d/prox.
+   - Speed-triggered push on fast pointer movement, with the original's
+     `+ v * 0.005` velocity contribution.
+   - Click shockwave with linear falloff over shockRadius.
+   - Inertial glide under `resistance`, then elastic.out(1, 0.75) return over
+     returnDuration.
+
+   WHAT WAS CHANGED, DELIBERATELY
+   1. The original redraws every dot every frame, forever. At your settings a
+      1080p hero is ~4,200 dots, so that is 4,200 fill calls per frame at rest
+      for a field that is not moving. Here the loop stops entirely when nothing
+      is animating and the pointer has not moved, and restarts on demand.
+   2. Dots are batched into ONE path and filled once. Only the handful inside
+      the proximity radius are drawn individually, because only they have a
+      different colour. That is ~80 individual fills instead of ~4,200.
+   3. It stops when scrolled out of view, via IntersectionObserver.
+   4. Colours come from CSS custom properties rather than props, so the grid is
+      themed by the same tokens as everything else and re-reads them on
+      themechange instead of hard-coding a hex.
+   ========================================================================= */
+
+interface Props {
+  dotSize?: number;
+  gap?: number;
+  proximity?: number;
+  shockRadius?: number;
+  shockStrength?: number;
+  resistance?: number;
+  returnDuration?: number;
+  /** Pointer speed (px/s) above which movement pushes dots aside. */
+  speedTrigger?: number;
+  maxSpeed?: number;
+}
+
+const {
+  dotSize = 2,
+  gap = 20,
+  proximity = 100,
+  shockRadius = 200,
+  shockStrength = 5,
+  resistance = 1050,
+  returnDuration = 2.5,
+  speedTrigger = 100,
+  maxSpeed = 5000,
+} = Astro.props;
+
+const config = {
+  dotSize,
+  gap,
+  proximity,
+  shockRadius,
+  shockStrength,
+  resistance,
+  returnDuration,
+  speedTrigger,
+  maxSpeed,
+};
+---
+
+<div class="dotgrid" data-dotgrid data-config={JSON.stringify(config)} aria-hidden="true">
+  <canvas data-dotgrid-canvas></canvas>
+</div>
+
+<style>
+  .dotgrid {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    /* Never intercepts a click. The hero's buttons and links stay reachable,
+       and the grid still receives coordinates because its listeners are bound
+       to the window rather than to the canvas. */
+    pointer-events: none;
+    z-index: 0;
+
+    /* Base is a dim cobalt; active is the full accent. The React Bits example
+       passes the SAME value for both, which makes the proximity effect
+       invisible — the interpolation runs and resolves to the colour it started
+       from. Two distinct values are what make the cursor actually do
+       something. */
+    --dot-base: rgb(18 58 143 / 0.22);
+    --dot-active: var(--raw-light-accent);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .dotgrid {
+      --dot-base: rgb(110 155 255 / 0.2);
+      --dot-active: var(--raw-dark-accent);
+    }
+  }
+
+  :root[data-theme='dark'] .dotgrid {
+    --dot-base: rgb(110 155 255 / 0.2);
+    --dot-active: var(--raw-dark-accent);
+  }
+
+  :root[data-theme='light'] .dotgrid {
+    --dot-base: rgb(18 58 143 / 0.22);
+    --dot-active: var(--raw-light-accent);
+  }
+
+  canvas {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  /* Decorative colour is discarded by the OS here, and a field of dots behind
+     real content would only muddy its palette. */
+  @media (forced-colors: active) {
+    .dotgrid {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { motionReduced } from '../scripts/motion';
+
+  type Dot = {
+    cx: number;
+    cy: number;
+    ox: number;
+    oy: number;
+    vx: number;
+    vy: number;
+    /** 0 = at rest, 1 = gliding under inertia, 2 = elastic return */
+    phase: 0 | 1 | 2;
+    /** offset captured at the moment the return began */
+    rx: number;
+    ry: number;
+    t: number;
+  };
+
+  type Cfg = {
+    dotSize: number;
+    gap: number;
+    proximity: number;
+    shockRadius: number;
+    shockStrength: number;
+    resistance: number;
+    returnDuration: number;
+    speedTrigger: number;
+    maxSpeed: number;
+  };
+
+  /* GSAP's elastic.out(amplitude 1, period 0.75), written out. This is the
+     shape that makes the return read as a spring settling rather than a slide
+     stopping, and it is the single most recognisable part of the effect. */
+  function elasticOut(p: number): number {
+    if (p <= 0) return 0;
+    if (p >= 1) return 1;
+    const period = 0.75;
+    const s = period / 4;
+    return (
+      Math.pow(2, -10 * p) * Math.sin(((p - s) * (2 * Math.PI)) / period) + 1
+    );
+  }
+
+  /* Custom properties are NOT normalised — getPropertyValue hands back
+     whatever the browser last serialised, which for `rgb(110 155 255 / 0.2)`
+     turns out to be the hex8 `#6e9bff33`. A hand-written rgb() parser reads
+     that as black, and black dots on a near-black ground are invisible, which
+     is exactly the bug this replaced.
+
+     So rather than parse colour syntax at all, hand the value to the engine
+     and read back what it computed. `color` always serialises to rgb()/rgba(),
+     whatever went in — hex, hsl, oklch, color-mix, a named colour. */
+  const probe = document.createElement('span');
+  probe.setAttribute('aria-hidden', 'true');
+  probe.style.cssText = 'position:absolute;width:0;height:0;visibility:hidden';
+  document.body.appendChild(probe);
+
+  function toRgba(value: string): [number, number, number, number] {
+    /* Cleared first: an invalid value leaves the previous one in place, which
+       would silently return the last colour instead of failing visibly. */
+    probe.style.color = '';
+    probe.style.color = value.trim();
+    const nums = getComputedStyle(probe).color.match(/[\d.]+/g);
+    if (!nums) return [0, 0, 0, 1];
+    return [
+      Number(nums[0]),
+      Number(nums[1]),
+      Number(nums[2]),
+      nums[3] === undefined ? 1 : Number(nums[3]),
+    ];
+  }
+
+  const host = document.querySelector<HTMLElement>('[data-dotgrid]');
+  const canvas = host?.querySelector<HTMLCanvasElement>('[data-dotgrid-canvas]');
+
+  if (host && canvas) {
+    const ctx = canvas.getContext('2d');
+    const cfg: Cfg = JSON.parse(host.dataset.config || '{}');
+
+    if (ctx) {
+      let dots: Dot[] = [];
+      let base: [number, number, number, number] = [0, 0, 0, 1];
+      let active: [number, number, number, number] = [0, 0, 0, 1];
+      let width = 0;
+      let height = 0;
+      let raf = 0;
+      let running = false;
+      let visible = true;
+
+      const pointer = {
+        x: -9999,
+        y: -9999,
+        lastX: 0,
+        lastY: 0,
+        lastT: 0,
+        moved: false,
+      };
+
+      function readColors() {
+        const cs = getComputedStyle(host!);
+        base = toRgba(cs.getPropertyValue('--dot-base'));
+        active = toRgba(cs.getPropertyValue('--dot-active'));
+      }
+
+      /* Exactly the original's layout maths: whole cells only, remainder split
+         evenly so the field is centred rather than anchored top-left. */
+      function build() {
+        const r = host!.getBoundingClientRect();
+        width = r.width;
+        height = r.height;
+        if (!width || !height) return;
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas!.width = Math.round(width * dpr);
+        canvas!.height = Math.round(height * dpr);
+        ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const cell = cfg.dotSize + cfg.gap;
+        const cols = Math.floor((width + cfg.gap) / cell);
+        const rows = Math.floor((height + cfg.gap) / cell);
+        const startX = (width - (cell * cols - cfg.gap)) / 2 + cfg.dotSize / 2;
+        const startY = (height - (cell * rows - cfg.gap)) / 2 + cfg.dotSize / 2;
+
+        dots = [];
+        for (let y = 0; y < rows; y++) {
+          for (let x = 0; x < cols; x++) {
+            dots.push({
+              cx: startX + x * cell,
+              cy: startY + y * cell,
+              ox: 0,
+              oy: 0,
+              vx: 0,
+              vy: 0,
+              phase: 0,
+              rx: 0,
+              ry: 0,
+              t: 0,
+            });
+          }
+        }
+      }
+
+      function draw() {
+        const r = cfg.dotSize / 2;
+        const prox = cfg.proximity;
+        const proxSq = prox * prox;
+        ctx!.clearRect(0, 0, width, height);
+
+        /* Pass 1 — every dot outside the proximity radius shares one colour,
+           so they go into a single path and cost a single fill. This is the
+           difference between ~4,200 fill calls a frame and one. */
+        ctx!.beginPath();
+        const near: Dot[] = [];
+        for (const d of dots) {
+          const dx = d.cx - pointer.x;
+          const dy = d.cy - pointer.y;
+          if (dx * dx + dy * dy <= proxSq) {
+            near.push(d);
+            continue;
+          }
+          const x = d.cx + d.ox;
+          const y = d.cy + d.oy;
+          ctx!.moveTo(x + r, y);
+          ctx!.arc(x, y, r, 0, Math.PI * 2);
+        }
+        ctx!.fillStyle = `rgba(${base[0]},${base[1]},${base[2]},${base[3]})`;
+        ctx!.fill();
+
+        /* Pass 2 — only the dots near the pointer need their own colour. */
+        for (const d of near) {
+          const dist = Math.hypot(d.cx - pointer.x, d.cy - pointer.y);
+          const t = 1 - dist / prox;
+          const cr = base[0] + (active[0] - base[0]) * t;
+          const cg = base[1] + (active[1] - base[1]) * t;
+          const cb = base[2] + (active[2] - base[2]) * t;
+          const ca = base[3] + (active[3] - base[3]) * t;
+          ctx!.beginPath();
+          ctx!.arc(d.cx + d.ox, d.cy + d.oy, r, 0, Math.PI * 2);
+          ctx!.fillStyle = `rgba(${cr | 0},${cg | 0},${cb | 0},${ca})`;
+          ctx!.fill();
+        }
+      }
+
+      /* Returns true while any dot is still animating, which is what lets the
+         loop shut itself down instead of spinning forever. */
+      function step(dt: number): boolean {
+        let busy = false;
+        for (const d of dots) {
+          if (d.phase === 1) {
+            /* Inertial glide.
+
+               `resistance` is a DECELERATION in px/s², which is InertiaPlugin's
+               sense of the word: velocity sheds a fixed amount per second and
+               the dot coasts to a stop after v²/(2·resistance) pixels. At the
+               configured 1050, a dot shoved at 160 px/s travels ~12 px — about
+               half a cell, which is the scale this effect wants.
+
+               Both terms are per-SECOND, so dt has to be converted out of
+               milliseconds. Multiplying by raw dt makes the dot travel a
+               thousand times too far. */
+            const dts = dt / 1000;
+            const speed = Math.hypot(d.vx, d.vy);
+            const drop = cfg.resistance * dts;
+
+            if (speed <= drop) {
+              d.vx = 0;
+              d.vy = 0;
+              d.phase = 2;
+              d.rx = d.ox;
+              d.ry = d.oy;
+              d.t = 0;
+            } else {
+              const k = (speed - drop) / speed;
+              d.vx *= k;
+              d.vy *= k;
+              d.ox += d.vx * dts;
+              d.oy += d.vy * dts;
+            }
+            busy = true;
+          } else if (d.phase === 2) {
+            d.t += dt / 1000;
+            const p = Math.min(d.t / cfg.returnDuration, 1);
+            const e = elasticOut(p);
+            d.ox = d.rx * (1 - e);
+            d.oy = d.ry * (1 - e);
+            if (p >= 1) {
+              d.phase = 0;
+              d.ox = 0;
+              d.oy = 0;
+            } else {
+              busy = true;
+            }
+          }
+        }
+        return busy;
+      }
+
+      let last = 0;
+      function loop(now: number) {
+        const dt = last ? Math.min(now - last, 50) : 16;
+        last = now;
+        const busy = step(dt);
+        draw();
+        if ((busy || pointer.moved) && visible && !motionReduced()) {
+          pointer.moved = false;
+          raf = requestAnimationFrame(loop);
+        } else {
+          running = false;
+          raf = 0;
+        }
+      }
+
+      function wake() {
+        if (running || !visible || motionReduced()) return;
+        running = true;
+        last = 0;
+        raf = requestAnimationFrame(loop);
+      }
+
+      function push(d: Dot, vx: number, vy: number) {
+        d.vx = vx;
+        d.vy = vy;
+        d.phase = 1;
+      }
+
+      /* -- Pointer ------------------------------------------------------- */
+      function onMove(e: PointerEvent) {
+        if (e.pointerType !== 'mouse' || motionReduced()) return;
+        const r = canvas!.getBoundingClientRect();
+        const now = performance.now();
+        const dt = pointer.lastT ? now - pointer.lastT : 16;
+
+        let vx = ((e.clientX - pointer.lastX) / dt) * 1000;
+        let vy = ((e.clientY - pointer.lastY) / dt) * 1000;
+        let speed = Math.hypot(vx, vy);
+        if (speed > cfg.maxSpeed) {
+          const s = cfg.maxSpeed / speed;
+          vx *= s;
+          vy *= s;
+          speed = cfg.maxSpeed;
+        }
+        pointer.lastT = now;
+        pointer.lastX = e.clientX;
+        pointer.lastY = e.clientY;
+        pointer.x = e.clientX - r.left;
+        pointer.y = e.clientY - r.top;
+        pointer.moved = true;
+
+        if (speed > cfg.speedTrigger) {
+          for (const d of dots) {
+            if (d.phase !== 0) continue;
+            const dx = d.cx - pointer.x;
+            const dy = d.cy - pointer.y;
+            if (Math.hypot(dx, dy) < cfg.proximity) {
+              push(d, dx + vx * 0.005, dy + vy * 0.005);
+            }
+          }
+        }
+        wake();
+      }
+
+      function onDown(e: PointerEvent) {
+        if (motionReduced()) return;
+        const r = canvas!.getBoundingClientRect();
+        const cx = e.clientX - r.left;
+        const cy = e.clientY - r.top;
+        /* A click elsewhere on the page should not ripple the hero. */
+        if (cx < 0 || cy < 0 || cx > r.width || cy > r.height) return;
+
+        for (const d of dots) {
+          const dx = d.cx - cx;
+          const dy = d.cy - cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist < cfg.shockRadius) {
+            const falloff = Math.max(0, 1 - dist / cfg.shockRadius);
+            push(d, dx * cfg.shockStrength * falloff, dy * cfg.shockStrength * falloff);
+          }
+        }
+        wake();
+      }
+
+      /* -- Wiring --------------------------------------------------------- */
+      readColors();
+      build();
+      draw();
+
+      const ro = new ResizeObserver(() => {
+        build();
+        draw();
+        wake();
+      });
+      ro.observe(host);
+
+      /* Off screen, there is nothing to animate and no reason to burn frames. */
+      new IntersectionObserver(
+        (entries) => {
+          visible = entries.some((en) => en.isIntersecting);
+          if (visible) wake();
+          else if (raf) {
+            cancelAnimationFrame(raf);
+            raf = 0;
+            running = false;
+          }
+        },
+        { threshold: 0 },
+      ).observe(host);
+
+      window.addEventListener('pointermove', onMove, { passive: true });
+      window.addEventListener('pointerdown', onDown, { passive: true });
+
+      /* The grid is painted from tokens, so a theme change has to repaint it.
+         Waiting a frame lets the CSS variables settle first. */
+      window.addEventListener('themechange', () => {
+        requestAnimationFrame(() => {
+          readColors();
+          draw();
+        });
+      });
+
+      /* Reducing motion parks every dot at its home position and leaves a
+         still field — a composed resting state, not an empty box. */
+      window.addEventListener('motionchange', () => {
+        if (motionReduced()) {
+          for (const d of dots) {
+            d.ox = d.oy = d.vx = d.vy = 0;
+            d.phase = 0;
+          }
+          pointer.x = pointer.y = -9999;
+          draw();
+        } else {
+          wake();
+        }
+      });
+    }
+  }
+</script>

@@ -1,0 +1,223 @@
+---
+/* ============================================================================
+   BaseLayout.astro — the document shell every page renders into.
+   ----------------------------------------------------------------------------
+   Owns: <head> metadata, the entity graph (JSON-LD), the flash-free theme
+   bootstrap, the skip link, and the global stylesheet order.
+
+   SEO / AEO / GEO NOTES
+   - Google's own guidance says structured data is NOT required for its
+     generative features and that llms.txt is ignored. We ship rich JSON-LD
+     anyway because the other answer engines (ChatGPT, Perplexity, Claude) do
+     use it to resolve entities — and because it still earns classic rich
+     results in Search.
+   - The thing Google DOES ask for is semantic HTML, fast pages and genuinely
+     useful content. That is why this shell is small and why no page depends on
+     JavaScript to render its text.
+   ========================================================================= */
+import { PERSON, SOCIALS, SEO, ANALYTICS, absoluteUrl } from '../config/site';
+import { asset } from '../lib/url';
+/* One family, two faces — roman and a true drawn italic.
+
+   Unlike DM Sans, Inter Tight ships NO optical-size axis, so there is no
+   opsz build to import and no size-aware drawing to inherit. Both faces come
+   from the weight-only build: 44 KB + 47 KB latin. */
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource-variable/inter-tight/wght-italic.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+
+interface Props {
+  /** Page title, before the site suffix. Omit on the homepage. */
+  title?: string;
+  description?: string;
+  /** Site-relative path of this page, for the canonical URL. */
+  path?: string;
+  /** Site-relative OG image path. Falls back to the default card. */
+  ogImage?: string;
+  /** Set true on pages that should not be indexed (thank-you, previews). */
+  noindex?: boolean;
+  /** Extra JSON-LD objects to merge into the page's @graph. */
+  schema?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  description = SEO.defaultDescription,
+  path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/+$/, ''), '') || '/',
+  ogImage = SEO.defaultOgImage,
+  noindex = false,
+  schema = [],
+} = Astro.props;
+
+const pageTitle = title ? SEO.titleTemplate(title) : SEO.defaultTitle;
+const canonical = absoluteUrl(path);
+const ogImageUrl = absoluteUrl(ogImage);
+
+/* ---------------------------------------------------------------------------
+   The entity graph.
+   One @graph with stable @id values so Person, WebSite and WebPage reference
+   each other rather than floating as three unrelated blobs. That linkage is
+   what lets a knowledge graph conclude "this site is by this person".
+   ------------------------------------------------------------------------ */
+const personId = `${absoluteUrl('/')}#person`;
+const siteId = `${absoluteUrl('/')}#website`;
+
+const graph = [
+  {
+    '@type': 'Person',
+    '@id': personId,
+    name: PERSON.name,
+    givenName: PERSON.firstName,
+    jobTitle: PERSON.jobTitle,
+    description: SEO.defaultDescription,
+    url: absoluteUrl('/'),
+    email: `mailto:${PERSON.email}`,
+    image: ogImageUrl,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: PERSON.location.city,
+      addressRegion: PERSON.location.regionCode,
+      addressCountry: PERSON.location.countryCode,
+    },
+    knowsAbout: [...PERSON.knowsAbout],
+    sameAs: SOCIALS.map((s) => s.url),
+  },
+  {
+    '@type': 'WebSite',
+    '@id': siteId,
+    url: absoluteUrl('/'),
+    name: SEO.defaultTitle,
+    description: SEO.defaultDescription,
+    inLanguage: SEO.lang,
+    publisher: { '@id': personId },
+  },
+  {
+    '@type': 'WebPage',
+    '@id': `${canonical}#webpage`,
+    url: canonical,
+    name: pageTitle,
+    description,
+    isPartOf: { '@id': siteId },
+    about: { '@id': personId },
+    inLanguage: SEO.lang,
+  },
+  ...schema,
+];
+
+const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
+---
+
+<!doctype html>
+<html lang={SEO.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* ------------------------------------------------------------------
+        THEME BOOTSTRAP — must be the first script and must be blocking.
+        It runs before the browser paints, so a returning visitor who chose
+        dark never sees a white flash. Everything it touches is one attribute
+        on <html>; the CSS in tokens.css does the rest.
+
+        `is:inline` keeps Astro from bundling and deferring it, which would
+        defeat the entire purpose.
+        ------------------------------------------------------------------ */}
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('jm-theme');
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.setAttribute('data-theme', stored);
+          }
+          // Motion has to land before paint for the same reason the theme
+          // does: the hero backdrop starts animating on the first frame, and
+          // a visitor who chose "reduce" would otherwise see it move once
+          // before the preference applied.
+          var motion = localStorage.getItem('jm-motion');
+          if (motion === 'full' || motion === 'reduced') {
+            document.documentElement.setAttribute('data-motion', motion);
+          }
+        } catch (e) {
+          /* Private mode or blocked storage: fall through to the OS preference,
+             which the CSS already handles. Never let this throw and block paint. */
+        }
+      })();
+    </script>
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="author" content={PERSON.name} />
+
+    {/* The browser chrome follows the active theme in both directions. */}
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f3" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0b10" />
+
+    <meta name="google-site-verification" content={ANALYTICS.googleSiteVerification} />
+
+    {/* Open Graph / Twitter */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={PERSON.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content={SEO.locale} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    {/* Icons — carried over from v1, same files. */}
+    <link rel="icon" type="image/svg+xml" href={asset('/favicon.svg')} />
+    <link rel="icon" type="image/png" sizes="96x96" href={asset('/images/favicon-96x96.png')} />
+    <link rel="shortcut icon" href={asset('/favicon.ico')} />
+    <link rel="apple-touch-icon" sizes="180x180" href={asset('/images/apple-touch-icon.png')} />
+    <link rel="manifest" href={asset('/images/site.webmanifest')} />
+
+    <link rel="sitemap" href={asset('/sitemap-index.xml')} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <slot name="header" />
+
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+
+    <slot name="footer" />
+
+    {/* ------------------------------------------------------------------
+        Google Tag Manager, loaded last and deliberately not in <head>.
+        In v1 it was a blocking script above the content. Moving it here
+        keeps a third-party request off the critical path to first paint,
+        which is the single cheapest Core Web Vitals win available.
+        ------------------------------------------------------------------ */}
+    <script is:inline define:vars={{ gtmId: ANALYTICS.gtmId }}>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', gtmId);
+    </script>
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${ANALYTICS.gtmId}`}
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+        title="Google Tag Manager"></iframe>
+    </noscript>
+  </body>
+</html>

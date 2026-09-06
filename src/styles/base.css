@@ -1,0 +1,345 @@
+/* ============================================================================
+   base.css — reset, typography defaults and the accessibility floor.
+   ----------------------------------------------------------------------------
+   Loaded after tokens.css. Nothing here knows about a specific component; it
+   sets the rules every component then inherits.
+
+   DELIBERATE OMISSION: v1's custom cursor (`cursor: none` plus a JS-tracked
+   dot and ring) is not carried forward. It hides the system cursor, which
+   users with low vision may have enlarged or recoloured in their OS settings,
+   it has no meaning on touch, and it costs a pointermove listener on every
+   frame. The craft it signalled is better spent on the theme reveal.
+   ========================================================================= */
+
+/* -- Reset ---------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  /* WCAG 2.4.11 Focus Not Obscured (Minimum): the sticky header would
+     otherwise cover an element scrolled to via an in-page anchor or via
+     keyboard focus. Reserving the header height here is the cheapest fix and
+     applies to every anchor target on the site at once. */
+  scroll-padding-top: calc(var(--header-height, 4.5rem) + var(--space-m));
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Native smooth scrolling, switched off for users who asked for less motion.
+   Note we are NOT using a smooth-scroll library: your research is explicit
+   that a JS scroll wrapper breaks keyboard traversal, in-page anchors and
+   screen-reader navigation, which we are not willing to trade. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  min-height: 100svh;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--step-0);
+  line-height: var(--leading-normal);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* overflow-x hidden on <body> alone does not stop horizontal scroll in all
+     browsers; the layout is built so nothing overflows in the first place, and
+     any wide element (tables, code) scrolls inside its own container. */
+  overflow-x: clip;
+}
+
+/* The theme change is the site's signature moment, so it is animated —
+   but only these properties, which are cheap, and only on the surfaces that
+   actually change. Animating every element would be a repaint storm. */
+body,
+header,
+section,
+footer,
+article,
+aside,
+dialog {
+  transition:
+    background-color var(--dur-theme) var(--ease-in-out),
+    color var(--dur-theme) var(--ease-in-out),
+    border-color var(--dur-theme) var(--ease-in-out);
+}
+
+/* -- Media ---------------------------------------------------------------- */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Images must carry width/height (or an aspect-ratio) so the browser reserves
+   space before they load. Unreserved images are the most common cause of
+   Cumulative Layout Shift, which is a ranking signal. */
+img,
+video {
+  height: auto;
+}
+
+/* -- Forms ---------------------------------------------------------------- */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* WCAG 2.5.8 Target Size (Minimum) — 24x24 CSS px is the requirement; 44px is
+   the comfortable target. Applied to every interactive control by default so
+   compliance is opt-out rather than opt-in. */
+button,
+a[href],
+input,
+select,
+summary,
+[role='button'],
+[tabindex]:not([tabindex='-1']) {
+  min-block-size: var(--tap-min);
+  min-inline-size: var(--tap-min);
+}
+
+/* Inline links inside prose are exempt — a link in a sentence cannot be 44px
+   tall without wrecking the line box, and WCAG 2.5.8 explicitly excepts
+   targets in a sentence or block of text. */
+p a[href],
+li a[href],
+dd a[href],
+figcaption a[href] {
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+
+/* -- Icon buttons --------------------------------------------------------- */
+/* The round hairline control used for the theme toggle, the music toggle and
+   the mobile menu trigger.
+
+   This lives here rather than in SiteHeader because Astro scopes a component's
+   styles to that component's own template — a rule written in SiteHeader does
+   NOT reach <MusicToggle />, which renders with its own scope hash. Defining
+   it once globally is what keeps the three buttons in the header identical.
+
+   v1 drew this as a 38px square with a hairline; same idea, but round. Since
+   box-sizing is border-box, the ring sits inside the 44px target rather than
+   growing it. */
+.icon-button {
+  display: grid;
+  place-items: center;
+  inline-size: var(--tap-min);
+  block-size: var(--tap-min);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  color: var(--text-dim);
+  transition:
+    color var(--dur-fast) var(--ease-out-quart),
+    border-color var(--dur-fast) var(--ease-out-quart),
+    background-color var(--dur-fast) var(--ease-out-quart);
+}
+
+.icon-button:hover,
+.icon-button:focus-visible {
+  color: var(--accent);
+  border-color: var(--border-strong);
+  background-color: var(--bg-2);
+}
+
+/* Icons stack in one grid cell so a control can cross-fade between two of
+   them without either one affecting layout. */
+.icon {
+  grid-area: 1 / 1;
+}
+
+/* -- Typography ----------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  /* Avoids a one-word last line on multi-line headings. */
+  text-wrap: balance;
+}
+
+/* The signature: an italic accent word inside a heading. Used as
+   <h1>Marketing that <em>moves</em> brands</h1>. It is the one typographic
+   flourish the site repeats, in both themes.
+
+   This used to be a second family (Cormorant inside Syne). It is now the same
+   family as the heading, so the contrast has to be manufactured from the
+   design space instead — that is the whole trade of a single-typeface system.
+   Three things do the work at once: a true drawn italic, a drop from the
+   heading's 800 down to 400, and the accent colour. DM Sans ships a real
+   italic rather than an oblique, which is why this still reads as a
+   deliberate change of voice and not as slanted text.
+
+   Never let the browser synthesise this. If the italic face fails to load,
+   font-synthesis: none makes the word render upright — visibly wrong, and
+   therefore noticed — rather than as a smeared fake that ships unnoticed. */
+h1 em,
+h2 em,
+h3 em,
+.display em {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: 0;
+  color: var(--accent);
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+/* Prose blocks get a measure cap. Full-bleed paragraphs at 1600px are
+   unreadable regardless of font size. */
+.prose {
+  max-inline-size: var(--measure);
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+/* Links inside body copy keep their underline — WCAG 1.4.1 Use of Color means
+   a link must not be identified by colour alone. */
+.prose a,
+p a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+ul,
+ol {
+  padding-inline-start: 1.25em;
+}
+
+/* -- Focus ---------------------------------------------------------------- */
+/* :focus-visible only, so mouse users do not see a ring on click, but every
+   keyboard user always does. The ring uses the accent, which is verified
+   3:1+ against both backgrounds. */
+:focus-visible {
+  outline: var(--ring-width) solid var(--accent);
+  outline-offset: var(--ring-offset);
+  border-radius: var(--radius-s);
+}
+
+/* Some browsers keep a default focus style that would double up. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* In Windows High Contrast the accent is discarded, so ask the OS for its
+   own highlight rather than losing the ring entirely. */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* -- Skip link ------------------------------------------------------------ */
+/* WCAG 2.4.1 Bypass Blocks. Visually hidden until focused, then pinned to the
+   top-left above everything else on the page. */
+.skip-link {
+  position: absolute;
+  inset-block-start: var(--space-s);
+  inset-inline-start: var(--space-s);
+  z-index: var(--z-skip-link);
+  padding: var(--space-2xs) var(--space-s);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: var(--radius-m);
+  transform: translateY(-200%);
+  transition: transform var(--dur-fast) var(--ease-out-quart);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* -- Utilities ------------------------------------------------------------ */
+/* Available to screen readers, invisible on screen. Used for the accessible
+   names of icon-only controls and for the live-region status text. */
+.visually-hidden {
+  position: absolute !important;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  inline-size: 100%;
+  max-inline-size: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--space-section);
+}
+
+/* -- Reduced motion, the blunt backstop ------------------------------------
+   Components ship their own designed static states; this only guarantees that
+   anything missed cannot animate. Duration is near-zero rather than zero so
+   that animationend / transitionend handlers still fire and no JS waits
+   forever on an event that never arrives. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* -- Print ---------------------------------------------------------------- */
+@media print {
+  .skip-link,
+  .site-header,
+  .music-toggle {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+}

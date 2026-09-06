@@ -1,0 +1,398 @@
+---
+/* ============================================================================
+   Hero.astro — the first screen.
+   ----------------------------------------------------------------------------
+   TYPING EFFECT — the three problems it normally causes, and how each is fixed
+
+   1. SEO. A heading that types itself character by character is often empty in
+      the HTML, so a crawler sees no H1. Here the H1 is ordinary static text and
+      is never animated. Only the name line types, and its full text is present
+      in the markup before any script runs.
+
+   2. Screen readers. A naive typewriter re-announces the string on every
+      keystroke, or announces a fragment. The real text sits in a
+      visually-hidden span that is read once, normally. The animating copy is
+      aria-hidden. Deliberately NO aria-live — a live region here would produce
+      exactly the stuttering it is meant to prevent.
+
+   3. Layout shift. Text that grows pushes the page down on every character,
+      which is a Cumulative Layout Shift hit and therefore a ranking signal. A
+      hidden "ghost" copy of the finished string reserves the exact final box
+      up front, and the animating text is overlaid on top of it. The box never
+      changes size.
+
+   PARALLAX is CSS scroll-driven animation — zero JavaScript, and it runs off
+   the main thread. Support is Chrome/Edge 115+ and Safari 26+; Firefox's
+   status is genuinely unsettled, so the whole thing sits behind @supports and
+   the static composition is the default everyone else gets. It also only
+   engages on pointer devices at tablet width and up: on a phone there is no
+   depth to perceive and it is a pure battery cost.
+   ========================================================================= */
+import { PERSON } from '../config/site';
+import { href } from '../lib/url';
+import DotGrid from './DotGrid.astro';
+---
+
+<section class="hero" aria-labelledby="hero-heading">
+  {/* Decorative. aria-hidden and pointer-events:none — it exists only to
+      react to the pointer, and never intercepts one. */}
+  <DotGrid
+    dotSize={2}
+    gap={20}
+    proximity={100}
+    shockRadius={200}
+    shockStrength={5}
+    resistance={1050}
+    returnDuration={2.5}
+  />
+
+  <div class="hero__content container">
+    <p class="hero__eyebrow">{PERSON.tagline}</p>
+
+    <h1 class="hero__heading" id="hero-heading">
+      Marketing that <em>moves</em> brands
+    </h1>
+
+    <p class="hero__intro">
+      <span class="hero__intro-lead">I&rsquo;m</span>
+      {' '}
+      <span class="typed" data-typed data-typed-text={PERSON.name}>
+        {/* Read by assistive tech, once, as ordinary text. */}
+        <span class="visually-hidden">{PERSON.name}</span>
+        {/* Seen by everyone else. Entirely hidden from the a11y tree. */}
+        <span class="typed__box" aria-hidden="true">
+          <span class="typed__ghost">{PERSON.name}</span>
+          <span class="typed__out" data-typed-out>{PERSON.name}</span>
+        </span>
+      </span>
+    </p>
+
+    <p class="hero__lede prose">
+      I pair data-driven marketing strategy with logo, brand, web and UI/UX
+      design — so the work does not just look right, it performs.
+    </p>
+
+    <div class="hero__actions">
+      <a class="button button--primary" href={href('/#work')} data-magnetic>
+        <span class="button__label">View selected work</span>
+      </a>
+      <a class="button button--ghost" href={href('/#contact')} data-magnetic>
+        <span class="button__label">Start a project</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-block-size: 100svh;
+    overflow: hidden;
+    /* The sticky header sits transparent over this, so the hero pads itself
+       clear of it rather than the header reserving space in the flow. */
+    padding-block: calc(var(--header-height, 4.5rem) + var(--space-xl))
+      var(--space-2xl);
+    background-color: var(--bg);
+  }
+
+  /* -- Content ------------------------------------------------------------ */
+  .hero__content {
+    position: relative;
+    z-index: var(--z-raised);
+  }
+
+  .hero__eyebrow {
+    font-size: var(--step--1);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-block-end: var(--space-m);
+  }
+
+  .hero__heading {
+    font-size: var(--step-7);
+    max-inline-size: 18ch;
+    margin-block-end: var(--space-m);
+  }
+
+  .hero__intro {
+    font-size: var(--step-2);
+    font-weight: 600;
+    margin-block-end: var(--space-s);
+  }
+
+  .hero__intro-lead {
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .hero__lede {
+    color: var(--text-dim);
+    font-size: var(--step-0);
+    margin-block-end: var(--space-xl);
+  }
+
+  /* -- The typed name ----------------------------------------------------- */
+  .typed {
+    color: var(--accent);
+  }
+
+  /* The box is inline-grid so the ghost and the output stack in the same cell.
+     The ghost defines the size; the output can never make it grow. */
+  .typed__box {
+    display: inline-grid;
+    vertical-align: baseline;
+  }
+
+  .typed__ghost,
+  .typed__out {
+    grid-area: 1 / 1;
+    white-space: pre-wrap;
+  }
+
+  /* `visibility: hidden` rather than `display: none` — the element must still
+     occupy its space, which is the entire point. */
+  .typed__ghost {
+    visibility: hidden;
+  }
+
+  /* The caret is a pseudo-element on the OUTPUT, not a sibling, so it flows
+     immediately after the last typed character and needs no positioning code.
+     It exists only once script has taken over — so a no-JS visitor, who sees
+     the complete static name, never gets a caret parked next to it. */
+  .typed.is-typing .typed__out::after,
+  .typed.is-done .typed__out::after {
+    content: '';
+    display: inline-block;
+    inline-size: 2px;
+    block-size: 0.95em;
+    margin-inline-start: 0.08em;
+    vertical-align: text-bottom;
+    background-color: var(--accent);
+    animation: caret-blink 1s steps(2, jump-none) infinite;
+  }
+
+  @keyframes caret-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* The caret is a pseudo-element, so it cannot carry the `.ambient` class the
+     rest of the site uses. It loops forever all the same, which makes it a
+     WCAG 2.2.2 leak the moment someone reduces motion AFTER the name has
+     finished typing. Stated explicitly here rather than relying on the global
+     rule that cannot see it. */
+  @media (prefers-reduced-motion: reduce) {
+    :root:not([data-motion='full']) .typed__out::after {
+      animation: none;
+    }
+  }
+
+  :root[data-motion='reduced'] .typed__out::after {
+    animation: none;
+  }
+
+  /* -- Actions ------------------------------------------------------------ */
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+  }
+
+  /* Two independent forces move this button, so neither may own `transform`
+     outright: the magnetic pull (set by script) and the hover lift (set by
+     CSS). Writing either one directly to `transform` makes the other vanish,
+     because the last declaration wins rather than the two composing.
+
+     Routing both through custom properties lets one transform express both,
+     and keeps the whole thing transition-able as a single value. */
+  .button {
+    --mx: 0px;
+    --my: 0px;
+    --lift: 0px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xs) var(--space-l);
+    border-radius: var(--radius-full);
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transform: translate3d(var(--mx), calc(var(--my) + var(--lift)), 0);
+    transition:
+      transform var(--dur-slow) var(--ease-out-expo),
+      background-color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart),
+      color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  /* The label trails the button at half its rate. That difference is the
+     entire illusion — matched rates read as the button sliding, and the
+     mismatch is what reads as depth. */
+  .button__label {
+    display: block;
+    pointer-events: none;
+    transform: translate3d(
+      calc(var(--mx) * 0.5),
+      calc(var(--my) * 0.5),
+      0
+    );
+    transition: transform var(--dur-slow) var(--ease-out-expo);
+  }
+
+  .button:hover,
+  .button:focus-visible {
+    --lift: -2px;
+  }
+
+  .button--primary {
+    background-color: var(--accent);
+    color: var(--on-accent);
+  }
+
+  .button--primary:hover,
+  .button--primary:focus-visible {
+    background-color: var(--accent-strong);
+  }
+
+  .button--ghost {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+
+  .button--ghost:hover,
+  .button--ghost:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* In forced-colors mode the accent is discarded, so the primary button would
+     lose its only affordance. A border restores it. */
+  @media (forced-colors: active) {
+    .button {
+      border-color: ButtonText;
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .hero__heading {
+      font-size: var(--step-6);
+    }
+  }
+</style>
+
+<script>
+  import { motionReduced } from '../scripts/motion';
+
+  const root = document.querySelector<HTMLElement>('[data-typed]');
+  const out = root?.querySelector<HTMLElement>('[data-typed-out]');
+
+  if (root && out) {
+    const text = root.dataset.typedText ?? out.textContent ?? '';
+
+    /* Under reduced motion the name is simply there — already true of the
+       server-rendered markup, so there is nothing to do but leave it alone.
+       No caret either: a blinking caret is itself motion. */
+    if (!motionReduced()) {
+      /* Clear only now, in script. If script never runs — disabled JS, a
+         crawler, a failed bundle — the complete name stays on screen. That
+         ordering is the whole safety net. */
+      out.textContent = '';
+      root.classList.add('is-typing');
+
+      let i = 0;
+      /* Slightly irregular timing reads as typed rather than mechanical. */
+      const tick = () => {
+        out.textContent = text.slice(0, ++i);
+        if (i < text.length) {
+          setTimeout(tick, 55 + Math.random() * 45);
+        } else {
+          root.classList.remove('is-typing');
+          root.classList.add('is-done');
+        }
+      };
+
+      /* Wait for the hero to be on screen before starting, so someone who
+         lands mid-page or navigates back does not miss it. */
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            io.disconnect();
+            setTimeout(tick, 350);
+          }
+        },
+        { threshold: 0.4 },
+      );
+      io.observe(root);
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+     MAGNETIC BUTTONS
+
+     This is what replaced the custom cursor. It produces the same "considered"
+     impression without overriding the system pointer — which some visitors
+     have deliberately enlarged, and which macOS and Windows scale in opposite
+     and incompatible ways.
+
+     Three guards, all of them load-bearing:
+       - pointer must be fine AND hover-capable. A magnetic button that lurches
+         under a thumb is a bug, not a delight.
+       - pointerType must be mouse. The media query above is about the PRIMARY
+         input; a laptop with a touchscreen passes it and still gets touch
+         events, so the per-event check is not redundant.
+       - motion must not be reduced, re-checked on every move rather than once
+         at bind time, so the header toggle takes effect immediately instead of
+         at the next reload.
+
+     The rect is read once on enter and cached. Reading it per-move would force
+     layout on every frame of every pointer movement, which is the usual reason
+     these feel worse than they look.
+     --------------------------------------------------------------------- */
+  const STRENGTH = 0.32;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const magnets = document.querySelectorAll<HTMLElement>('[data-magnetic]');
+
+  const release = (el: HTMLElement) => {
+    el.style.removeProperty('--mx');
+    el.style.removeProperty('--my');
+  };
+
+  if (finePointer.matches) {
+    magnets.forEach((el) => {
+      let box: DOMRect | null = null;
+
+      el.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        box = el.getBoundingClientRect();
+      });
+
+      el.addEventListener('pointermove', (e) => {
+        if (!box || e.pointerType !== 'mouse' || motionReduced()) return;
+        const x = (e.clientX - (box.left + box.width / 2)) * STRENGTH;
+        const y = (e.clientY - (box.top + box.height / 2)) * STRENGTH;
+        el.style.setProperty('--mx', `${x.toFixed(2)}px`);
+        el.style.setProperty('--my', `${y.toFixed(2)}px`);
+      });
+
+      /* Both leave and blur, because a keyboard user can Tab away from a
+         button the mouse is still sitting on. */
+      el.addEventListener('pointerleave', () => {
+        box = null;
+        release(el);
+      });
+      el.addEventListener('blur', () => release(el));
+    });
+
+    /* Turning motion off mid-hover must let go immediately, not on next move. */
+    window.addEventListener('motionchange', () => {
+      if (motionReduced()) magnets.forEach(release);
+    });
+  }
+</script>

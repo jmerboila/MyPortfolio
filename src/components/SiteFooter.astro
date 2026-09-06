@@ -1,0 +1,149 @@
+---
+/* ============================================================================
+   SiteFooter.astro
+   ----------------------------------------------------------------------------
+   Carries the rights line your research flagged as now-expected on a creative
+   portfolio (Sarah Oh's AI/ML training notice) — one sentence, and it costs
+   nothing to state.
+   ========================================================================= */
+import { PERSON, SOCIALS, RIGHTS_NOTICE } from '../config/site';
+import { asset } from '../lib/url';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner container">
+    <div class="site-footer__brand">
+      <img
+        class="site-footer__mark site-footer__mark--light"
+        src={asset('/images/jmlogoblack.svg')}
+        alt=""
+        width="40"
+        height="40"
+        aria-hidden="true"
+      />
+      <img
+        class="site-footer__mark site-footer__mark--dark"
+        src={asset('/images/jmlogowhite.svg')}
+        alt=""
+        width="40"
+        height="40"
+        aria-hidden="true"
+      />
+      <p class="site-footer__name">{PERSON.name}</p>
+      <p class="site-footer__role">
+        {PERSON.jobTitle} · {PERSON.location.city}, {PERSON.location.regionCode}
+      </p>
+    </div>
+
+    <nav class="site-footer__socials" aria-label="Elsewhere">
+      <ul>
+        {
+          SOCIALS.map((social) => (
+            <li>
+              <a href={social.url} target="_blank" rel="noopener me">
+                {social.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-footer__legal">
+      <p>&copy; {year} {PERSON.name}. All rights reserved.</p>
+      <p class="site-footer__rights">{RIGHTS_NOTICE}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-block-start: 1px solid var(--border);
+    background-color: var(--bg-2);
+    padding-block: var(--space-xl);
+  }
+
+  .site-footer__inner {
+    display: grid;
+    gap: var(--space-l);
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    align-items: start;
+  }
+
+  .site-footer__mark {
+    inline-size: 2.5rem;
+    block-size: auto;
+    margin-block-end: var(--space-2xs);
+  }
+
+  .site-footer__mark--dark {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .site-footer__mark--light {
+      display: none;
+    }
+    :root:not([data-theme='light']) .site-footer__mark--dark {
+      display: block;
+    }
+  }
+
+  :root[data-theme='dark'] .site-footer__mark--light {
+    display: none;
+  }
+
+  :root[data-theme='dark'] .site-footer__mark--dark {
+    display: block;
+  }
+
+  :root[data-theme='light'] .site-footer__mark--light {
+    display: block;
+  }
+
+  :root[data-theme='light'] .site-footer__mark--dark {
+    display: none;
+  }
+
+  .site-footer__name {
+    font-weight: 700;
+  }
+
+  .site-footer__role,
+  .site-footer__legal {
+    color: var(--text-dim);
+    font-size: var(--step--1);
+  }
+
+  .site-footer__socials ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .site-footer__socials a {
+    text-decoration: none;
+    color: var(--text-dim);
+    font-size: var(--step--1);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .site-footer__socials a:hover,
+  .site-footer__socials a:focus-visible {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .site-footer__legal p + p {
+    margin-block-start: var(--space-2xs);
+  }
+
+  .site-footer__rights {
+    max-inline-size: 34ch;
+  }
+</style>

@@ -1,0 +1,295 @@
+/* ============================================================================
+   tokens.css — the design system in one file.
+   ----------------------------------------------------------------------------
+   THE ONE IDEA: light and dark are not a tint flip. They are two brands.
+   Dark is night + lifted cobalt. Light is warm paper + ink cobalt.
+
+   Note what changed from v1's black+gold / white+blue: the two themes now
+   share ONE hue. Cobalt is the signature colour in both, at two different
+   tints — because no single tint of any blue passes contrast on both grounds
+   (classic cobalt #0047AB is 7.8:1 on paper and 2.3:1 on night). One hue at
+   two tints buys brand recall AND accessibility; two hues bought neither.
+   The duality now lives in the grounds and in per-project art direction,
+   not in two competing accent colours.
+
+   HOW THEMING WORKS — three states, in this order:
+     1. :root                       → light, the default
+     2. prefers-color-scheme: dark  → dark, unless the user explicitly chose light
+     3. [data-theme="..."]          → an explicit choice always wins
+
+   Raw palette values are declared ONCE at the top. The theme blocks below only
+   remap semantic names to those raws, so a colour is never typed twice and the
+   two themes cannot drift apart. The raws stay exposed rather than inlined so
+   any component that must render the INACTIVE theme can reach them.
+
+   CONTRAST (verified, WCAG 2.2 AA needs 4.5:1 body / 3:1 large + UI).
+   Every pairing below was measured against ALL THREE surfaces (bg, bg-2,
+   bg-3), not just the base ground — the worst case is quoted:
+     NIGHT   text      #eaedf2 on #171a22 = 14.8:1  PASS
+             text-dim  #9aa3b8 on #171a22 =  6.9:1  PASS
+             accent    #6e9bff on #171a22 =  6.5:1  PASS
+             on-accent #0a0b10 over accent =  7.3:1  PASS
+     PAPER   text      #12131a on #e6e4de = 14.6:1  PASS
+             text-dim  #5a5f6e on #e6e4de =  5.0:1  PASS
+             accent    #123a8f on #e6e4de =  8.2:1  PASS
+             on-accent #ffffff over accent = 10.4:1  PASS
+   accent-dim is UI-only (3:1 floor) and must never carry body text.
+   Re-check with a contrast tool before changing any of these.
+   ========================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------- */
+  /* RAW PALETTE — declared once, never used directly by components          */
+  /* ---------------------------------------------------------------------- */
+
+  /* Dark brand: night + lifted cobalt.
+     The accent is deliberately LIGHTER than the "obvious" cobalt. #0047AB
+     reads as the real thing but only clears 2.3:1 here, which fails text
+     outright — lifting it to #6e9bff keeps it unmistakably cobalt at 7.3:1. */
+  --raw-dark-bg: #0a0b10;
+  --raw-dark-bg-2: #101218;
+  --raw-dark-bg-3: #171a22;
+  --raw-dark-accent: #6e9bff;
+  --raw-dark-accent-strong: #8fb4ff;
+  --raw-dark-accent-dim: #3f6acc;
+  --raw-dark-text: #eaedf2;
+  --raw-dark-text-dim: #9aa3b8;
+  --raw-dark-border: rgb(110 155 255 / 0.18);
+  --raw-dark-border-strong: rgb(110 155 255 / 0.38);
+  --raw-dark-surface-blur: rgb(10 11 16 / 0.88);
+
+  /* Light brand: warm paper + ink cobalt.
+     The ground is paper, not #fff — flat white now reads as unconsidered,
+     and a warm off-white lets the cobalt sit rather than vibrate. */
+  --raw-light-bg: #f7f6f3;
+  --raw-light-bg-2: #efeee9;
+  --raw-light-bg-3: #e6e4de;
+  --raw-light-accent: #123a8f;
+  --raw-light-accent-strong: #0b2a6b;
+  --raw-light-accent-dim: #4a6fb5;
+  --raw-light-text: #12131a;
+  --raw-light-text-dim: #5a5f6e;
+  --raw-light-border: rgb(18 58 143 / 0.18);
+  --raw-light-border-strong: rgb(18 58 143 / 0.38);
+  --raw-light-surface-blur: rgb(247 246 243 / 0.88);
+
+  /* ---------------------------------------------------------------------- */
+  /* SEMANTIC MAPPING — light is the default state                          */
+  /* ---------------------------------------------------------------------- */
+  --bg: var(--raw-light-bg);
+  --bg-2: var(--raw-light-bg-2);
+  --bg-3: var(--raw-light-bg-3);
+  --accent: var(--raw-light-accent);
+  --accent-strong: var(--raw-light-accent-strong);
+  --accent-dim: var(--raw-light-accent-dim);
+  --text: var(--raw-light-text);
+  --text-dim: var(--raw-light-text-dim);
+  --border: var(--raw-light-border);
+  --border-strong: var(--raw-light-border-strong);
+  --surface-blur: var(--raw-light-surface-blur);
+  /* Text that sits ON the accent colour. Both brands need white here. */
+  --on-accent: #ffffff;
+
+  color-scheme: light;
+
+  /* ---------------------------------------------------------------------- */
+  /* TYPOGRAPHY                                                             */
+  /* ---------------------------------------------------------------------- */
+  /* ONE typeface does the whole site. Inter Tight carries display, body, UI
+     and the italic accent inside headings via <em> — there is no second family.
+
+     With one family, every bit of typographic contrast has to come out of the
+     design space instead of out of a pairing. Inter Tight gives weight 100-900
+     and a true drawn italic, and its tighter default fit is what makes it work
+     at display size where plain Inter needs manual tracking.
+
+     What it does NOT have, and DM Sans did: an optical-size axis. Nothing is
+     broken by that, but headline and body are now the same drawing at two
+     sizes rather than two drawings — so the heading tracking below is doing
+     work that opsz used to do on its own.
+
+     'Inter Tight Variable' is the family name @fontsource-variable registers —
+     NOT 'Inter Tight'. Naming it 'Inter Tight' silently falls through to the
+     system stack and the whole site renders in Segoe UI, which is exactly what
+     happened the first time with Syne. */
+  --font-ui: 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui,
+    -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Kept as a name so components do not have to know there is only one
+     family. If a display face is ever reintroduced, it changes here alone. */
+  --font-display: var(--font-ui);
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas,
+    monospace;
+
+  /* Fluid scale. Every step is clamp(min, preferred, max) so the site is
+     genuinely responsive rather than snapping at breakpoints. The vw component
+     is paired with a rem component so text still scales when a user zooms —
+     a pure-vw font-size fails WCAG 1.4.4 Resize Text. */
+  --step--1: clamp(0.83rem, 0.79rem + 0.19vw, 0.94rem);
+  --step-0: clamp(1rem, 0.95rem + 0.24vw, 1.13rem);
+  --step-1: clamp(1.2rem, 1.13rem + 0.36vw, 1.41rem);
+  --step-2: clamp(1.44rem, 1.34rem + 0.52vw, 1.76rem);
+  --step-3: clamp(1.73rem, 1.58rem + 0.74vw, 2.2rem);
+  --step-4: clamp(2.07rem, 1.86rem + 1.05vw, 2.75rem);
+  --step-5: clamp(2.49rem, 2.19rem + 1.48vw, 3.43rem);
+  --step-6: clamp(2.99rem, 2.57rem + 2.06vw, 4.29rem);
+  --step-7: clamp(3.58rem, 3.02rem + 2.83vw, 5.36rem);
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.25;
+  --leading-normal: 1.6;
+  /* Long-form prose gets a measure cap. 66ch is the readable ceiling. */
+  --measure: 66ch;
+
+  /* ---------------------------------------------------------------------- */
+  /* SPACE — one ratio, applied everywhere                                  */
+  /* ---------------------------------------------------------------------- */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: 2.25rem;
+  --space-xl: 3.5rem;
+  --space-2xl: 5.5rem;
+  --space-3xl: 8rem;
+  /* Section rhythm scales with viewport so mobile is not padded like desktop */
+  --space-section: clamp(4rem, 2.5rem + 7vw, 9rem);
+  --gutter: clamp(1.25rem, 0.75rem + 2.5vw, 4rem);
+  --max-width: 78rem;
+
+  /* ---------------------------------------------------------------------- */
+  /* MOTION                                                                 */
+  /* ---------------------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  /* Overshoots slightly past its target before settling. Used for the theme
+     icon swap, where a mechanical ease reads as a crossfade and this reads as
+     a thing that turned. Only for transforms — never for colour, where an
+     overshoot would briefly render an out-of-palette value. */
+  --ease-back: cubic-bezier(0.34, 1.4, 0.5, 1);
+
+  /* Durations route through these two multipliers. Under reduced motion we
+     set the multiplier to zero ONCE at the bottom of this file, and every
+     animation in the codebase collapses with it — no per-component opt-out
+     to forget. */
+  --motion-scale: 1;
+  --dur-fast: calc(150ms * var(--motion-scale));
+  --dur-base: calc(300ms * var(--motion-scale));
+  --dur-slow: calc(600ms * var(--motion-scale));
+  --dur-theme: calc(500ms * var(--motion-scale));
+
+  /* ---------------------------------------------------------------------- */
+  /* SHAPE & DEPTH                                                          */
+  /* ---------------------------------------------------------------------- */
+  --radius-s: 2px;
+  --radius-m: 4px;
+  --radius-l: 10px;
+  --radius-full: 999px;
+  --ring-width: 2px;
+  --ring-offset: 3px;
+
+  /* Layering. Named, so no component invents a z-index of 99999. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-overlay: 500;
+  --z-skip-link: 1000;
+
+  /* WCAG 2.5.8 Target Size (Minimum) requires 24x24 CSS px. 44px is the
+     comfortable touch target and what we actually build to. */
+  --tap-min: 44px;
+}
+
+/* ==========================================================================
+   DARK — applied when the OS asks for it and the user has not chosen light
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: var(--raw-dark-bg);
+    --bg-2: var(--raw-dark-bg-2);
+    --bg-3: var(--raw-dark-bg-3);
+    --accent: var(--raw-dark-accent);
+    --accent-strong: var(--raw-dark-accent-strong);
+    --accent-dim: var(--raw-dark-accent-dim);
+    --text: var(--raw-dark-text);
+    --text-dim: var(--raw-dark-text-dim);
+    --border: var(--raw-dark-border);
+    --border-strong: var(--raw-dark-border-strong);
+    --surface-blur: var(--raw-dark-surface-blur);
+    --on-accent: #0a0b10;
+    color-scheme: dark;
+  }
+}
+
+/* ==========================================================================
+   DARK — an explicit choice, which beats the OS preference in both directions
+   ========================================================================== */
+:root[data-theme='dark'] {
+  --bg: var(--raw-dark-bg);
+  --bg-2: var(--raw-dark-bg-2);
+  --bg-3: var(--raw-dark-bg-3);
+  --accent: var(--raw-dark-accent);
+  --accent-strong: var(--raw-dark-accent-strong);
+  --accent-dim: var(--raw-dark-accent-dim);
+  --text: var(--raw-dark-text);
+  --text-dim: var(--raw-dark-text-dim);
+  --border: var(--raw-dark-border);
+  --border-strong: var(--raw-dark-border-strong);
+  --surface-blur: var(--raw-dark-surface-blur);
+  --on-accent: #0a0b10;
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   REDUCED MOTION — one switch, whole site
+   --------------------------------------------------------------------------
+   Your research is explicit that reduced motion "is not a toggle you add at
+   the end, it is a second design". Collapsing --motion-scale to zero is the
+   floor, not the whole job: the dot grid and the typing effect each ship a
+   designed static end state in their own components.
+   ========================================================================== */
+/* Three states, matching the theme's contract exactly:
+     1. no attribute            → follow the OS
+     2. prefers-reduced-motion  → reduced, unless explicitly set to full
+     3. [data-motion="..."]     → an explicit choice wins in both directions
+
+   Collapsing --motion-scale is only HALF the job, and the half that is easy
+   to get wrong. It shortens every duration to ~0, which is correct for a
+   one-shot transition — but an animation set to `infinite` does not stop, it
+   runs at 0.6ms per cycle, which is a strobe rather than a still.
+
+   So anything that loops forever carries `.ambient` and is paused outright.
+   That is the WCAG 2.2.2 Pause, Stop, Hide mechanism for the whole site: one
+   class, every loop, no per-component pause logic to fall out of sync. */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) {
+    --motion-scale: 0.001;
+  }
+
+  :root:not([data-motion='full']) .ambient {
+    animation-play-state: paused;
+  }
+}
+
+:root[data-motion='reduced'] {
+  --motion-scale: 0.001;
+}
+
+:root[data-motion='reduced'] .ambient {
+  animation-play-state: paused;
+}
+
+/* ==========================================================================
+   FORCED COLORS (Windows High Contrast)
+   --------------------------------------------------------------------------
+   Decorative colour is dropped by the OS here, so anything whose meaning was
+   carried by colour alone needs a border to survive. Handled per-component;
+   this block only keeps our custom properties from fighting the OS palette.
+   ========================================================================== */
+@media (forced-colors: active) {
+  :root {
+    --border: CanvasText;
+    --border-strong: CanvasText;
+  }
+}

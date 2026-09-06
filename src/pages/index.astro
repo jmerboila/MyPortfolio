@@ -1,0 +1,72 @@
+---
+/* ============================================================================
+   index.astro — the homepage.
+   ----------------------------------------------------------------------------
+   Sections below the hero are stubs for now. The build order from your research
+   is deliberate and we are following it: get the static page right and good
+   while motionless, THEN layer motion on. Work, About, Services and Contact
+   land next, driven by a typed content collection rather than hand-written
+   markup.
+   ========================================================================= */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Hero from '../components/Hero.astro';
+---
+
+<BaseLayout>
+  <SiteHeader slot="header" />
+  <SiteFooter slot="footer" />
+
+  <Hero />
+
+  {/* --- Placeholders, so the page has real scroll depth to test motion
+      against. Replaced next. --- */}
+  <section class="section container" id="work" aria-labelledby="work-heading">
+    <p class="section__label">Selected work</p>
+    <h2 class="section__title" id="work-heading">My <em>projects</em></h2>
+    <p class="prose">
+      Project grid lands next, generated from a content collection so each
+      case study is one file and the light and dark artwork are both required
+      by schema.
+    </p>
+  </section>
+
+  <section class="section container" id="about" aria-labelledby="about-heading">
+    <p class="section__label">About</p>
+    <h2 class="section__title" id="about-heading">Hello, I&rsquo;m <em>Jayson</em></h2>
+    <p class="prose">Portrait, story and skills move here from v1.</p>
+  </section>
+
+  <section class="section container" id="services" aria-labelledby="services-heading">
+    <p class="section__label">Services</p>
+    <h2 class="section__title" id="services-heading">What I <em>do</em></h2>
+    <p class="prose">
+      New section — v1 never said what you sell or what an engagement looks
+      like.
+    </p>
+  </section>
+
+  <section class="section container" id="contact" aria-labelledby="contact-heading">
+    <p class="section__label">Get in touch</p>
+    <h2 class="section__title" id="contact-heading">
+      Let&rsquo;s make <em>something great</em>
+    </h2>
+    <p class="prose">Contact block moves here from v1.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .section__label {
+    font-size: var(--step--1);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-block-end: var(--space-xs);
+  }
+
+  .section__title {
+    font-size: var(--step-5);
+    margin-block-end: var(--space-m);
+  }
+</style>

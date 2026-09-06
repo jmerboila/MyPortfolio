@@ -1,0 +1,197 @@
+---
+/* ============================================================================
+   MusicToggle.astro — ambient audio, off by default.
+   ----------------------------------------------------------------------------
+   WCAG 1.4.2 Audio Control (Level A) is the rule that decides this component's
+   entire shape: if audio plays automatically for more than three seconds,
+   there must be a mechanism to stop it. The W3C's own advice is stronger than
+   that — start sound from a user action instead, and the problem disappears.
+
+   So this NEVER autoplays on a first visit. Every browser blocks
+   autoplay-with-sound anyway, so an autoplay implementation would fail
+   silently in production AND fail an accessibility audit. The toggle itself
+   is the user action.
+
+   The control also satisfies the rest of 1.4.2's advice by construction:
+     - it is in the header, visible on load without scrolling or hovering
+     - it is early in the tab order, before the page's own content
+     - it is a real <button>, so it is keyboard operable for free
+     - its state is exposed with aria-pressed, not by icon colour alone
+
+   RESUMING ACROSS PAGES
+   Because this is a multi-page site, navigating restarts the document and
+   would kill playback. We remember the preference and attempt to resume, then
+   swallow the rejection if the browser declines for lack of a fresh gesture.
+   That is safe under 1.4.2 because the stop control is always on screen. The
+   better long-term fix is Astro's ClientRouter with transition:persist on the
+   audio element, which keeps one element alive across navigations.
+   ========================================================================= */
+import { asset } from '../lib/url';
+---
+
+<button
+  type="button"
+  class="icon-button music-toggle"
+  id="music-toggle"
+  aria-pressed="false"
+  aria-label="Play ambient sound"
+  hidden
+>
+  <svg
+    class="icon icon--sound-off"
+    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M11 5 6 9H3v6h3l5 4V5z"></path>
+    <path d="m22 9-6 6M16 9l6 6"></path>
+  </svg>
+  <svg
+    class="icon icon--sound-on"
+    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M11 5 6 9H3v6h3l5 4V5z"></path>
+    <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"></path>
+  </svg>
+</button>
+
+{/* preload="none" so the file costs nothing until someone asks for it. A
+    portfolio's audio is optional garnish and must never compete with the hero
+    image for bandwidth. */}
+<audio id="ambient-audio" loop preload="none" src={asset('/audio/ambient.mp3')}
+></audio>
+
+<style>
+  .music-toggle[hidden] {
+    display: none;
+  }
+
+  .icon {
+    grid-area: 1 / 1;
+  }
+
+  .icon--sound-on {
+    display: none;
+  }
+
+  .music-toggle[aria-pressed='true'] .icon--sound-off {
+    display: none;
+  }
+
+  .music-toggle[aria-pressed='true'] .icon--sound-on {
+    display: block;
+  }
+
+  /* State is carried by colour AND by a different icon, so it never depends on
+     colour alone (WCAG 1.4.1). */
+  .music-toggle[aria-pressed='true'] {
+    color: var(--accent);
+  }
+
+  audio {
+    display: none;
+  }
+</style>
+
+<script>
+  const button = document.getElementById('music-toggle') as HTMLButtonElement | null;
+  const audio = document.getElementById('ambient-audio') as HTMLAudioElement | null;
+
+  const STORAGE_KEY = 'jm-music';
+
+  if (button && audio) {
+    /* ------------------------------------------------------------------
+       The control is rendered hidden and only revealed once we know the
+       audio file actually exists. A play button that does nothing because
+       the asset 404s is worse than no button, and it would also be a
+       broken control for a screen-reader user to land on.
+       ------------------------------------------------------------------ */
+    fetch(audio.src, { method: 'HEAD' })
+      .then((res) => {
+        if (res.ok) {
+          button.hidden = false;
+          init();
+        }
+      })
+      .catch(() => {
+        /* Offline or blocked: leave the control hidden. */
+      });
+
+    function init() {
+      const btn = button as HTMLButtonElement;
+      const el = audio as HTMLAudioElement;
+
+      /* Ambient means ambient. Full volume on a portfolio is startling. */
+      el.volume = 0.25;
+
+      const setState = (on: boolean) => {
+        btn.setAttribute('aria-pressed', String(on));
+        btn.setAttribute('aria-label', on ? 'Stop ambient sound' : 'Play ambient sound');
+      };
+
+      const stop = () => {
+        el.pause();
+        setState(false);
+        try {
+          localStorage.setItem(STORAGE_KEY, 'off');
+        } catch {
+          /* Preference not remembered; the control still works. */
+        }
+      };
+
+      const start = () =>
+        el
+          .play()
+          .then(() => {
+            setState(true);
+            try {
+              localStorage.setItem(STORAGE_KEY, 'on');
+            } catch {
+              /* As above. */
+            }
+          })
+          .catch(() => {
+            /* The browser declined — almost always because there has been no
+               user gesture on this document yet. Presenting the off state is
+               the honest thing to do; the next click will succeed. */
+            setState(false);
+          });
+
+      btn.addEventListener('click', () => {
+        if (btn.getAttribute('aria-pressed') === 'true') stop();
+        else start();
+      });
+
+      /* Resume a preference carried over from a previous page in this visit.
+         If the browser blocks it, start() fails quietly and the button simply
+         shows as off. */
+      try {
+        if (localStorage.getItem(STORAGE_KEY) === 'on') start();
+      } catch {
+        /* No stored preference available. Default off, which is correct. */
+      }
+
+      /* Leaving the tab should not leave music playing in the background. */
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && !el.paused) el.pause();
+        else if (!document.hidden && btn.getAttribute('aria-pressed') === 'true') {
+          void el.play().catch(() => setState(false));
+        }
+      });
+    }
+  }
+</script>

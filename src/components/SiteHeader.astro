@@ -1,0 +1,490 @@
+---
+/* ============================================================================
+   SiteHeader.astro — sticky navigation.
+   ----------------------------------------------------------------------------
+   WCAG NOTES THAT SHAPED THIS
+   - 2.4.11 Focus Not Obscured (Minimum): a sticky header is the classic way to
+     fail this, because it covers whatever the keyboard just focused. The fix
+     lives in base.css as scroll-padding-top on <html>, fed by the
+     --header-height variable this component keeps up to date.
+   - 3.2.6 Consistent Help: the same controls sit in the same place on every
+     page, which is all this criterion asks for.
+   - 2.5.8 Target Size: every control here clears 44px via the base rule.
+   - 1.4.13 Content on Hover: nothing here appears on hover alone.
+
+   The mobile menu is a disclosure, not a modal — it pushes nothing off screen
+   and needs no focus trap, which is one less thing to get wrong.
+   ========================================================================= */
+import { PERSON } from '../config/site';
+import { href, asset } from '../lib/url';
+import MusicToggle from './MusicToggle.astro';
+import MotionToggle from './MotionToggle.astro';
+
+const NAV_LINKS = [
+  { label: 'Work', href: href('/#work') },
+  { label: 'About', href: href('/#about') },
+  { label: 'Services', href: href('/#services') },
+  { label: 'Contact', href: href('/#contact') },
+];
+---
+
+<header class="site-header" id="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href={href('/')} aria-label={`${PERSON.name} — home`}>
+      {/* Two files, one shown per theme. Both are marked decorative because
+          the link already carries an accessible name via aria-label; letting
+          the images add their own alt would announce the name twice. */}
+      <img
+        class="brand__mark brand__mark--light"
+        src={asset('/images/jmlogoblack.svg')}
+        alt=""
+        width="44"
+        height="44"
+        aria-hidden="true"
+      />
+      <img
+        class="brand__mark brand__mark--dark"
+        src={asset('/images/jmlogowhite.svg')}
+        alt=""
+        width="44"
+        height="44"
+        aria-hidden="true"
+      />
+    </a>
+
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul class="site-nav__list">
+        {
+          NAV_LINKS.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__controls">
+      <MotionToggle />
+      <MusicToggle />
+
+      <button
+        type="button"
+        class="icon-button"
+        id="theme-toggle"
+        aria-label="Switch to dark theme"
+      >
+        <svg
+          class="icon icon--sun"
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="4"></circle>
+          <path
+            d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+          ></path>
+        </svg>
+        <svg
+          class="icon icon--moon"
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="icon-button nav-trigger"
+        id="nav-trigger"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="site-nav"
+      >
+        <span class="nav-trigger__bar" aria-hidden="true"></span>
+        <span class="nav-trigger__bar" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-sticky);
+    background-color: transparent;
+    transition:
+      background-color var(--dur-base) var(--ease-in-out),
+      border-color var(--dur-base) var(--ease-in-out);
+    border-block-end: 1px solid transparent;
+  }
+
+  /* Only once scrolled does the bar take on a surface. At the top of the page
+     it sits transparent over the hero, which is what makes the hero feel
+     full-bleed without actually overlapping content. */
+  .site-header.is-stuck {
+    background-color: var(--surface-blur);
+    border-block-end-color: var(--border);
+  }
+
+  /* backdrop-filter forces a readback of everything painted beneath, on every
+     frame it changes. It is applied only to this one thin bar, only when
+     scrolled, and only where the browser supports it — never to large or
+     scrolling surfaces. */
+  @supports (backdrop-filter: blur(12px)) {
+    .site-header.is-stuck {
+      backdrop-filter: blur(12px) saturate(1.4);
+    }
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    inline-size: 100%;
+    max-inline-size: var(--max-width);
+    margin-inline: auto;
+    padding: var(--space-2xs) var(--gutter);
+  }
+
+  /* -- Brand -------------------------------------------------------------- */
+  .brand {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .brand__mark {
+    grid-area: 1 / 1;
+    inline-size: 2.25rem;
+    block-size: auto;
+  }
+
+  /* Which mark shows is driven by the same three-state logic as the palette,
+     so it cannot disagree with the theme. */
+  .brand__mark--dark {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .brand__mark--light {
+      display: none;
+    }
+    :root:not([data-theme='light']) .brand__mark--dark {
+      display: block;
+    }
+  }
+
+  :root[data-theme='dark'] .brand__mark--light {
+    display: none;
+  }
+
+  :root[data-theme='dark'] .brand__mark--dark {
+    display: block;
+  }
+
+  :root[data-theme='light'] .brand__mark--light {
+    display: block;
+  }
+
+  :root[data-theme='light'] .brand__mark--dark {
+    display: none;
+  }
+
+  /* -- Nav ---------------------------------------------------------------- */
+  .site-nav__list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .site-nav a {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: var(--step--1);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding-inline: var(--space-2xs);
+    transition: color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .site-nav a:hover,
+  .site-nav a:focus-visible {
+    color: var(--accent);
+  }
+
+  /* -- Controls ----------------------------------------------------------- */
+  .site-header__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+  }
+
+  /* -- Theme icon: the rotate swap --------------------------------------- */
+  /* v1 swapped these with `display: none`, which is why it could never
+     animate — there is no transition between "not rendered" and "rendered".
+     Both icons are now always painted, stacked in the same grid cell by the
+     global `.icon` rule, and only transform and opacity change. Both run on
+     the compositor, so the swap cannot cause layout or a repaint storm.
+
+     The sun leaves clockwise and the moon arrives from counter-clockwise, so
+     the pair reads as one object rotating through rather than two icons
+     dissolving into each other. Scale is what sells it: shrinking on the way
+     out reads as depth, not as a fade.
+
+     Which icon shows is the CURRENT theme (sun while light), matching v1.
+     The button's aria-label names the ACTION instead, which is what a screen
+     reader user needs — the two are deliberately different. */
+  .icon--sun,
+  .icon--moon {
+    transform-origin: 50% 50%;
+    transition:
+      transform var(--dur-slow) var(--ease-back),
+      opacity var(--dur-base) var(--ease-out-quart);
+  }
+
+  /* State 1 — light, the default. */
+  .icon--sun {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+
+  .icon--moon {
+    transform: rotate(-90deg) scale(0.35);
+    opacity: 0;
+  }
+
+  /* State 2 — the OS asks for dark and no explicit choice overrides it. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .icon--sun {
+      transform: rotate(90deg) scale(0.35);
+      opacity: 0;
+    }
+
+    :root:not([data-theme='light']) .icon--moon {
+      transform: rotate(0deg) scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* State 3 — an explicit choice, which must win in both directions. */
+  :root[data-theme='dark'] .icon--sun {
+    transform: rotate(90deg) scale(0.35);
+    opacity: 0;
+  }
+
+  :root[data-theme='dark'] .icon--moon {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+
+  :root[data-theme='light'] .icon--sun {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+
+  :root[data-theme='light'] .icon--moon {
+    transform: rotate(-90deg) scale(0.35);
+    opacity: 0;
+  }
+
+  /* Windows High Contrast discards opacity as a hiding mechanism, so both
+     icons would paint on top of each other. Fall back to the v1 behaviour
+     there — no animation, but never an unreadable control. */
+  @media (forced-colors: active) {
+    .icon--sun,
+    .icon--moon {
+      transition: none;
+    }
+
+    .icon--moon,
+    :root[data-theme='dark'] .icon--sun,
+    :root[data-theme='light'] .icon--moon {
+      visibility: hidden;
+    }
+
+    :root[data-theme='dark'] .icon--moon,
+    :root[data-theme='light'] .icon--sun {
+      visibility: visible;
+    }
+  }
+
+  /* -- Mobile ------------------------------------------------------------- */
+  .nav-trigger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .nav-trigger__bar {
+    inline-size: 20px;
+    block-size: 1.5px;
+    background-color: currentcolor;
+    transition: transform var(--dur-base) var(--ease-out-quart);
+  }
+
+  @media (max-width: 48rem) {
+    .nav-trigger {
+      display: flex;
+    }
+
+    .site-nav {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 100%;
+      background-color: var(--bg);
+      border-block-end: 1px solid var(--border);
+      /* Collapsed by default. Using a grid row rather than max-height means
+         the open height is the content's real height, so it never clips a
+         longer menu or leaves a gap under a shorter one. */
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows var(--dur-base) var(--ease-out-quart);
+    }
+
+    .site-nav__list {
+      overflow: hidden;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .site-header.is-open .site-nav {
+      grid-template-rows: 1fr;
+    }
+
+    .site-nav a {
+      padding: var(--space-s) var(--gutter);
+      font-size: var(--step-0);
+      border-block-end: 1px solid var(--border);
+    }
+
+    /* While closed, the links must not be reachable by Tab. `visibility`
+       removes them from the focus order; height alone would not. */
+    .site-nav__list {
+      visibility: hidden;
+      transition: visibility 0s linear var(--dur-base);
+    }
+
+    .site-header.is-open .site-nav__list {
+      visibility: visible;
+      transition-delay: 0s;
+    }
+
+    .site-header.is-open .nav-trigger__bar:first-child {
+      transform: translateY(3.25px) rotate(45deg);
+    }
+
+    .site-header.is-open .nav-trigger__bar:last-child {
+      transform: translateY(-3.25px) rotate(-45deg);
+    }
+  }
+</style>
+
+<script>
+  import { currentTheme, toggleTheme } from '../scripts/theme';
+
+  const header = document.getElementById('site-header');
+  const trigger = document.getElementById('nav-trigger');
+  const nav = document.getElementById('site-nav');
+  const themeButton = document.getElementById('theme-toggle');
+
+  /* ---------------------------------------------------------------------
+     Publish the header's real height so base.css can reserve it in
+     scroll-padding-top. Hard-coding a number here is how sites end up with a
+     heading tucked behind the bar at one breakpoint — measuring is cheap and
+     always right.
+     ------------------------------------------------------------------- */
+  if (header) {
+    const publishHeight = () => {
+      document.documentElement.style.setProperty(
+        '--header-height',
+        `${header.offsetHeight}px`,
+      );
+    };
+    publishHeight();
+    new ResizeObserver(publishHeight).observe(header);
+
+    /* Surface appears once the page has scrolled. IntersectionObserver on a
+       sentinel would also work; a passive scroll listener reading a single
+       scalar is simpler and does not force layout. */
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        header.classList.toggle('is-stuck', window.scrollY > 8);
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  /* -- Mobile disclosure -------------------------------------------------- */
+  if (trigger && header && nav) {
+    const setOpen = (open: boolean) => {
+      header.classList.toggle('is-open', open);
+      trigger.setAttribute('aria-expanded', String(open));
+      trigger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+
+    trigger.addEventListener('click', () => {
+      setOpen(trigger.getAttribute('aria-expanded') !== 'true');
+    });
+
+    /* Following a link should close the menu, or the next page loads with it
+       still open on mobile. */
+    nav.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    });
+
+    /* Escape closes and returns focus to the control that opened it. */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && trigger.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        trigger.focus();
+      }
+    });
+  }
+
+  /* -- Theme toggle ------------------------------------------------------- */
+  if (themeButton) {
+    /* The label always names the ACTION, not the current state — "Switch to
+       dark theme" — because that is what a screen-reader user needs to decide
+       whether to press it. It is kept in sync with the theme however the
+       theme changed. */
+    const syncLabel = () => {
+      const next = currentTheme() === 'dark' ? 'light' : 'dark';
+      themeButton.setAttribute('aria-label', `Switch to ${next} theme`);
+    };
+
+    themeButton.addEventListener('click', () => {
+      toggleTheme();
+      syncLabel();
+    });
+
+    window.addEventListener('themechange', syncLabel);
+    syncLabel();
+  }
+</script>
