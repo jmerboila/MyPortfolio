@@ -21,31 +21,16 @@
       up front, and the animating text is overlaid on top of it. The box never
       changes size.
 
-   PARALLAX is CSS scroll-driven animation — zero JavaScript, and it runs off
-   the main thread. Support is Chrome/Edge 115+ and Safari 26+; Firefox's
-   status is genuinely unsettled, so the whole thing sits behind @supports and
-   the static composition is the default everyone else gets. It also only
-   engages on pointer devices at tablet width and up: on a phone there is no
-   depth to perceive and it is a pure battery cost.
+   THE BACKDROP IS NOT HERE any more. The dot field and its scroll parallax
+   moved to BaseLayout as one viewport-fixed layer for the whole site, so the
+   hero owns only its own content. What remains local is the magnetic pull on
+   the two CTAs at the bottom of this file.
    ========================================================================= */
 import { PERSON } from '../config/site';
 import { href } from '../lib/url';
-import DotGrid from './DotGrid.astro';
 ---
 
 <section class="hero" aria-labelledby="hero-heading">
-  {/* Decorative. aria-hidden and pointer-events:none — it exists only to
-      react to the pointer, and never intercepts one. */}
-  <DotGrid
-    dotSize={2}
-    gap={20}
-    proximity={100}
-    shockRadius={200}
-    shockStrength={5}
-    resistance={1050}
-    returnDuration={2.5}
-  />
-
   <div class="hero__content container">
     <p class="hero__eyebrow">{PERSON.tagline}</p>
 
@@ -161,9 +146,16 @@ import DotGrid from './DotGrid.astro';
   /* The caret is a pseudo-element on the OUTPUT, not a sibling, so it flows
      immediately after the last typed character and needs no positioning code.
      It exists only once script has taken over — so a no-JS visitor, who sees
-     the complete static name, never gets a caret parked next to it. */
-  .typed.is-typing .typed__out::after,
-  .typed.is-done .typed__out::after {
+     the complete static name, never gets a caret parked next to it.
+
+     It is bound to `.is-typing` ONLY, so it disappears when the name finishes.
+     That is deliberate and load-bearing: a caret left blinking on `.is-done`
+     is content that blinks indefinitely, which is the one thing on this site
+     that would trigger WCAG 2.2.2 Pause, Stop, Hide and force a pause control
+     into the header. Nothing else here animates without the user driving it —
+     the dot grid waits for a pointer and the parallax waits for a scroll — so
+     retiring the caret retires the requirement with it. */
+  .typed.is-typing .typed__out::after {
     content: '';
     display: inline-block;
     inline-size: 2px;
@@ -180,19 +172,13 @@ import DotGrid from './DotGrid.astro';
     }
   }
 
-  /* The caret is a pseudo-element, so it cannot carry the `.ambient` class the
-     rest of the site uses. It loops forever all the same, which makes it a
-     WCAG 2.2.2 leak the moment someone reduces motion AFTER the name has
-     finished typing. Stated explicitly here rather than relying on the global
-     rule that cannot see it. */
+  /* Belt and braces. Under reduced motion the typing script never runs, so
+     `.is-typing` is never applied and this caret never renders — but if that
+     ordering is ever changed, a blinking caret would come back silently. */
   @media (prefers-reduced-motion: reduce) {
-    :root:not([data-motion='full']) .typed__out::after {
+    .typed__out::after {
       animation: none;
     }
-  }
-
-  :root[data-motion='reduced'] .typed__out::after {
-    animation: none;
   }
 
   /* -- Actions ------------------------------------------------------------ */
@@ -288,7 +274,7 @@ import DotGrid from './DotGrid.astro';
 </style>
 
 <script>
-  import { motionReduced } from '../scripts/motion';
+  import { motionReduced, onMotionChange } from '../scripts/motion';
 
   const root = document.querySelector<HTMLElement>('[data-typed]');
   const out = root?.querySelector<HTMLElement>('[data-typed-out]');
@@ -390,9 +376,11 @@ import DotGrid from './DotGrid.astro';
       el.addEventListener('blur', () => release(el));
     });
 
-    /* Turning motion off mid-hover must let go immediately, not on next move. */
-    window.addEventListener('motionchange', () => {
-      if (motionReduced()) magnets.forEach(release);
+    /* Turning motion off mid-hover must let go immediately, not on next move.
+       This now tracks the OS setting rather than an in-page toggle, so it
+       fires when someone changes the system preference with the tab open. */
+    onMotionChange((reduced) => {
+      if (reduced) magnets.forEach(release);
     });
   }
 </script>

@@ -18,7 +18,6 @@
 import { PERSON } from '../config/site';
 import { href, asset } from '../lib/url';
 import MusicToggle from './MusicToggle.astro';
-import MotionToggle from './MotionToggle.astro';
 
 const NAV_LINKS = [
   { label: 'Work', href: href('/#work') },
@@ -65,7 +64,6 @@ const NAV_LINKS = [
     </nav>
 
     <div class="site-header__controls">
-      <MotionToggle />
       <MusicToggle />
 
       <button

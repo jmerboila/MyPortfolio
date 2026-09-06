@@ -95,25 +95,22 @@
   /* ---------------------------------------------------------------------- */
   /* TYPOGRAPHY                                                             */
   /* ---------------------------------------------------------------------- */
-  /* ONE typeface does the whole site. Inter Tight carries display, body, UI
-     and the italic accent inside headings via <em> — there is no second family.
+  /* ONE typeface does the whole site. Inter carries display, body, UI and the
+     italic accent inside headings via <em> — there is no second family.
 
      With one family, every bit of typographic contrast has to come out of the
-     design space instead of out of a pairing. Inter Tight gives weight 100-900
-     and a true drawn italic, and its tighter default fit is what makes it work
-     at display size where plain Inter needs manual tracking.
+     design space instead of out of a pairing: weight 100-900, size, and the
+     drawn italic. Inter rather than Inter Tight because it is the original cut
+     and the one every current recommendation names first; the cost is that it
+     sets wider, which the heading tracking below compensates for.
 
-     What it does NOT have, and DM Sans did: an optical-size axis. Nothing is
-     broken by that, but headline and body are now the same drawing at two
-     sizes rather than two drawings — so the heading tracking below is doing
-     work that opsz used to do on its own.
-
-     'Inter Tight Variable' is the family name @fontsource-variable registers —
-     NOT 'Inter Tight'. Naming it 'Inter Tight' silently falls through to the
-     system stack and the whole site renders in Segoe UI, which is exactly what
-     happened the first time with Syne. */
-  --font-ui: 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui,
-    -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+     'Inter Variable' is the family name @fontsource-variable registers — NOT
+     'Inter'. The two differ only in packaging (one variable file versus one
+     file per weight) but the name must match what was installed, or the whole
+     site silently falls through to Segoe UI. That has already happened once,
+     with Syne. */
+  --font-ui: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   /* Kept as a name so components do not have to know there is only one
      family. If a display face is ever reintroduced, it changes here alone. */
   --font-display: var(--font-ui);
@@ -249,35 +246,20 @@
    floor, not the whole job: the dot grid and the typing effect each ship a
    designed static end state in their own components.
    ========================================================================== */
-/* Three states, matching the theme's contract exactly:
-     1. no attribute            → follow the OS
-     2. prefers-reduced-motion  → reduced, unless explicitly set to full
-     3. [data-motion="..."]     → an explicit choice wins in both directions
+/* Motion is no longer a user-facing preference — see src/scripts/motion.ts.
+   Nothing here animates without the visitor causing it, so there is nothing
+   for a pause button to pause. What is left is the OS preference, which was
+   never optional.
 
-   Collapsing --motion-scale is only HALF the job, and the half that is easy
-   to get wrong. It shortens every duration to ~0, which is correct for a
-   one-shot transition — but an animation set to `infinite` does not stop, it
-   runs at 0.6ms per cycle, which is a strobe rather than a still.
-
-   So anything that loops forever carries `.ambient` and is paused outright.
-   That is the WCAG 2.2.2 Pause, Stop, Hide mechanism for the whole site: one
-   class, every loop, no per-component pause logic to fall out of sync. */
+   Collapsing --motion-scale handles every duration in one place. It is enough
+   ONLY because nothing loops forever any more: an `infinite` animation with a
+   near-zero duration strobes rather than stops, so if an ambient animation is
+   ever reintroduced it needs an explicit `animation: none` here, not just a
+   shorter duration. */
 @media (prefers-reduced-motion: reduce) {
-  :root:not([data-motion='full']) {
+  :root {
     --motion-scale: 0.001;
   }
-
-  :root:not([data-motion='full']) .ambient {
-    animation-play-state: paused;
-  }
-}
-
-:root[data-motion='reduced'] {
-  --motion-scale: 0.001;
-}
-
-:root[data-motion='reduced'] .ambient {
-  animation-play-state: paused;
 }
 
 /* ==========================================================================

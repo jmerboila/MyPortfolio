@@ -17,13 +17,15 @@
    ========================================================================= */
 import { PERSON, SOCIALS, SEO, ANALYTICS, absoluteUrl } from '../config/site';
 import { asset } from '../lib/url';
+import DotGrid from '../components/DotGrid.astro';
 /* One family, two faces — roman and a true drawn italic.
 
-   Unlike DM Sans, Inter Tight ships NO optical-size axis, so there is no
-   opsz build to import and no size-aware drawing to inherit. Both faces come
-   from the weight-only build: 44 KB + 47 KB latin. */
-import '@fontsource-variable/inter-tight/wght.css';
-import '@fontsource-variable/inter-tight/wght-italic.css';
+   The weight-only build, not the optical-size one. Inter DOES ship an opsz
+   axis, but its range is 14-32: at the 5rem hero heading it is clamped at the
+   top and does nothing, so the axis only earns its keep at body sizes. That is
+   24 KB extra for a refinement almost nobody would name. 47 + 51 KB latin. */
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/inter/wght-italic.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
 
@@ -130,14 +132,6 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
           if (stored === 'light' || stored === 'dark') {
             document.documentElement.setAttribute('data-theme', stored);
           }
-          // Motion has to land before paint for the same reason the theme
-          // does: the hero backdrop starts animating on the first frame, and
-          // a visitor who chose "reduce" would otherwise see it move once
-          // before the preference applied.
-          var motion = localStorage.getItem('jm-motion');
-          if (motion === 'full' || motion === 'reduced') {
-            document.documentElement.setAttribute('data-motion', motion);
-          }
         } catch (e) {
           /* Private mode or blocked storage: fall through to the OS preference,
              which the CSS already handles. Never let this throw and block paint. */
@@ -184,6 +178,12 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
 
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
+
+    {/* Site-wide, viewport-fixed and decorative. It sits at the top of the
+        body so it paints behind everything; base.css lifts main and footer
+        above it. One instance for the whole page — it is fixed, so it never
+        needs to grow with the document. */}
+    <DotGrid />
 
     <slot name="header" />
 
