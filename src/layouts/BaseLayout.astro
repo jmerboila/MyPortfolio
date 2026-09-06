@@ -182,7 +182,7 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
     {/* Site-wide, viewport-fixed and decorative. It sits at the top of the
         body so it paints behind everything; base.css lifts main and footer
         above it. One instance for the whole page — it is fixed, so it never
-        needs to grow with the document. */}
+        grows with the document and never scrolls with it either. */}
     <DotGrid />
 
     <slot name="header" />

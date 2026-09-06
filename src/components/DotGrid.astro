@@ -1,32 +1,33 @@
 ---
 /* ============================================================================
-   DotGrid.astro — the site-wide dot field. Pointer-reactive, scroll-parallaxed.
+   DotGrid.astro — the site-wide dot field. Pointer-reactive, nothing else.
    ----------------------------------------------------------------------------
    A vanilla port of React Bits' DotGrid, which is React + GSAP + InertiaPlugin.
    GSAP alone is ~27 kB gzipped before the plugin, several times what this whole
-   site ships, and the physics it provides here is a decaying glide plus an
-   elastic return — about forty lines. So the behaviour is reproduced and the
-   dependency is not.
+   site ships, and the physics it provides is a decaying glide plus an elastic
+   return — about forty lines. So the behaviour is reproduced, the dependency
+   is not.
 
-   FIXED, NOT TALL. The canvas is `position: fixed` and viewport-sized, and
-   scrolling is applied as an offset inside the drawing maths. A 10,000px page
-   therefore costs exactly what a 1,000px page costs. Because the grid is
-   periodic, that offset only has to travel one cell before it can wrap — so
-   the field scrolls forever off a canvas that never grows.
+   FIXED, NOT TALL. The canvas is `position: fixed` and viewport-sized, so a
+   10,000px page costs exactly what a 1,000px page costs. It does not scroll
+   with the document and it does not parallax: the field is a still ground that
+   reacts to the pointer, and that is the whole of it.
 
-   THE MASK IS AN ACCESSIBILITY FEATURE, NOT A LOOK. Measured by compositing
-   dots over the ground, text over a full-strength dot fell to 1.07:1 on night
-   and 1.63:1 on paper. Going full-page would have put that behind every
-   heading on the site rather than just the hero. So dots are masked out of the
-   centre of the viewport where reading happens and kept in the margins, and
-   the active colour is capped below full opacity. Both, deliberately: the mask
-   is the fix, the cap is the insurance for anything that slips past it.
+   VISIBILITY AND CONTRAST, RESOLVED TOGETHER. An earlier pass masked the dots
+   out of the middle of the viewport to protect text, which worked so well the
+   grid was only visible along the edges. The better answer is that the two
+   constraints are not actually in tension, because they pull on different
+   levers:
 
-   NOTHING HERE STARTS ON ITS OWN. Dots move when a pointer moves or a click
-   lands; the field shifts when the visitor scrolls. That is why this needs no
-   pause control — WCAG 2.2.2 governs content that moves automatically, and
-   user-driven motion is not that. `prefers-reduced-motion` is still honoured
-   in full: no parallax, no pointer reaction, a still field.
+     - CONTRAST is governed by dot ALPHA. Compositing a dot over the ground and
+       demanding every foreground hold 4.5:1 gives a ceiling of 0.29 on night
+       and 0.15 on paper — text-dim binds first, having the least headroom.
+     - VISIBILITY is governed by dot SIZE, which is per-pixel and does not
+       affect the contrast maths at all.
+
+   So the dots are large enough to see and translucent enough to read through,
+   every pairing verified at the worst case of a glyph sitting directly on a
+   dot. No mask is needed, which is why there is none.
    ========================================================================= */
 
 interface Props {
@@ -40,21 +41,21 @@ interface Props {
   /** Pointer speed (px/s) above which movement pushes dots aside. */
   speedTrigger?: number;
   maxSpeed?: number;
-  /** Fraction of scroll distance the field travels. 0 = pinned, 1 = normal. */
-  parallax?: number;
 }
 
 const {
-  dotSize = 2,
-  gap = 20,
-  proximity = 100,
+  /* 4px, not the 2px of the React Bits example. At 2px on a dark ground the
+     field is invisible at any alpha the contrast budget permits — size is the
+     lever that buys presence without costing legibility. */
+  dotSize = 4,
+  gap = 22,
+  proximity = 120,
   shockRadius = 200,
   shockStrength = 5,
   resistance = 1050,
   returnDuration = 2.5,
   speedTrigger = 100,
   maxSpeed = 5000,
-  parallax = 0.2,
 } = Astro.props;
 
 const config = {
@@ -67,7 +68,6 @@ const config = {
   returnDuration,
   speedTrigger,
   maxSpeed,
-  parallax,
 };
 ---
 
@@ -80,78 +80,48 @@ const config = {
     position: fixed;
     inset: 0;
     /* Above the body's background, below every positioned section. A negative
-       z-index would put it BEHIND the body background and make it invisible —
+       z-index would drop it BEHIND the body background and make it invisible —
        0 is the value that works. base.css lifts main and footer to 1. */
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
 
-    /* These alphas are SOLVED, not chosen. Compositing a dot over the ground
-       and requiring every foreground to stay at 4.5:1 gives a ceiling of 0.29
-       on night and 0.15 on paper. The binding constraint is text-dim, which
-       starts with the least headroom (5.89:1 on paper) and therefore runs out
-       first. Both themes sit just under their own ceiling.
+    /* SOLVED, not chosen. See the header note: 0.29 is the ceiling on night,
+       0.15 on paper, past which text-dim drops below 4.5:1 when a glyph lands
+       on a dot. Both themes sit just under their own.
 
-       Paper's ceiling is half of night's, so the proximity glow is genuinely
-       quieter in light mode. That is a real consequence of the palette rather
-       than an oversight — light mode simply has less room to spend.
+       Paper's ceiling is half of night's because its text-dim starts with less
+       headroom (5.89:1 on the bare ground). Light mode's glow is therefore
+       quieter — a real consequence of the palette, not an oversight.
 
-       Two distinct values matter: the React Bits example passes the SAME
-       colour for base and active, so its interpolation resolves to where it
-       started and the cursor does nothing visible. */
-    --dot-base: rgb(18 58 143 / 0.09);
-    --dot-active: rgb(18 58 143 / 0.145);
+       Base and active must DIFFER or the proximity effect does nothing: the
+       React Bits example passes the same colour for both, so its interpolation
+       resolves to where it started. */
+    --dot-base: rgb(18 58 143 / 0.12);
+    --dot-active: rgb(18 58 143 / 0.15);
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) .dotgrid {
-      --dot-base: rgb(110 155 255 / 0.16);
+      --dot-base: rgb(110 155 255 / 0.18);
       --dot-active: rgb(110 155 255 / 0.28);
     }
   }
 
   :root[data-theme='dark'] .dotgrid {
-    --dot-base: rgb(110 155 255 / 0.16);
+    --dot-base: rgb(110 155 255 / 0.18);
     --dot-active: rgb(110 155 255 / 0.28);
   }
 
   :root[data-theme='light'] .dotgrid {
-    --dot-base: rgb(18 58 143 / 0.09);
-    --dot-active: rgb(18 58 143 / 0.145);
+    --dot-base: rgb(18 58 143 / 0.12);
+    --dot-active: rgb(18 58 143 / 0.15);
   }
 
-  /* The reading well. Transparent in the middle of the viewport — where every
-     section's content column sits — and opaque toward the edges, so the dots
-     read as a frame around the page rather than a texture underneath the text.
-
-     Viewport-relative because the canvas is fixed, which means it protects the
-     middle of the SCREEN. That happens to be exactly where a reader's eye is,
-     on every section, without the mask needing to know anything about the
-     page's structure. */
   canvas {
     display: block;
     inline-size: 100%;
     block-size: 100%;
-    -webkit-mask-image: radial-gradient(
-      ellipse 78% 62% at 50% 45%,
-      transparent 34%,
-      rgb(0 0 0 / 0.55) 68%,
-      #000 100%
-    );
-    mask-image: radial-gradient(
-      ellipse 78% 62% at 50% 45%,
-      transparent 34%,
-      rgb(0 0 0 / 0.55) 68%,
-      #000 100%
-    );
-  }
-
-  /* Narrow screens have no margin to spare — the content column is the whole
-     viewport, so there is nowhere for dots to live that is not behind text. */
-  @media (max-width: 48rem) {
-    .dotgrid {
-      display: none;
-    }
   }
 
   /* Decorative colour is discarded by the OS here, and a dot field behind real
@@ -190,7 +160,6 @@ const config = {
     returnDuration: number;
     speedTrigger: number;
     maxSpeed: number;
-    parallax: number;
   };
 
   /* GSAP's elastic.out(amplitude 1, period 0.75), written out. This shape is
@@ -237,8 +206,6 @@ const config = {
     let width = 0;
     let height = 0;
     let running = false;
-    let shiftY = 0;
-    let lastScroll = -1;
 
     const pointer = { x: -9999, y: -9999, lastX: 0, lastY: 0, lastT: 0, moved: false };
 
@@ -248,8 +215,8 @@ const config = {
       active = toRgba(cs.getPropertyValue('--dot-active'));
     }
 
-    /* The grid carries two spare rows — one above, one below — so the parallax
-       offset always has a row to bring in and never opens a gap at an edge. */
+    /* Whole cells only, with the remainder split evenly so the field is
+       centred rather than anchored to one corner. */
     function build() {
       const r = host!.getBoundingClientRect();
       width = r.width;
@@ -262,9 +229,9 @@ const config = {
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const cols = Math.floor((width + cfg.gap) / cell);
-      const rows = Math.floor((height + cfg.gap) / cell) + 2;
+      const rows = Math.floor((height + cfg.gap) / cell);
       const startX = (width - (cell * cols - cfg.gap)) / 2 + cfg.dotSize / 2;
-      const startY = (height - (cell * (rows - 2) - cfg.gap)) / 2 + cfg.dotSize / 2 - cell;
+      const startY = (height - (cell * rows - cfg.gap)) / 2 + cfg.dotSize / 2;
 
       dots = [];
       for (let y = 0; y < rows; y++) {
@@ -279,20 +246,6 @@ const config = {
       }
     }
 
-    /* Scroll travels at `parallax` of page speed, then wraps at one cell.
-       Because every row is identical, wrapping is invisible — which is what
-       lets a viewport-sized canvas scroll indefinitely. */
-    function updateShift() {
-      if (motionReduced()) {
-        shiftY = 0;
-        return false;
-      }
-      const next = -(((window.scrollY * cfg.parallax) % cell) + cell) % cell;
-      if (next === shiftY) return false;
-      shiftY = next;
-      return true;
-    }
-
     function draw() {
       const r = cfg.dotSize / 2;
       const prox = cfg.proximity;
@@ -305,15 +258,14 @@ const config = {
       ctx!.beginPath();
       const near: Dot[] = [];
       for (const d of dots) {
-        const py = d.cy + shiftY;
         const dx = d.cx - pointer.x;
-        const dy = py - pointer.y;
+        const dy = d.cy - pointer.y;
         if (dx * dx + dy * dy <= proxSq) {
           near.push(d);
           continue;
         }
         const x = d.cx + d.ox;
-        const y = py + d.oy;
+        const y = d.cy + d.oy;
         ctx!.moveTo(x + r, y);
         ctx!.arc(x, y, r, 0, Math.PI * 2);
       }
@@ -322,14 +274,13 @@ const config = {
 
       /* Pass 2 — only dots near the pointer need an individual colour. */
       for (const d of near) {
-        const py = d.cy + shiftY;
-        const t = 1 - Math.hypot(d.cx - pointer.x, py - pointer.y) / prox;
+        const t = 1 - Math.hypot(d.cx - pointer.x, d.cy - pointer.y) / prox;
         const cr = base[0] + (active[0] - base[0]) * t;
         const cg = base[1] + (active[1] - base[1]) * t;
         const cb = base[2] + (active[2] - base[2]) * t;
         const ca = base[3] + (active[3] - base[3]) * t;
         ctx!.beginPath();
-        ctx!.arc(d.cx + d.ox, py + d.oy, r, 0, Math.PI * 2);
+        ctx!.arc(d.cx + d.ox, d.cy + d.oy, r, 0, Math.PI * 2);
         ctx!.fillStyle = `rgba(${cr | 0},${cg | 0},${cb | 0},${ca})`;
         ctx!.fill();
       }
@@ -370,15 +321,13 @@ const config = {
     }
 
     let last = 0;
-    let dirty = false;
     function loop(now: number) {
       const dt = last ? Math.min(now - last, 50) : 16;
       last = now;
       const busy = step(dt);
       draw();
-      if ((busy || pointer.moved || dirty) && !motionReduced()) {
+      if ((busy || pointer.moved) && !motionReduced()) {
         pointer.moved = false;
-        dirty = false;
         requestAnimationFrame(loop);
       } else {
         running = false;
@@ -421,7 +370,7 @@ const config = {
         for (const d of dots) {
           if (d.phase !== 0) continue;
           const dx = d.cx - pointer.x;
-          const dy = d.cy + shiftY - pointer.y;
+          const dy = d.cy - pointer.y;
           if (Math.hypot(dx, dy) < cfg.proximity) {
             push(d, dx + vx * 0.005, dy + vy * 0.005);
           }
@@ -434,7 +383,7 @@ const config = {
       if (motionReduced()) return;
       for (const d of dots) {
         const dx = d.cx - e.clientX;
-        const dy = d.cy + shiftY - e.clientY;
+        const dy = d.cy - e.clientY;
         const dist = Math.hypot(dx, dy);
         if (dist < cfg.shockRadius) {
           const falloff = Math.max(0, 1 - dist / cfg.shockRadius);
@@ -444,33 +393,19 @@ const config = {
       wake();
     }
 
-    /* -- Scroll. Passive, and it only wakes the loop when the offset actually
-       moved — a scroll of two pixels at 0.2 parallax often does not. ------ */
-    function onScroll() {
-      if (window.scrollY === lastScroll) return;
-      lastScroll = window.scrollY;
-      if (updateShift()) {
-        dirty = true;
-        wake();
-      }
-    }
-
     /* -- Wiring ---------------------------------------------------------- */
     readColors();
     build();
-    updateShift();
     draw();
 
     new ResizeObserver(() => {
       build();
-      updateShift();
       draw();
       wake();
     }).observe(host);
 
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('pointerdown', onDown, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
 
     /* Painted from tokens, so a theme change has to repaint it. A frame's wait
        lets the custom properties settle before they are read back. */
@@ -481,8 +416,8 @@ const config = {
       });
     });
 
-    /* Reducing motion parks every dot at home, drops the parallax offset and
-       leaves a still field — a composed resting state, not an empty box. */
+    /* Reducing motion parks every dot at home and leaves a still field — a
+       composed resting state, not an empty box. The grid stays visible. */
     onMotionChange((reduced) => {
       if (reduced) {
         for (const d of dots) {
@@ -490,11 +425,8 @@ const config = {
           d.phase = 0;
         }
         pointer.x = pointer.y = -9999;
-        shiftY = 0;
         draw();
       } else {
-        updateShift();
-        dirty = true;
         wake();
       }
     });
