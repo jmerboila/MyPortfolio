@@ -1,0 +1,233 @@
+/* ============================================================================
+   v2b.css — the shared chrome for the v2B variant.
+   ----------------------------------------------------------------------------
+   v2B is an alternate ART DIRECTION for the same brand, not a second brand.
+   It deliberately inherits every token from tokens.css — the Devsign8 type
+   system, the cobalt accent, the spacing ratio, the motion curves — and
+   changes only how they are used. That is what makes it comparable with v2:
+   the brand is the control and the layout is the variable. A variant that
+   also changed the typeface and the palette would tell you nothing about the
+   layout.
+
+   WHAT "MINIMAL" MEANS HERE, concretely, and how it differs from v2:
+     - No filled cards. v2 puts work in bordered, --bg-2 filled cards; v2B uses
+       hairline-separated rows and nothing else. The surface is the page.
+     - No chrome that is not load-bearing. No filter chips, no tag pills, no
+       stat blocks, no icon buttons.
+     - Type does the work. The scale is pushed harder at the top end and the
+       accent appears only on interaction, never as decoration.
+     - Colour is almost absent until you touch something.
+
+   THIS FILE IS GLOBAL, not a scoped component style, because v2B's chrome is
+   shared by the layout AND by components rendered inside it — and an Astro
+   component's styles never reach its children. That is the same trap
+   .section__label hit in v2, documented in base.css.
+   ========================================================================= */
+
+/* -- Shell ---------------------------------------------------------------- */
+.v2b {
+  /* A tighter measure than v2's 78rem. Minimal layouts read as considered
+     when the column is narrower than the screen, not when it fills it. */
+  --v2b-max: 70rem;
+  --v2b-rule: 1px solid var(--border);
+
+  /* The lift behind the portrait's head. See .mesh-hero::before — on the night
+     ground the subject's dark hair dissolves into #0a0b10 and the silhouette
+     is lost from the ears up, which is why light mode has always read as the
+     stronger of the two. Transparent on paper, where the head already
+     separates cleanly and a halo would only muddy it.
+
+     Declared here rather than in tokens.css because it is an art-direction
+     value for one variant, not part of the shared design system. It follows
+     tokens.css's three-state pattern exactly, so an explicit theme choice
+     still beats the OS preference in both directions. */
+  --mesh-halo: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .v2b:not([data-theme='light']) {
+    --mesh-halo: rgb(110 155 255 / 0.07);
+  }
+}
+
+.v2b[data-theme='dark'] {
+  --mesh-halo: rgb(110 155 255 / 0.07);
+}
+
+.v2b-container {
+  inline-size: 100%;
+  max-inline-size: var(--v2b-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* -- Header --------------------------------------------------------------- */
+/* Not sticky, unlike v2. A minimal page that scrolls under a persistent bar
+   is not minimal — and dropping it also drops the whole 2.4.11 Focus Not
+   Obscured problem a sticky header creates, rather than mitigating it. */
+/* --space-m block padding measured 92px tall at desktop, which is over the
+   80px a page header should ever take. It also came straight out of the hero,
+   because the hero's height is 100svh MINUS this. --space-s buys 32px back for
+   the composition and lands the header at ~60px. */
+.v2b-header {
+  padding-block: var(--space-s);
+}
+
+.v2b-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.v2b-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  /* BOTH of these, and neither is optional. A flex item's default
+     min-inline-size: auto does NOT protect an item whose text can wrap: at
+     375px the wordmark broke to two lines, the box shrank to 72px around
+     109px of content, and the inline-flex badge — which cannot wrap — spilled
+     14px over the "Work" link. nowrap stops the wrap, flex-shrink stops the
+     box being squeezed under the resulting intrinsic width. */
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* The variant badge. This is a development affordance, not a design element —
+   it is how you tell at a glance which version you are looking at, and it
+   should be deleted if v2B is ever promoted to the real site. */
+.v2b-badge {
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  padding: 0.1em 0.6em;
+}
+
+.v2b-header__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.v2b-header__links a,
+.v2b-header__links button {
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 0;
+  /* base.css gives every control a 44px minimum box. In this header the
+     controls are words in a line of text, which WCAG 2.5.8 explicitly excepts
+     — and a 44px tall word would wreck the line. */
+  min-block-size: 0;
+  min-inline-size: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+
+.v2b-header__links a:hover,
+.v2b-header__links a:focus-visible,
+.v2b-header__links button:hover,
+.v2b-header__links button:focus-visible {
+  color: var(--accent);
+}
+
+/* The way back to v2. A development affordance like .v2b-badge, and the first
+   thing to drop when space runs out — it is not navigation a visitor wants. */
+.v2b-backlink {
+  display: none;
+}
+
+@media (min-width: 42rem) {
+  .v2b-backlink {
+    display: inline;
+  }
+}
+
+/* Below 42rem the four nav words plus the wordmark need 444px of a 332px
+   content column. There is no set of gaps that fixes that, so the header
+   becomes two rows: mark, then nav spread across the full width. Both rows are
+   single-line, which is the part that was actually broken. */
+@media (max-width: 42rem) {
+  .v2b-header__inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-xs);
+  }
+
+  .v2b-header__links {
+    justify-content: space-between;
+    gap: var(--space-s);
+  }
+}
+
+/* -- Sections ------------------------------------------------------------- */
+.v2b-section {
+  padding-block: var(--space-2xl);
+  border-block-start: var(--v2b-rule);
+}
+
+/* A real <h2>, not a decorative label — it is what aria-labelledby points at,
+   and a section heading that only exists as a styled <p> is a heading the
+   document outline does not have. Styled down to eyebrow scale because in this
+   art direction the work titles below are the display type, not this.
+
+   Two cells rather than one line, which is how "Work — 7 projects" loses its
+   em-dash: the count moves to its own column instead of hanging off a dash. */
+.v2b-eyebrow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-m);
+  font-size: var(--step--1);
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-block-end: var(--space-l);
+}
+
+/* -- Footer --------------------------------------------------------------- */
+.v2b-footer {
+  padding-block: var(--space-xl);
+  border-block-start: var(--v2b-rule);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-m);
+  font-size: var(--step--1);
+  color: var(--text-dim);
+}
+
+.v2b-footer a {
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+
+.v2b-footer a:hover,
+.v2b-footer a:focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.v2b-footer__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-m);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
