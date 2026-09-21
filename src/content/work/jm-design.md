@@ -10,10 +10,10 @@ tags:
   - "Branding"
   - "Monogram"
 cover: "../../assets/projects/JMDesign-Preview.webp"
-coverAlt: "JM Design — designer, developer and founder of the digital agency Devsign8."
+coverAlt: "The JM monogram in gold on black — a serif J and M interlocked so the stem of the J passes through the M."
 gallery:
   - src: "../../assets/projects/JMDesign-Full.webp"
-    alt: "JM Design — additional view"
+    alt: "The primary JM monogram in black on cream, captioned as the heart of the identity."
 client: "Self-initiated"
 featured: false
 order: 50

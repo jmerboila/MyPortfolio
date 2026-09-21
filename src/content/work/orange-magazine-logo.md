@@ -10,10 +10,10 @@ tags:
   - "Hybrid"
   - "Combination Mark"
 cover: "../../assets/projects/OrangeMagazine-Logo-Preview.webp"
-coverAlt: "Orange Magazine Logo — The Orange Magazine logo is a combination mark that pairs a bold, geometric wordmark with a simple, circular i"
+coverAlt: "The Orange Magazine icon — a flat orange circle with two green leaves, drawn as a stylised orange."
 gallery:
   - src: "../../assets/projects/OrangeMagazine-Logo-Full.webp"
-    alt: "Orange Magazine Logo — additional view"
+    alt: "The full Orange Magazine combination mark: the orange icon doubling as the O of a heavy black wordmark, stacked over two lines."
 featured: true
 order: 40
 ---

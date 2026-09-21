@@ -123,7 +123,9 @@
      is paired with a rem component so text still scales when a user zooms —
      a pure-vw font-size fails WCAG 1.4.4 Resize Text. */
   --step--1: clamp(0.83rem, 0.79rem + 0.19vw, 0.94rem);
-  --step-0: clamp(1rem, 0.95rem + 0.24vw, 1.13rem);
+  /* Body. devsign8.com sets 18px, dropping to 17px at <=480px; this reaches
+     the same two values fluidly (17px floor, 18px from ~1000px). */
+  --step-0: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);
   --step-1: clamp(1.2rem, 1.13rem + 0.36vw, 1.41rem);
   --step-2: clamp(1.44rem, 1.34rem + 0.52vw, 1.76rem);
   --step-3: clamp(1.73rem, 1.58rem + 0.74vw, 2.2rem);
@@ -132,9 +134,33 @@
   --step-6: clamp(2.99rem, 2.57rem + 2.06vw, 4.29rem);
   --step-7: clamp(3.58rem, 3.02rem + 2.83vw, 5.36rem);
 
+  /* Display sizes lifted from devsign8.com's own rules, re-expressed with a
+     rem term. The brand site writes h1 as clamp(2.5rem, 6vw, 5.2rem) and the
+     section h2 as clamp(2rem, 4.5vw, 3.4rem) — pure-vw middles, which fail
+     1.4.4 per the note above. These keep the same floor and ceiling and land
+     within a pixel or two of the brand site at 1024px (61px / 46px). */
+  --step-hero: clamp(2.5rem, 0.64rem + 5vw, 5.2rem);
+  --step-section: clamp(2rem, 0.48rem + 3.75vw, 3.4rem);
+
   --leading-tight: 1.05;
+  --leading-display: 1.06;
   --leading-snug: 1.25;
   --leading-normal: 1.6;
+
+  /* Weight and tracking, read off devsign8.com's computed styles on
+     2026-09-21. The brand is LIGHTER than v2 had been: h1 600 and section h2
+     500, where v2 set every heading at 700. Tracking tightens as size grows,
+     and small-caps labels are barely opened (0.04em), not the 0.14–0.2em
+     spread v2 had used. Tokens rather than literals so the two sites can be
+     re-synced from one block. */
+  --weight-h1: 600;
+  --weight-h2: 500;
+  --weight-h3: 600;
+  --tracking-body: -0.01em;
+  --tracking-h1: -0.03em;
+  --tracking-h2: -0.025em;
+  --tracking-h3: -0.02em;
+  --tracking-caps: 0.04em;
   /* Long-form prose gets a measure cap. 66ch is the readable ceiling. */
   --measure: 66ch;
 

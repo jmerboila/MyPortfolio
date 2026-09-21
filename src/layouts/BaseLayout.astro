@@ -25,13 +25,16 @@ import DotGrid from '../components/DotGrid.astro';
    appears only as <span class="serif"> inside display type, never as body
    copy.
 
-   Only the ITALIC of Instrument Serif is imported, because the accent is the
-   only thing using it. The brand site also sets its 01/02/03 card numerals in
-   the upright cut; add `@fontsource/instrument-serif/400.css` when the Work
-   and Services sections land, not before. */
+   BOTH CUTS ARE NOW IMPORTED. The italic carries the accent word inside
+   headings. The UPRIGHT is the Services card numerals (01/02/03), which is the
+   second thing the brand site does with this family — the note that used to
+   sit here said to add it "when the Work and Services sections land, not
+   before", and Services has now landed. If those numerals are ever removed,
+   remove this import with them rather than paying for a face nothing sets. */
 import '@fontsource-variable/inter-tight/wght.css';
 import '@fontsource-variable/inter-tight/wght-italic.css';
 import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/instrument-serif/400.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
 

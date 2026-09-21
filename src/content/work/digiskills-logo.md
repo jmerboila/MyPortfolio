@@ -10,10 +10,10 @@ tags:
   - "Mobile App"
   - "Symbol"
 cover: "../../assets/projects/DigiSkills-Logo-Preview.webp"
-coverAlt: "DigiSkills App Logo — The DigiSkills logo is a playful, friendly design that appeals to children while conveying the app's focus on "
+coverAlt: "The DigiSkills app icon — an open white book on a deep navy rounded square, with three orange squares rising from its pages like pixels."
 gallery:
   - src: "../../assets/projects/DigiSkills-Logo-Full.webp"
-    alt: "DigiSkills App Logo — additional view"
+    alt: "The DigiSkills book mark on its construction grid, with guides labelled pixel field, book mouth, centre and baseline."
 featured: false
 order: 60
 ---

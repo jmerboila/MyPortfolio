@@ -1,0 +1,244 @@
+---
+/* ============================================================================
+   About.astro — who is behind the work.
+   ----------------------------------------------------------------------------
+   THE COPY IS v1's, NOT NEW. Every sentence here was already published on
+   jmerboila.github.io/MyPortfolio and is carried across verbatim, as are the
+   three counts. Nothing about Jayson is invented in this file — if a claim is
+   not in v1 or in site.ts, it is not on the page.
+
+   THE IMAGE IS THE MESH HEADSHOT — a 3D polygon-mesh render of Jayson's head,
+   the same asset v2B's hero is built on. It replaced v1's
+   `jayson-portrait.webp`, which despite its name is a photo of the Devsign8
+   wall sign with no person in it (still at src/assets/devsign8-sign.webp).
+   This section is "who is behind the work", so here the portrait carries
+   meaning and gets real alt text — unlike v2B, where the <h1> already names
+   him and the render is aria-hidden atmosphere.
+
+   The file is a transparent WebP with its edge fade and side blur BAKED IN.
+   So no border, no radius and no background behind it: any of those draws a
+   box around a picture designed to have no edges.
+
+   THE SKILL LIST IS DERIVED, NOT RETYPED. It renders PERSON.knowsAbout, which
+   is the same array that feeds the Person schema in BaseLayout. v1 kept two
+   copies of this list and they had already drifted; one source means the page
+   and the entity graph cannot disagree.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import { PERSON } from '../config/site';
+/* ONE render for both themes. Built by scripts/mesh-portrait.py from the
+   crisp cutout in src/assets/source/: a sharp face and ears, only the outer
+   hair softened (the subtle strength Jayson chose from three), and a long
+   radial fade at the neck. Colour is blurred fully but alpha only partly: a
+   plain blur spread the dark hair into a grey haze that the night ground hid
+   and the paper ground showed, so this keeps the softness inside the
+   silhouette and the one file reads cleanly on both.
+   v2B's hero still uses the original render, jayson-mesh-headshot.webp. */
+import meshPortrait from '../assets/jayson-mesh-portrait.webp';
+
+/* The counts v1 published. Kept as data so the markup stays a loop rather
+   than three near-identical blocks that drift apart. */
+const STATS = [
+  { value: '40+', label: 'Projects' },
+  { value: '5+', label: 'Years' },
+  { value: '20+', label: 'Clients' },
+] as const;
+---
+
+<div class="about">
+  <div class="about__text">
+    <p class="prose about__para">
+      I&rsquo;m a Digital Marketing Specialist and multidisciplinary designer,
+      with a passion for building memorable brand experiences. From marketing
+      strategy and SEO to pixel-perfect logos and immersive digital interfaces,
+      I work at the intersection of <em>strategy</em> and <em>aesthetics</em>.
+    </p>
+
+    <p class="prose about__para">
+      With 5+ years of experience working with brands across various
+      industries, I bring ideas to life through thoughtful, intentional design.
+    </p>
+
+    {/* A description list, not three divs: each number IS the value of a named
+        measure, which is exactly what <dl> encodes. A screen reader then reads
+        "Projects, 40 plus" rather than two unrelated strings.
+
+        The visual order is number-then-label, so the item is reversed by CSS.
+        The DOM keeps dt before dd, because that is the order assistive tech
+        reads and `flex-direction` must not be the thing that decides it. */}
+    <dl class="stats">
+      {
+        STATS.map((s) => (
+          <div class="stats__item">
+            <dt class="stats__label">{s.label}</dt>
+            <dd class="stats__value">{s.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <h3 class="about__sub" id="skills-heading">What I work in</h3>
+    <ul class="skills" role="list" aria-labelledby="skills-heading">
+      {PERSON.knowsAbout.map((skill) => <li>{skill}</li>)}
+    </ul>
+  </div>
+
+  <figure class="about__figure">
+    <Image
+      class="about__img"
+      src={meshPortrait}
+      alt="Jayson's head rendered as a grey 3D polygon mesh, a fine wireframe traced over his face beneath swept-back hair."
+      widths={[400, 726]}
+      sizes="(min-width: 60rem) 22rem, min(80vw, 22rem)"
+      loading="lazy"
+      decoding="async"
+    />
+  </figure>
+</div>
+
+<style>
+  .about {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  /* One column until there is genuinely room for two. Below this the image
+     would be a thumbnail next to a squeezed measure, which helps nobody. */
+  @media (min-width: 60rem) {
+    .about {
+      grid-template-columns: minmax(0, 1fr) 26rem;
+      gap: var(--space-2xl);
+    }
+  }
+
+  .about__para {
+    font-size: var(--step-1);
+    color: var(--text-dim);
+  }
+
+  .about__para + .about__para {
+    margin-block-start: var(--space-s);
+  }
+
+  /* The italic accent is defined in base.css for h1/h2/h3 and .display only —
+     deliberately, so it cannot leak into body copy. This paragraph is the one
+     considered exception, so it opts in explicitly rather than by widening
+     that global rule. */
+  .about__para em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-synthesis: none;
+    color: var(--accent);
+  }
+
+  /* -- Stats -------------------------------------------------------------- */
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m) var(--space-xl);
+    margin-block: var(--space-xl);
+    padding-block: var(--space-m);
+    border-block: 1px solid var(--border);
+  }
+
+  .stats__item {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .stats__value {
+    margin: 0;
+    font-size: var(--step-5);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    letter-spacing: -0.03em;
+    /* Tabular figures so 40+, 5+ and 20+ sit on a common rhythm rather than
+       each number setting its own width. */
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+
+  .stats__label {
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* -- Skills ------------------------------------------------------------- */
+  .about__sub {
+    font-size: var(--step-1);
+    margin-block-end: var(--space-s);
+  }
+
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .skills li {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    padding: var(--space-3xs) var(--space-s);
+  }
+
+  /* -- Figure ------------------------------------------------------------- */
+  /* Capped at 22rem, not the column's 26rem: the render is 726x1166, so at
+     full column width it would stand ~670px tall and outgrow the text beside
+     it. Centred so the stacked (mobile) layout does not hang it off the left. */
+  .about__figure {
+    --mesh-halo: transparent;
+    position: relative;
+    margin: 0 auto;
+    inline-size: 100%;
+    max-inline-size: 22rem;
+  }
+
+  /* Night ground only. The subject's dark hair has the same luminance as
+     #0a0b10, so without a lift the silhouette dissolves from the ears up —
+     measured on v2B, fixed there with the same 7% cobalt halo. Transparent on
+     paper, where the head already separates cleanly.
+     :global() because the theme attribute lives on <html>, outside this
+     component's scope. Follows tokens.css's three-state order: an explicit
+     choice beats the OS preference in both directions. */
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .about__figure {
+      --mesh-halo: rgb(110 155 255 / 0.07);
+    }
+  }
+
+  :global(:root[data-theme='dark']) .about__figure {
+    --mesh-halo: rgb(110 155 255 / 0.07);
+  }
+
+  .about__figure::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(48% 40% at 50% 38%, var(--mesh-halo) 0%, transparent 70%);
+  }
+
+  .about__img {
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  @media (forced-colors: active) {
+    .skills li {
+      border-color: CanvasText;
+    }
+  }
+</style>

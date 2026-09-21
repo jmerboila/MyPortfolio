@@ -11,10 +11,10 @@ tags:
   - "UI Design"
   - "UX Research"
 cover: "../../assets/projects/DigiSkills-Preview.webp"
-coverAlt: "DigiSkills — Be Safe Online is a free, offline-first mobile app that teaches children aged 7–11 how to stay safe on the int"
+coverAlt: "The DigiSkills welcome screen on a phone — a smiling orange character on a deep purple ground above the line 'Learn to stay safe online'."
 gallery:
   - src: "../../assets/projects/DigiSkills-Full.webp"
-    alt: "DigiSkills — additional view"
+    alt: "Three DigiSkills screens side by side: the welcome screen, a 'Who's it for?' profile setup with colour and character pickers, and a 'Brilliant!' three-star reward screen."
 constraints:
   - "Works fully offline — no connection required"
   - "No ads and no data collection"

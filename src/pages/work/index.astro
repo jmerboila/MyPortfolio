@@ -1,0 +1,115 @@
+---
+/* ============================================================================
+   /work — the full body of work.
+   ----------------------------------------------------------------------------
+   WHY THIS PAGE EXISTS. WorkGrid has always taken a `featuredOnly` prop and
+   nothing ever passed it, so the homepage rendered all seven projects and
+   there was nowhere else to send anyone. The homepage now shows the featured
+   set and hands off here, which is what that prop was written for.
+
+   IT IS ALSO AN SEO ASSET IN ITS OWN RIGHT. "/#work" is a fragment — it cannot
+   rank, cannot be linked to as a distinct result, and cannot carry its own
+   title or description. "/work/" can do all three, and it is the URL worth
+   giving to anyone who asks to see the portfolio.
+
+   THE FILTER BAR COMES FOR FREE. It lives in WorkGrid, derives its buttons
+   from the categories actually present, and reveals itself only once its
+   script has run. Nothing extra is needed here.
+   ========================================================================= */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import WorkGrid from '../../components/WorkGrid.astro';
+import { href } from '../../lib/url';
+import { absoluteUrl, PERSON } from '../../config/site';
+
+const entries = await getCollection('work', ({ data }) => !data.draft);
+const sorted = entries.sort((a, b) =>
+  a.data.order !== b.data.order
+    ? a.data.order - b.data.order
+    : a.data.title.localeCompare(b.data.title),
+);
+
+const description =
+  `Selected design and marketing projects by ${PERSON.name} — logo and brand ` +
+  'identity, web and app interfaces, and social campaign work.';
+
+/* An ItemList of the projects in the order they appear. This is what lets a
+   search result show the collection rather than a single page, and what an
+   answer engine walks when asked what work exists. Each item points at the
+   same URL /work/[slug] declares its CreativeWork @id against, so the two
+   descriptions of the collection agree. */
+const schema = [
+  {
+    '@type': 'CollectionPage',
+    '@id': `${absoluteUrl('/work/')}#collection`,
+    name: 'Work',
+    description,
+    isPartOf: { '@id': `${absoluteUrl('/')}#website` },
+    about: { '@id': `${absoluteUrl('/')}#person` },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: sorted.length,
+      itemListElement: sorted.map((entry, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: absoluteUrl(`/work/${entry.id}/`),
+        name: entry.data.title,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout title="Work" description={description} path="/work/" schema={schema}>
+  <SiteHeader slot="header" />
+  <SiteFooter slot="footer" />
+
+  <div class="work-page section container">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={href('/')}>Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Work</span>
+    </nav>
+
+    <p class="section__label">Selected work</p>
+    <h1 class="section__title">Every <em>project</em></h1>
+    <p class="section__lede">
+      {sorted.length} projects across brand identity, digital product and social
+      campaign work. Filter by type, or open any one for the full artwork.
+    </p>
+
+    {/* No featuredOnly: this is the whole collection. */}
+    <WorkGrid />
+  </div>
+</BaseLayout>
+
+<style>
+  /* The page heading is an <h1> here rather than the <h2> the homepage uses,
+     but it is the same visual rank — so it borrows .section__title from
+     base.css instead of inheriting the much larger default h1 size. */
+  .work-page {
+    /* Clears the sticky header, which the homepage gets from the hero's own
+       top padding and this page has no hero to provide. */
+    padding-block-start: calc(var(--header-height, 4.5rem) + var(--space-xl));
+  }
+
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-size: var(--step--1);
+    color: var(--text-dim);
+    margin-block-end: var(--space-l);
+  }
+
+  .crumbs a {
+    color: inherit;
+  }
+
+  .crumbs a:hover {
+    color: var(--accent);
+  }
+</style>

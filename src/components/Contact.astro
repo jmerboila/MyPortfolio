@@ -1,0 +1,193 @@
+---
+/* ============================================================================
+   Contact.astro — the one thing the whole page is for.
+   ----------------------------------------------------------------------------
+   A MAILTO, NOT A FORM. A form on a static GitHub Pages build has no server to
+   post to, so it would need a third-party endpoint (Formspree, Netlify) — a
+   new dependency, a new privacy surface to disclose, and a new way for a
+   message to be silently dropped. A mailto opens the visitor's own client,
+   works with no JavaScript, and cannot fail quietly. If a form is wanted
+   later, that is a deliberate decision with a provider attached, not a default.
+
+   THE ADDRESS IS VISIBLE AS TEXT, not hidden behind "Say hello" alone. Some
+   people are not on a configured mail client and need to copy it; some prefer
+   to know where a link goes before they press it. It is also what an answer
+   engine extracts when asked how to reach him, which the mailto href alone
+   does not reliably give.
+
+   COPY IS v1's, carried over verbatim — same as About. Nothing new is claimed.
+
+   NOTE ON THE ADDRESS ITSELF: site.ts carries an open TODO about whether the
+   published address stays jmerboila@gmail.com or moves to the Devsign8 one.
+   This component reads PERSON.email, so resolving that TODO is a one-line
+   change in site.ts and never an edit here.
+   ========================================================================= */
+import { PERSON, SOCIALS } from '../config/site';
+---
+
+<div class="contact">
+  <div class="contact__lead">
+    <p class="prose contact__para">
+      Have a project in mind? I&rsquo;d love to hear about it. Whether
+      it&rsquo;s a brand, a product, or just an idea — <em>let&rsquo;s talk</em>.
+    </p>
+
+    <a class="contact__cta" href={`mailto:${PERSON.email}`}>
+      <span>Say hello</span>
+      <span class="contact__arrow" aria-hidden="true">&rarr;</span>
+    </a>
+  </div>
+
+  {/* A description list again, for the same reason as the About stats: each
+      of these is a labelled value, and <dl> is the element that says so. */}
+  <dl class="contact__details">
+    <div class="contact__row">
+      <dt>Email</dt>
+      <dd>
+        <a href={`mailto:${PERSON.email}`}>{PERSON.email}</a>
+      </dd>
+    </div>
+
+    <div class="contact__row">
+      <dt>Based in</dt>
+      <dd>
+        {PERSON.location.city}, {PERSON.location.region}, {PERSON.location.country}
+      </dd>
+    </div>
+
+    <div class="contact__row">
+      <dt>Elsewhere</dt>
+      <dd>
+        <ul class="contact__socials" role="list">
+          {
+            SOCIALS.map((s) => (
+              <li>
+                {/* rel="me" is what links these profiles back to this page as
+                    the same identity — the HTML counterpart of schema.org
+                    sameAs, which BaseLayout already emits from this same
+                    SOCIALS array. */}
+                <a href={s.url} target="_blank" rel="noopener me">
+                  {s.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </dd>
+    </div>
+  </dl>
+</div>
+
+<style>
+  .contact {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  @media (min-width: 58rem) {
+    .contact {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: var(--space-2xl);
+    }
+  }
+
+  .contact__para {
+    font-size: var(--step-2);
+    color: var(--text-dim);
+    margin-block-end: var(--space-l);
+  }
+
+  /* Same considered exception as .about__para em — the accent italic opting
+     in explicitly rather than widening the global heading rule. */
+  .contact__para em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-synthesis: none;
+    color: var(--accent);
+  }
+
+  /* -- The CTA ------------------------------------------------------------ */
+  .contact__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: var(--space-xs) var(--space-l);
+    border-radius: var(--radius-full);
+    background-color: var(--accent);
+    color: var(--on-accent);
+    /* Same as the hero buttons: devsign8.com's .btn, 16px / 500 / sentence case. */
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition:
+      background-color var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-base) var(--ease-out-quart);
+  }
+
+  .contact__cta:hover,
+  .contact__cta:focus-visible {
+    background-color: var(--accent-strong);
+    transform: translateY(-2px);
+  }
+
+  .contact__arrow {
+    transition: transform var(--dur-base) var(--ease-out-quart);
+  }
+
+  .contact__cta:hover .contact__arrow,
+  .contact__cta:focus-visible .contact__arrow {
+    transform: translateX(0.25em);
+  }
+
+  /* In forced-colors the accent fill is discarded, so the button would lose
+     its only affordance — the same fix the hero buttons carry. */
+  @media (forced-colors: active) {
+    .contact__cta {
+      border-color: ButtonText;
+    }
+  }
+
+  /* -- Details ------------------------------------------------------------ */
+  .contact__details {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  .contact__row {
+    padding-block-start: var(--space-s);
+    border-block-start: 1px solid var(--border);
+  }
+
+  .contact__details dt {
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-block-end: var(--space-3xs);
+  }
+
+  .contact__details dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .contact__details a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    /* Long addresses must wrap rather than push the grid wide on a phone. */
+    overflow-wrap: anywhere;
+  }
+
+  .contact__socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+</style>

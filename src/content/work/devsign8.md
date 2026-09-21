@@ -10,10 +10,10 @@ tags:
   - "Branding"
   - "Wordmark"
 cover: "../../assets/projects/Devsign8-Logo.webp"
-coverAlt: "Devsign8 — Devsign8 was built on one idea: limitless creativity. From websites and branding to digital marketing, we help"
+coverAlt: "The Devsign8 wordmark — 'Dev' in a heavy sans and 'sign8' in a contrasting serif — set over a construction grid marking cap height, x-height, baseline and descender."
 gallery:
   - src: "../../assets/projects/Devsign8-Logo-Full.webp"
-    alt: "Devsign8 — additional view"
+    alt: "The Devsign8 wordmark enlarged on its construction grid, with the cap-height, x-height, baseline and descender guides labelled."
 client: "Self-initiated"
 featured: true
 order: 10

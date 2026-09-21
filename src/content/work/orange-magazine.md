@@ -11,10 +11,10 @@ tags:
   - "UI"
   - "Mobile"
 cover: "../../assets/projects/OrangeMagazine-Preview.webp"
-coverAlt: "Orange Magazine — K-pop, music, film & TV, and the people shaping it. Desktop & mobile, light & dark, built on one bold orange s"
+coverAlt: "The Orange Magazine site shown on a phone, a laptop and a tablet — a dark navigation bar above a light editorial grid led by a green cover-story panel."
 gallery:
   - src: "../../assets/projects/OrangeMagazine-Full.webp"
-    alt: "Orange Magazine — additional view"
+    alt: "The same three-device mockup on a marble surface, the tablet showing the story grid above an orange newsletter band and the footer."
 featured: true
 order: 20
 ---

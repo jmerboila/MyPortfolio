@@ -91,16 +91,17 @@ import { href } from '../lib/url';
     z-index: var(--z-raised);
   }
 
+  /* devsign8.com's .eyebrow — matches .section__label in base.css. */
   .hero__eyebrow {
-    font-size: var(--step--1);
-    letter-spacing: 0.2em;
+    font-size: 0.875rem;
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
-    color: var(--text-dim);
+    color: var(--accent);
     margin-block-end: var(--space-m);
   }
 
   .hero__heading {
-    font-size: var(--step-7);
+    font-size: var(--step-hero);
     max-inline-size: 18ch;
     margin-block-end: var(--space-m);
   }
@@ -207,10 +208,9 @@ import { href } from '../lib/url';
     justify-content: center;
     padding: var(--space-xs) var(--space-l);
     border-radius: var(--radius-full);
-    font-size: var(--step--1);
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    /* devsign8.com's .btn: 16px, weight 500, sentence case, untracked. */
+    font-size: 1rem;
+    font-weight: 500;
     text-decoration: none;
     border: 1px solid transparent;
     transform: translate3d(var(--mx), calc(var(--my) + var(--lift)), 0);
@@ -269,11 +269,6 @@ import { href } from '../lib/url';
     }
   }
 
-  @media (max-width: 34rem) {
-    .hero__heading {
-      font-size: var(--step-6);
-    }
-  }
 </style>
 
 <script>

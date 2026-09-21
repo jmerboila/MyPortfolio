@@ -1,0 +1,114 @@
+---
+/* ============================================================================
+   404.astro — the not-found page.
+   ----------------------------------------------------------------------------
+   astro.config.mjs has been filtering "/404" out of the sitemap since it was
+   written, which means this page was always meant to exist; it just never got
+   made, so every mistyped URL fell through to GitHub's own default — a bare
+   white page with none of this site's chrome, no theme, and no way back.
+
+   noindex, deliberately. A soft-404 that returns 200 and gets indexed is a
+   classic way to put "Page not found" into someone's search results. GitHub
+   Pages does serve this with a real 404 status, but the meta robots tag costs
+   nothing and covers the case where it is ever served from somewhere that
+   does not.
+
+   IT OFFERS ROUTES, NOT AN APOLOGY. Whoever lands here wanted something; the
+   three links are the three things they could plausibly have been after.
+   ========================================================================= */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { href } from '../lib/url';
+
+const LINKS = [
+  { label: 'Home', to: href('/') },
+  { label: 'All work', to: href('/work/') },
+  { label: 'Get in touch', to: href('/#contact') },
+];
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page does not exist. Links back to the work and the contact details."
+  noindex
+>
+  <SiteHeader slot="header" />
+  <SiteFooter slot="footer" />
+
+  <div class="notfound container">
+    {/* Decorative: the accessible page title is the h1 below, and a screen
+        reader announcing "four zero four" before it is pure noise. */}
+    <p class="notfound__code" aria-hidden="true">404</p>
+    <h1 class="notfound__title">This page went <em>missing</em></h1>
+    <p class="notfound__lede prose">
+      The link may be out of date, or the address may have a typo in it.
+      Here is the way back.
+    </p>
+
+    <ul class="notfound__links" role="list">
+      {
+        LINKS.map((l) => (
+          <li>
+            <a href={l.to}>{l.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .notfound {
+    /* Fills the viewport below the header so the footer does not ride up under
+       a short page. svh, not vh, so mobile browser chrome does not overshoot. */
+    min-block-size: calc(100svh - var(--header-height, 4.5rem));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: var(--space-2xl);
+  }
+
+  .notfound__code {
+    font-family: var(--font-display);
+    font-style: normal;
+    font-weight: 400;
+    font-synthesis: none;
+    font-size: var(--step-7);
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--text-dim);
+    margin-block-end: var(--space-s);
+  }
+
+  .notfound__title {
+    font-size: var(--step-6);
+    max-inline-size: 16ch;
+    margin-block-end: var(--space-m);
+  }
+
+  .notfound__lede {
+    color: var(--text-dim);
+    font-size: var(--step-1);
+    margin-block-end: var(--space-xl);
+  }
+
+  .notfound__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m) var(--space-l);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .notfound__links a {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--step-1);
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+</style>

@@ -1,0 +1,168 @@
+---
+/* ============================================================================
+   Services.astro — what you can actually hire him for.
+   ----------------------------------------------------------------------------
+   THIS SECTION DID NOT EXIST IN v1, which is the point. v1 showed the work and
+   never said what was for sale, so a visitor who liked a logo had no idea
+   whether that was the whole offer or a corner of it.
+
+   WHAT IS AND IS NOT INVENTED HERE. The three groupings are a rearrangement of
+   PERSON.knowsAbout — all eight entries appear exactly once across the three
+   cards, so this section cannot claim a skill that the entity graph does not
+   already assert. The prose describes the DISCIPLINE, not the engagement:
+   there are no timelines, no prices, no deliverable counts and no client
+   outcomes anywhere in this file, because none of those are established
+   anywhere in the project and a portfolio that invents them is worse than one
+   that omits them.
+
+   THE NUMERALS ARE THE BRAND MOVE. devsign8.com sets its 01/02/03 card numbers
+   in the upright cut of Instrument Serif, and BaseLayout's font comment says
+   in as many words to import that cut "when the Work and Services sections
+   land, not before". This is that moment, so the import is now there.
+
+   `aria-hidden` on the numerals is deliberate: "01" is decorative ordering,
+   and a screen reader announcing "zero one, Brand Identity" is noise. The
+   heading carries the name on its own.
+
+   THE DATA LIVES IN src/config/services.ts, not here, because the homepage
+   also needs it to emit the matching OfferCatalog JSON-LD. See that file for
+   the reasoning and for what these descriptions deliberately omit.
+   ========================================================================= */
+import { href } from '../lib/url';
+import { SERVICES } from '../config/services';
+---
+
+<ul class="services" role="list">
+  {
+    SERVICES.map((s) => (
+      <li class="service">
+        <p class="service__n" aria-hidden="true">
+          {s.n}
+        </p>
+        <h3 class="service__title">{s.title}</h3>
+        <p class="service__body prose">{s.body}</p>
+        <ul class="service__skills" role="list">
+          {s.skills.map((k) => (
+            <li>{k}</li>
+          ))}
+        </ul>
+      </li>
+    ))
+  }
+</ul>
+
+<p class="services__cta">
+  <a class="services__link" href={href('/#contact')}>
+    Tell me what you&rsquo;re building
+    <span class="services__arrow" aria-hidden="true">&rarr;</span>
+  </a>
+</p>
+
+<style>
+  .services {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-m);
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  }
+
+  .service {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-l);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    background-color: var(--bg-2);
+    transition: border-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  /* No lift and no stretched link here, unlike the work cards: these cards are
+     not links, and a hover transform on something that cannot be clicked reads
+     as a broken affordance. Only the hairline responds. */
+  .service:hover {
+    border-color: var(--border-strong);
+  }
+
+  /* The Devsign8 numeral. Upright Instrument Serif, large, and set back in
+     --text-dim rather than the accent so it orders the cards without competing
+     with the heading directly beneath it. */
+  .service__n {
+    font-family: var(--font-display);
+    font-style: normal;
+    font-weight: 400;
+    font-synthesis: none;
+    font-size: var(--step-4);
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--text-dim);
+    margin-block-end: var(--space-s);
+  }
+
+  .service__title {
+    font-size: var(--step-2);
+    margin-block-end: var(--space-2xs);
+  }
+
+  .service__body {
+    color: var(--text-dim);
+    /* Pushes the skill list to the bottom of every card regardless of how long
+       the description runs, so the three lists line up across the row. */
+    flex-grow: 1;
+    margin-block-end: var(--space-m);
+  }
+
+  .service__skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .service__skills li {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    padding: 0.1em 0.5em;
+  }
+
+  /* -- Closing link ------------------------------------------------------- */
+  .services__cta {
+    margin-block-start: var(--space-xl);
+  }
+
+  .services__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-size: var(--step-1);
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  /* Only the arrow moves. Translating the whole link would shift its own
+     underline and the text under the pointer; moving one glyph reads as the
+     link pointing somewhere. */
+  .services__arrow {
+    transition: transform var(--dur-base) var(--ease-out-quart);
+  }
+
+  .services__link:hover .services__arrow,
+  .services__link:focus-visible .services__arrow {
+    transform: translateX(0.25em);
+  }
+
+  @media (forced-colors: active) {
+    .service,
+    .service__skills li {
+      border-color: CanvasText;
+    }
+  }
+</style>

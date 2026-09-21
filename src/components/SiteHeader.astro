@@ -19,8 +19,14 @@ import { PERSON } from '../config/site';
 import { href, asset } from '../lib/url';
 import MusicToggle from './MusicToggle.astro';
 
+/* "Work" points at the real /work page rather than the homepage's #work
+   fragment, now that the page exists. The fragment only resolves from the
+   homepage — from a project page it meant "go home, then scroll" — and a
+   visitor pressing Work expects the work, not a teaser of four of it. The
+   other three have no page of their own and stay as in-page anchors. */
 const NAV_LINKS = [
-  { label: 'Work', href: href('/#work') },
+  { label: 'Work', href: href('/work/') },
+  { label: 'Social', href: href('/social/') },
   { label: 'About', href: href('/#about') },
   { label: 'Services', href: href('/#services') },
   { label: 'Contact', href: href('/#contact') },
@@ -218,9 +224,8 @@ const NAV_LINKS = [
     display: inline-flex;
     align-items: center;
     text-decoration: none;
-    font-size: var(--step--1);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    /* devsign8.com's nav: 16px sentence case at body tracking, not small caps. */
+    font-size: 1rem;
     color: var(--text-dim);
     padding-inline: var(--space-2xs);
     transition: color var(--dur-fast) var(--ease-out-quart);
