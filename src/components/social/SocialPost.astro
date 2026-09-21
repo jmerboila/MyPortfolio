@@ -1,0 +1,83 @@
+---
+/* ============================================================================
+   SocialPost.astro — picks the frame for a post, and adds the portfolio's own
+   line underneath it: platform, client, case study, the live post.
+   ----------------------------------------------------------------------------
+   That line is kept OUTSIDE the frame on purpose. The frame is a faithful
+   picture of the platform; the links are the portfolio talking, and mixing
+   the two would make neither read true.
+
+   New post type: add its branch below. The `never` check at the end turns a
+   forgotten branch into a type error rather than an empty card.
+   ========================================================================= */
+import type { CollectionEntry } from 'astro:content';
+import InstagramPost from './InstagramPost.astro';
+import InstagramReel from './InstagramReel.astro';
+import TikTokVideo from './TikTokVideo.astro';
+import { POST_TYPES, SOCIAL_ACCOUNTS } from '../../config/social';
+import { href } from '../../lib/url';
+
+interface Props {
+  entry: CollectionEntry<'social'>;
+}
+
+const { entry } = Astro.props;
+const { data, id } = entry;
+const info = POST_TYPES[data.type];
+const account = SOCIAL_ACCOUNTS[info.account];
+const video = 'video' in data ? data.video : undefined;
+
+function assertNever(x: never): never {
+  throw new Error(`No frame for social post type "${(x as { type: string }).type}"`);
+}
+---
+
+<div class="sp-card">
+  <div class="sp-card__frame">
+    {
+      data.type === 'instagram-post' ? (
+        <InstagramPost data={data} id={id} />
+      ) : data.type === 'instagram-reel' ? (
+        <InstagramReel data={data} id={id} />
+      ) : data.type === 'tiktok-video' ? (
+        <TikTokVideo data={data} id={id} />
+      ) : (
+        assertNever(data)
+      )
+    }
+  </div>
+
+  <div class="sp-card__meta">
+    <p class="sp-card__line">
+      <span class="sp-badge">{account.platform} · {info.label}</span>
+      {data.draft && <span class="sp-badge sp-badge--draft">Draft · dev only</span>}
+      {data.client && <span class="sp-card__client">{data.client}</span>}
+    </p>
+
+    {
+      (data.work || data.permalink) && (
+        <p class="sp-card__links">
+          {data.work && <a href={href(`/work/${data.work.id}/`)}>Case study</a>}
+          {data.permalink && (
+            <a href={data.permalink} rel="noopener" target="_blank">
+              View on {account.platform}
+              <span class="visually-hidden"> (opens in a new tab)</span>
+              <span aria-hidden="true"> ↗</span>
+            </a>
+          )}
+        </p>
+      )
+    }
+
+    {/* WCAG 1.2.1: the text alternative for video-only content, available
+        to everyone, not only to screen readers via aria-label. */}
+    {
+      video && (
+        <details class="sp-card__desc">
+          <summary>Describe this video</summary>
+          <p>{video.alt}</p>
+        </details>
+      )
+    }
+  </div>
+</div>

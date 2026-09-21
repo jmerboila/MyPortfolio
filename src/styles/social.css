@@ -1,0 +1,967 @@
+/* ============================================================================
+   social.css — the /social platform frames.
+   ----------------------------------------------------------------------------
+   GLOBAL, NOT SCOPED, and every class is prefixed `sp-`. The frames are three
+   components deep (SocialFeed → SocialPost → InstagramPost → SocialVideo),
+   and a scoped rule never crosses a component boundary — the trap documented
+   on .icon-button in base.css. One global sheet with a private prefix is the
+   honest shape for a family of components that share parts.
+
+   INSIDE A FRAME, THE PLATFORM'S DESIGN WINS OVER THE SITE'S. System UI type,
+   the platforms' own greys, Instagram blue, the like reds. Outside the frame
+   (badges, links, filters) it is the portfolio again. Keeping the two
+   separate is what makes a frame read as the real thing.
+
+   CONTRAST INSIDE FRAMES, measured:
+     Instagram light  #737373 dim on #fff  = 4.7:1   PASS
+     Instagram dark   #a8a8a8 dim on #000  = 9.0:1   PASS
+     Over video: the scrim reaches rgb(0 0 0 / .55) where the caption starts,
+     which over a pure-white frame composites to #737373 — white on that is
+     4.7:1. The first frames of the Mustang reel ARE near-white, so this is
+     the worst case, not a hypothetical. Icons add a drop shadow on top.
+   ========================================================================= */
+
+/* -- Frame tokens --------------------------------------------------------- */
+.sp-feed {
+  --sp-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  --ig-bg: #ffffff;
+  --ig-text: #000000;
+  --ig-dim: #737373;
+  --ig-border: #dbdbdb;
+  --ig-tag: #00376b;
+  --ig-blue: #0095f6;
+  --ig-red: #ff3040;
+  --tt-red: #fe2c55;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .sp-feed {
+    --ig-bg: #000000;
+    --ig-text: #f5f5f5;
+    --ig-dim: #a8a8a8;
+    --ig-border: #262626;
+    --ig-tag: #e0f1ff;
+  }
+}
+
+:root[data-theme='dark'] .sp-feed {
+  --ig-bg: #000000;
+  --ig-text: #f5f5f5;
+  --ig-dim: #a8a8a8;
+  --ig-border: #262626;
+  --ig-tag: #e0f1ff;
+}
+
+/* -- Filters (same look as the work grid's chips) ------------------------- */
+.sp-feed [data-sp-filters][hidden] {
+  display: none;
+}
+
+.sp-feed__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-block-end: var(--space-s);
+}
+
+.sp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  min-block-size: var(--tap-min);
+  padding: var(--space-2xs) var(--space-s);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  color: var(--text-dim);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  transition:
+    color var(--dur-fast) var(--ease-out-quart),
+    border-color var(--dur-fast) var(--ease-out-quart),
+    background-color var(--dur-fast) var(--ease-out-quart);
+}
+
+.sp-chip:hover {
+  color: var(--accent);
+  border-color: var(--border-strong);
+}
+
+.sp-chip[aria-pressed='true'] {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.sp-chip__n {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.65;
+  font-size: 0.85em;
+}
+
+.sp-feed__status {
+  min-block-size: 1.5em;
+  margin-block-end: var(--space-l);
+  font-size: var(--step--1);
+  color: var(--text-dim);
+}
+
+/* -- Grid ----------------------------------------------------------------- */
+.sp-feed__grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-xl) var(--space-l);
+  grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr));
+  align-items: start;
+}
+
+.sp-feed__grid > li[hidden] {
+  display: none;
+}
+
+.sp-card {
+  display: grid;
+  gap: var(--space-s);
+  inline-size: 100%;
+  max-inline-size: 26rem;
+  margin-inline: auto;
+}
+
+/* -- Shared bits ---------------------------------------------------------- */
+.sp-icon {
+  display: block;
+  flex: none;
+}
+
+.sp-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
+}
+
+.sp-avatar img {
+  inline-size: 82%;
+  block-size: 82%;
+  object-fit: contain;
+}
+
+.sp-avatar--sm {
+  inline-size: 30px;
+  block-size: 30px;
+}
+
+.sp-avatar--lg {
+  inline-size: 48px;
+  block-size: 48px;
+  box-shadow: 0 0 0 1.5px #ffffff;
+}
+
+/* Two-state icons: the pressed state is shape AND colour, never colour
+   alone (WCAG 1.4.1) — an outline heart becomes a solid one. */
+.sp-when-on {
+  display: none;
+}
+
+[aria-pressed='true'] > .sp-when-on {
+  display: block;
+  animation: sp-pop 380ms var(--ease-back);
+}
+
+[aria-pressed='true'] > .sp-when-off {
+  display: none;
+}
+
+@keyframes sp-pop {
+  40% {
+    transform: scale(1.25);
+  }
+}
+
+/* -- Instagram feed post -------------------------------------------------- */
+.sp-ig {
+  background: var(--ig-bg);
+  color: var(--ig-text);
+  border: 1px solid var(--ig-border);
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: var(--sp-font);
+  font-size: 0.875rem;
+  line-height: 1.3;
+  --sp-caption-bg: var(--ig-bg);
+}
+
+.sp-ig__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.sp-ig__who {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.sp-ig__handle {
+  font-weight: 600;
+}
+
+.sp-ig__who time,
+.sp-ig__sep {
+  color: var(--ig-dim);
+}
+
+.sp-ig__body {
+  padding: 0 14px 14px;
+}
+
+.sp-ig__likes {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.sp-ig__dim {
+  margin: 6px 0 0;
+  color: var(--ig-dim);
+}
+
+.sp-tag {
+  color: var(--ig-tag);
+}
+
+/* Action row: like, comment, send · dots · save */
+.sp-ig__actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+}
+
+.sp-act {
+  display: grid;
+  place-items: center;
+  inline-size: 40px;
+  block-size: 40px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
+button.sp-act {
+  cursor: pointer;
+}
+
+button.sp-act:hover {
+  color: var(--ig-dim);
+}
+
+button.sp-act:focus-visible {
+  outline: 2px solid var(--ig-blue);
+  outline-offset: -2px;
+  border-radius: 50%;
+}
+
+.sp-act--save {
+  margin-inline-start: auto;
+}
+
+.sp-act--like[aria-pressed='true'] {
+  color: var(--ig-red);
+}
+
+.sp-dots {
+  position: absolute;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  display: flex;
+  gap: 4px;
+}
+
+.sp-dot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: var(--ig-dim);
+  opacity: 0.4;
+  transition:
+    background-color var(--dur-fast) linear,
+    opacity var(--dur-fast) linear;
+}
+
+.sp-dot.is-active {
+  background: var(--ig-blue);
+  opacity: 1;
+}
+
+/* -- Carousel ------------------------------------------------------------- */
+.sp-carousel {
+  position: relative;
+  aspect-ratio: var(--sp-ratio, 4 / 5);
+  background: var(--ig-bg);
+  user-select: none;
+}
+
+.sp-carousel__track {
+  display: flex;
+  block-size: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.sp-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.sp-carousel__track:focus-visible {
+  outline: 3px solid var(--ig-blue);
+  outline-offset: -3px;
+}
+
+.sp-carousel__slide {
+  position: relative;
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.sp-carousel__slide > img,
+.sp-carousel__slide > .sp-video {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.sp-carousel__nav {
+  position: absolute;
+  inset-block-start: 50%;
+  translate: 0 -50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  inline-size: 30px;
+  block-size: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.85);
+  color: #262626;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) linear;
+}
+
+.sp-carousel__nav[hidden] {
+  display: none;
+}
+
+.sp-carousel__nav:hover {
+  background: #ffffff;
+}
+
+.sp-carousel__nav:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #000000;
+}
+
+.sp-carousel__nav--prev {
+  inset-inline-start: 10px;
+}
+
+.sp-carousel__nav--next {
+  inset-inline-end: 10px;
+}
+
+.sp-carousel__count {
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline-end: 12px;
+  z-index: 2;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgb(26 26 26 / 0.8);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* Double-tap heart */
+.sp-burst {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 16px rgb(0 0 0 / 0.35));
+}
+
+.sp-burst.is-on {
+  animation: sp-burst 900ms var(--ease-out-expo);
+}
+
+@keyframes sp-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  30% {
+    transform: scale(0.95);
+  }
+  45%,
+  75% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* -- Captions ------------------------------------------------------------- */
+.sp-caption {
+  position: relative;
+}
+
+.sp-caption__text {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.sp-caption--one .sp-caption__text {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+.sp-caption.is-open .sp-caption__text {
+  display: block;
+  -webkit-line-clamp: unset;
+  line-clamp: none;
+}
+
+.sp-caption__text:focus {
+  outline: none;
+}
+
+/* "… more" sits over the end of the last line, as in the feed. */
+.sp-caption__more {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-end: 0;
+  padding: 0 0 0 2.2em;
+  border: 0;
+  background: linear-gradient(to right, transparent, var(--sp-caption-bg, transparent) 1.6em);
+  color: var(--ig-dim);
+  font: inherit;
+  cursor: pointer;
+}
+
+.sp-caption__more[hidden] {
+  display: none;
+}
+
+.sp-caption__more::before {
+  content: '… ';
+}
+
+.sp-caption__more:focus-visible {
+  outline: 2px solid var(--ig-blue);
+  outline-offset: 1px;
+}
+
+/* -- Video ---------------------------------------------------------------- */
+.sp-video {
+  position: relative;
+  overflow: hidden;
+  background: #000000;
+}
+
+.sp-video__el {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.sp-video__toggle {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.sp-video__toggle:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: -7px;
+  box-shadow: inset 0 0 0 7px rgb(0 0 0 / 0.6);
+}
+
+.sp-video__big {
+  display: grid;
+  place-items: center;
+  inline-size: 64px;
+  block-size: 64px;
+  padding-inline-start: 4px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.45);
+  transition:
+    opacity var(--dur-base) var(--ease-out-quart),
+    transform var(--dur-base) var(--ease-out-quart);
+}
+
+.sp-video[data-state='playing'] .sp-video__big {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.sp-video__mute {
+  position: absolute;
+  inset-block-start: 56px;
+  inset-inline-end: 12px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(38 38 38 / 0.75);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.sp-video__mute:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.sp-when-sound,
+.sp-video[data-sound='on'] .sp-when-muted {
+  display: none;
+}
+
+.sp-video[data-sound='on'] .sp-when-sound {
+  display: block;
+}
+
+.sp-video__progress {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 3;
+  block-size: 2px;
+  background: rgb(255 255 255 / 0.25);
+  pointer-events: none;
+}
+
+.sp-video__progress > span {
+  display: block;
+  block-size: 100%;
+  background: #ffffff;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 250ms linear;
+}
+
+/* -- Vertical frames (Reels, TikTok) -------------------------------------- */
+.sp-vert {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 9 / 16;
+  /* Tall enough to feel like a phone, never taller than the viewport can
+     show below the sticky header. */
+  inline-size: min(100%, max(16rem, calc((100svh - var(--header-height, 4.5rem) - 7rem) * 9 / 16)));
+  margin-inline: auto;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000000;
+  color: #ffffff;
+  font-family: var(--sp-font);
+  font-size: 0.875rem;
+  line-height: 1.3;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.sp-vert > .sp-video {
+  position: absolute;
+  inset: 0;
+}
+
+.sp-vert__scrim,
+.sp-vert__top,
+.sp-rail,
+.sp-vert__bottom {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sp-vert__scrim {
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.4) 0%,
+    transparent 16%,
+    transparent 40%,
+    rgb(0 0 0 / 0.55) 62%,
+    rgb(0 0 0 / 0.85) 100%
+  );
+}
+
+.sp-vert__top {
+  inset-block-start: 0;
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.5));
+}
+
+.sp-reel__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sp-rail {
+  inset-inline-end: 6px;
+  inset-block-end: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.55));
+}
+
+.sp-rail__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-inline-size: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+button.sp-rail__item {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+button.sp-rail__item:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.sp-reel .sp-act--like[aria-pressed='true'] {
+  color: var(--ig-red);
+}
+
+.sp-rail__n {
+  font-variant-numeric: tabular-nums;
+}
+
+.sp-reel__audio-art {
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  border: 2px solid #ffffff;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.sp-reel__audio-art img {
+  inline-size: 85%;
+  block-size: 85%;
+  object-fit: contain;
+}
+
+.sp-vert__bottom {
+  inset-inline: 12px 66px;
+  inset-block-end: 16px;
+  display: grid;
+  gap: 8px;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+.sp-vert__who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.sp-vert__handle {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.sp-reel__follow {
+  padding: 3px 10px;
+  border: 1px solid rgb(255 255 255 / 0.85);
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.sp-vert .sp-tag {
+  color: inherit;
+  font-weight: 600;
+}
+
+/* Over video there is no solid ground to fade into, so "more" drops onto its
+   own line rather than overlaying the text. */
+.sp-vert .sp-caption__more {
+  position: static;
+  padding: 0;
+  background: none;
+  color: rgb(255 255 255 / 0.85);
+  font-weight: 600;
+  pointer-events: auto;
+}
+
+.sp-vert .sp-caption__more::before {
+  content: none;
+}
+
+.sp-vert .sp-caption__more:focus-visible {
+  outline-color: #ffffff;
+}
+
+.sp-vert .sp-caption.is-open .sp-caption__text {
+  max-block-size: 9lh;
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+.sp-vert__audio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sp-vert__audio > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* TikTok specifics */
+.sp-tt__top {
+  justify-content: center;
+}
+
+.sp-tt__tabs {
+  display: flex;
+  gap: 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgb(255 255 255 / 0.7);
+}
+
+.sp-tt__tabs .is-current {
+  position: relative;
+  color: #ffffff;
+}
+
+.sp-tt__tabs .is-current::after {
+  content: '';
+  position: absolute;
+  inset-inline: 30%;
+  inset-block-end: -7px;
+  block-size: 2px;
+  border-radius: 2px;
+  background: #ffffff;
+}
+
+.sp-tt__search {
+  position: absolute;
+  inset-inline-end: 14px;
+}
+
+.sp-tt__rail {
+  inset-block-end: 58px;
+  gap: 14px;
+}
+
+.sp-tt .sp-act--like[aria-pressed='true'] {
+  color: var(--tt-red);
+}
+
+.sp-tt .sp-act--save[aria-pressed='true'] {
+  color: #face15;
+}
+
+.sp-tt__avatar {
+  position: relative;
+  margin-block-end: 8px;
+}
+
+.sp-tt__follow {
+  position: absolute;
+  inset-block-end: -9px;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  display: grid;
+  place-items: center;
+  inline-size: 20px;
+  block-size: 20px;
+  border-radius: 50%;
+  background: var(--tt-red);
+  color: #ffffff;
+}
+
+.sp-tt__disc {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  margin-block-start: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #3a3a3a 0 34%, #161616 35% 100%);
+}
+
+.sp-tt__disc img {
+  inline-size: 56%;
+  block-size: 56%;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.sp-tt__bottom {
+  inset-inline-end: 72px;
+  inset-block-end: 18px;
+}
+
+/* -- The portfolio's line under each frame ------------------------------- */
+.sp-card__meta {
+  display: grid;
+  gap: var(--space-3xs);
+  font-size: var(--step--1);
+  color: var(--text-dim);
+}
+
+.sp-card__meta p {
+  margin: 0;
+}
+
+.sp-card__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+.sp-badge {
+  padding: 2px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  color: var(--text);
+  font-size: 0.85em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.sp-badge--draft {
+  border-style: dashed;
+  color: var(--accent);
+}
+
+.sp-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.sp-card__links a {
+  display: inline-block;
+  padding-block: var(--space-3xs);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.sp-card__desc summary {
+  cursor: pointer;
+  padding-block: var(--space-3xs);
+}
+
+.sp-card__desc p {
+  margin-block-start: var(--space-3xs);
+  max-inline-size: 60ch;
+}
+
+/* -- Windows High Contrast ------------------------------------------------ */
+@media (forced-colors: active) {
+  .sp-carousel__nav,
+  .sp-video__big,
+  .sp-video__mute,
+  .sp-carousel__count {
+    border: 1px solid ButtonText;
+  }
+
+  .sp-dot.is-active {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+
+  .sp-vert {
+    border: 1px solid CanvasText;
+  }
+}

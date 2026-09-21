@@ -24,7 +24,7 @@
    pieces of fiction. Instead `caseStudyComplete()` below reports which ones
    are still missing, so the gap stays visible instead of quietly shipping.
    ========================================================================= */
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 /* `z` from 'astro:content' is deprecated in Astro 7 and emits a hint on every
    single use — 39 of them here. The zod re-export moved to 'astro/zod'. */
@@ -146,7 +146,102 @@ const work = defineCollection({
     }),
 });
 
-export const collections = { work };
+/* ============================================================================
+   social — posts shown on /social as the platform draws them.
+   ----------------------------------------------------------------------------
+   One file per post in src/content/social/. `type` picks the frame; each type
+   is built from one of two media shapes, so a new platform is usually a single
+   line in the union below (see src/config/social.ts for the full checklist).
+
+   MEDIA IS SELF-HOSTED, NOT EMBEDDED. Instagram's and TikTok's embed scripts
+   each pull several hundred KB of third-party JavaScript and tracking per
+   post, render in an iframe that ignores the site theme, and break when the
+   post is deleted or the account goes private. Posters and slides go in
+   src/assets (Astro optimises them); video goes in public/social/.
+
+   NO INVENTED NUMBERS. `stats` is optional and every count renders only when
+   it is present. Leave it out rather than guess — a like count on a portfolio
+   is a claim.
+   ========================================================================= */
+const social = defineCollection({
+  loader: glob({ base: './src/content/social', pattern: '**/*.md' }),
+  schema: ({ image }) => {
+    const video = z.object({
+      /* Path under public/, e.g. "/social/launch-reel.mp4". */
+      src: z.string().startsWith('/'),
+      poster: image(),
+      /* REQUIRED for the same reason as work.video.alt: WCAG 1.2.1. */
+      alt: z.string(),
+      /* No audio track. Hides the mute button, which would otherwise be a
+         control that does nothing. */
+      silent: z.boolean().default(false),
+      /* WebVTT under public/. Needed whenever the video has speech (1.2.2). */
+      captions: z.string().startsWith('/').optional(),
+      durationISO: z.string().optional(),
+    });
+
+    /* A slide is an image, or a video with a poster. Exactly one. */
+    const slide = z
+      .object({
+        image: image().optional(),
+        video: z.string().startsWith('/').optional(),
+        poster: image().optional(),
+        alt: z.string(),
+      })
+      .refine((s) => Boolean(s.image) !== Boolean(s.video), {
+        message: 'A slide needs exactly one of `image` or `video`.',
+      })
+      .refine((s) => !s.video || s.poster, {
+        message: 'A video slide needs a `poster`.',
+      });
+
+    const base = z.object({
+      /* Internal name, and the accessible name of the card. Never shown as a
+         headline, because the platforms do not show one. */
+      title: z.string(),
+      caption: z.string().default(''),
+      /* Optional so nothing has to be invented. Posts without one sort by
+         `order` alone and carry no uploadDate in the structured data. */
+      date: z.coerce.date().optional(),
+      /* The live post. Renders a "View on Instagram" link when present. */
+      permalink: z.url().optional(),
+      /* The sound line on Reels and TikTok, e.g. "Original audio". */
+      audio: z.string().optional(),
+      stats: z
+        .object({
+          likes: z.number().int().nonnegative(),
+          comments: z.number().int().nonnegative(),
+          shares: z.number().int().nonnegative(),
+          saves: z.number().int().nonnegative(),
+          views: z.number().int().nonnegative(),
+        })
+        .partial()
+        .default({}),
+      /* Links the card to its case study on /work. */
+      work: reference('work').optional(),
+      client: z.string().optional(),
+      order: z.number().default(100),
+      /* Drafts render in `astro dev` only, never in a build. */
+      draft: z.boolean().default(false),
+    });
+
+    const slidesPost = base.extend({
+      slides: z.array(slide).min(1).max(20),
+      /* Instagram's feed crops. 4:5 is the tallest and the usual choice. */
+      ratio: z.enum(['1x1', '4x5', '3x4', '191x100']).default('4x5'),
+    });
+
+    const videoPost = base.extend({ video });
+
+    return z.discriminatedUnion('type', [
+      slidesPost.extend({ type: z.literal('instagram-post') }),
+      videoPost.extend({ type: z.literal('instagram-reel') }),
+      videoPost.extend({ type: z.literal('tiktok-video') }),
+    ]);
+  },
+});
+
+export const collections = { work, social };
 
 /* ---------------------------------------------------------------------------
    Which case-study fields is an entry still missing?

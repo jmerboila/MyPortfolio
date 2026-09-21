@@ -1,0 +1,67 @@
+---
+/* ============================================================================
+   SocialFeed.astro — the grid of platform frames, with type filters.
+   ----------------------------------------------------------------------------
+   Takes the entries rather than fetching them, so the homepage can later show
+   a featured few with <SocialFeed entries={top3} filters={false} />.
+
+   Filters follow WorkGrid's contract: every post is in the HTML for crawlers
+   and no-JS visitors, the bar ships `hidden` and is revealed by the script,
+   and filtered-out cards use `hidden` so they leave the tab order too. Chips
+   derive from the types actually present, in POST_TYPES order.
+
+   Styles are one global sheet (src/styles/social.css) rather than scoped
+   blocks, because the frames are several components deep and Astro's scoped
+   styles do not cross component boundaries.
+   ========================================================================= */
+import type { CollectionEntry } from 'astro:content';
+import SocialPost from './SocialPost.astro';
+import { POST_TYPES, type SocialType } from '../../config/social';
+import '../../styles/social.css';
+
+interface Props {
+  entries: CollectionEntry<'social'>[];
+  filters?: boolean;
+}
+
+const { entries, filters = true } = Astro.props;
+
+const present = (Object.keys(POST_TYPES) as SocialType[])
+  .map((type) => ({ type, count: entries.filter((e) => e.data.type === type).length }))
+  .filter((t) => t.count > 0);
+---
+
+<div class="sp-feed" data-sp-feed>
+  {
+    filters && present.length > 1 && (
+      <div data-sp-filters hidden>
+        <div role="group" aria-label="Filter posts by type" class="sp-feed__filters">
+          <button type="button" class="sp-chip" data-filter="all" aria-pressed="true">
+            All <span class="sp-chip__n">{entries.length}</span>
+          </button>
+          {present.map((t) => (
+            <button type="button" class="sp-chip" data-filter={t.type} aria-pressed="false">
+              {POST_TYPES[t.type].filterLabel} <span class="sp-chip__n">{t.count}</span>
+            </button>
+          ))}
+        </div>
+        <p class="sp-feed__status" data-sp-status aria-live="polite" />
+      </div>
+    )
+  }
+
+  <ul class="sp-feed__grid" role="list">
+    {
+      entries.map((entry) => (
+        <li data-type={entry.data.type}>
+          <SocialPost entry={entry} />
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  import { initSocial } from '../../scripts/social';
+  initSocial();
+</script>

@@ -1,0 +1,109 @@
+---
+/* ============================================================================
+   TikTokVideo.astro — a video as the For You feed draws it.
+   ----------------------------------------------------------------------------
+   Following | For You tabs on top, the rail on the right (avatar with the
+   follow badge, like, comment, save, share, the sound disc), @handle, caption
+   and the sound line bottom-left, a hairline progress bar underneath.
+
+   The sound disc does NOT spin. On TikTok it rotates forever, which here would
+   be an ambient loop with no pause control of its own — the thing
+   src/scripts/motion.ts documents the site as having removed.
+
+   Start new vertical-video platforms (YouTube Shorts, Facebook Reels) by
+   copying this file; the rail and bottom block are the shared shape.
+   ========================================================================= */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import SocialIcon from './SocialIcon.astro';
+import SocialVideo from './SocialVideo.astro';
+import { SOCIAL_ACCOUNTS, captionParts, compactCount } from '../../config/social';
+
+type Data = Extract<CollectionEntry<'social'>['data'], { type: 'tiktok-video' }>;
+
+interface Props {
+  data: Data;
+  id: string;
+}
+
+const { data, id } = Astro.props;
+const account = SOCIAL_ACCOUNTS.tiktok;
+const { stats } = data;
+---
+
+<article class="sp-vert sp-tt" aria-label={`TikTok video: ${data.title}`}>
+  <SocialVideo
+    src={data.video.src}
+    poster={data.video.poster}
+    alt={data.video.alt}
+    label={data.title}
+    silent={data.video.silent}
+    captions={data.video.captions}
+  >
+    <span class="sp-vert__scrim" aria-hidden="true"></span>
+
+    <div class="sp-vert__top sp-tt__top" aria-hidden="true">
+      <span class="sp-tt__tabs">
+        <span>Following</span>
+        <span class="is-current">For You</span>
+      </span>
+      <SocialIcon name="search" size={22} class="sp-tt__search" />
+    </div>
+
+    <div class="sp-rail sp-tt__rail">
+      <span class="sp-tt__avatar" aria-hidden="true">
+        <span class="sp-avatar sp-avatar--lg">
+          <Image src={account.avatar} alt="" width={96} height={96} loading="lazy" />
+        </span>
+        <span class="sp-tt__follow"><SocialIcon name="plus" size={12} /></span>
+      </span>
+      <button type="button" class="sp-rail__item sp-act--like" data-sp-like aria-pressed="false" aria-label="Like">
+        <SocialIcon name="heart" filled size={32} class="sp-when-off" />
+        <SocialIcon name="heart" filled size={32} class="sp-when-on" />
+        {stats.likes !== undefined && <span class="sp-rail__n">{compactCount(stats.likes)}</span>}
+      </button>
+      <span class="sp-rail__item" aria-hidden="true">
+        <SocialIcon name="comment" filled size={30} />
+        {stats.comments !== undefined && <span class="sp-rail__n">{compactCount(stats.comments)}</span>}
+      </span>
+      <button type="button" class="sp-rail__item sp-act--save" data-sp-save aria-pressed="false" aria-label="Save">
+        <SocialIcon name="bookmark" filled size={30} class="sp-when-off" />
+        <SocialIcon name="bookmark" filled size={30} class="sp-when-on" />
+        {stats.saves !== undefined && <span class="sp-rail__n">{compactCount(stats.saves)}</span>}
+      </button>
+      <span class="sp-rail__item" aria-hidden="true">
+        <SocialIcon name="share" size={30} />
+        {stats.shares !== undefined && <span class="sp-rail__n">{compactCount(stats.shares)}</span>}
+      </span>
+      <span class="sp-tt__disc" aria-hidden="true">
+        <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />
+      </span>
+    </div>
+
+    <div class="sp-vert__bottom sp-tt__bottom">
+      <p class="sp-vert__handle">@{account.handle}</p>
+
+      {
+        data.caption && (
+          <div class="sp-caption" data-sp-caption>
+            <p class="sp-caption__text" id={`cap-${id}`}>
+              {captionParts(data.caption).map((p) => (p.tag ? <span class="sp-tag">{p.text}</span> : p.text))}
+            </p>
+            <button type="button" class="sp-caption__more" data-sp-more aria-controls={`cap-${id}`} hidden>
+              more
+            </button>
+          </div>
+        )
+      }
+
+      {
+        data.audio && (
+          <p class="sp-vert__audio">
+            <SocialIcon name="music" size={13} />
+            <span>{data.audio}</span>
+          </p>
+        )
+      }
+    </div>
+  </SocialVideo>
+</article>

@@ -1,0 +1,119 @@
+---
+/* ============================================================================
+   /social — posts shown the way each platform shows them.
+   ----------------------------------------------------------------------------
+   Content is src/content/social/*.md; frames are src/components/social/.
+   Adding a platform or post type: see the checklist in src/config/social.ts.
+
+   Drafts appear under `astro dev` with a "Draft · dev only" badge and are
+   dropped from every build, so a sample can sit in the folder safely.
+
+   STRUCTURED DATA. Each video with a date becomes a VideoObject — the type
+   Google's video results and the answer engines read. uploadDate is required
+   for a valid VideoObject, and the schema deliberately does not invent dates,
+   so undated videos are simply left out of the graph rather than emitted
+   broken.
+   ========================================================================= */
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SocialFeed from '../../components/social/SocialFeed.astro';
+import { href, asset } from '../../lib/url';
+import { absoluteUrl, PERSON, SITE_ORIGIN } from '../../config/site';
+
+const entries = (
+  await getCollection('social', ({ data }) => import.meta.env.DEV || !data.draft)
+).sort((a, b) => {
+  if (a.data.order !== b.data.order) return a.data.order - b.data.order;
+  return (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0);
+});
+
+const description =
+  `Social media creative by ${PERSON.name} — Instagram carousels and Reels, ` +
+  'and TikTok videos, shown as they appear in the feed.';
+
+const videoObjects = await Promise.all(
+  entries
+    .filter((e) => 'video' in e.data && e.data.date && !e.data.draft)
+    .map(async (e) => {
+      const d = e.data as Extract<typeof e.data, { video: unknown }>;
+      const thumb = await getImage({ src: d.video.poster, width: 720, format: 'webp' });
+      return {
+        '@type': 'VideoObject',
+        name: d.title,
+        description: d.caption || d.video.alt,
+        thumbnailUrl: `${SITE_ORIGIN}${thumb.src}`,
+        contentUrl: `${SITE_ORIGIN}${asset(d.video.src)}`,
+        uploadDate: d.date!.toISOString(),
+        ...(d.video.durationISO && { duration: d.video.durationISO }),
+        creator: { '@id': `${absoluteUrl('/')}#person` },
+      };
+    }),
+);
+
+const schema = [
+  {
+    '@type': 'CollectionPage',
+    '@id': `${absoluteUrl('/social/')}#collection`,
+    name: 'Social',
+    description,
+    isPartOf: { '@id': `${absoluteUrl('/')}#website` },
+    about: { '@id': `${absoluteUrl('/')}#person` },
+    ...(videoObjects.length && { hasPart: videoObjects }),
+  },
+];
+---
+
+<BaseLayout title="Social" description={description} path="/social/" schema={schema}>
+  <SiteHeader slot="header" />
+  <SiteFooter slot="footer" />
+
+  <div class="social-page section container">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={href('/')}>Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Social</span>
+    </nav>
+
+    <p class="section__label">Social media creative</p>
+    <h1 class="section__title">Made for the <em>feed</em></h1>
+    <p class="section__lede">
+      Carousels, Reels and short-form video, shown exactly as they land on the
+      platform. Swipe the carousels, and tap any video to pause it.
+    </p>
+
+    {
+      entries.length ? (
+        <SocialFeed entries={entries} />
+      ) : (
+        <p class="section__lede">New posts are on the way.</p>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .social-page {
+    padding-block-start: calc(var(--header-height, 4.5rem) + var(--space-xl));
+  }
+
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-size: var(--step--1);
+    color: var(--text-dim);
+    margin-block-end: var(--space-l);
+  }
+
+  .crumbs a {
+    color: inherit;
+  }
+
+  .crumbs a:hover {
+    color: var(--accent);
+  }
+</style>

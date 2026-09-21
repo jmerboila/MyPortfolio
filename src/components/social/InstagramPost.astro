@@ -1,0 +1,160 @@
+---
+/* ============================================================================
+   InstagramPost.astro — a feed post: single image or carousel.
+   ----------------------------------------------------------------------------
+   Drawn the way the feed draws it: header, media at the post's own crop,
+   action row with the page dots centred in it, likes, a two-line caption with
+   "more", date.
+
+   The frame follows the site theme, because Instagram itself has a light and
+   a dark mode and a white card on the night ground would look pasted in.
+
+   THE CAROUSEL IS NATIVE SCROLL-SNAP. Swipe, trackpad and wheel work with no
+   script at all; the script only adds the arrows, dots and counter, keeps
+   them in step, and gives the track arrow-key control once focused.
+   ========================================================================= */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import SocialIcon from './SocialIcon.astro';
+import SocialVideo from './SocialVideo.astro';
+import { SOCIAL_ACCOUNTS, captionParts, compactCount, postDate } from '../../config/social';
+
+type Data = Extract<CollectionEntry<'social'>['data'], { type: 'instagram-post' }>;
+
+interface Props {
+  data: Data;
+  id: string;
+}
+
+const { data, id } = Astro.props;
+const account = SOCIAL_ACCOUNTS.instagram;
+const n = data.slides.length;
+const RATIOS = { '1x1': '1 / 1', '4x5': '4 / 5', '3x4': '3 / 4', '191x100': '1.91 / 1' };
+const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
+---
+
+<article class="sp-ig" aria-label={`Instagram post: ${data.title}`}>
+  <header class="sp-ig__head">
+    <span class="sp-avatar">
+      <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />
+    </span>
+    <p class="sp-ig__who">
+      <span class="sp-ig__handle">{account.handle}</span>
+      {
+        data.date && (
+          <>
+            <span class="sp-ig__sep" aria-hidden="true">•</span>
+            <time datetime={data.date.toISOString().slice(0, 10)}>{postDate(data.date)}</time>
+          </>
+        )
+      }
+    </p>
+    <SocialIcon name="more" size={22} class="sp-ig__more" />
+  </header>
+
+  <div
+    class="sp-carousel"
+    data-sp-carousel
+    data-sp-media
+    style={`--sp-ratio: ${RATIOS[data.ratio]}`}
+  >
+    <ul
+      class="sp-carousel__track"
+      data-sp-track
+      tabindex={n > 1 ? 0 : undefined}
+      aria-label={n > 1 ? `${data.title}, ${n} slides. Use arrow keys to move.` : undefined}
+    >
+      {
+        data.slides.map((slide, i) => (
+          <li
+            class="sp-carousel__slide"
+            aria-roledescription={n > 1 ? 'slide' : undefined}
+            aria-label={n > 1 ? `${i + 1} of ${n}` : undefined}
+            role={n > 1 ? 'group' : undefined}
+          >
+            {slide.image ? (
+              <Image src={slide.image} alt={slide.alt} widths={[480, 720, 1080]} sizes={sizes} loading="lazy" />
+            ) : (
+              <SocialVideo
+                src={slide.video!}
+                poster={slide.poster!}
+                alt={slide.alt}
+                label={`${data.title}, slide ${i + 1}`}
+                progress={false}
+              />
+            )}
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      n > 1 && (
+        <>
+          <span class="sp-carousel__count" data-sp-count aria-hidden="true">
+            1/{n}
+          </span>
+          <button type="button" class="sp-carousel__nav sp-carousel__nav--prev" data-sp-prev aria-label="Previous slide" hidden>
+            <SocialIcon name="chevron-left" size={16} />
+          </button>
+          <button type="button" class="sp-carousel__nav sp-carousel__nav--next" data-sp-next aria-label="Next slide">
+            <SocialIcon name="chevron-right" size={16} />
+          </button>
+          <span class="visually-hidden" data-sp-live aria-live="polite" />
+        </>
+      )
+    }
+
+    <span class="sp-burst" data-sp-burst aria-hidden="true">
+      <SocialIcon name="heart" filled size={96} />
+    </span>
+  </div>
+
+  <div class="sp-ig__actions">
+    <button type="button" class="sp-act sp-act--like" data-sp-like aria-pressed="false" aria-label="Like">
+      <SocialIcon name="heart" class="sp-when-off" />
+      <SocialIcon name="heart" filled class="sp-when-on" />
+    </button>
+    <span class="sp-act" aria-hidden="true"><SocialIcon name="comment" /></span>
+    <span class="sp-act" aria-hidden="true"><SocialIcon name="send" /></span>
+
+    {
+      n > 1 && (
+        <span class="sp-dots" aria-hidden="true">
+          {data.slides.map((_, i) => (
+            <span class:list={['sp-dot', { 'is-active': i === 0 }]} data-sp-dot />
+          ))}
+        </span>
+      )
+    }
+
+    <button type="button" class="sp-act sp-act--save" data-sp-save aria-pressed="false" aria-label="Save">
+      <SocialIcon name="bookmark" class="sp-when-off" />
+      <SocialIcon name="bookmark" filled class="sp-when-on" />
+    </button>
+  </div>
+
+  <div class="sp-ig__body">
+    {data.stats.likes !== undefined && <p class="sp-ig__likes">{data.stats.likes.toLocaleString('en')} likes</p>}
+
+    {
+      data.caption && (
+        <div class="sp-caption" data-sp-caption>
+          <p class="sp-caption__text" id={`cap-${id}`}>
+            <span class="sp-ig__handle">{account.handle}</span>{' '}
+            {captionParts(data.caption).map((p) => (p.tag ? <span class="sp-tag">{p.text}</span> : p.text))}
+          </p>
+          <button type="button" class="sp-caption__more" data-sp-more aria-controls={`cap-${id}`} hidden>
+            more
+          </button>
+        </div>
+      )
+    }
+
+    {
+      data.stats.comments !== undefined && data.stats.comments > 0 && (
+        <p class="sp-ig__dim">View all {compactCount(data.stats.comments)} comments</p>
+      )
+    }
+  </div>
+</article>

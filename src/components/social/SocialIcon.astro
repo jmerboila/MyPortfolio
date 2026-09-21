@@ -1,0 +1,84 @@
+---
+/* ============================================================================
+   SocialIcon.astro — the glyphs the platform frames are drawn with.
+   ----------------------------------------------------------------------------
+   Hand-drawn generic shapes on a 24px grid, not the platforms' own artwork:
+   close enough to read as the real UI at a glance, and nothing here is a
+   trademarked mark. Always decorative (aria-hidden); the control around an
+   icon carries the accessible name.
+   ========================================================================= */
+interface Props {
+  name:
+    | 'heart'
+    | 'comment'
+    | 'send'
+    | 'bookmark'
+    | 'more'
+    | 'more-v'
+    | 'music'
+    | 'play'
+    | 'pause'
+    | 'volume'
+    | 'muted'
+    | 'chevron-left'
+    | 'chevron-right'
+    | 'share'
+    | 'plus'
+    | 'search'
+    | 'camera'
+    | 'layers';
+  /** Draw solid rather than outlined. */
+  filled?: boolean;
+  size?: number;
+  class?: string;
+}
+
+const { name, filled = false, size = 24, class: className } = Astro.props;
+
+const PATHS: Record<Props['name'], string> = {
+  heart:
+    'M12 20.3s-7.6-4.6-9.3-9.4C1.5 7.5 3.8 4.2 7.3 4.2c2 0 3.6 1.1 4.7 2.8 1.1-1.7 2.7-2.8 4.7-2.8 3.5 0 5.8 3.3 4.6 6.7-1.7 4.8-9.3 9.4-9.3 9.4z',
+  comment: 'M20.7 16.2A9 9 0 1 0 17 19.9L21.5 21z',
+  send: 'M21.5 2.5 10.2 13.8M21.5 2.5 15 21.5l-4.8-7.7L2.5 9z',
+  bookmark: 'M19 21 12 15.6 5 21V3.8A.8.8 0 0 1 5.8 3h12.4a.8.8 0 0 1 .8.8z',
+  more: 'M5.5 12h.01M12 12h.01M18.5 12h.01',
+  'more-v': 'M12 5.5v.01M12 12v.01M12 18.5v.01',
+  music:
+    'M9 18.5V5.5l11-2.2v12.9M9 18.5a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 0 1 5.2 0zM20 16.2a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 0 1 5.2 0z',
+  play: 'M7 4.4v15.2L20 12z',
+  pause: 'M7 4.5h3.2v15H7zM13.8 4.5H17v15h-3.2z',
+  volume: 'M4 9.5h3.5L12 5.5v13l-4.5-4H4zM15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11',
+  muted: 'M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9.5l5 5M21 9.5l-5 5',
+  'chevron-left': 'M14.5 6 8.5 12l6 6',
+  'chevron-right': 'M9.5 6l6 6-6 6',
+  share: 'M13.5 4.5v4.2C7.3 9.4 4 13.6 3 19.5c2.7-3.3 6-4.7 10.5-4.8v4.3L21 11.7z',
+  plus: 'M12 5v14M5 12h14',
+  search: 'M10.8 18.1a7.3 7.3 0 1 0 0-14.6 7.3 7.3 0 0 0 0 14.6zM16 16l5 5',
+  camera:
+    'M3 8.2A1.7 1.7 0 0 1 4.7 6.5h2.5L9 4h6l1.8 2.5h2.5A1.7 1.7 0 0 1 21 8.2v10.1a1.7 1.7 0 0 1-1.7 1.7H4.7A1.7 1.7 0 0 1 3 18.3zM12 16.8a3.6 3.6 0 1 0 0-7.2 3.6 3.6 0 0 0 0 7.2z',
+  layers:
+    'M8 3.5h11.5a1 1 0 0 1 1 1V16M4.5 7.5h11a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z',
+};
+
+/* Always solid, whatever `filled` says. */
+const SOLID = new Set<Props['name']>(['play', 'pause', 'share']);
+const solid = filled || SOLID.has(name);
+/* The dot glyphs are zero-length segments; a fat round cap is what draws them. */
+const dots = name === 'more' || name === 'more-v';
+---
+
+<svg
+  class:list={['sp-icon', className]}
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  fill={solid ? 'currentColor' : 'none'}
+  stroke={solid ? 'none' : 'currentColor'}
+  stroke-width={dots ? 3 : 1.9}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={PATHS[name]}></path>
+</svg>

@@ -1,0 +1,86 @@
+---
+/* ============================================================================
+   SocialVideo.astro — one feed video: the element, its controls, a slot for
+   the platform chrome drawn over it.
+   ----------------------------------------------------------------------------
+   Behaviour lives in src/scripts/social.ts and keys off the data-sp-*
+   attributes here. It plays muted while at least 60% on screen and pauses when
+   it leaves, like a feed does — except under prefers-reduced-motion, where
+   nothing starts until pressed.
+
+   WCAG 2.2.2 Pause, Stop, Hide: anything that plays on its own for more than
+   five seconds needs a way to stop it. The whole video surface is a real
+   <button> that toggles play, named for what it will do next.
+
+   preload="none" because a page of these would otherwise fetch every file up
+   front. The poster is an optimised still from src/assets, so nothing is blank
+   while the video waits.
+   ========================================================================= */
+import { getImage } from 'astro:assets';
+import SocialIcon from './SocialIcon.astro';
+import { asset } from '../../lib/url';
+
+interface Props {
+  src: string;
+  poster: ImageMetadata;
+  alt: string;
+  /** Names the controls: "Play video: <label>". */
+  label: string;
+  silent?: boolean;
+  captions?: string;
+  /** Thin playback bar along the bottom edge. */
+  progress?: boolean;
+}
+
+const { src, poster, alt, label, silent = false, captions, progress = true } = Astro.props;
+
+const posterImg = await getImage({ src: poster, width: 720, format: 'webp' });
+const type = src.endsWith('.webm') ? 'video/webm' : 'video/mp4';
+---
+
+<div class="sp-video" data-sp-video data-state="paused" data-label={label}>
+  <video
+    class="sp-video__el"
+    muted
+    loop
+    playsinline
+    preload="none"
+    disablepictureinpicture
+    poster={posterImg.src}
+    aria-label={alt}
+  >
+    <source src={asset(src)} type={type} />
+    {captions && <track kind="captions" src={asset(captions)} srclang="en" label="English" default />}
+  </video>
+
+  <button type="button" class="sp-video__toggle" data-sp-toggle aria-label={`Play video: ${label}`}>
+    <span class="sp-video__big">
+      <SocialIcon name="play" size={30} />
+    </span>
+  </button>
+
+  <slot />
+
+  {
+    !silent && (
+      <button
+        type="button"
+        class="sp-video__mute"
+        data-sp-mute
+        aria-pressed="false"
+        aria-label={`Sound: ${label}`}
+      >
+        <SocialIcon name="muted" size={16} class="sp-when-muted" />
+        <SocialIcon name="volume" size={16} class="sp-when-sound" />
+      </button>
+    )
+  }
+
+  {
+    progress && (
+      <span class="sp-video__progress" aria-hidden="true">
+        <span data-sp-progress />
+      </span>
+    )
+  }
+</div>
