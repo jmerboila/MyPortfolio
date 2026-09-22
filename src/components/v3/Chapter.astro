@@ -113,8 +113,12 @@ const showAll = def.all.always || overflow;
 <style>
   .v3-plate {
     --plate-dim: 0;
-    position: sticky;
-    inset-block-start: min(var(--header-height, 4.5rem), 100svh - var(--plate-h, 100svh));
+    /* F3: plates start in normal flow. A plate taller than the viewport with
+       no JS (or before the ResizeObserver script below has measured it) must
+       still scroll past fully rather than being covered mid-content — see
+       the ready-gated sticky rule after this one. */
+    position: relative;
+    inset-block-start: auto;
     min-block-size: calc(100svh - var(--header-height, 4.5rem));
     margin-inline: var(--gutter);
     display: grid;
@@ -137,6 +141,21 @@ const showAll = def.all.always || overflow;
     .v3-plate {
       position: relative;
       inset-block-start: auto;
+    }
+  }
+
+  /* F3: sticky turns on only once #work reports every plate has been
+     measured (data-plates-ready, set by the script below) and only when the
+     visitor hasn't asked to reduce motion. #work is a real element ID, not a
+     pseudo-class like :root, so Astro's scoping would otherwise append this
+     component's scope hash to #work too — and #work is rendered by the
+     parent page, not by Chapter.astro, so it never carries that hash. Wrap
+     it in :global() to keep the id selector as written; .v3-plate still
+     gets scoped normally. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(#work[data-plates-ready]) .v3-plate {
+      position: sticky;
+      inset-block-start: min(var(--header-height, 4.5rem), 100svh - var(--plate-h, 100svh));
     }
   }
 
@@ -261,11 +280,21 @@ const showAll = def.all.always || overflow;
 <script>
   /* Publish each plate's height for the tall-plate rule. offsetHeight ignores
      transforms, so GSAP's scale on a covered plate does not feed back here. */
+  const plates = document.querySelectorAll<HTMLElement>('[data-plate]');
+  const work = document.getElementById('work');
+  const measured = new Set<Element>();
+
   const ro = new ResizeObserver((entries) => {
     for (const e of entries) {
       const el = e.target as HTMLElement;
       el.style.setProperty('--plate-h', `${el.offsetHeight}px`);
+      measured.add(el);
+    }
+    // F3: --plate-h is only trustworthy once every plate has been measured
+    // at least once. Only then does CSS let .v3-plate go sticky.
+    if (work && measured.size === plates.length) {
+      work.setAttribute('data-plates-ready', '');
     }
   });
-  document.querySelectorAll<HTMLElement>('[data-plate]').forEach((p) => ro.observe(p));
+  plates.forEach((p) => ro.observe(p));
 </script>
