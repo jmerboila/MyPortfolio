@@ -1,9 +1,19 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 
 const PAGE = 'dist/v3/index.html';
 const html = existsSync(PAGE) ? readFileSync(PAGE, 'utf8') : '';
+
+// F3: read every compiled stylesheet rather than one hashed filename, so this
+// survives Astro's per-build content hash.
+const CSS_DIR = 'dist/_astro';
+const css = existsSync(CSS_DIR)
+  ? readdirSync(CSS_DIR)
+      .filter((f) => f.endsWith('.css'))
+      .map((f) => readFileSync(`${CSS_DIR}/${f}`, 'utf8'))
+      .join('\n')
+  : '';
 
 test('the page is built', () => assert.ok(existsSync(PAGE), `${PAGE} missing`));
 test('noindex, nofollow', () => assert.match(html, /<meta name="robots" content="noindex, nofollow"/));
@@ -47,4 +57,20 @@ test('no More row while every chapter has one project', () => {
 test('peaks fall back to brief, then summary', () => {
   assert.ok(html.includes('Four Instagram panels that had to read as one unbroken frame.'));
   assert.ok(html.includes('The studio website for Devsign8'));
+});
+
+test('F3: a plate only goes sticky once #work is marked data-plates-ready', () => {
+  // The gated rule exists and actually turns sticky on.
+  assert.match(
+    css,
+    /#work\[data-plates-ready\][^{]*\.v3-plate\[[^\]]+\]\{[^}]*position:sticky/,
+    'expected a #work[data-plates-ready] .v3-plate rule that sets position: sticky',
+  );
+  // Every unqualified ".v3-plate{...}" rule -- the ones a browser applies
+  // before JS has measured anything -- must not be unconditionally sticky.
+  const bareRules = [...css.matchAll(/(?:^|\})(\.v3-plate\[[a-z0-9-]+\]\{[^}]*\})/g)].map((m) => m[1]);
+  assert.ok(bareRules.length > 0, 'expected to find the base, unqualified .v3-plate rule');
+  for (const rule of bareRules) {
+    assert.doesNotMatch(rule, /position:sticky/, `an unqualified .v3-plate rule went sticky: ${rule}`);
+  }
 });
