@@ -32,6 +32,10 @@ const titleId = `v3-chapter-${def.key}`;
 const showAll = def.all.always || overflow;
 ---
 
+<!-- F1 (WCAG 2.4.11): a zero-height marker in normal flow, read by the
+     focusin handler below to find this plate's in-flow top even while the
+     plate itself is stuck (a stuck element's own offsetTop/rect is unreliable). -->
+<span class="v3-plate-anchor" data-plate-anchor aria-hidden="true"></span>
 <article class="v3-plate" data-plate aria-labelledby={titleId}>
   <div class="v3-plate__inner container">
     <header class="v3-plate__head">
@@ -111,6 +115,12 @@ const showAll = def.all.always || overflow;
 </article>
 
 <style>
+  /* F3: a zero-height marker, never a layout participant. */
+  .v3-plate-anchor {
+    display: block;
+    block-size: 0;
+  }
+
   .v3-plate {
     --plate-dim: 0;
     /* F3: plates start in normal flow. A plate taller than the viewport with
@@ -133,7 +143,9 @@ const showAll = def.all.always || overflow;
     color: color-mix(in srgb, var(--text-dim) calc(var(--plate-dim) * 100%), var(--text));
   }
 
-  .v3-plate + :global(.v3-plate) {
+  /* General-sibling, not adjacent: the F1 anchor marker sits between two
+     plates now, and this still has to match across it. */
+  .v3-plate ~ :global(.v3-plate) {
     margin-block-start: var(--space-xl);
   }
 
@@ -297,4 +309,41 @@ const showAll = def.all.always || overflow;
     }
   });
   plates.forEach((p) => ro.observe(p));
+
+  /* F1 (WCAG 2.4.11) — Focus Not Obscured (Minimum). Every plate is sticky
+     inside the same #work, so an earlier plate stays stuck under later ones
+     until the whole section scrolls past. The browser's own focus-scroll
+     only checks whether the focused element's box is inside the scrollport;
+     it has no idea a later plate is painted on top, so a covered link can
+     receive focus while remaining invisible.
+
+     Fix: on every focus inside a plate, check whether the focused element is
+     actually the (or inside the) topmost paint at its own centre point. If
+     not, jump straight to the scroll position where this plate has *just*
+     stuck — its anchor's in-flow document top minus the plate's own computed
+     sticky offset — where the whole plate is clear of the next one. A stuck
+     plate's own offsetTop/rect is unreliable for this, hence the zero-height
+     [data-plate-anchor] marker rendered immediately before each article.
+
+     Under reduced motion .v3-plate is position: relative (see the CSS
+     above), so no plate ever covers another and the visibility check always
+     passes on the first look — this handler is then a harmless no-op. */
+  document.addEventListener('focusin', (e) => {
+    const target = e.target;
+    if (!(target instanceof HTMLElement)) return;
+    const plate = target.closest<HTMLElement>('[data-plate]');
+    if (!plate) return;
+
+    const rect = target.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const atPoint = document.elementFromPoint(cx, cy);
+    if (atPoint === target || (atPoint && target.contains(atPoint))) return; // already visible
+
+    const anchor = plate.previousElementSibling;
+    if (!(anchor instanceof HTMLElement) || !anchor.hasAttribute('data-plate-anchor')) return;
+    const anchorTop = anchor.getBoundingClientRect().top + window.scrollY;
+    const stickyTop = parseFloat(getComputedStyle(plate).top) || 0;
+    window.scrollTo({ top: anchorTop - stickyTop, left: window.scrollX, behavior: 'instant' });
+  });
 </script>
