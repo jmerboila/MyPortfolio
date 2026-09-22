@@ -105,7 +105,7 @@ const year = new Date().getFullYear();
     </footer>
 
     <script>
-      import { currentTheme, toggleTheme } from '../scripts/theme';
+      import { bindThemeToggle } from '../scripts/theme';
 
       /* Measured, not guessed: DotGrid and the sticky plates both read it. */
       const header = document.querySelector<HTMLElement>('[data-v3-header]');
@@ -116,23 +116,9 @@ const year = new Date().getFullYear();
         new ResizeObserver(publish).observe(header);
       }
 
-      /* Visible word = current state; accessible name = the action. Same split
-         as v2B's toggle. */
       const btn = document.getElementById('v3-theme');
       const label = btn?.querySelector<HTMLElement>('[data-theme-label]');
-      if (btn && label) {
-        const sync = () => {
-          const now = currentTheme();
-          label.textContent = now === 'dark' ? 'Dark' : 'Light';
-          btn.setAttribute('aria-label', `Switch to ${now === 'dark' ? 'light' : 'dark'} theme`);
-        };
-        btn.addEventListener('click', () => {
-          toggleTheme();
-          sync();
-        });
-        window.addEventListener('themechange', sync);
-        sync();
-      }
+      if (btn && label) bindThemeToggle(btn, label);
     </script>
   </body>
 </html>
