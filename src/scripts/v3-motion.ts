@@ -29,6 +29,8 @@ const endIntro = () => root.classList.remove('v3-intro');
 const headerPx = () =>
   parseFloat(getComputedStyle(root).getPropertyValue('--header-height')) || 72;
 
+const isHeading = (el: Element) => el.matches('h1, h2, h3, h4, h5, h6');
+
 /** Lines rise out of a mask. Used by the Open h1 (on load) and by headings. */
 function riseLines(el: HTMLElement, onLoad: boolean): void {
   splits.push(
@@ -36,6 +38,12 @@ function riseLines(el: HTMLElement, onLoad: boolean): void {
       type: 'lines',
       mask: 'lines',
       autoSplit: true,
+      // F2: SplitText 3.15 defaults to aria: 'auto' — an aria-label on the
+      // split element plus aria-hidden on every line. aria-label is valid on
+      // a heading (the Open h1, a .v3-plate__title) but prohibited on the
+      // paragraph role (the plate-brief p[data-split] also passes through
+      // here), where NVDA/JAWS browse mode then reads nothing at all.
+      aria: isHeading(el) ? 'auto' : 'none',
       onSplit(self) {
         if (onLoad) endIntro();
         return gsap.from(self.lines, {
@@ -65,6 +73,9 @@ function inkIn(): void {
         type: 'words',
         wordsClass: 'v3-word',
         autoSplit: true,
+        // F2: [data-ink] is always a paragraph (Brief.astro's p.v3-brief__text),
+        // where aria-label is prohibited — see riseLines() above.
+        aria: 'none',
         onSplit(self) {
           return gsap.fromTo(
             self.words,
