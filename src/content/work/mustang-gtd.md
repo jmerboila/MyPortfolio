@@ -45,6 +45,8 @@ constraints:
   - "Artwork must read as one continuous image across the swipe"
   - "Every panel also has to work alone, since the feed may show only the first"
   - "One spec per panel — the pacing is the message"
+brief: "Four Instagram panels that had to read as one unbroken frame."
+showcase: 1
 featured: false
 order: 70
 ---

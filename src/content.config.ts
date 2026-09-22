@@ -132,6 +132,23 @@ const work = defineCollection({
       approach: z.string().optional(),
       outcome: z.string().optional(),
 
+      /* -- v3 showcase ---------------------------------------------------
+         All optional, so v2 and every entry without them are unaffected.
+         `showcase` is the rank inside the entry's v3 discipline chapter
+         (1 = featured). `brief` is the one-line problem shown as a chapter's
+         peak when there is no result. `result` NEVER renders without a
+         `source`, which is why source is required inside it: a number with
+         no provenance is a claim, and this site does not make those. */
+      brief: z.string().max(90).optional(),
+      showcase: z.number().int().positive().optional(),
+      result: z
+        .object({
+          value: z.string(),
+          label: z.string(),
+          source: z.string(),
+        })
+        .optional(),
+
       /* -- Placement ----------------------------------------------------- */
       /* Homepage shows only featured work; /work shows everything. */
       featured: z.boolean().default(false),
