@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "node --test \"tests/unit/*.test.ts\"",
+    "test:build": "astro build && node --test \"tests/build/*.test.ts\""
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
