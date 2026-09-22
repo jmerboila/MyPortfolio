@@ -1,0 +1,33 @@
+/* ============================================================================
+   v3.css — the /v3 variant's global layer.
+   ----------------------------------------------------------------------------
+   GLOBAL ON PURPOSE. Astro scopes a component's <style> to its own markup, so
+   anything shared between v3 components, or aimed at a child component such
+   as DotGrid, has to live here.
+
+   THE PALETTE IS AN OVERRIDE, NOT A FORK. tokens.css maps semantic tokens
+   (--accent…) to raw ones (--raw-light-accent…) on :root. html IS :root, so
+   redefining the raw tokens here, at higher specificity, changes what those
+   same var() references resolve to, and every downstream rule turns purple
+   without a single component knowing. Verified by tests/unit/contrast.test.ts.
+   ========================================================================= */
+
+html.v3 {
+  /* Devsign8 purple. Light ground: #5a3fe0 6.03:1 on paper. */
+  --raw-light-accent: #5a3fe0;
+  --raw-light-accent-strong: #4527c4;
+  --raw-light-accent-dim: #8a78e6;
+  --raw-light-border: rgb(90 63 224 / 0.18);
+  --raw-light-border-strong: rgb(90 63 224 / 0.38);
+
+  /* Night ground: #a98dff 7.43:1 on night. */
+  --raw-dark-accent: #a98dff;
+  --raw-dark-accent-strong: #c4b1ff;
+  --raw-dark-accent-dim: #7a5ee6;
+  --raw-dark-border: rgb(169 141 255 / 0.18);
+  --raw-dark-border-strong: rgb(169 141 255 / 0.38);
+
+  /* Dot field tint, read by DotGrid.astro. Alphas stay in DotGrid. */
+  --dotgrid-rgb-light: 90 63 224;
+  --dotgrid-rgb-dark: 169 141 255;
+}
