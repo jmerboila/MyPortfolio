@@ -31,3 +31,143 @@ html.v3 {
   --dotgrid-rgb-light: 90 63 224;
   --dotgrid-rgb-dark: 169 141 255;
 }
+
+/* ==========================================================================
+   SHELL
+   ========================================================================== */
+.v3-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
+  background: var(--surface-blur);
+  backdrop-filter: blur(12px);
+  border-block-end: 1px solid var(--border);
+}
+
+.v3-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  min-block-size: 4rem;
+}
+
+.v3-mark {
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.v3-header__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.v3-header__links a {
+  text-decoration: none;
+}
+
+.v3-theme {
+  min-block-size: var(--tap-min);
+  padding-inline: var(--space-xs);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: inherit;
+}
+
+/* The dev backlink is the first thing to go when the header runs out of room. */
+@media (max-width: 30rem) {
+  .v3-backlink {
+    display: none;
+  }
+}
+
+.v3-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-m);
+  padding-block: var(--space-xl);
+  color: var(--text-dim);
+}
+
+.v3-footer__socials {
+  display: flex;
+  gap: var(--space-m);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* ==========================================================================
+   SHARED
+   ========================================================================== */
+.v3-eyebrow {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.v3-link {
+  display: inline-flex;
+  gap: 0.4em;
+  align-items: center;
+  min-block-size: var(--tap-min);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.v3-button {
+  display: inline-flex;
+  gap: 0.5em;
+  align-items: center;
+  min-block-size: var(--tap-min);
+  padding: var(--space-xs) var(--space-m);
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.v3-button:hover,
+.v3-button:focus-visible {
+  background: var(--accent-strong);
+}
+
+/* ==========================================================================
+   MOTION HOOKS — styles v3-motion.ts relies on. Every default is the fully
+   visible, fully inked state, so no-JS and reduced motion need nothing.
+   ========================================================================== */
+
+/* The ONLY thing hidden before JS runs. See V3Layout's inline script. */
+html.v3-intro [data-intro] {
+  visibility: hidden;
+}
+
+/* Brief words ink from text-dim to text. A colour mix, never opacity: both
+   ends pass AA, so every point in between does too. */
+.v3-word {
+  --ink: 1;
+  color: color-mix(in srgb, var(--text) calc(var(--ink) * 100%), var(--text-dim));
+}
+
+/* Counting overlay: the real value keeps its layout box and stays in the
+   accessibility tree; the aria-hidden overlay paints the digits. */
+.v3-count-host {
+  position: relative;
+  -webkit-text-fill-color: transparent;
+}
+
+.v3-count {
+  position: absolute;
+  inset: 0;
+  -webkit-text-fill-color: currentColor;
+  font-variant-numeric: tabular-nums;
+}

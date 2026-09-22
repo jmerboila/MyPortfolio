@@ -30,8 +30,11 @@ export default defineConfig({
          /v2b is the alternate art direction (see src/layouts/V2BLayout.astro).
          It is a real URL on a real deployed site, so it is excluded here AND
          carries its own noindex,nofollow — belt and braces, because a sitemap
-         omission alone does not stop a crawler that finds the link. */
-      filter: (page) => !page.includes('/404') && !page.includes('/v2b'),
+         omission alone does not stop a crawler that finds the link.
+         /v3 is the one-page scroll variant (src/layouts/V3Layout.astro),
+         excluded for the same reason until it is promoted to /. */
+      filter: (page) =>
+        !page.includes('/404') && !page.includes('/v2b') && !page.includes('/v3'),
     }),
   ],
 

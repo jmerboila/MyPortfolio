@@ -1,0 +1,138 @@
+---
+/* ============================================================================
+   V3Layout.astro — the shell for the /v3 one-page scroll variant.
+   ----------------------------------------------------------------------------
+   Separate from BaseLayout for the V2BLayout reason: an unindexed variant must
+   not inject GTM or a second JSON-LD entity graph about the same person. Unlike
+   v2B it DOES mount the dot field, which v3 keeps from v2.
+
+   The header is sticky and publishes --header-height, because DotGrid insets
+   its canvas by that variable so no dot ever paints behind the navigation.
+   Phase C flips this shell to indexable in one place when /v3 is promoted.
+   ========================================================================= */
+import { PERSON, SOCIALS, SEO } from '../config/site';
+import { href, asset } from '../lib/url';
+import DotGrid from '../components/DotGrid.astro';
+
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource-variable/inter-tight/wght-italic.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/instrument-serif/400.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/v3.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'v3',
+  description = 'A one-page portfolio: who Jayson is, then the work, one discipline at a time.',
+} = Astro.props;
+
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang={SEO.lang} class="v3">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* Before first paint, for two jobs that cannot wait for the bundle:
+        1. the stored theme, shared with v2 and v2B through 'jm-theme';
+        2. html.v3-intro, which hides ONLY the Open h1 so its line reveal does
+           not flash. It is added only when motion is allowed, and removed after
+           2 s no matter what, so a failed bundle can never strand the headline.
+        This reads the media query itself because motion.ts is a module and has
+        not loaded yet; everything after first paint asks motion.ts. */}
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        try {
+          var stored = localStorage.getItem('jm-theme');
+          if (stored === 'light' || stored === 'dark') d.setAttribute('data-theme', stored);
+        } catch (e) {}
+        try {
+          if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            d.classList.add('v3-intro');
+            setTimeout(function () { d.classList.remove('v3-intro'); }, 2000);
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <title>{`${title} — ${PERSON.name}`}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f3" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0b10" />
+    <link rel="icon" type="image/svg+xml" href={asset('/favicon.svg')} />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="v3-header" data-v3-header>
+      <div class="v3-header__inner container">
+        <a class="v3-mark" href={href('/v3/')}>{PERSON.firstName} Erboila</a>
+        <nav class="v3-header__links" aria-label="Primary">
+          <a href="#work">Work</a>
+          <a href="#contact">Contact</a>
+          <button type="button" class="v3-theme" id="v3-theme" aria-label="Switch to dark theme">
+            <span data-theme-label>Theme</span>
+          </button>
+          <a class="v3-backlink" href={href('/')}>&larr; v2</a>
+        </nav>
+      </div>
+    </header>
+
+    <DotGrid />
+
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+
+    <footer class="v3-footer container">
+      <p>&copy; {year} {PERSON.name}</p>
+      <ul class="v3-footer__socials" role="list">
+        {SOCIALS.map((s) => (
+          <li><a href={s.url} target="_blank" rel="noopener me">{s.label}</a></li>
+        ))}
+      </ul>
+    </footer>
+
+    <script>
+      import { currentTheme, toggleTheme } from '../scripts/theme';
+
+      /* Measured, not guessed: DotGrid and the sticky plates both read it. */
+      const header = document.querySelector<HTMLElement>('[data-v3-header]');
+      if (header) {
+        const publish = () =>
+          document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+        publish();
+        new ResizeObserver(publish).observe(header);
+      }
+
+      /* Visible word = current state; accessible name = the action. Same split
+         as v2B's toggle. */
+      const btn = document.getElementById('v3-theme');
+      const label = btn?.querySelector<HTMLElement>('[data-theme-label]');
+      if (btn && label) {
+        const sync = () => {
+          const now = currentTheme();
+          label.textContent = now === 'dark' ? 'Dark' : 'Light';
+          btn.setAttribute('aria-label', `Switch to ${now === 'dark' ? 'light' : 'dark'} theme`);
+        };
+        btn.addEventListener('click', () => {
+          toggleTheme();
+          sync();
+        });
+        window.addEventListener('themechange', sync);
+        sync();
+      }
+    </script>
+  </body>
+</html>

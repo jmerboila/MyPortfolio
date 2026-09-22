@@ -1,0 +1,123 @@
+---
+import { Image } from 'astro:assets';
+import meshPortrait from '../../assets/jayson-mesh-portrait.webp';
+
+/* The same three counts as v1 and v2's About. The value is the real text;
+   v3-motion.ts overlays an aria-hidden counter, so assistive tech only ever
+   reads the final value. */
+const STATS = [
+  { value: '40+', label: 'Projects' },
+  { value: '5+', label: 'Years' },
+  { value: '20+', label: 'Clients' },
+];
+---
+
+<section id="about" class="v3-brief container" aria-labelledby="v3-brief-title">
+  <figure class="v3-brief__figure">
+    <Image
+      class="v3-brief__img"
+      src={meshPortrait}
+      alt="Jayson's head rendered as a grey 3D polygon mesh, a fine wireframe traced over his face beneath swept-back hair."
+      widths={[400, 726]}
+      sizes="(min-width: 64rem) 24rem, min(80vw, 22rem)"
+      loading="lazy"
+      decoding="async"
+      data-portrait
+    />
+  </figure>
+
+  <div class="v3-brief__body">
+    <h2 id="v3-brief-title" class="v3-eyebrow">About</h2>
+    <p class="v3-brief__text" data-ink>
+      I'm Jayson Mercado Erboila, a Digital Marketing Specialist and designer in Toronto. From
+      marketing strategy and SEO to pixel-perfect logos and digital interfaces, I work where
+      strategy meets aesthetics. With 5+ years across industries, I bring ideas to life through
+      thoughtful, intentional design.
+    </p>
+    <dl class="v3-stats">
+      {STATS.map((s) => (
+        <div class="v3-stats__item">
+          <dt class="v3-stats__label">{s.label}</dt>
+          <dd class="v3-stats__value" data-count>{s.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .v3-brief {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+    padding-block: var(--space-section);
+  }
+
+  @media (min-width: 64rem) {
+    .v3-brief {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+  }
+
+  .v3-brief__figure {
+    position: relative;
+    margin: 0 auto;
+    inline-size: min(100%, 24rem);
+    --mesh-halo: transparent;
+  }
+
+  /* Dark hair on night has no silhouette without a lift (v2B finding). */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .v3-brief__figure {
+      --mesh-halo: rgb(169 141 255 / 0.07);
+    }
+  }
+  :root[data-theme='dark'] .v3-brief__figure {
+    --mesh-halo: rgb(169 141 255 / 0.07);
+  }
+
+  .v3-brief__figure::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(48% 40% at 50% 38%, var(--mesh-halo) 0%, transparent 70%);
+  }
+
+  .v3-brief__img {
+    position: relative;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .v3-brief__text {
+    font-size: var(--step-2);
+    line-height: var(--leading-snug);
+    max-inline-size: 34ch;
+    margin-block: var(--space-s) var(--space-l);
+  }
+
+  .v3-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-l);
+    margin: 0;
+  }
+
+  .v3-stats__item {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .v3-stats__value {
+    margin: 0;
+    font-size: var(--step-5);
+    font-weight: var(--weight-h1);
+    letter-spacing: var(--tracking-h1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .v3-stats__label {
+    color: var(--text-dim);
+    font-size: var(--step--1);
+  }
+</style>

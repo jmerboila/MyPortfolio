@@ -1,0 +1,17 @@
+---
+/* ============================================================================
+   /v3 — the one-page scroll portfolio (noindex until promoted).
+   Spec: docs/superpowers/specs/2026-09-22-v3-scroll-portfolio-design.md
+   ========================================================================= */
+import V3Layout from '../../layouts/V3Layout.astro';
+import Open from '../../components/v3/Open.astro';
+import Brief from '../../components/v3/Brief.astro';
+import Contact from '../../components/v3/Contact.astro';
+---
+
+<V3Layout>
+  <Open />
+  <Brief />
+  <section id="work" class="v3-work" aria-label="Selected work"></section>
+  <Contact />
+</V3Layout>

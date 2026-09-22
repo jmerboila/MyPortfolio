@@ -1,0 +1,35 @@
+---
+import { PERSON } from '../../config/site';
+---
+
+<section class="v3-open container" aria-labelledby="v3-open-title">
+  <p class="v3-eyebrow">{PERSON.name} · {PERSON.tagline} · {PERSON.location.city}</p>
+  <h1 id="v3-open-title" class="v3-open__title" data-intro>
+    Marketing strategy<br /> <em>and the design to carry it</em>
+  </h1>
+  <p class="v3-open__cue" data-cue aria-hidden="true">Scroll</p>
+</section>
+
+<style>
+  .v3-open {
+    display: grid;
+    align-content: center;
+    gap: var(--space-m);
+    min-block-size: calc(100svh - var(--header-height, 4.5rem));
+    padding-block: var(--space-2xl);
+  }
+
+  .v3-open__title {
+    font-size: var(--step-hero);
+    max-inline-size: 16ch;
+    margin: 0;
+  }
+
+  .v3-open__cue {
+    font-size: var(--step--1);
+    color: var(--text-dim);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    margin: 0;
+  }
+</style>
