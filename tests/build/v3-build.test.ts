@@ -23,3 +23,28 @@ test('/v3 is not in the sitemap', () => {
   assert.ok(map.length > 0, 'sitemap missing');
   assert.doesNotMatch(map, /\/v3\//);
 });
+
+test('three chapter plates with derived counters', () => {
+  assert.equal((html.match(/<article[^>]*data-plate/g) ?? []).length, 3);
+  for (const c of ['01 / 03', '02 / 03', '03 / 03']) assert.ok(html.includes(c), c);
+});
+test('chapters run web, social, logo', () => {
+  const at = ['Web &amp; growth', 'Social media', 'Logo &amp; identity'].map((l) => html.indexOf(l));
+  assert.ok(at.every((i) => i > -1), JSON.stringify(at));
+  assert.deepEqual([...at].sort((a, b) => a - b), at);
+});
+test('each featured project links to its case page', () => {
+  for (const slug of ['devsign8-website', 'mustang-gtd', 'digiskills-logo']) {
+    assert.match(html, new RegExp(`href="/MyPortfolio2/work/${slug}/"`));
+  }
+});
+test('the social chapter always links to /social', () => {
+  assert.match(html, /href="\/MyPortfolio2\/social\/"/);
+});
+test('no More row while every chapter has one project', () => {
+  assert.doesNotMatch(html, /<ul[^>]*data-more/);
+});
+test('peaks fall back to brief, then summary', () => {
+  assert.ok(html.includes('Four Instagram panels that had to read as one unbroken frame.'));
+  assert.ok(html.includes('The studio website for Devsign8'));
+});

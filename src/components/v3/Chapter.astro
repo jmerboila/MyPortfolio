@@ -1,0 +1,271 @@
+---
+/* ============================================================================
+   Chapter.astro — one discipline plate.
+   ----------------------------------------------------------------------------
+   Plates stack with plain CSS sticky: each sticks under the header and the next
+   scrolls up over it. Scrolling stays 1:1 with the visitor's input; GSAP only
+   decorates. Under reduced motion the plates simply flow.
+
+   TALL-PLATE RULE. A sticky element taller than the viewport is covered by the
+   next plate before its bottom is ever seen. The script below publishes each
+   plate's height as --plate-h, and `top` takes the smaller of "under the
+   header" and "bottom-aligned", so a tall plate scrolls fully past first.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { counter, type Chapter as ChapterData, type ShowcaseItem } from '../../lib/chapters';
+import { href } from '../../lib/url';
+
+type Item = ShowcaseItem & { entry: CollectionEntry<'work'> };
+
+interface Props {
+  chapter: ChapterData<Item>;
+  index: number;
+  total: number;
+}
+
+const { chapter, index, total } = Astro.props;
+const { def, featured, more, overflow } = chapter;
+const d = featured.entry.data;
+const name = d.shortTitle ?? d.title;
+const titleId = `v3-chapter-${def.key}`;
+const showAll = def.all.always || overflow;
+---
+
+<article class="v3-plate" data-plate aria-labelledby={titleId}>
+  <div class="v3-plate__inner container">
+    <header class="v3-plate__head">
+      <p class="v3-eyebrow">
+        <span class="v3-plate__count">{counter(index, total)}</span>
+        <span aria-hidden="true"> · </span>
+        <span>{def.label}</span>
+      </p>
+      <h2 id={titleId} class="v3-plate__title" data-split>{name}</h2>
+    </header>
+
+    <div class="v3-plate__peak">
+      {d.result ? (
+        <p class="v3-result">
+          <span class="v3-result__value" data-count>{d.result.value}</span>
+          <span class="v3-result__label">{d.result.label}</span>
+          <span class="v3-result__source">Source: {d.result.source}</span>
+        </p>
+      ) : (
+        <p class="v3-plate__brief" data-split>{d.brief ?? d.summary}</p>
+      )}
+    </div>
+
+    <figure class="v3-plate__frame" data-frame>
+      <Image
+        class:list={['v3-plate__img', d.coverDark && 'v3-plate__img--light']}
+        src={d.cover}
+        alt={d.coverAlt}
+        widths={[640, 960, 1440]}
+        sizes="(min-width: 64rem) 55vw, 90vw"
+        loading={index === 0 ? 'eager' : 'lazy'}
+        decoding="async"
+        data-parallax
+      />
+      {d.coverDark && (
+        <Image
+          class="v3-plate__img v3-plate__img--dark"
+          src={d.coverDark}
+          alt={d.coverAlt}
+          widths={[640, 960, 1440]}
+          sizes="(min-width: 64rem) 55vw, 90vw"
+          loading="lazy"
+          decoding="async"
+          data-parallax
+        />
+      )}
+    </figure>
+
+    <div class="v3-plate__links">
+      <a class="v3-link" href={href(`/work/${featured.entry.id}/`)}>
+        Read the case<span class="visually-hidden">: {name}</span>
+        <span aria-hidden="true">→</span>
+      </a>
+      {showAll && (
+        <a class="v3-link" href={href(def.all.href)}>
+          {def.all.label} <span aria-hidden="true">→</span>
+        </a>
+      )}
+    </div>
+
+    {more.length > 0 && (
+      <div class="v3-more">
+        <h3 class="v3-more__title">{def.more}</h3>
+        <ul class="v3-more__list" role="list" data-more>
+          {more.map((m) => (
+            <li>
+              <a class="v3-more__item" href={href(`/work/${m.entry.id}/`)}>
+                <Image src={m.entry.data.cover} alt="" widths={[320, 480]} sizes="12rem" loading="lazy" decoding="async" />
+                <span>{m.entry.data.shortTitle ?? m.entry.data.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+</article>
+
+<style>
+  .v3-plate {
+    --plate-dim: 0;
+    position: sticky;
+    inset-block-start: min(var(--header-height, 4.5rem), 100svh - var(--plate-h, 100svh));
+    min-block-size: calc(100svh - var(--header-height, 4.5rem));
+    margin-inline: var(--gutter);
+    display: grid;
+    align-items: center;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-block-end: 0;
+    border-radius: var(--radius-l) var(--radius-l) 0 0;
+    transform-origin: 50% 0;
+    /* A covered plate dims to text-dim. Both ends pass AA on bg-2
+       (tests/unit/contrast.test.ts), so every point between does. */
+    color: color-mix(in srgb, var(--text-dim) calc(var(--plate-dim) * 100%), var(--text));
+  }
+
+  .v3-plate + :global(.v3-plate) {
+    margin-block-start: var(--space-xl);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .v3-plate {
+      position: relative;
+      inset-block-start: auto;
+    }
+  }
+
+  .v3-plate__inner {
+    display: grid;
+    gap: var(--space-m);
+    padding-block: var(--space-xl);
+  }
+
+  @media (min-width: 64rem) {
+    .v3-plate__inner {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      grid-template-areas:
+        'head  frame'
+        'peak  frame'
+        'links frame'
+        'more  more';
+      column-gap: var(--space-xl);
+      align-items: center;
+    }
+    .v3-plate__head { grid-area: head; }
+    .v3-plate__peak { grid-area: peak; }
+    .v3-plate__links { grid-area: links; }
+    .v3-plate__frame { grid-area: frame; }
+    .v3-more { grid-area: more; }
+  }
+
+  .v3-plate__title {
+    font-size: var(--step-section);
+    margin: var(--space-2xs) 0 0;
+  }
+
+  .v3-plate__brief {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-4);
+    line-height: var(--leading-snug);
+    margin: 0;
+    max-inline-size: 22ch;
+  }
+
+  .v3-result {
+    display: grid;
+    gap: var(--space-3xs);
+    margin: 0;
+  }
+
+  .v3-result__value {
+    font-size: var(--step-7);
+    font-weight: var(--weight-h1);
+    letter-spacing: var(--tracking-h1);
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .v3-result__source {
+    font-size: var(--step--1);
+    color: var(--text-dim);
+  }
+
+  /* The frame is its own surface, so covers with baked-in light grounds read
+     as mounted artwork rather than as a broken edge. */
+  .v3-plate__frame {
+    margin: 0;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: var(--radius-l);
+    background: var(--bg-3);
+  }
+
+  .v3-plate__img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+    scale: 1.1;
+  }
+
+  .v3-plate__img--dark {
+    display: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .v3-plate__img--light { display: none; }
+    :root:not([data-theme='light']) .v3-plate__img--dark { display: block; }
+  }
+  :root[data-theme='dark'] .v3-plate__img--light { display: none; }
+  :root[data-theme='dark'] .v3-plate__img--dark { display: block; }
+
+  .v3-plate__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+  }
+
+  .v3-more__title {
+    font-size: var(--step-1);
+    margin: var(--space-m) 0 var(--space-s);
+  }
+
+  .v3-more__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: var(--space-m);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .v3-more__item {
+    display: grid;
+    gap: var(--space-2xs);
+    text-decoration: none;
+  }
+
+  .v3-more__item img {
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    background: var(--bg-3);
+    border-radius: var(--radius-m);
+  }
+</style>
+
+<script>
+  /* Publish each plate's height for the tall-plate rule. offsetHeight ignores
+     transforms, so GSAP's scale on a covered plate does not feed back here. */
+  const ro = new ResizeObserver((entries) => {
+    for (const e of entries) {
+      const el = e.target as HTMLElement;
+      el.style.setProperty('--plate-h', `${el.offsetHeight}px`);
+    }
+  });
+  document.querySelectorAll<HTMLElement>('[data-plate]').forEach((p) => ro.observe(p));
+</script>
