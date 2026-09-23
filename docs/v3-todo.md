@@ -5,14 +5,14 @@ The running list for the `/v3` portfolio. Branch: `feat/v3-phase-a`.
 
 ## Round 3 — header, contact, footer, reveals (2026-09-22)
 
-- [ ] Remove the `← v2` link from the header
-- [ ] Header = JM monogram (48px; 40px on phones) + sun/moon toggle + **Let's talk** — no Work/Process/About/Contact links, no mobile Menu
-- [ ] "Let's talk": smaller, no icon, border-beam effect (plays ~5 s then stops, replays on hover/focus — WCAG 2.2.2)
-- [ ] Better discovery-call email: subject and a short prompt list in the body
-- [ ] Footer as icon links: LinkedIn, Instagram, TikTok (`@devsign8`), Devsign8 wordmark from `Devsign8.ai`
-- [ ] Contact: drop the social links and visible email; **Let's build the next one.** big, as the email link, with a split-letter roll on hover
-- [ ] Every text block reveals on scroll
-- [x] TikTok handle corrected to `@devsign8` everywhere (also `/social`)
+- [x] Remove the `← v2` link from the header — `475f138`
+- [x] Header = JM monogram (48px; 40px on phones) + sun/moon toggle + **Let's talk** — no Work/Process/About/Contact links, no mobile Menu — `475f138`
+- [x] "Let's talk": smaller, no icon, border-beam effect (plays ~5 s then stops, replays on hover/focus — WCAG 2.2.2) — `475f138`
+- [x] Better discovery-call email: subject and a short prompt list in the body — `475f138`
+- [x] Footer as icon links: LinkedIn, Instagram, TikTok (`@devsign8`), Devsign8 wordmark from `Devsign8.ai` — `dca6885`
+- [x] Contact: drop the social links and visible email; **Let's build the next one.** big, as the email link, with a split-letter roll on hover — `0f50058`
+- [x] Every text block reveals on scroll — `05fba75`
+- [x] TikTok handle corrected to `@devsign8` everywhere (also `/social`) — `ad4d6c9`
 
 ## Next
 
