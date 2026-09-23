@@ -11,8 +11,10 @@
    Phase C flips this shell to indexable in one place when /v3 is promoted.
    ========================================================================= */
 import { PERSON, SOCIALS, SEO } from '../config/site';
-import { href, asset } from '../lib/url';
+import { asset } from '../lib/url';
 import DotGrid from '../components/DotGrid.astro';
+import SiteNav from '../components/v3/SiteNav.astro';
+import StageRail from '../components/v3/StageRail.astro';
 
 import '@fontsource-variable/inter-tight/wght.css';
 import '@fontsource-variable/inter-tight/wght-italic.css';
@@ -81,19 +83,8 @@ const year = new Date().getFullYear();
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
 
-    <header class="v3-header" data-v3-header>
-      <div class="v3-header__inner container">
-        <a class="v3-mark" href={href('/v3/')}>{PERSON.firstName} Erboila</a>
-        <nav class="v3-header__links" aria-label="Primary">
-          <a href="#work">Work</a>
-          <a href="#contact">Contact</a>
-          <button type="button" class="v3-theme" id="v3-theme" aria-label="Switch to dark theme">
-            <span data-theme-label>Theme</span>
-          </button>
-          <a class="v3-backlink" href={href('/')}>&larr; v2</a>
-        </nav>
-      </div>
-    </header>
+    <SiteNav />
+    <StageRail />
 
     <DotGrid />
 
@@ -111,21 +102,8 @@ const year = new Date().getFullYear();
     </footer>
 
     <script>
-      import { bindThemeToggle } from '../scripts/theme';
+      /* Header height publishing and the theme toggle now live in SiteNav. */
       import '../scripts/v3-motion';
-
-      /* Measured, not guessed: DotGrid and the sticky plates both read it. */
-      const header = document.querySelector<HTMLElement>('[data-v3-header]');
-      if (header) {
-        const publish = () =>
-          document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
-        publish();
-        new ResizeObserver(publish).observe(header);
-      }
-
-      const btn = document.getElementById('v3-theme');
-      const label = btn?.querySelector<HTMLElement>('[data-theme-label]');
-      if (btn && label) bindThemeToggle(btn, label);
     </script>
   </body>
 </html>

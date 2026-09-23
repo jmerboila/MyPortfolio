@@ -35,54 +35,369 @@ html.v3 {
 /* ==========================================================================
    SHELL
    ========================================================================== */
-.v3-header {
+/* Lucide icons (Icon.astro). Lighter than Lucide's default 2px stroke so they
+   sit with Inter Tight at text sizes rather than shouting over it. */
+.v3-icon {
+  inline-size: 1.15em;
+  block-size: 1.15em;
+  flex-shrink: 0;
+  stroke-width: 1.75;
+}
+
+/* -- Header (SiteNav.astro) --------------------------------------------------
+   Solid ground and a hairline, deliberately NOT a translucent blur. */
+.v3-nav {
   position: sticky;
   inset-block-start: 0;
-  z-index: 10;
-  background: var(--surface-blur);
-  backdrop-filter: blur(12px);
+  z-index: var(--z-sticky);
+  background: var(--bg);
   border-block-end: 1px solid var(--border);
 }
 
-.v3-header__inner {
+.v3-nav__bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-m);
   min-block-size: 4rem;
 }
 
-.v3-mark {
+.v3-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-inline-end: auto;
   font-weight: 600;
+  letter-spacing: var(--tracking-h3);
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-.v3-header__links {
+/* The monogram stands alone in the bar, so it gets a little more height. */
+.v3-nav__mark {
+  block-size: 2.25rem;
+  inline-size: auto;
+}
+
+/* Scoped under .v3-nav because the CTA is also a .v3-button, and that shared
+   rule comes later in this file at the same specificity — unscoped, it won. */
+.v3-nav .v3-nav__links,
+.v3-nav .v3-nav__cta,
+.v3-nav .v3-backlink {
+  display: none;
+}
+
+.v3-nav__links ul {
   display: flex;
+  gap: var(--space-3xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.v3-nav__links a,
+.v3-nav__menu,
+.v3-menu__primary a {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-m);
-}
-
-.v3-header__links a {
-  text-decoration: none;
-}
-
-.v3-theme {
+  gap: 0.45em;
   min-block-size: var(--tap-min);
   padding-inline: var(--space-xs);
-  border: 1px solid var(--border-strong);
   border-radius: var(--radius-full);
+  color: inherit;
+  font: inherit;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-out-quart);
+}
+
+.v3-nav__links a {
+  font-size: 0.9375rem;
+}
+
+.v3-nav__links a:hover,
+.v3-nav__menu:hover,
+.v3-menu__primary a:hover {
+  background: var(--bg-2);
+}
+
+/* A pressed state, not just hover: the control answers the click. */
+.v3-nav__links a:active,
+.v3-nav__menu:active,
+.v3-iconbtn:active,
+.v3-button:active,
+.v3-menu__primary a:active {
+  translate: 0 1px;
+}
+
+.v3-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  flex-shrink: 0;
+}
+
+.v3-nav__menu,
+.v3-iconbtn,
+.v3-menu__primary a {
+  border: 1px solid var(--border-strong);
   background: transparent;
+}
+
+.v3-nav__menu {
+  padding-inline: var(--space-s);
+}
+
+.v3-iconbtn {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--tap-min);
+  block-size: var(--tap-min);
+  border-radius: var(--radius-full);
   color: inherit;
 }
 
-/* The dev backlink is the first thing to go when the header runs out of room. */
-@media (max-width: 30rem) {
-  .v3-backlink {
-    display: none;
+.v3-iconbtn .v3-icon {
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+}
+
+/* The theme button shows the theme in force: sun on paper, moon at night.
+   Its accessible name (aria-label) states the action instead. */
+.v3-theme__moon {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .v3-theme__sun { display: none; }
+  :root:not([data-theme='light']) .v3-theme__moon { display: block; }
+}
+:root[data-theme='dark'] .v3-theme__sun { display: none; }
+:root[data-theme='dark'] .v3-theme__moon { display: block; }
+
+.v3-backlink {
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  text-decoration: none;
+}
+
+@media (min-width: 64rem) {
+  .v3-nav .v3-nav__links { display: block; }
+  .v3-nav .v3-nav__cta { display: inline-flex; }
+  .v3-nav .v3-nav__menu[data-menu-open] { display: none; }
+}
+
+@media (min-width: 80rem) {
+  .v3-nav .v3-backlink { display: inline; }
+}
+
+/* -- Mobile story map (the <dialog> in SiteNav.astro) ---------------------- */
+.v3-menu {
+  inline-size: 100%;
+  block-size: 100dvh;
+  max-inline-size: none;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--bg);
+  color: var(--text);
+  overflow-y: auto;
+}
+
+.v3-menu::backdrop {
+  background: transparent;
+}
+
+.v3-menu__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-block-size: 4rem;
+  border-block-end: 1px solid var(--border);
+}
+
+.v3-menu__body {
+  display: grid;
+  gap: var(--space-l);
+  padding-block: var(--space-l) var(--space-2xl);
+}
+
+.v3-menu__title {
+  margin: 0;
+  font-size: var(--step-0);
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.v3-menu__stages {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.v3-menu__stages a {
+  display: grid;
+  grid-template-columns: 2.25rem 1.5rem 1fr;
+  grid-template-areas:
+    'n icon label'
+    '. .    line';
+  column-gap: var(--space-s);
+  align-items: center;
+  padding-block: var(--space-s);
+  border-block-end: 1px solid var(--border);
+  text-decoration: none;
+}
+
+/* Upright Instrument Serif numerals: the brand's second use of the family. */
+.v3-menu__n {
+  grid-area: n;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  line-height: 1;
+  color: var(--accent);
+}
+
+.v3-menu__icon {
+  grid-area: icon;
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+}
+
+.v3-menu__label {
+  grid-area: label;
+  font-size: var(--step-3);
+  font-weight: 500;
+  letter-spacing: var(--tracking-h2);
+  line-height: 1.1;
+}
+
+.v3-menu__line {
+  grid-area: line;
+  margin-block-start: var(--space-3xs);
+  font-size: var(--step--1);
+  color: var(--text-dim);
+}
+
+.v3-menu__primary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.v3-menu__primary a {
+  padding-inline: var(--space-s);
+}
+
+.v3-menu__cta {
+  justify-self: start;
+}
+
+/* The stages arrive one after another when the map opens. @starting-style is
+   a progressive enhancement, and --dur-* collapse under reduced motion. */
+.v3-menu[open] .v3-menu__stages li {
+  transition:
+    opacity var(--dur-slow) var(--ease-out-expo),
+    translate var(--dur-slow) var(--ease-out-expo);
+  transition-delay: calc(var(--i) * 40ms * var(--motion-scale));
+}
+
+@starting-style {
+  .v3-menu[open] .v3-menu__stages li {
+    opacity: 0;
+    translate: 0 0.75rem;
   }
+}
+
+/* -- Stage rail (StageRail.astro), wide screens only ----------------------- */
+.v3-rail {
+  display: none;
+}
+
+@media (min-width: 80rem) {
+  .v3-rail:not([hidden]) {
+    display: block;
+    position: fixed;
+    inset-inline-start: 1rem;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    z-index: var(--z-sticky);
+  }
+}
+
+.v3-rail ol {
+  position: relative;
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The thread the stages hang on. */
+.v3-rail ol::before {
+  content: '';
+  position: absolute;
+  inset-block: 0.9rem;
+  inset-inline-start: calc(0.3rem - 0.5px);
+  inline-size: 1px;
+  background: var(--border-strong);
+}
+
+.v3-rail a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 1.75rem;
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  text-decoration: none;
+}
+
+.v3-rail__dot {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.v3-rail__n {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Only the current stage's name shows; the rest reveal on hover or focus,
+   so the rail stays a thin thread beside the content. */
+.v3-rail__label {
+  padding-inline: 0.25rem;
+  border-radius: var(--radius-s);
+  background: var(--bg);
+  white-space: nowrap;
+  opacity: 0;
+  translate: -0.25rem 0;
+  transition:
+    opacity var(--dur-base) var(--ease-out-expo),
+    translate var(--dur-base) var(--ease-out-expo);
+}
+
+.v3-rail a:hover .v3-rail__label,
+.v3-rail a:focus-visible .v3-rail__label,
+.v3-rail a[aria-current] .v3-rail__label {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.v3-rail a[aria-current] {
+  color: var(--text);
+}
+
+.v3-rail a[aria-current] .v3-rail__dot {
+  border-color: var(--accent);
+  background: var(--accent);
 }
 
 .v3-footer {

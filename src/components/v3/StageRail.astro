@@ -1,0 +1,55 @@
+---
+/* ============================================================================
+   StageRail.astro — the desktop story rail: 01 Discover … 07 Measure down the
+   left edge, lighting up the stage in view.
+   ----------------------------------------------------------------------------
+   Hidden until the script finds at least one stage section on the page, so it
+   never offers links to anchors that do not exist yet (and simply stays
+   hidden without JS — the header links remain the way around the page).
+   The current stage is marked with aria-current="location", so screen-reader
+   users hear the same "you are here" sighted users see.
+   ========================================================================= */
+import { STAGES } from '../../config/lifecycle';
+---
+
+<nav class="v3-rail" aria-label="Project stages" data-rail hidden>
+  <ol role="list">
+    {STAGES.map((s) => (
+      <li>
+        <a href={`#${s.id}`} data-rail-link={s.id}>
+          <span class="v3-rail__dot" aria-hidden="true"></span>
+          <span class="v3-rail__n">{s.n}</span>
+          <span class="v3-rail__label">{s.label}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script>
+  const rail = document.querySelector<HTMLElement>('[data-rail]');
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-rail-link]')];
+  const sections = links
+    .map((a) => document.getElementById(a.dataset.railLink ?? ''))
+    .filter((el): el is HTMLElement => el !== null);
+
+  if (rail && sections.length) {
+    rail.hidden = false;
+    const mark = (id: string) =>
+      links.forEach((a) =>
+        a.dataset.railLink === id
+          ? a.setAttribute('aria-current', 'location')
+          : a.removeAttribute('aria-current'),
+      );
+
+    /* A section counts as current while it crosses the middle band of the
+       viewport — one at a time, whichever way the visitor scrolls. */
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) mark(e.target.id);
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => io.observe(s));
+  }
+</script>
