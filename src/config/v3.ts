@@ -1,42 +1,14 @@
 /* ============================================================================
-   v3.ts — the discipline chapters of the /v3 page, in page order.
+   v3.ts — the footer socials for the /v3 page.
    ----------------------------------------------------------------------------
-   A chapter appears only once a work entry in its cats carries `showcase`.
-   To feature more work, add `showcase: 2` (3, 4…) to that entry's
-   frontmatter; nothing here needs to change. To add a discipline, add a row;
-   it stays invisible until its first entry is showcased.
-
-   Order is marketing-weighted: the web and social work lead, identity last.
+   Round 4 removed the discipline-chapter system that used to live here
+   (V3_CHAPTERS + src/lib/chapters.ts + Chapter.astro): sample work now
+   appears inline within the seven-stage story, matched to the process stage
+   it was produced at (src/config/lifecycle.ts's `Stage.work`), so grouping by
+   medium is no longer needed. This file keeps only what's left: the footer's
+   icon links.
    ========================================================================= */
 import type { BrandIconName } from '../lib/brand-icons';
-import type { ChapterDef } from '../lib/chapters';
-import type { WorkCategory } from '../content.config';
-
-type V3Chapter = ChapterDef & { cats: readonly WorkCategory[] };
-
-export const V3_CHAPTERS: readonly V3Chapter[] = [
-  {
-    key: 'web',
-    label: 'Web & growth',
-    cats: ['web', 'mobile'],
-    more: 'More web work',
-    all: { href: '/work?cat=web', label: 'See all web work', always: false },
-  },
-  {
-    key: 'social',
-    label: 'Social media',
-    cats: ['social'],
-    more: 'More social work',
-    all: { href: '/social/', label: 'See all posts', always: true },
-  },
-  {
-    key: 'logo',
-    label: 'Logo & identity',
-    cats: ['logo'],
-    more: 'More logo work',
-    all: { href: '/work?cat=logo', label: 'See all logo work', always: false },
-  },
-];
 
 /* Footer icon links, in brand order: the two most-used social profiles,
    TikTok, then the studio wordmark last. 'devsign8' renders through

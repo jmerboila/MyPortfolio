@@ -299,6 +299,18 @@ html.v3 {
   background: var(--accent);
 }
 
+/* ==========================================================================
+   STORY / STAGES (Story.astro, Stage.astro) — the hairline between stages.
+   ----------------------------------------------------------------------------
+   Lives here rather than in Stage.astro because it is a relationship between
+   sibling instances of that component: Astro scopes a component's own <style>
+   to its own markup, so a rule written in Stage.astro never matches the NEXT
+   Stage.astro instance (see the shared-CSS binding rule at the top of v3.css).
+   ========================================================================== */
+.v3-stage + .v3-stage {
+  border-block-start: 1px solid var(--border);
+}
+
 .v3-footer {
   display: flex;
   flex-wrap: wrap;

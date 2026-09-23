@@ -1,0 +1,54 @@
+---
+/* ============================================================================
+   Story.astro — "How a project runs": the seven-stage story that replaced
+   round 3's three discipline plates.
+   ----------------------------------------------------------------------------
+   STAGES (src/config/lifecycle.ts) is the single source of the copy and the
+   work placement; this component only resolves each stage's `work` ids
+   against the content collection and hands the result to <Stage>. StageRail
+   reads the same STAGES array independently and un-hides itself once it finds
+   these section ids on the page.
+   ========================================================================= */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { STAGES } from '../../config/lifecycle';
+import Stage from './Stage.astro';
+
+const entries = await getCollection('work', ({ data }) => !data.draft);
+const byId = new Map(entries.map((entry) => [entry.id, entry]));
+
+const stagesWithWork = STAGES.map((stage) => ({
+  stage,
+  work: stage.work
+    .map((id) => byId.get(id))
+    .filter((entry): entry is CollectionEntry<'work'> => entry !== undefined),
+}));
+---
+
+<section id="story" class="v3-story" aria-labelledby="v3-story-title">
+  <header class="v3-story__head container">
+    <h2 id="v3-story-title" data-split>How a project runs</h2>
+    <p data-split>Seven steps, from the first chat to real results.</p>
+  </header>
+
+  {stagesWithWork.map(({ stage, work }) => (
+    <Stage stage={stage} work={work} />
+  ))}
+</section>
+
+<style>
+  .v3-story__head {
+    padding-block-start: var(--space-section);
+    padding-block-end: var(--space-l);
+    text-align: center;
+  }
+
+  .v3-story__head h2 {
+    margin: 0;
+  }
+
+  .v3-story__head p {
+    margin: var(--space-xs) 0 0;
+    color: var(--text-dim);
+    font-size: var(--step-1);
+  }
+</style>

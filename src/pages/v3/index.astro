@@ -3,36 +3,16 @@
    /v3 — the one-page scroll portfolio (noindex until promoted).
    Spec: docs/superpowers/specs/2026-09-22-v3-scroll-portfolio-design.md
    ========================================================================= */
-import { getCollection } from 'astro:content';
 import V3Layout from '../../layouts/V3Layout.astro';
-import Open from '../../components/v3/Open.astro';
+import Hero from '../../components/v3/Hero.astro';
 import Brief from '../../components/v3/Brief.astro';
-import Chapter from '../../components/v3/Chapter.astro';
+import Story from '../../components/v3/Story.astro';
 import Contact from '../../components/v3/Contact.astro';
-import { V3_CHAPTERS } from '../../config/v3';
-import { buildChapters } from '../../lib/chapters';
-
-const entries = await getCollection('work', ({ data }) => !data.draft);
-const chapters = buildChapters(
-  V3_CHAPTERS,
-  entries.map((entry) => ({
-    id: entry.id,
-    cats: entry.data.cats,
-    showcase: entry.data.showcase,
-    order: entry.data.order,
-    title: entry.data.title,
-    entry,
-  })),
-);
 ---
 
 <V3Layout>
-  <Open />
+  <Hero />
   <Brief />
-  <section id="work" class="v3-work" aria-label="Selected work">
-    {chapters.map((chapter, index) => (
-      <Chapter chapter={chapter} index={index} total={chapters.length} />
-    ))}
-  </section>
+  <Story />
   <Contact />
 </V3Layout>
