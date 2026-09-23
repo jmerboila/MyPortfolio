@@ -41,12 +41,12 @@ export const SOCIAL_ACCOUNTS = {
     url: 'https://www.instagram.com/hello.devsign8/',
     avatar: devsign8Avatar,
   },
-  /* TODO(jayson): confirm the TikTok handle. It mirrors the Instagram one
-     until you say otherwise. */
+  /* Confirmed by Jayson 2026-09-22: TikTok is @devsign8, not the Instagram
+     handle it used to mirror. */
   tiktok: {
     platform: 'TikTok',
-    handle: 'hello.devsign8',
-    url: 'https://www.tiktok.com/@hello.devsign8',
+    handle: 'devsign8',
+    url: 'https://www.tiktok.com/@devsign8',
     avatar: devsign8Avatar,
   },
 } as const satisfies Record<string, SocialAccount>;

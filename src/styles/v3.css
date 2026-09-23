@@ -58,7 +58,7 @@ html.v3 {
   display: flex;
   align-items: center;
   gap: var(--space-m);
-  min-block-size: 4rem;
+  min-block-size: 4.5rem;
 }
 
 .v3-nav__brand {
@@ -73,60 +73,23 @@ html.v3 {
   flex-shrink: 0;
 }
 
-/* The monogram stands alone in the bar, so it gets a little more height. */
+/* The monogram stands alone in the bar, so it gets a little more height.
+   Bigger from 64rem up, where the bar has room to spare. */
 .v3-nav__mark {
-  block-size: 2.25rem;
+  block-size: 2.5rem;
   inline-size: auto;
 }
 
-/* Scoped under .v3-nav because the CTA is also a .v3-button, and that shared
-   rule comes later in this file at the same specificity — unscoped, it won. */
-.v3-nav .v3-nav__links,
-.v3-nav .v3-nav__cta,
-.v3-nav .v3-backlink {
-  display: none;
-}
-
-.v3-nav__links ul {
-  display: flex;
-  gap: var(--space-3xs);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.v3-nav__links a,
-.v3-nav__menu,
-.v3-menu__primary a {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45em;
-  min-block-size: var(--tap-min);
-  padding-inline: var(--space-xs);
-  border-radius: var(--radius-full);
-  color: inherit;
-  font: inherit;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background-color var(--dur-fast) var(--ease-out-quart);
-}
-
-.v3-nav__links a {
-  font-size: 0.9375rem;
-}
-
-.v3-nav__links a:hover,
-.v3-nav__menu:hover,
-.v3-menu__primary a:hover {
-  background: var(--bg-2);
+@media (min-width: 64rem) {
+  .v3-nav__mark {
+    block-size: 3rem;
+  }
 }
 
 /* A pressed state, not just hover: the control answers the click. */
-.v3-nav__links a:active,
-.v3-nav__menu:active,
 .v3-iconbtn:active,
 .v3-button:active,
-.v3-menu__primary a:active {
+.v3-talk:active {
   translate: 0 1px;
 }
 
@@ -135,17 +98,6 @@ html.v3 {
   align-items: center;
   gap: var(--space-2xs);
   flex-shrink: 0;
-}
-
-.v3-nav__menu,
-.v3-iconbtn,
-.v3-menu__primary a {
-  border: 1px solid var(--border-strong);
-  background: transparent;
-}
-
-.v3-nav__menu {
-  padding-inline: var(--space-s);
 }
 
 .v3-iconbtn {
@@ -174,141 +126,85 @@ html.v3 {
 :root[data-theme='dark'] .v3-theme__sun { display: none; }
 :root[data-theme='dark'] .v3-theme__moon { display: block; }
 
-.v3-backlink {
-  font-size: 0.875rem;
-  color: var(--text-dim);
-  text-decoration: none;
+/* -- "Let's talk" CTA (SiteNav.astro) --------------------------------------
+   Smaller and outlined, unlike the filled .v3-button: this is the header's
+   one action, not a page CTA. The border beam is a short bright arc that
+   travels the pill's ring — @property makes the angle animatable so the
+   conic-gradient can rotate through a CSS transition/keyframe rather than a
+   rAF loop (the header stays live even if the JS bundle never runs).
+
+   WCAG 2.2.2 Pause/Stop/Hide: the on-load play is 3 iterations at 1.6s each
+   (4.8s), so it always stops on its own before 5s. Hover/focus looping is
+   user-initiated and therefore exempt. */
+@property --v3-beam {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
 }
 
-@media (min-width: 64rem) {
-  .v3-nav .v3-nav__links { display: block; }
-  .v3-nav .v3-nav__cta { display: inline-flex; }
-  .v3-nav .v3-nav__menu[data-menu-open] { display: none; }
+@keyframes v3-beam {
+  to {
+    --v3-beam: 360deg;
+  }
 }
 
-@media (min-width: 80rem) {
-  .v3-nav .v3-backlink { display: inline; }
-}
-
-/* -- Mobile story map (the <dialog> in SiteNav.astro) ---------------------- */
-.v3-menu {
-  inline-size: 100%;
-  block-size: 100dvh;
-  max-inline-size: none;
-  max-block-size: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
+.v3-talk {
+  position: relative;
+  z-index: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--tap-min);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
   background: var(--bg);
   color: var(--text);
-  overflow-y: auto;
-}
-
-.v3-menu::backdrop {
-  background: transparent;
-}
-
-.v3-menu__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-block-size: 4rem;
-  border-block-end: 1px solid var(--border);
-}
-
-.v3-menu__body {
-  display: grid;
-  gap: var(--space-l);
-  padding-block: var(--space-l) var(--space-2xl);
-}
-
-.v3-menu__title {
-  margin: 0;
-  font-size: var(--step-0);
+  border: 1px solid var(--border-strong);
+  font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-dim);
-}
-
-.v3-menu__stages {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.v3-menu__stages a {
-  display: grid;
-  grid-template-columns: 2.25rem 1.5rem 1fr;
-  grid-template-areas:
-    'n icon label'
-    '. .    line';
-  column-gap: var(--space-s);
-  align-items: center;
-  padding-block: var(--space-s);
-  border-block-end: 1px solid var(--border);
-  text-decoration: none;
-}
-
-/* Upright Instrument Serif numerals: the brand's second use of the family. */
-.v3-menu__n {
-  grid-area: n;
-  font-family: var(--font-display);
-  font-size: var(--step-2);
   line-height: 1;
-  color: var(--accent);
+  text-decoration: none;
+  animation: v3-beam 1.6s linear 3;
 }
 
-.v3-menu__icon {
-  grid-area: icon;
-  inline-size: 1.35rem;
-  block-size: 1.35rem;
+.v3-talk:hover,
+.v3-talk:focus-visible {
+  animation: v3-beam 1.6s linear infinite;
 }
 
-.v3-menu__label {
-  grid-area: label;
-  font-size: var(--step-3);
-  font-weight: 500;
-  letter-spacing: var(--tracking-h2);
-  line-height: 1.1;
+.v3-talk::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--v3-beam),
+    transparent 0 70%,
+    var(--accent) 85%,
+    var(--accent-strong) 92%,
+    transparent 100%
+  );
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
 }
 
-.v3-menu__line {
-  grid-area: line;
-  margin-block-start: var(--space-3xs);
-  font-size: var(--step--1);
-  color: var(--text-dim);
-}
-
-.v3-menu__primary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2xs);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.v3-menu__primary a {
-  padding-inline: var(--space-s);
-}
-
-.v3-menu__cta {
-  justify-self: start;
-}
-
-/* The stages arrive one after another when the map opens. @starting-style is
-   a progressive enhancement, and --dur-* collapse under reduced motion. */
-.v3-menu[open] .v3-menu__stages li {
-  transition:
-    opacity var(--dur-slow) var(--ease-out-expo),
-    translate var(--dur-slow) var(--ease-out-expo);
-  transition-delay: calc(var(--i) * 40ms * var(--motion-scale));
-}
-
-@starting-style {
-  .v3-menu[open] .v3-menu__stages li {
-    opacity: 0;
-    translate: 0 0.75rem;
+@media (prefers-reduced-motion: reduce) {
+  .v3-talk,
+  .v3-talk:hover,
+  .v3-talk:focus-visible {
+    animation: none;
+    border-color: var(--accent);
+  }
+  .v3-talk::before {
+    content: none;
   }
 }
 
