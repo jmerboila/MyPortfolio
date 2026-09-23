@@ -12,27 +12,48 @@ what happens next.
 
 | ID | Where | Copy | Status |
 |---|---|---|---|
-| open.eyebrow | `src/components/v3/Open.astro` | Jayson Mercado Erboila · Digital Marketing Specialist & Designer · Toronto *(from site.ts)* | draft |
-| open.h1 | `src/components/v3/Open.astro` | Marketing strategy / *and the design to carry it* | draft |
-| brief.text | `src/components/v3/Brief.astro` | I'm Jayson Mercado Erboila, a Digital Marketing Specialist and designer in Toronto. From marketing strategy and SEO to pixel-perfect logos and digital interfaces, I work where strategy meets aesthetics. With 5+ years across industries, I bring ideas to life through thoughtful, intentional design. | draft (trimmed from v1 About; first sentence is answer-first) |
+| hero.h1 | `src/components/v3/Hero.astro` | Jayson Mercado Erboila *(from site.ts)* | draft |
+| hero.line | `src/components/v3/Hero.astro` | I help businesses look good, get found and grow online. | draft |
+| hero.subline | `src/components/v3/Hero.astro` | Digital marketing & design · Toronto | draft |
+| brief.h2 | `src/components/v3/Brief.astro` | Hi, I'm Jayson. | draft |
+| brief.text | `src/components/v3/Brief.astro` | I'm a digital marketer and designer in Toronto. For more than five years I've helped brands in different industries, from the first chat to the monthly report, so nothing gets lost between the logo and the likes. | draft |
 | brief.stats | `src/components/v3/Brief.astro` | 40+ Projects · 5+ Years · 20+ Clients *(from v1)* | draft (please confirm still accurate) |
-| chapter.web.label | `src/config/v3.ts` | Web & growth | draft |
-| chapter.social.label | `src/config/v3.ts` | Social media | draft |
-| chapter.logo.label | `src/config/v3.ts` | Logo & identity | draft |
-| chapter.link | `src/components/v3/Chapter.astro` | Read the case → | draft |
-| chapter.social.all | `src/config/v3.ts` | See all posts → | draft |
+| story.h2 | `src/components/v3/Story.astro` | How a project runs | draft |
+| story.line | `src/components/v3/Story.astro` | Seven steps, from the first chat to real results. | draft |
 | contact.h2 | `src/components/v3/Contact.astro` | Let's build the *next one.* | draft |
 | contact.button | `src/components/v3/Contact.astro` | Email {address} | draft (address still pending: jmerboila@gmail.com vs hello.devsign8@gmail.com) |
 
-## Chapter briefs (`brief` in each work entry's frontmatter)
+## The seven stages (`STAGES` in `src/config/lifecycle.ts`)
+
+Sample work is placed at the stage it was actually produced at, not grouped
+by medium — round 4 replaced the three discipline plates (Web & growth /
+Social media / Logo & identity) with this.
+
+| # | Label | Headline | Body | You get | Sample work |
+|---|---|---|---|---|---|
+| 01 | Discover | First, I listen. | Before any design, we talk. I learn what you sell, who buys it, and what's getting in the way. | A clear picture of where you are today | — |
+| 02 | Plan | Then we make a plan. | We decide who you're for, what makes you different, and what a win looks like, in numbers you can check. | A simple plan with clear goals | — |
+| 03 | Brand | Your brand gets a face. | Logo, colours, fonts and tone of voice, all built from the plan. Then a short guide, so everyone uses them the same way. | Logo and brand guide | DigiSkills App Logo, JM Design, Devsign8 |
+| 04 | Build | A website that works. | A fast site that looks good on every phone and turns visitors into messages and sales. Tracking goes in on day one, so we can see what works. | Website with tracking | devsign8.com |
+| 05 | Be found | People can find you. | I help you show up when people search on Google, on Maps, and in AI tools like ChatGPT. | Search-ready pages and a Google Business Profile | — |
+| 06 | Show up | Show up where your customers are. | Social media set up and filled with posts people stop for, planned ahead and on brand. | Social channels and a posting plan | Mustang GTD |
+| 07 | Measure | Check the numbers, then do it again. | Every month, a simple report: what worked, what didn't, and what we'll try next. Then the loop starts over. | A monthly report and next steps | — |
+
+Status: **draft** for all seven rows (label/headline/body/gets) — see
+"Waiting on Jayson" in `docs/v3-todo.md`.
+
+## Work-entry briefs (`brief` in each work entry's frontmatter)
+
+Cards on the story stages show `shortTitle ?? title` and `brief ?? summary` —
+unchanged by round 4, kept here for reference.
 
 | Entry | Brief | Status |
 |---|---|---|
-| devsign8-website | *(none yet: the chapter shows `summary` until the questionnaire is answered)* | waiting on questionnaire |
+| devsign8-website | *(none yet: the card shows `summary` until the questionnaire is answered)* | waiting on questionnaire |
 | mustang-gtd | Four Instagram panels that had to read as one unbroken frame. | draft |
 | digiskills-logo | A digital-safety app for kids needed a mark that felt like play. | draft |
-| devsign8 *(queued, not showcased)* | A studio name that had to say design and development in one word. | draft |
-| jm-design *(queued, not showcased)* | A personal monogram that carries both letters in a single stroke. | draft |
+| devsign8 | *(none yet: the card shows `summary`)* | draft |
+| jm-design | *(none yet: the card shows `summary`)* | draft |
 
 ## Assets still needed
 
