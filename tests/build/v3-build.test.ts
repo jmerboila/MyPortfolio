@@ -1,19 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 const PAGE = 'dist/v3/index.html';
 const html = existsSync(PAGE) ? readFileSync(PAGE, 'utf8') : '';
-
-// F3: read every compiled stylesheet rather than one hashed filename, so this
-// survives Astro's per-build content hash.
-const CSS_DIR = 'dist/_astro';
-const css = existsSync(CSS_DIR)
-  ? readdirSync(CSS_DIR)
-      .filter((f) => f.endsWith('.css'))
-      .map((f) => readFileSync(`${CSS_DIR}/${f}`, 'utf8'))
-      .join('\n')
-  : '';
 
 test('the page is built', () => assert.ok(existsSync(PAGE), `${PAGE} missing`));
 test('noindex, nofollow', () => assert.match(html, /<meta name="robots" content="noindex, nofollow"/));
@@ -21,7 +11,16 @@ test('no GTM and no JSON-LD on a variant', () => {
   assert.doesNotMatch(html, /googletagmanager/);
   assert.doesNotMatch(html, /application\/ld\+json/);
 });
-test('exactly one h1', () => assert.equal((html.match(/<h1[\s>]/g) ?? []).length, 1));
+test('exactly one h1, and it is the full name', () => {
+  const h1s = html.match(/<h1[^>]*>[\s\S]*?<\/h1>/g) ?? [];
+  assert.equal(h1s.length, 1);
+  assert.match(h1s[0] ?? '', /Jayson[\s\S]*Mercado[\s\S]*Erboila/);
+});
+test('an aria-hidden outline copy of the hero name exists', () => {
+  const m = /<[a-z0-9]+\b[^>]*class="[^"]*v3-hero__title--outline[^"]*"[^>]*>/i.exec(html);
+  assert.ok(m, 'expected the outline element');
+  assert.match(m[0], /aria-hidden="true"/);
+});
 test('html carries the v3 class', () => assert.match(html, /<html[^>]*class="v3"/));
 test('the dot field is mounted', () => assert.match(html, /data-dotgrid/));
 test('stats are real text', () => {
@@ -50,43 +49,35 @@ test('/v3 is not in the sitemap', () => {
   assert.doesNotMatch(map, /\/v3\//);
 });
 
-test('three chapter plates with derived counters', () => {
-  assert.equal((html.match(/<article[^>]*data-plate/g) ?? []).length, 3);
-  for (const c of ['01 / 03', '02 / 03', '03 / 03']) assert.ok(html.includes(c), c);
-});
-test('chapters run web, social, logo', () => {
-  const at = ['Web &amp; growth', 'Social media', 'Logo &amp; identity'].map((l) => html.indexOf(l));
+test('seven story stages, in lifecycle order', () => {
+  const ids = ['discover', 'plan', 'brand', 'build', 'be-found', 'show-up', 'measure'];
+  const at = ids.map((id) => html.indexOf(`id="${id}"`));
   assert.ok(at.every((i) => i > -1), JSON.stringify(at));
   assert.deepEqual([...at].sort((a, b) => a - b), at);
 });
-test('each featured project links to its case page', () => {
-  for (const slug of ['devsign8-website', 'mustang-gtd', 'digiskills-logo']) {
+test('every stage headline is present', () => {
+  const headlines = [
+    'First, I listen.',
+    'Then we make a plan.',
+    'Your brand gets a face.',
+    'A website that works.',
+    'People can find you.',
+    'Show up where your customers are.',
+    'Check the numbers, then do it again.',
+  ];
+  for (const h of headlines) assert.ok(html.includes(h), h);
+});
+test('sample work at the matching stage links to its case page', () => {
+  for (const slug of ['digiskills-logo', 'jm-design', 'devsign8', 'devsign8-website', 'mustang-gtd']) {
     assert.match(html, new RegExp(`href="/MyPortfolio2/work/${slug}/"`));
   }
 });
-test('the social chapter always links to /social', () => {
-  assert.match(html, /href="\/MyPortfolio2\/social\/"/);
+test('no discipline-plate markup remains', () => {
+  assert.doesNotMatch(html, /data-plate\b/);
 });
-test('no More row while every chapter has one project', () => {
-  assert.doesNotMatch(html, /<ul[^>]*data-more/);
-});
-test('peaks fall back to brief, then summary', () => {
-  assert.ok(html.includes('Four Instagram panels that had to read as one unbroken frame.'));
-  assert.ok(html.includes('The studio website for Devsign8'));
-});
-
-test('F3: a plate only goes sticky once #work is marked data-plates-ready', () => {
-  // The gated rule exists and actually turns sticky on.
-  assert.match(
-    css,
-    /#work\[data-plates-ready\][^{]*\.v3-plate\[[^\]]+\]\{[^}]*position:sticky/,
-    'expected a #work[data-plates-ready] .v3-plate rule that sets position: sticky',
-  );
-  // Every unqualified ".v3-plate{...}" rule -- the ones a browser applies
-  // before JS has measured anything -- must not be unconditionally sticky.
-  const bareRules = [...css.matchAll(/(?:^|\})(\.v3-plate\[[a-z0-9-]+\]\{[^}]*\})/g)].map((m) => m[1]);
-  assert.ok(bareRules.length > 0, 'expected to find the base, unqualified .v3-plate rule');
-  for (const rule of bareRules) {
-    assert.doesNotMatch(rule, /position:sticky/, `an unqualified .v3-plate rule went sticky: ${rule}`);
+test('the stage rail markup is present and lists every stage', () => {
+  assert.match(html, /data-rail\b/);
+  for (const id of ['discover', 'plan', 'brand', 'build', 'be-found', 'show-up', 'measure']) {
+    assert.match(html, new RegExp(`data-rail-link="${id}"`));
   }
 });
