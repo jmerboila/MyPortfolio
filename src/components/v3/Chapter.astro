@@ -39,7 +39,7 @@ const showAll = def.all.always || overflow;
 <article class="v3-plate" data-plate aria-labelledby={titleId}>
   <div class="v3-plate__inner container">
     <header class="v3-plate__head">
-      <p class="v3-eyebrow">
+      <p class="v3-eyebrow" data-split>
         <span class="v3-plate__count">{counter(index, total)}</span>
         <span aria-hidden="true"> · </span>
         <span>{def.label}</span>
@@ -84,7 +84,7 @@ const showAll = def.all.always || overflow;
       )}
     </figure>
 
-    <div class="v3-plate__links">
+    <div class="v3-plate__links" data-reveal="fade">
       <a class="v3-link" href={href(`/work/${featured.entry.id}/`)}>
         Read the case<span class="visually-hidden">: {name}</span>
         <span aria-hidden="true">→</span>
@@ -98,7 +98,7 @@ const showAll = def.all.always || overflow;
 
     {more.length > 0 && (
       <div class="v3-more">
-        <h3 class="v3-more__title">{def.more}</h3>
+        <h3 class="v3-more__title" data-split>{def.more}</h3>
         <ul class="v3-more__list" role="list" data-more>
           {more.map((m) => (
             <li>

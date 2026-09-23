@@ -128,6 +128,21 @@ function counts(): void {
   }
 }
 
+/** A simple rise-and-fade for blocks SplitText shouldn't touch — currently
+ *  just the plates' link rows, which contain real interactive <a> elements
+ *  that a line split would tear out of their box and re-wrap. */
+function revealFade(): void {
+  for (const el of document.querySelectorAll<HTMLElement>('[data-reveal="fade"]')) {
+    gsap.from(el, {
+      y: 16,
+      autoAlpha: 0,
+      duration: 0.8,
+      ease: EASE,
+      scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+    });
+  }
+}
+
 /** The contact heading's characters rise in on scroll. Targets
  *  .v3-roll__char (the clipped outer window), never .v3-roll__inner (the
  *  hover-roll's own translate target in v3.css) — animating the same
@@ -226,6 +241,7 @@ function build(): void {
     counts();
     portrait();
     plates();
+    revealFade();
     rollChars();
     for (const el of document.querySelectorAll<HTMLElement>('[data-split]')) riseLines(el, false);
   });

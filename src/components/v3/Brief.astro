@@ -27,7 +27,7 @@ const STATS = [
   </figure>
 
   <div class="v3-brief__body">
-    <h2 id="v3-brief-title" class="v3-eyebrow">About</h2>
+    <h2 id="v3-brief-title" class="v3-eyebrow" data-split>About</h2>
     <p class="v3-brief__text" data-ink>
       I'm Jayson Mercado Erboila, a Digital Marketing Specialist and designer in Toronto. From
       marketing strategy and SEO to pixel-perfect logos and digital interfaces, I work where
@@ -37,7 +37,7 @@ const STATS = [
     <dl class="v3-stats">
       {STATS.map((s) => (
         <div class="v3-stats__item">
-          <dt class="v3-stats__label">{s.label}</dt>
+          <dt class="v3-stats__label" data-split>{s.label}</dt>
           <dd class="v3-stats__value" data-count>{s.value}</dd>
         </div>
       ))}
