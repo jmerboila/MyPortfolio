@@ -14,14 +14,22 @@ The running list for the `/v3` portfolio. Branch: `feat/v3-phase-a`.
 - [x] Every text block reveals on scroll — `05fba75`
 - [x] TikTok handle corrected to `@devsign8` everywhere (also `/social`) — `ad4d6c9`
 
+## Round 4 — hero name-sandwich, seven-stage story (2026-09-23)
+
+- [x] **Hero:** JAYSON MERCADO ERBOILA full width behind/in front of the mesh head, aria-hidden outline crossing the face, subtle tilt from the cursor (touch gets scroll parallax instead); still under reduced motion — `7fbc3c9`
+- [x] Intro reworked to a single readable column, portrait moved into the hero, "About" eyebrow dropped — `f88ad71`
+- [x] **Story sections after the hero:** the seven stages (Discover → Measure) unfold as you scroll, with sample work placed at each stage; desktop stage rail tracks progress — replaces the three discipline plates — `e02c207`
+- [x] Copy deck updated for the hero, intro and seven stages — `6f33e08`
+- [x] Build + unit tests updated for the new markup — `c97363f`
+
 ## Next
 
-- [ ] **Hero:** JAYSON MERCADO ERBOILA full width, mesh head layered into the name, subtle tilt from the cursor; scroll parallax on phones; still under reduced motion — *Jayson to choose the line under his name (keep "Marketing strategy and the design to carry it" or rewrite)*
-- [ ] **Story sections after the hero:** the seven stages (Discover → Measure) unfold as you scroll, with sample work placed at each stage; desktop stage rail tracks progress — replaces the three discipline plates
+(nothing queued — see "Waiting on Jayson" below)
 
 ## Waiting on Jayson
 
-- [ ] devsign8.com screenshot, 1440 × 900 (light, plus dark if it differs) — the Web card uses the wordmark as a stand-in
+- [ ] Approve the new hero line, intro and 7-stage copy (copy deck)
+- [ ] devsign8.com screenshot, 1440 × 900 (light, plus dark if it differs) — the Build stage's work card uses the wordmark as a stand-in
 - [ ] Approve or rewrite the copy deck (`docs/copy/v3-copy-deck.md`), incl. the seven stage one-liners in `src/config/lifecycle.ts`
 - [ ] Answer the case-study questionnaire (in the copy deck)
 - [ ] Analytics exports (GA4, Search Console, social) — kept outside the repo
