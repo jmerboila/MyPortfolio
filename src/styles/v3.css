@@ -164,11 +164,17 @@ html.v3 {
   font-weight: 500;
   line-height: 1;
   text-decoration: none;
+}
+
+/* The animation runs ON the ::before, not the button: --v3-beam is registered
+   with inherits: false, so an angle animated on the parent never reaches the
+   pseudo-element that paints the ring — the beam would sit still. */
+.v3-talk::before {
   animation: v3-beam 1.6s linear 3;
 }
 
-.v3-talk:hover,
-.v3-talk:focus-visible {
+.v3-talk:hover::before,
+.v3-talk:focus-visible::before {
   animation: v3-beam 1.6s linear infinite;
 }
 
@@ -197,10 +203,7 @@ html.v3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .v3-talk,
-  .v3-talk:hover,
-  .v3-talk:focus-visible {
-    animation: none;
+  .v3-talk {
     border-color: var(--accent);
   }
   .v3-talk::before {
@@ -343,6 +346,15 @@ html.v3 {
   block-size: 1.1rem;
   inline-size: auto;
   max-inline-size: none;
+}
+
+/* The wordmark is wider than the 44px square the icons use, so its link
+   grows to fit it (keeping the 44px height) instead of letting the glyph
+   spill out of its own tap target and crowd the TikTok icon. */
+.v3-footer__socials a:has(.v3-footer__mark) {
+  inline-size: auto;
+  padding-inline: var(--space-2xs);
+  border-radius: var(--radius-m);
 }
 
 /* ==========================================================================
