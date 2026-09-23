@@ -47,7 +47,9 @@ function riseLines(el: HTMLElement, onLoad: boolean): void {
       onSplit(self) {
         if (onLoad) endIntro();
         return gsap.from(self.lines, {
-          yPercent: 100,
+          // 115, not 100: each mask reaches 0.12em below its line (v3.css),
+          // so a line parked at 100% would show its top edge in that strip.
+          yPercent: 115,
           duration: 0.9,
           ease: EASE,
           stagger: 0.08,
