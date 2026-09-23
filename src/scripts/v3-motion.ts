@@ -128,6 +128,25 @@ function counts(): void {
   }
 }
 
+/** The contact heading's characters rise in on scroll. Targets
+ *  .v3-roll__char (the clipped outer window), never .v3-roll__inner (the
+ *  hover-roll's own translate target in v3.css) — animating the same
+ *  property on both would fight the moment a visitor hovers mid-reveal. */
+function rollChars(): void {
+  for (const el of document.querySelectorAll<HTMLElement>('[data-reveal-chars]')) {
+    const chars = el.querySelectorAll<HTMLElement>('.v3-roll__char');
+    if (!chars.length) continue;
+    gsap.from(chars, {
+      yPercent: 60,
+      autoAlpha: 0,
+      duration: 0.8,
+      ease: EASE,
+      stagger: 0.02,
+      scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+    });
+  }
+}
+
 function portrait(): void {
   const img = document.querySelector<HTMLElement>('[data-portrait]');
   if (!img) return;
@@ -207,6 +226,7 @@ function build(): void {
     counts();
     portrait();
     plates();
+    rollChars();
     for (const el of document.querySelectorAll<HTMLElement>('[data-split]')) riseLines(el, false);
   });
 }

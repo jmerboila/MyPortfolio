@@ -426,3 +426,70 @@ html.v3-intro [data-intro] {
   -webkit-text-fill-color: currentColor;
   font-variant-numeric: tabular-nums;
 }
+
+/* ==========================================================================
+   CONTACT ROLL (Contact.astro) — hover split-letter roll on the one link.
+   ----------------------------------------------------------------------------
+   Each character is its own clipped window (.v3-roll__char) around a sliding
+   pair (.v3-roll__inner): the real glyph on top, a second copy — painted via
+   ::after so no character is duplicated in the accessible name — parked just
+   below. Hovering slides the pair up by its own height plus the gap, so the
+   real glyph exits the top as the accent copy arrives at the bottom, both in
+   one continuous translate.
+
+   THE GAP MATTERS. .v3-roll__char's padding (protecting descenders and the
+   italic accent's overhang from .v3-word-style clipping) already reserves
+   some space below the line box. Parking the ::after copy at exactly 100%
+   would sit inside that reserved space and peek out at rest. Pushing it to
+   100% + 0.3em clears the padding, and translating the same extra distance
+   keeps the arrival exactly aligned with the resting position. */
+.v3-roll {
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.v3-roll__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.v3-roll__char {
+  display: inline-block;
+  overflow: clip;
+  padding: 0.08em 0.06em 0.22em;
+  margin: -0.08em -0.06em -0.22em;
+}
+
+.v3-roll__inner {
+  display: inline-block;
+  position: relative;
+  transition: translate var(--dur-slow) var(--ease-out-expo) calc(var(--i) * 18ms);
+}
+
+.v3-roll__inner::after {
+  content: attr(data-char);
+  position: absolute;
+  left: 0;
+  top: calc(100% + 0.3em);
+  color: var(--accent);
+}
+
+.v3-roll:hover .v3-roll__inner,
+.v3-roll:focus-visible .v3-roll__inner {
+  translate: 0 calc(-100% - 0.3em);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-roll__inner {
+    transition: none;
+  }
+  .v3-roll:hover .v3-roll__inner,
+  .v3-roll:focus-visible .v3-roll__inner {
+    translate: none;
+  }
+  .v3-roll:hover,
+  .v3-roll:focus-visible {
+    text-decoration: underline;
+  }
+}

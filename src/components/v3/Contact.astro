@@ -1,41 +1,66 @@
 ---
-import { PERSON, SOCIALS } from '../../config/site';
+/* ============================================================================
+   Contact.astro — the page's last word: one big heading, one link.
+   ----------------------------------------------------------------------------
+   Round 3 dropped the email button and the social list (the footer carries
+   the socials now) — the heading itself IS the mailto, so there is exactly
+   one contact action on the whole page.
+
+   The visible text is split into characters at build time, for two things
+   CSS alone can't do to real text: the hover roll (each .v3-roll__char is an
+   independent clipped window — see v3.css) and the scroll-in stagger
+   (v3-motion.ts targets .v3-roll__char directly). A .visually-hidden span
+   carries the real sentence so a screen reader hears one heading, not 26
+   single-letter announcements — see the aria-hidden split below.
+   ========================================================================= */
+import { CONTACT_HREF } from '../../config/lifecycle';
+
+const HEADING = "Let's build the next one.";
+
+/* Last two words keep the Instrument Serif italic accent (h2 em, base.css) —
+   same move as v2's hero. Splitting per word, not per sentence, is what lets
+   .v3-roll__word's white-space: nowrap stop a word breaking mid-roll. */
+const EM_FROM = 3;
+let i = 0;
+const words = HEADING.split(' ').map((word, wi) => ({
+  em: wi >= EM_FROM,
+  chars: [...word].map((char) => ({ char, i: i++ })),
+}));
 ---
 
 <section id="contact" class="v3-contact container" aria-labelledby="v3-contact-title">
-  <h2 id="v3-contact-title" class="v3-contact__title" data-split>
-    Let's build the <em>next one.</em>
+  <h2 id="v3-contact-title" class="v3-contact__title">
+    <a class="v3-roll" href={CONTACT_HREF} data-reveal-chars>
+      <span class="visually-hidden">{HEADING}</span>
+      <span aria-hidden="true">
+        {words.map((w, wi) => {
+          const charsMarkup = w.chars.map((c) => (
+            <span class="v3-roll__char" style={`--i:${c.i}`}>
+              <span class="v3-roll__inner" data-char={c.char}>{c.char}</span>
+            </span>
+          ));
+          return (
+            <>
+              {wi > 0 && ' '}
+              {w.em ? <em class="v3-roll__word">{charsMarkup}</em> : <span class="v3-roll__word">{charsMarkup}</span>}
+            </>
+          );
+        })}
+      </span>
+    </a>
   </h2>
-  <a class="v3-button" href={`mailto:${PERSON.email}`}>
-    Email <span class="v3-button__addr">{PERSON.email}</span>
-  </a>
-  <ul class="v3-contact__socials" role="list">
-    {SOCIALS.map((s) => (
-      <li><a href={s.url} target="_blank" rel="noopener me">{s.label}</a></li>
-    ))}
-  </ul>
 </section>
 
 <style>
   .v3-contact {
     display: grid;
-    gap: var(--space-l);
-    justify-items: start;
     padding-block: var(--space-section);
   }
 
   .v3-contact__title {
-    font-size: var(--step-hero);
+    font-size: clamp(3rem, 2rem + 6vw, 7.5rem);
+    line-height: 1.05;
     margin: 0;
-    max-inline-size: 14ch;
-  }
-
-  .v3-contact__socials {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-m);
-    padding: 0;
-    margin: 0;
-    list-style: none;
+    max-inline-size: 12ch;
   }
 </style>
