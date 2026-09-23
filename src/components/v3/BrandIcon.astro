@@ -1,0 +1,23 @@
+---
+/* ============================================================================
+   BrandIcon.astro — one social-platform mark, inlined.
+   ----------------------------------------------------------------------------
+   Same pattern as Icon.astro: always decorative, since the footer link that
+   wraps it carries the accessible name via aria-label. Sized in em, styled
+   from v3.css (.v3-footer__icon) because set:html output carries no Astro
+   scope attribute.
+   ========================================================================= */
+import { BRAND_ICONS, type BrandIconName } from '../../lib/brand-icons';
+
+interface Props {
+  name: BrandIconName;
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+const cls = ['v3-footer__icon', className].filter(Boolean).join(' ');
+
+const svg = BRAND_ICONS[name].replace('<svg', `<svg class="${cls}"`);
+---
+
+<Fragment set:html={svg} />

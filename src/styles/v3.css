@@ -307,10 +307,42 @@ html.v3 {
 
 .v3-footer__socials {
   display: flex;
-  gap: var(--space-m);
+  gap: var(--space-2xs);
   padding: 0;
   margin: 0;
   list-style: none;
+}
+
+.v3-footer__socials a {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--tap-min);
+  block-size: var(--tap-min);
+  border-radius: var(--radius-full);
+  color: var(--text-dim);
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+
+.v3-footer__socials a:hover,
+.v3-footer__socials a:focus-visible {
+  color: var(--text);
+}
+
+.v3-footer__icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+/* The wordmark reads at a different size than the square platform icons —
+   "small but readable" rather than icon-sized. base.css's global
+   `svg { max-width: 100% }` resolves against the link's own definite
+   inline-size (var(--tap-min), a fixed 44px square) rather than the
+   wordmark's true aspect ratio, clamping the auto width down and squashing
+   the glyph — max-inline-size: none opts this one svg back out. */
+.v3-footer__mark {
+  block-size: 1.1rem;
+  inline-size: auto;
+  max-inline-size: none;
 }
 
 /* ==========================================================================

@@ -10,8 +10,11 @@
    its canvas by that variable so no dot ever paints behind the navigation.
    Phase C flips this shell to indexable in one place when /v3 is promoted.
    ========================================================================= */
-import { PERSON, SOCIALS, SEO } from '../config/site';
+import { PERSON, SEO } from '../config/site';
+import { V3_SOCIALS } from '../config/v3';
 import { asset } from '../lib/url';
+import BrandIcon from '../components/v3/BrandIcon.astro';
+import Devsign8Mark from '../components/Devsign8Mark.astro';
 import DotGrid from '../components/DotGrid.astro';
 import SiteNav from '../components/v3/SiteNav.astro';
 import StageRail from '../components/v3/StageRail.astro';
@@ -93,12 +96,20 @@ const year = new Date().getFullYear();
     </main>
 
     <footer class="v3-footer container">
-      <p>&copy; {year} {PERSON.name}</p>
       <ul class="v3-footer__socials" role="list">
-        {SOCIALS.map((s) => (
-          <li><a href={s.url} target="_blank" rel="noopener me">{s.label}</a></li>
+        {V3_SOCIALS.map((s) => (
+          <li>
+            <a href={s.url} target="_blank" rel="noopener me" aria-label={`${s.label} (opens in a new tab)`}>
+              {s.icon === 'devsign8' ? (
+                <Devsign8Mark class="v3-footer__mark" />
+              ) : (
+                <BrandIcon name={s.icon} />
+              )}
+            </a>
+          </li>
         ))}
       </ul>
+      <p>&copy; {year} {PERSON.name}</p>
     </footer>
 
     <script>

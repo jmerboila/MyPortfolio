@@ -8,6 +8,7 @@
 
    Order is marketing-weighted: the web and social work lead, identity last.
    ========================================================================= */
+import type { BrandIconName } from '../lib/brand-icons';
 import type { ChapterDef } from '../lib/chapters';
 import type { WorkCategory } from '../content.config';
 
@@ -35,4 +36,20 @@ export const V3_CHAPTERS: readonly V3Chapter[] = [
     more: 'More logo work',
     all: { href: '/work?cat=logo', label: 'See all logo work', always: false },
   },
+];
+
+/* Footer icon links, in brand order: the two most-used social profiles,
+   TikTok, then the studio wordmark last. 'devsign8' renders through
+   Devsign8Mark.astro instead of BrandIcon.astro — see V3Layout's footer. */
+export interface V3Social {
+  label: string;
+  url: string;
+  icon: BrandIconName | 'devsign8';
+}
+
+export const V3_SOCIALS: readonly V3Social[] = [
+  { label: 'LinkedIn', url: 'https://www.linkedin.com/in/jayson-erboila/', icon: 'linkedin' },
+  { label: 'Instagram', url: 'https://www.instagram.com/hello.devsign8/', icon: 'instagram' },
+  { label: 'TikTok', url: 'https://www.tiktok.com/@devsign8', icon: 'tiktok' },
+  { label: 'Devsign8', url: 'https://www.devsign8.com', icon: 'devsign8' },
 ];
