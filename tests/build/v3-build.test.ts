@@ -28,6 +28,22 @@ test('stats are real text', () => {
   for (const v of ['40+', '5+', '20+']) assert.ok(html.includes(`>${v}<`), v);
 });
 test('contact is a mailto', () => assert.match(html, /href="mailto:[^"]+"/));
+test('no mobile menu and no v2 backlink', () => {
+  assert.doesNotMatch(html, /data-menu-open/);
+  assert.doesNotMatch(html, /&larr; v2|← v2/);
+});
+test('the header CTA reads Let’s talk', () => {
+  assert.match(html, /Let(?:&#39;|&#x27;|')s talk/);
+});
+test('footer links to LinkedIn, Instagram, TikTok and Devsign8', () => {
+  assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/jayson-erboila\/"/);
+  assert.match(html, /href="https:\/\/www\.instagram\.com\/hello\.devsign8\/"/);
+  assert.match(html, /href="https:\/\/www\.tiktok\.com\/@devsign8"/);
+  assert.match(html, /href="https:\/\/www\.devsign8\.com"/);
+});
+test('the contact heading is a discovery-call mailto', () => {
+  assert.match(html, /<a class="v3-roll" href="mailto:[^"]*Discovery%20call[^"]*"/);
+});
 test('/v3 is not in the sitemap', () => {
   const map = existsSync('dist/sitemap-0.xml') ? readFileSync('dist/sitemap-0.xml', 'utf8') : '';
   assert.ok(map.length > 0, 'sitemap missing');
