@@ -1,0 +1,255 @@
+---
+/* ============================================================================
+   Hero.astro — the "name sandwich": Jayson's full name spans the section,
+   his 3D mesh head is layered into it, and an outlined copy of the name
+   stacks above the head so the letters it covers still read as an outline
+   across his face.
+   ----------------------------------------------------------------------------
+   Replaces Open.astro (round 3's "Marketing strategy / and the design to
+   carry it" headline) — Jayson wants his name to be the first thing the page
+   says, not a tagline.
+
+   THREE LAYERS, one stacking context (v3-hero__namewrap):
+     0. the real <h1> — the accessible name, in normal flow, sets the box.
+     1. the head image — absolutely positioned over it, `z-index: 1`.
+     2. an aria-hidden copy of the name, same box, same type, painted as an
+        outline only (`color: transparent; -webkit-text-stroke`) — `z-index:
+        2`, so where the head covers the filled letters underneath, the
+        outline still traces them across the face.
+   The outline is a sibling of the h1 (not a child, not wrapping the head), so
+   each layer's z-index compares directly within one stacking context — no
+   layer's own `transform` (the cursor tilt) can accidentally nest another.
+
+   Both layers 0 and 2 share `.v3-hero__title` for identical font metrics —
+   required for the two to stay pixel-aligned — and per-word spans so CSS can
+   flip between one inline line (>= 64rem) and three stacked lines (< 64rem)
+   without touching markup.
+
+   Motion (cursor tilt, touch parallax, the load-time rise, the head's fade-up)
+   lives in src/scripts/v3-motion.ts's heroTilt()/heroParallax()/intro()/
+   heroHeadReveal() — this component only marks the elements those functions
+   need with data attributes.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import meshPortrait from '../../assets/jayson-mesh-portrait.webp';
+import { PERSON } from '../../config/site';
+
+const WORDS = PERSON.name.split(' ');
+---
+
+<section class="v3-hero container" aria-labelledby="v3-hero-title" data-hero>
+  <div class="v3-hero__namewrap">
+    <h1 id="v3-hero-title" class="v3-hero__title" data-intro data-hero-tilt>
+      {WORDS.map((word, i) => (
+        <>
+          {i > 0 && ' '}
+          <span class="v3-hero__word">{word}</span>
+        </>
+      ))}
+    </h1>
+
+    <div class="v3-hero__head" data-hero-head>
+      <Image
+        class="v3-hero__head-img"
+        src={meshPortrait}
+        alt="Jayson's head rendered as a grey 3D polygon mesh, a fine wireframe traced over his face beneath swept-back hair."
+        widths={[480, 726]}
+        sizes="(min-width: 64rem) 44rem, 70vw"
+        loading="eager"
+        fetchpriority="high"
+        data-hero-head-target
+      />
+    </div>
+
+    <p class="v3-hero__title v3-hero__title--outline" aria-hidden="true" data-intro data-hero-tilt>
+      {WORDS.map((word, i) => (
+        <>
+          {i > 0 && ' '}
+          <span class="v3-hero__word">{word}</span>
+        </>
+      ))}
+    </p>
+  </div>
+
+  <div class="v3-hero__lines">
+    <p class="v3-hero__line" data-split>I help businesses look good, get found and grow online.</p>
+    <p class="v3-hero__sub" data-split>Digital marketing &amp; design · Toronto</p>
+  </div>
+</section>
+
+<style>
+  .v3-hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-l);
+    min-block-size: calc(100svh - var(--header-height, 4.5rem));
+    /* Deliberately smaller than most sections' --space-2xl: the head's own
+       min(72svh, 44rem) height already claims most of this section's block
+       size, so a generous padding here would push the whole hero past one
+       screen rather than just filling it. */
+    padding-block: var(--space-l);
+  }
+
+  /* namewrap's block-size matches the head's (both min(Nsvh, Nrem)) so the
+     head's full visual height is counted when .v3-hero centres its content —
+     otherwise the head, being absolutely positioned, would rise out of the
+     flex flow unnoticed and the section would look bottom-heavy (all the
+     "extra" height counted below the name, none of it above the head).
+     The single in-flow child (h1 — the head and outline are both position:
+     absolute, so they don't participate here) sits at the BOTTOM of that box,
+     with a little padding so the head's own bottom edge (chin/neck) can dip
+     past the name's baseline rather than stopping flush with it. */
+  .v3-hero__namewrap {
+    position: relative;
+    display: grid;
+    /* justify-items stays default (stretch): h1 keeps spanning the full
+       width it always did, with text-align: center doing the centring — the
+       outline copy below replicates this box exactly with inset-inline: 0. */
+    align-items: end;
+    min-block-size: min(55svh, 34rem);
+    padding-block-end: 4rem;
+  }
+
+  @media (min-width: 64rem) {
+    .v3-hero__namewrap {
+      min-block-size: min(72svh, 44rem);
+      padding-block-end: 8rem;
+    }
+  }
+
+  /* Shared by the filled h1 and the outline copy — any property that affects
+     line-breaking or box size (font, tracking, line-height, text-align, word
+     display) MUST live here so the two stay pixel-aligned. */
+  .v3-hero__title {
+    margin: 0;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+    text-align: center;
+    color: var(--text);
+    /* Below 64rem: three stacked lines, one word each — "Mercado" (the
+       longest) sets the ceiling, so the other two land short of the edge
+       rather than the longest word overflowing it. Measured against real
+       Inter Tight Variable metrics (a Range over the rendered word, not the
+       word's own block box, which a `display: block` span always reports as
+       100% of its container regardless of glyph width): a single word needs
+       far more font-size per pixel of width than three words sharing a line,
+       so this curve is unrelated to the >= 64rem one below it and legitimately
+       jumps at the breakpoint rather than blending into it. */
+    font-size: clamp(3.6rem, -0.3rem + 20.3vw, 13rem);
+  }
+
+  .v3-hero__word {
+    display: block;
+  }
+
+  @media (min-width: 64rem) {
+    .v3-hero__word {
+      display: inline;
+    }
+    /* >= 64rem: one line filling the container. --gutter keeps growing with
+       viewport width even after --max-width (78rem) caps the container's own
+       box, so the content width available to the text actually PEAKS around
+       80rem and eases back down toward wider viewports — measured 933.8px at
+       1024, 1160px at 1280, 1152px at 1440, 1128px at 1920. A single
+       monotonic clamp cannot hit a peak, so this is calibrated to the
+       smallest of those (1920's 1128px) for the ceiling, which slightly
+       underfills 1280/1440 rather than ever overflowing them. */
+    .v3-hero__title {
+      font-size: clamp(4.7rem, 0.7rem + 6.1vw, 5.7rem);
+    }
+  }
+
+  /* Layer 1: the head, filling namewrap's box exactly (same min-block-size),
+     bottom-anchored so its chin/neck lands past the name's padding-block-end
+     gap — past the name's baseline — while the hair rises through the empty
+     space the grid above leaves above the bottom-aligned h1. */
+  .v3-hero__head {
+    position: absolute;
+    z-index: 1;
+    inset-inline-start: 50%;
+    inset-block-end: 0;
+    translate: -50% 0;
+    block-size: min(55svh, 34rem);
+    perspective: 1000px;
+    /* Dark hair on night has no silhouette without a lift (v2B finding) —
+       same halo Brief.astro used to draw behind the portrait. */
+    --mesh-halo: transparent;
+  }
+
+  @media (min-width: 64rem) {
+    .v3-hero__head {
+      block-size: min(72svh, 44rem);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .v3-hero__head {
+      --mesh-halo: rgb(169 141 255 / 0.07);
+    }
+  }
+  :root[data-theme='dark'] .v3-hero__head {
+    --mesh-halo: rgb(169 141 255 / 0.07);
+  }
+
+  .v3-hero__head::before {
+    content: '';
+    position: absolute;
+    inset: -20% -60%;
+    background: radial-gradient(45% 42% at 50% 40%, var(--mesh-halo) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .v3-hero__head-img {
+    position: relative;
+    display: block;
+    block-size: 100%;
+    inline-size: auto;
+    margin-inline: auto;
+  }
+
+  /* Layer 2: the outline, exactly over the h1's box, above the head. h1 is
+     bottom-aligned within namewrap's taller grid cell (above), so this
+     replicates that box directly — inset-inline: 0 for the same full width,
+     inset-block-end matching namewrap's own padding-block-end for the same
+     bottom edge — rather than `inset: 0`, which would stretch the outline to
+     namewrap's full (head-height) box and start its text at the top. */
+  .v3-hero__title--outline {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 4rem;
+    z-index: 2;
+    color: transparent;
+    -webkit-text-stroke: 1.25px var(--text);
+    pointer-events: none;
+  }
+
+  @media (min-width: 64rem) {
+    .v3-hero__title--outline {
+      inset-block-end: 8rem;
+    }
+  }
+
+  .v3-hero__lines {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    gap: var(--space-2xs);
+    text-align: center;
+  }
+
+  .v3-hero__line {
+    margin: 0;
+    font-size: var(--step-2);
+    max-inline-size: 34ch;
+    margin-inline: auto;
+  }
+
+  .v3-hero__sub {
+    margin: 0;
+    color: var(--text-dim);
+  }
+</style>
