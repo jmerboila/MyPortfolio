@@ -69,7 +69,13 @@ const year = new Date().getFullYear();
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f3" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0b10" />
+    {/* The JM monogram. The SVG switches ink/paper with the browser's own
+        colour scheme; the raster fallbacks (Safari, older browsers, iOS home
+        screen) are a paper-on-night tile that reads on any tab bar. */}
     <link rel="icon" type="image/svg+xml" href={asset('/favicon.svg')} />
+    <link rel="icon" type="image/png" sizes="96x96" href={asset('/images/favicon-96x96.png')} />
+    <link rel="shortcut icon" href={asset('/favicon.ico')} />
+    <link rel="apple-touch-icon" sizes="180x180" href={asset('/images/apple-touch-icon.png')} />
   </head>
 
   <body>
