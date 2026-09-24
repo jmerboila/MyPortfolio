@@ -23,12 +23,13 @@ import MusicToggle from './MusicToggle.astro';
    fragment, now that the page exists. The fragment only resolves from the
    homepage — from a project page it meant "go home, then scroll" — and a
    visitor pressing Work expects the work, not a teaser of four of it. The
-   other three have no page of their own and stay as in-page anchors. */
+   other three have no page of their own and stay as in-page anchors on the
+   homepage (v3 since 2026-09-24: #about, #story, #contact). */
 const NAV_LINKS = [
   { label: 'Work', href: href('/work/') },
   { label: 'Social', href: href('/social/') },
   { label: 'About', href: href('/#about') },
-  { label: 'Services', href: href('/#services') },
+  { label: 'Process', href: href('/#story') },
   { label: 'Contact', href: href('/#contact') },
 ];
 ---

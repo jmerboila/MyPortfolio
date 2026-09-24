@@ -1,0 +1,36 @@
+---
+/* ============================================================================
+   GoogleTagManager.astro — the GTM container, for the end of <body>.
+   ----------------------------------------------------------------------------
+   Loaded last and deliberately not in <head>. In v1 it was a blocking script
+   above the content. Rendering it after the page keeps a third-party request
+   off the critical path to first paint, which is the single cheapest Core Web
+   Vitals win available.
+
+   Shared by BaseLayout and V3Layout since v3 became the homepage (2026-09-24).
+   Still no consent banner in front of it — that is Phase B (docs/v3-todo.md),
+   and v1 ran the same container without one.
+   ========================================================================= */
+import { ANALYTICS } from '../config/site';
+---
+
+<script is:inline define:vars={{ gtmId: ANALYTICS.gtmId }}>
+  (function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s),
+      dl = l != 'dataLayer' ? '&l=' + l : '';
+    j.async = true;
+    j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', 'dataLayer', gtmId);
+</script>
+<noscript>
+  <iframe
+    src={`https://www.googletagmanager.com/ns.html?id=${ANALYTICS.gtmId}`}
+    height="0"
+    width="0"
+    style="display:none;visibility:hidden"
+    title="Google Tag Manager"></iframe>
+</noscript>

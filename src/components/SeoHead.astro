@@ -1,0 +1,134 @@
+---
+/* ============================================================================
+   SeoHead.astro — every <head> tag that tells search engines, answer engines
+   and share previews what a page is.
+   ----------------------------------------------------------------------------
+   Lifted out of BaseLayout when v3 became the homepage (2026-09-24): the v3
+   shell had been a noindex preview with none of this, and a copy in each
+   layout is how the two would have drifted. Both layouts render it now, so
+   the homepage and the case-study pages share one entity graph.
+
+   SEO / AEO / GEO NOTES
+   - Google's own guidance says structured data is NOT required for its
+     generative features and that llms.txt is ignored. We ship rich JSON-LD
+     anyway because the other answer engines (ChatGPT, Perplexity, Claude) do
+     use it to resolve entities — and because it still earns classic rich
+     results in Search.
+   - The thing Google DOES ask for is semantic HTML, fast pages and genuinely
+     useful content. That is why no page depends on JavaScript to render text.
+   ========================================================================= */
+import { PERSON, SOCIALS, SEO, ANALYTICS, absoluteUrl } from '../config/site';
+import { asset } from '../lib/url';
+
+export interface Props {
+  /** Page title, before the site suffix. Omit on the homepage. */
+  title?: string;
+  description?: string;
+  /** Site-relative path of this page, for the canonical URL. */
+  path?: string;
+  /** Site-relative OG image path. Falls back to the default card. */
+  ogImage?: string;
+  /** Set true on pages that should not be indexed (thank-you, previews). */
+  noindex?: boolean;
+  /** Extra JSON-LD objects to merge into the page's @graph. */
+  schema?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  description = SEO.defaultDescription,
+  path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/+$/, ''), '') || '/',
+  ogImage = SEO.defaultOgImage,
+  noindex = false,
+  schema = [],
+} = Astro.props;
+
+const pageTitle = title ? SEO.titleTemplate(title) : SEO.defaultTitle;
+const canonical = absoluteUrl(path);
+const ogImageUrl = absoluteUrl(ogImage);
+
+/* ---------------------------------------------------------------------------
+   The entity graph.
+   One @graph with stable @id values so Person, WebSite and WebPage reference
+   each other rather than floating as three unrelated blobs. That linkage is
+   what lets a knowledge graph conclude "this site is by this person".
+   ------------------------------------------------------------------------ */
+const personId = `${absoluteUrl('/')}#person`;
+const siteId = `${absoluteUrl('/')}#website`;
+
+const graph = [
+  {
+    '@type': 'Person',
+    '@id': personId,
+    name: PERSON.name,
+    givenName: PERSON.firstName,
+    jobTitle: PERSON.jobTitle,
+    description: SEO.defaultDescription,
+    url: absoluteUrl('/'),
+    email: `mailto:${PERSON.email}`,
+    image: ogImageUrl,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: PERSON.location.city,
+      addressRegion: PERSON.location.regionCode,
+      addressCountry: PERSON.location.countryCode,
+    },
+    knowsAbout: [...PERSON.knowsAbout],
+    sameAs: SOCIALS.map((s) => s.url),
+  },
+  {
+    '@type': 'WebSite',
+    '@id': siteId,
+    url: absoluteUrl('/'),
+    name: SEO.defaultTitle,
+    description: SEO.defaultDescription,
+    inLanguage: SEO.lang,
+    publisher: { '@id': personId },
+  },
+  {
+    '@type': 'WebPage',
+    '@id': `${canonical}#webpage`,
+    url: canonical,
+    name: pageTitle,
+    description,
+    isPartOf: { '@id': siteId },
+    about: { '@id': personId },
+    inLanguage: SEO.lang,
+  },
+  ...schema,
+];
+
+const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
+---
+
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+<meta name="author" content={PERSON.name} />
+
+<meta name="google-site-verification" content={ANALYTICS.googleSiteVerification} />
+
+{/* Open Graph / Twitter */}
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={PERSON.name} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:locale" content={SEO.locale} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />
+
+{/* Icons — carried over from v1, same files. */}
+<link rel="icon" type="image/svg+xml" href={asset('/favicon.svg')} />
+<link rel="icon" type="image/png" sizes="96x96" href={asset('/images/favicon-96x96.png')} />
+<link rel="shortcut icon" href={asset('/favicon.ico')} />
+<link rel="apple-touch-icon" sizes="180x180" href={asset('/images/apple-touch-icon.png')} />
+<link rel="manifest" href={asset('/images/site.webmanifest')} />
+
+<link rel="sitemap" href={asset('/sitemap-index.xml')} />
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />

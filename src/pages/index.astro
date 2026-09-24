@@ -1,143 +1,19 @@
 ---
 /* ============================================================================
-   index.astro — the homepage.
-   ----------------------------------------------------------------------------
-   The four sections below the hero are now real. What used to be here was four
-   one-line stubs ("Portrait, story and skills move here from v1") standing in
-   for content, which made the page look finished in a screenshot and was not
-   shippable to a human.
-
-   THE HOMEPAGE SHOWS FEATURED WORK ONLY, and links out to /work for the rest.
-   v1 dumped all seven projects on the landing page, which is a gallery; a
-   landing page is meant to make one strong pass and then hand off. The full,
-   filterable grid still exists, at its own indexable URL.
-
-   NO SECTION STYLES LIVE IN THIS FILE ANY MORE. `.section__label` and
-   `.section__title` moved to base.css when About/Services/Contact became
-   components: an Astro component's styles are scoped to its own template, so
-   a rule written here would never have reached <About />. It worked only while
-   every section was inline markup on this page, which is exactly the kind of
-   breakage that shows up as "the heading lost its styling" three commits later.
-
-   THE SERVICE SCHEMA IS DERIVED FROM THE SAME ARRAY THE CARDS RENDER, so the
-   offer a person reads and the offer an answer engine parses cannot drift.
+   The homepage — the one-page scroll portfolio (was the /v3 preview until
+   2026-09-24; /v3 now redirects here, see astro.config.mjs).
+   Spec: docs/superpowers/specs/2026-09-22-v3-scroll-portfolio-design.md
    ========================================================================= */
-import BaseLayout from '../layouts/BaseLayout.astro';
-import SiteHeader from '../components/SiteHeader.astro';
-import SiteFooter from '../components/SiteFooter.astro';
-import Hero from '../components/Hero.astro';
-import WorkGrid from '../components/WorkGrid.astro';
-import About from '../components/About.astro';
-import Services from '../components/Services.astro';
-import Contact from '../components/Contact.astro';
-import { SERVICES } from '../config/services';
-import { PERSON, absoluteUrl } from '../config/site';
-import { href } from '../lib/url';
-
-const personId = `${absoluteUrl('/')}#person`;
-
-/* An OfferCatalog of Services, each provided by the Person already declared in
-   BaseLayout's @graph. This is the node that lets an answer engine respond to
-   "what does Jayson Erboila do" with the three disciplines rather than by
-   guessing from the project titles. */
-const schema = [
-  {
-    '@type': 'OfferCatalog',
-    '@id': `${absoluteUrl('/')}#services`,
-    name: `Services offered by ${PERSON.name}`,
-    itemListElement: SERVICES.map((s, i) => ({
-      '@type': 'Offer',
-      position: i + 1,
-      itemOffered: {
-        '@type': 'Service',
-        name: s.title,
-        description: s.body,
-        serviceType: [...s.skills],
-        provider: { '@id': personId },
-        areaServed: {
-          '@type': 'City',
-          name: PERSON.location.city,
-        },
-      },
-    })),
-  },
-];
+import V3Layout from '../layouts/V3Layout.astro';
+import Hero from '../components/v3/Hero.astro';
+import Brief from '../components/v3/Brief.astro';
+import Story from '../components/v3/Story.astro';
+import Contact from '../components/v3/Contact.astro';
 ---
 
-<BaseLayout schema={schema}>
-  <SiteHeader slot="header" />
-  <SiteFooter slot="footer" />
-
+<V3Layout>
   <Hero />
-
-  <section class="section container" id="work" aria-labelledby="work-heading">
-    <p class="section__label">Selected work</p>
-    <h2 class="section__title" id="work-heading">My <em>projects</em></h2>
-    <p class="section__lede">
-      A few pieces worth a closer look. Each one has its own page with the
-      artwork at full size.
-    </p>
-
-    {/* Featured only. The whole body of work lives at /work. */}
-    <WorkGrid featuredOnly />
-
-    <p class="section__more">
-      <a class="section__more-link" href={href('/work/')}>
-        See all projects
-        <span class="section__arrow" aria-hidden="true">&rarr;</span>
-      </a>
-    </p>
-  </section>
-
-  <section class="section container" id="about" aria-labelledby="about-heading">
-    <p class="section__label">About</p>
-    <h2 class="section__title" id="about-heading">Hello, I&rsquo;m <em>Jayson</em></h2>
-    <About />
-  </section>
-
-  <section class="section container" id="services" aria-labelledby="services-heading">
-    <p class="section__label">Services</p>
-    <h2 class="section__title" id="services-heading">What I <em>do</em></h2>
-    <p class="section__lede">
-      Three ways I tend to be brought in — often more than one of them on the
-      same project.
-    </p>
-    <Services />
-  </section>
-
-  <section class="section container" id="contact" aria-labelledby="contact-heading">
-    <p class="section__label">Get in touch</p>
-    <h2 class="section__title" id="contact-heading">
-      Let&rsquo;s make <em>something great</em>
-    </h2>
-    <Contact />
-  </section>
-</BaseLayout>
-
-<style>
-  /* Only the "see all" link is local to this page. The section label, title
-     and lede are global — see the note in the frontmatter above. */
-  .section__more {
-    margin-block-start: var(--space-xl);
-  }
-
-  .section__more-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2xs);
-    font-size: var(--step-1);
-    font-weight: 600;
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-  }
-
-  .section__arrow {
-    transition: transform var(--dur-base) var(--ease-out-quart);
-  }
-
-  .section__more-link:hover .section__arrow,
-  .section__more-link:focus-visible .section__arrow {
-    transform: translateX(0.25em);
-  }
-</style>
+  <Brief />
+  <Story />
+  <Contact />
+</V3Layout>

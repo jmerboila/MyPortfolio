@@ -2,14 +2,39 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 
-const PAGE = 'dist/v3/index.html';
+/* v3 is the homepage since 2026-09-24 (it was a noindex preview at /v3). */
+const PAGE = 'dist/index.html';
 const html = existsSync(PAGE) ? readFileSync(PAGE, 'utf8') : '';
 
 test('the page is built', () => assert.ok(existsSync(PAGE), `${PAGE} missing`));
-test('noindex, nofollow', () => assert.match(html, /<meta name="robots" content="noindex, nofollow"/));
-test('no GTM and no JSON-LD on a variant', () => {
-  assert.doesNotMatch(html, /googletagmanager/);
-  assert.doesNotMatch(html, /application\/ld\+json/);
+test('the homepage is indexable, with a canonical at the site root', () => {
+  assert.doesNotMatch(html, /<meta name="robots"[^>]*noindex/);
+  assert.match(html, /<link rel="canonical" href="https:\/\/jmerboila\.github\.io\/MyPortfolio\/"/);
+});
+test('the homepage carries GTM, the JSON-LD graph and share tags', () => {
+  assert.match(html, /googletagmanager\.com\/gtm\.js/);
+  assert.match(html, /<script type="application\/ld\+json">[^<]*"@type":"Person"/);
+  assert.match(html, /<meta property="og:image" content="https:\/\/jmerboila\.github\.io\/MyPortfolio\//);
+});
+test('/v3 redirects to the homepage', () => {
+  const v3 = existsSync('dist/v3/index.html') ? readFileSync('dist/v3/index.html', 'utf8') : '';
+  assert.match(v3, /http-equiv="refresh" content="0;url=\/MyPortfolio\/"/);
+});
+test('the v2b preview is gone', () => assert.ok(!existsSync('dist/v2b/index.html')));
+test("v1's old root pages redirect to their case studies", () => {
+  const moved: Record<string, string> = {
+    'DigiSkills.html': 'digiskills',
+    'OrangeMagazine.html': 'orange-magazine',
+    'Devsign8-Showcase.html': 'devsign8',
+    'DigiSkills-Showcase.html': 'digiskills-logo',
+    'JM-Showcase.html': 'jm-design',
+    'OrangeMagazine-Showcase.html': 'orange-magazine-logo',
+  };
+  for (const [file, slug] of Object.entries(moved)) {
+    const stub = existsSync(`dist/${file}`) ? readFileSync(`dist/${file}`, 'utf8') : '';
+    assert.match(stub, new RegExp(`url=/MyPortfolio/work/${slug}/"`), file);
+    assert.ok(existsSync(`dist/work/${slug}/index.html`), `target of ${file}`);
+  }
 });
 test('exactly one h1, and it is the full name', () => {
   const h1s = html.match(/<h1[^>]*>[\s\S]*?<\/h1>/g) ?? [];
@@ -136,9 +161,10 @@ test('the contact heading reads the round 5 line', () => {
   assert.ok(html.includes("Got something epic in mind? Let's build it.") ||
     html.includes('Got something epic in mind? Let&#39;s build it.'), 'contact heading');
 });
-test('/v3 is not in the sitemap', () => {
+test('the sitemap lists the homepage, not the /v3 redirect', () => {
   const map = existsSync('dist/sitemap-0.xml') ? readFileSync('dist/sitemap-0.xml', 'utf8') : '';
   assert.ok(map.length > 0, 'sitemap missing');
+  assert.match(map, /<loc>https:\/\/jmerboila\.github\.io\/MyPortfolio\/<\/loc>/);
   assert.doesNotMatch(map, /\/v3\//);
 });
 
@@ -162,7 +188,7 @@ test('every stage headline is present', () => {
 });
 test('sample work at the matching stage links to its case page', () => {
   for (const slug of ['digiskills-logo', 'jm-design', 'devsign8', 'devsign8-website', 'mustang-gtd']) {
-    assert.match(html, new RegExp(`href="/MyPortfolio2/work/${slug}/"`));
+    assert.match(html, new RegExp(`href="/MyPortfolio/work/${slug}/"`));
   }
 });
 test('no discipline-plate markup remains', () => {

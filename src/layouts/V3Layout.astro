@@ -1,18 +1,20 @@
 ---
 /* ============================================================================
-   V3Layout.astro — the shell for the /v3 one-page scroll variant.
+   V3Layout.astro — the shell for the homepage, the one-page scroll site.
    ----------------------------------------------------------------------------
-   Separate from BaseLayout for the V2BLayout reason: an unindexed variant must
-   not inject GTM or a second JSON-LD entity graph about the same person. Unlike
-   v2B it DOES mount the dot field, which v3 keeps from v2.
+   v3 was built as a noindex preview at /v3 and became the homepage on
+   2026-09-24. It now renders the same SeoHead (canonical, share tags, the
+   entity graph) and GoogleTagManager as BaseLayout, so the homepage and the
+   case-study pages describe one person with one graph.
 
    The header is sticky and publishes --header-height, because DotGrid insets
    its canvas by that variable so no dot ever paints behind the navigation.
-   Phase C flips this shell to indexable in one place when /v3 is promoted.
    ========================================================================= */
 import { PERSON, SEO } from '../config/site';
 import { V3_SOCIALS } from '../config/v3';
-import { asset } from '../lib/url';
+import type { Props as SeoProps } from '../components/SeoHead.astro';
+import SeoHead from '../components/SeoHead.astro';
+import GoogleTagManager from '../components/GoogleTagManager.astro';
 import BrandIcon from '../components/v3/BrandIcon.astro';
 import Devsign8Mark from '../components/Devsign8Mark.astro';
 import DotGrid from '../components/DotGrid.astro';
@@ -27,15 +29,7 @@ import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/v3.css';
 
-interface Props {
-  title?: string;
-  description?: string;
-}
-
-const {
-  title = 'v3',
-  description = 'A one-page portfolio: who Jayson is, then the work, one discipline at a time.',
-} = Astro.props;
+type Props = SeoProps;
 
 const year = new Date().getFullYear();
 ---
@@ -69,18 +63,11 @@ const year = new Date().getFullYear();
       })();
     </script>
 
-    <title>{`${title} — ${PERSON.name}`}</title>
-    <meta name="description" content={description} />
-    <meta name="robots" content="noindex, nofollow" />
+    {/* Title, description, canonical, share tags, icons (the JM monogram)
+        and the JSON-LD entity graph — shared with BaseLayout. */}
+    <SeoHead {...Astro.props} />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f3" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0b10" />
-    {/* The JM monogram. The SVG switches ink/paper with the browser's own
-        colour scheme; the raster fallbacks (Safari, older browsers, iOS home
-        screen) are a paper-on-night tile that reads on any tab bar. */}
-    <link rel="icon" type="image/svg+xml" href={asset('/favicon.svg')} />
-    <link rel="icon" type="image/png" sizes="96x96" href={asset('/images/favicon-96x96.png')} />
-    <link rel="shortcut icon" href={asset('/favicon.ico')} />
-    <link rel="apple-touch-icon" sizes="180x180" href={asset('/images/apple-touch-icon.png')} />
   </head>
 
   <body>
@@ -116,5 +103,7 @@ const year = new Date().getFullYear();
       /* Header height publishing and the theme toggle now live in SiteNav. */
       import '../scripts/v3-motion';
     </script>
+
+    <GoogleTagManager />
   </body>
 </html>

@@ -14,13 +14,12 @@
    ========================================================================= */
 
 /* -- Where the site lives ------------------------------------------------ */
-/* TODO(jayson): confirm before first deploy. Options are:
-   1. Replace v1 in place  → site 'https://jmerboila.github.io', base '/MyPortfolio'
-   2. Ship alongside v1    → site 'https://jmerboila.github.io', base '/MyPortfolio2'
-   3. Custom domain        → site 'https://yourdomain.com',      base '/'
-   Set to (2) for now so v1 keeps serving traffic while v2 is built. */
+/* Replaces v1 in place (his call, 2026-09-24): the jmerboila/MyPortfolio repo,
+   served by GitHub Pages. v1 is kept as the `v1-final` tag and `v1-archive`
+   branch there. A custom domain later (Phase C) → site 'https://yourdomain.com',
+   base '/'. astro.config.mjs duplicates both values — change them together. */
 export const SITE_ORIGIN = 'https://jmerboila.github.io';
-export const BASE_PATH = '/MyPortfolio2';
+export const BASE_PATH = '/MyPortfolio';
 export const SITE_URL = `${SITE_ORIGIN}${BASE_PATH}`;
 
 /* -- Who ----------------------------------------------------------------- */

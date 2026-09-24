@@ -1,7 +1,7 @@
 /* ============================================================================
    url.ts — base-path-safe link helpers.
    ----------------------------------------------------------------------------
-   The site is served from a subpath on GitHub Pages ("/MyPortfolio2"), so a
+   The site is served from a subpath on GitHub Pages ("/MyPortfolio"), so a
    hand-written href="/about" would 404 in production while working perfectly
    in dev. Astro exposes the configured base as import.meta.env.BASE_URL, but
    whether it carries a trailing slash varies, so every link goes through here
@@ -13,8 +13,8 @@ const BASE = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
 /**
  * Site-relative href, base-path aware.
- *   href('/')        → '/MyPortfolio2/'
- *   href('/work')    → '/MyPortfolio2/work/'
+ *   href('/')        → '/MyPortfolio/'
+ *   href('/work')    → '/MyPortfolio/work/'
  *   href('#contact') → '#contact'   (fragments are left alone)
  */
 export function href(path: string): string {
@@ -22,7 +22,7 @@ export function href(path: string): string {
   if (/^[a-z]+:/i.test(path) || path.startsWith('//')) return path;
 
   // Split the fragment and query off before normalising. Without this,
-  // href('/#work') produced '/MyPortfolio2/#work/' — a trailing slash AFTER
+  // href('/#work') produced '/MyPortfolio/#work/' — a trailing slash AFTER
   // the fragment, which does not match the element id and silently breaks
   // every in-page anchor in the nav.
   const hashAt = path.search(/[#?]/);

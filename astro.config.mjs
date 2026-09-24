@@ -7,11 +7,20 @@ import sitemap from '@astrojs/sitemap';
    needs both values to build canonical URLs and the sitemap. If you change one,
    change the other. */
 const SITE_ORIGIN = 'https://jmerboila.github.io';
-const BASE_PATH = '/MyPortfolio2';
+const BASE_PATH = '/MyPortfolio';
 
 export default defineConfig({
   site: SITE_ORIGIN,
   base: BASE_PATH,
+
+  /* v3 was previewed at /v3 before it became the homepage (2026-09-24). A
+     static build emits this as a meta-refresh page, so an old /v3 link
+     still lands. v1's root-level .html pages are redirected from public/.
+     The destination must carry the base path: Astro prefixes the source but
+     not the target, so '/' alone sent visitors to jmerboila.github.io/. */
+  redirects: {
+    '/v3': `${BASE_PATH}/`,
+  },
 
   /* Static output. Keeps the site deployable to GitHub Pages with no server,
      and keeps every page a real HTML document that crawlers and answer engines
@@ -25,16 +34,9 @@ export default defineConfig({
   integrations: [
     sitemap({
       /* Case studies and the homepage are the pages worth surfacing. The
-         filter keeps utility routes out of the index.
-
-         /v2b is the alternate art direction (see src/layouts/V2BLayout.astro).
-         It is a real URL on a real deployed site, so it is excluded here AND
-         carries its own noindex,nofollow — belt and braces, because a sitemap
-         omission alone does not stop a crawler that finds the link.
-         /v3 is the one-page scroll variant (src/layouts/V3Layout.astro),
-         excluded for the same reason until it is promoted to /. */
-      filter: (page) =>
-        !page.includes('/404') && !page.includes('/v2b') && !page.includes('/v3'),
+         filter keeps utility routes out of the index. /v3 is only a redirect
+         to the homepage now, so it has no place in the sitemap either. */
+      filter: (page) => !page.includes('/404') && !page.includes('/v3'),
     }),
   ],
 
