@@ -96,6 +96,7 @@ const year = new Date().getFullYear();
     </main>
 
     <footer class="v3-footer container">
+      <p>&copy; {year} {PERSON.name}</p>
       <ul class="v3-footer__socials" role="list">
         {V3_SOCIALS.map((s) => (
           <li>
@@ -109,7 +110,6 @@ const year = new Date().getFullYear();
           </li>
         ))}
       </ul>
-      <p>&copy; {year} {PERSON.name}</p>
     </footer>
 
     <script>

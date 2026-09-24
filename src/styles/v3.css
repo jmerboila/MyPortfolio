@@ -114,17 +114,19 @@ html.v3 {
   block-size: 1.2rem;
 }
 
-/* The theme button shows the theme in force: sun on paper, moon at night.
-   Its accessible name (aria-label) states the action instead. */
-.v3-theme__moon {
+/* The theme button shows where it takes you: the moon on paper ("go dark"),
+   the sun at night ("go light") — so the icon and the aria-label ("Switch to
+   dark theme") say the same thing. Round 5 flipped this from showing the
+   theme in force. */
+.v3-theme__sun {
   display: none;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .v3-theme__sun { display: none; }
-  :root:not([data-theme='light']) .v3-theme__moon { display: block; }
+  :root:not([data-theme='light']) .v3-theme__moon { display: none; }
+  :root:not([data-theme='light']) .v3-theme__sun { display: block; }
 }
-:root[data-theme='dark'] .v3-theme__sun { display: none; }
-:root[data-theme='dark'] .v3-theme__moon { display: block; }
+:root[data-theme='dark'] .v3-theme__moon { display: none; }
+:root[data-theme='dark'] .v3-theme__sun { display: block; }
 
 /* -- "Let's talk" CTA (SiteNav.astro) --------------------------------------
    Smaller and outlined, unlike the filled .v3-button: this is the header's
@@ -133,9 +135,11 @@ html.v3 {
    conic-gradient can rotate through a CSS transition/keyframe rather than a
    rAF loop (the header stays live even if the JS bundle never runs).
 
-   WCAG 2.2.2 Pause/Stop/Hide: the on-load play is 3 iterations at 1.6s each
-   (4.8s), so it always stops on its own before 5s. Hover/focus looping is
-   user-initiated and therefore exempt. */
+   Loops forever (round 5, Jayson's call, 2026-09-23). Known trade-off: WCAG
+   2.2.2 Pause/Stop/Hide asks for a way to pause motion that runs past 5 s,
+   and this page offers none — the beam stops only for visitors with reduced
+   motion set in their OS (below), and browsers freeze it in hidden tabs.
+   Rounds 3–4 played it 3 times (4.8 s) then stopped, which was compliant. */
 @property --v3-beam {
   syntax: '<angle>';
   inherits: false;
@@ -170,11 +174,6 @@ html.v3 {
    with inherits: false, so an angle animated on the parent never reaches the
    pseudo-element that paints the ring — the beam would sit still. */
 .v3-talk::before {
-  animation: v3-beam 1.6s linear 3;
-}
-
-.v3-talk:hover::before,
-.v3-talk:focus-visible::before {
   animation: v3-beam 1.6s linear infinite;
 }
 
@@ -220,7 +219,7 @@ html.v3 {
   .v3-rail:not([hidden]) {
     display: block;
     position: fixed;
-    inset-inline-start: 1rem;
+    inset-inline-end: 1rem;
     inset-block-start: 50%;
     translate: 0 -50%;
     z-index: var(--z-sticky);
@@ -241,14 +240,17 @@ html.v3 {
   content: '';
   position: absolute;
   inset-block: 0.9rem;
-  inset-inline-start: calc(0.3rem - 0.5px);
+  inset-inline-end: calc(0.3rem - 0.5px);
   inline-size: 1px;
   background: var(--border-strong);
 }
 
+/* The rail sits on the right edge (round 5), so each row reads right to
+   left from the thread: dot, number, then the label opening leftward. */
 .v3-rail a {
   position: relative;
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: 0.5rem;
   min-block-size: 1.75rem;
@@ -277,7 +279,7 @@ html.v3 {
   background: var(--bg);
   white-space: nowrap;
   opacity: 0;
-  translate: -0.25rem 0;
+  translate: 0.25rem 0;
   transition:
     opacity var(--dur-base) var(--ease-out-expo),
     translate var(--dur-base) var(--ease-out-expo);
@@ -299,6 +301,98 @@ html.v3 {
   background: var(--accent);
 }
 
+/* -- Progress strip (StageRail.astro), below 80rem ------------------------
+   Slides out from under the header while the story is on screen. Segment
+   fill is a scaleX driven by --fill (0–1) from the script. */
+.v3-progress {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-start: var(--header-height, 4.5rem);
+  z-index: calc(var(--z-sticky) - 1);
+  background: var(--bg);
+  border-block-end: 1px solid var(--border);
+  translate: 0 -100%;
+  visibility: hidden;
+  transition:
+    translate var(--dur-base) var(--ease-out-expo),
+    visibility 0s linear var(--dur-base);
+}
+
+.v3-progress[data-active] {
+  translate: 0 0;
+  visibility: visible;
+  transition: translate var(--dur-base) var(--ease-out-expo);
+}
+
+@media (min-width: 80rem) {
+  .v3-progress {
+    display: none;
+  }
+}
+
+.v3-progress__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-block-size: 2.25rem;
+}
+
+.v3-progress__label {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.v3-progress__n {
+  margin-inline-end: 0.35em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.v3-progress__segs {
+  display: flex;
+  flex: 1;
+  gap: 4px;
+}
+
+.v3-progress__seg {
+  --fill: 0;
+  position: relative;
+  flex: 1;
+  block-size: 3px;
+  border-radius: 2px;
+  background: var(--border-strong);
+  overflow: hidden;
+}
+
+.v3-progress__seg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: left;
+  scale: var(--fill) 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-progress,
+  .v3-progress[data-active] {
+    transition: none;
+  }
+}
+
+/* -- One screen per light section (round 6) ------------------------------
+   The intro, the story heading, each stage and the contact fill at least one
+   viewport below the header, content centred. min-, never fixed: a stage
+   with three work cards simply runs longer. */
+.v3-screen {
+  display: grid;
+  align-content: center;
+  min-block-size: calc(100svh - var(--header-height, 4.5rem));
+}
+
 /* ==========================================================================
    STORY / STAGES (Story.astro, Stage.astro) — the hairline between stages.
    ----------------------------------------------------------------------------
@@ -311,13 +405,21 @@ html.v3 {
   border-block-start: 1px solid var(--border);
 }
 
+/* © on the left, icon links on the right (round 5). */
 .v3-footer {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-m);
   padding-block: var(--space-xl);
   color: var(--text-dim);
+}
+
+/* Round 7: the © line steps down to small print. */
+.v3-footer > p {
+  margin: 0;
+  font-size: 0.8125rem;
 }
 
 .v3-footer__socials {
@@ -362,7 +464,7 @@ html.v3 {
 
 /* The wordmark is wider than the 44px square the icons use, so its link
    grows to fit it (keeping the 44px height) instead of letting the glyph
-   spill out of its own tap target and crowd the TikTok icon. */
+   spill out of its own tap target and crowd the icon beside it. */
 .v3-footer__socials a:has(.v3-footer__mark) {
   inline-size: auto;
   padding-inline: var(--space-2xs);
@@ -430,25 +532,19 @@ html.v3-intro [data-intro] {
   margin-block-end: -0.12em;
 }
 
-/* Brief words ink from text-dim to text. A colour mix, never opacity: both
-   ends pass AA, so every point in between does too. */
+/* Brief words ink from a faint ghost to full text as you scroll (round 7:
+   the old start, --text-dim, was already readable, so the reveal barely
+   showed). Trade-off, on purpose: un-inked words sit well below AA contrast.
+   The scrub finishes by the time the paragraph is centred in the viewport
+   (v3-motion.ts inkIn), so the resting, readable state is always full
+   --text; reduced motion and no-JS never split the text and show it inked. */
 .v3-word {
   --ink: 1;
-  color: color-mix(in srgb, var(--text) calc(var(--ink) * 100%), var(--text-dim));
-}
-
-/* Counting overlay: the real value keeps its layout box and stays in the
-   accessibility tree; the aria-hidden overlay paints the digits. */
-.v3-count-host {
-  position: relative;
-  -webkit-text-fill-color: transparent;
-}
-
-.v3-count {
-  position: absolute;
-  inset: 0;
-  -webkit-text-fill-color: currentColor;
-  font-variant-numeric: tabular-nums;
+  color: color-mix(
+    in srgb,
+    var(--text) calc(var(--ink) * 100%),
+    color-mix(in srgb, var(--text) 6%, var(--bg))
+  );
 }
 
 /* ==========================================================================
@@ -478,9 +574,20 @@ html.v3-intro [data-intro] {
   white-space: nowrap;
 }
 
+/* Round 7: the roll is PER WORD — only the word under the cursor rolls
+   (keyboard focus on the link still rolls them all, since a keyboard can't
+   point at one word). The arriving copy lands in a random font and colour:
+   v3-motion.ts's rollRandom() sets --roll-font/-style/-weight/-color on the
+   word as the pointer enters; without JS it falls back to the purple accent
+   in the word's own font.
+
+   Clipped vertically only (overflow-y: clip): a random font's glyph can be
+   wider than the original's window, and a sideways clip would slice it. The
+   copy is centred under the original so any extra width spills evenly. */
 .v3-roll__char {
   display: inline-block;
-  overflow: clip;
+  overflow-x: visible;
+  overflow-y: clip;
   padding: 0.08em 0.06em 0.22em;
   margin: -0.08em -0.06em -0.22em;
 }
@@ -488,27 +595,100 @@ html.v3-intro [data-intro] {
 .v3-roll__inner {
   display: inline-block;
   position: relative;
-  transition: translate var(--dur-slow) var(--ease-out-expo) calc(var(--i) * 18ms);
+  /* --j is the letter's index WITHIN its word, so every word's roll starts
+     at once instead of waiting behind the words before it. */
+  transition: translate var(--dur-slow) var(--ease-out-expo) calc(var(--j, 0) * 22ms);
 }
 
 .v3-roll__inner::after {
   content: attr(data-char);
   position: absolute;
-  left: 0;
+  left: 50%;
   top: calc(100% + 0.3em);
-  color: var(--accent);
+  translate: -50% 0;
+  white-space: nowrap;
+  font-family: var(--roll-font, inherit);
+  font-style: var(--roll-style, inherit);
+  font-weight: var(--roll-weight, inherit);
+  color: var(--roll-color, var(--accent));
 }
 
-.v3-roll:hover .v3-roll__inner,
+.v3-roll__word:hover .v3-roll__inner,
 .v3-roll:focus-visible .v3-roll__inner {
   translate: 0 calc(-100% - 0.3em);
 }
 
+/* The random-colour set, one hue family per slot, tuned per theme. Every
+   value passes AA on its own ground (checked 2026-09-23): paper — purple
+   6.03, magenta 6.11, teal 5.06, orange 5.11, blue 6.20; night — purple
+   7.43, magenta 8.17, teal 13.29, orange 11.66, blue 10.90. */
+.v3 {
+  --roll-c1: #5a3fe0;
+  --roll-c2: #b0156e;
+  --roll-c3: #0f766e;
+  --roll-c4: #b8410c;
+  --roll-c5: #1d4ed8;
+}
+@media (prefers-color-scheme: dark) {
+  :root.v3:not([data-theme='light']) {
+    --roll-c1: #a98dff;
+    --roll-c2: #ff7ab8;
+    --roll-c3: #5eead4;
+    --roll-c4: #fdba74;
+    --roll-c5: #93c5fd;
+  }
+}
+:root.v3[data-theme='dark'] {
+  --roll-c1: #a98dff;
+  --roll-c2: #ff7ab8;
+  --roll-c3: #5eead4;
+  --roll-c4: #fdba74;
+  --roll-c5: #93c5fd;
+}
+
+/* The contact arrow (round 6): two copies in one clipped box. On hover the
+   first flies out top-right while the second flies in from bottom-left —
+   reads as "go", never loops. Lives here, not in Contact.astro, because
+   Icon.astro's set:html SVGs carry no Astro scope attribute. */
+.v3-arrow {
+  display: inline-grid;
+  vertical-align: -0.02em;
+  inline-size: 0.72em;
+  block-size: 0.72em;
+  overflow: clip;
+  color: var(--accent);
+}
+
+.v3-arrow .v3-icon {
+  grid-area: 1 / 1;
+  inline-size: 100%;
+  block-size: 100%;
+  stroke-width: 2.25;
+  transition: translate var(--dur-slow) var(--ease-out-expo);
+}
+
+.v3-arrow__b {
+  translate: -110% 110%;
+}
+
+.v3-roll:hover .v3-arrow__a,
+.v3-roll:focus-visible .v3-arrow__a {
+  translate: 110% -110%;
+}
+
+.v3-roll:hover .v3-arrow__b,
+.v3-roll:focus-visible .v3-arrow__b {
+  translate: 0 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .v3-arrow .v3-icon {
+    transition: none;
+  }
   .v3-roll__inner {
     transition: none;
   }
-  .v3-roll:hover .v3-roll__inner,
+  .v3-roll__word:hover .v3-roll__inner,
   .v3-roll:focus-visible .v3-roll__inner {
     translate: none;
   }

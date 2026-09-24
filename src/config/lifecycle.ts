@@ -76,7 +76,7 @@ export const STAGES: readonly Stage[] = [
     n: '05',
     label: 'Be found',
     headline: 'People can find you.',
-    body: 'I help you show up when people search on Google, on Maps, and in AI tools like ChatGPT.',
+    body: 'I help you show up when people search on Google, on Maps, and in AI tools like ChatGPT, then keep improving it every month (SEO, AEO and GEO).',
     gets: 'Search-ready pages and a Google Business Profile',
     work: [],
   },
@@ -116,8 +116,6 @@ const CONTACT_BODY = [
   'Two or three times that suit me (with my time zone):',
   '',
   'Thanks,',
-  '',
-  "P.S. Hiring? Share the role and the team instead, and I'll reply with my availability.",
 ].join('\r\n');
 
 /* Email until Jayson has a booking page; swap this one value then. */

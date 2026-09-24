@@ -23,8 +23,87 @@ test('an aria-hidden outline copy of the hero name exists', () => {
 });
 test('html carries the v3 class', () => assert.match(html, /<html[^>]*class="v3"/));
 test('the dot field is mounted', () => assert.match(html, /data-dotgrid/));
-test('stats are real text', () => {
-  for (const v of ['40+', '5+', '20+']) assert.ok(html.includes(`>${v}<`), v);
+test('no stats counters (removed in round 5)', () => {
+  assert.doesNotMatch(html, /v3-stats|data-count\b/);
+});
+test('the hero typewriter carries the full sentence and all three endings', () => {
+  assert.ok(html.includes('I help businesses look good, get found and grow online.'));
+  const m = /data-endings="([^"]*)"/.exec(html);
+  assert.ok(m, 'expected data-endings on the typewriter');
+  const endings = JSON.parse((m[1] ?? '').replaceAll('&quot;', '"').replaceAll('&#34;', '"'));
+  assert.deepEqual(endings, ['look good.', 'get found.', 'grow online.']);
+});
+test('the animated typewriter copy is hidden from screen readers', () => {
+  assert.match(html, /<span[^>]*class="v3-type__anim"[^>]*aria-hidden="true"|<span[^>]*aria-hidden="true"[^>]*class="v3-type__anim"/);
+});
+test('the hero sub-line is gone', () => {
+  assert.doesNotMatch(html, /Digital marketing &amp; design|Digital marketing & design/);
+});
+test('the intro is the round 6 copy', () => {
+  assert.ok(html.includes('I design with depth, crafting work that moves beyond surface aesthetics.'), 'intro paragraph');
+});
+test('the discovery-call email has no hiring P.S.', () => {
+  assert.doesNotMatch(html, /P\.S\.|Hiring%3F/);
+});
+test('the contact link carries the arrow and no magnetic drift', () => {
+  assert.match(html, /class="v3-arrow"/);
+  assert.doesNotMatch(html, /data-magnetic/);
+});
+test('the diagram marks what the purple cycle erases and redraws', () => {
+  for (const part of ['n0', 'n1', 'n2', 'c1', 'c2']) {
+    assert.equal((html.match(new RegExp(`data-repeat="${part}"`, 'g')) ?? []).length, 2, `${part} in both drawings`);
+  }
+});
+test('a mobile progress strip exists and is hidden from screen readers', () => {
+  const m = /<div[^>]*class="v3-progress"[^>]*>/.exec(html);
+  assert.ok(m, 'expected the progress strip');
+  assert.match(m[0], /aria-hidden="true"/);
+  // Count the elements, not the attribute name: the inlined script mentions it too.
+  assert.equal((html.match(/class="v3-progress__seg"/g) ?? []).length, 7);
+});
+test('the hand-drawn stage loop: two drawings, each an accessible image', () => {
+  const svgs = html.match(/<svg[^>]*data-sketch[^>]*>/g) ?? [];
+  assert.equal(svgs.length, 2, 'wide + tall');
+  for (const s of svgs) assert.match(s, /role="img"/);
+  const desc = /<desc[^>]*>([^<]*)<\/desc>/.exec(html)?.[1] ?? '';
+  for (const label of ['Discover', 'Plan', 'Brand', 'Build', 'Be found', 'Show up', 'Measure']) {
+    assert.ok(desc.includes(label), `desc names ${label}`);
+  }
+});
+test('the diagram repeats 05 → 07 only, and says so', () => {
+  const desc = /<desc[^>]*>([^<]*)<\/desc>/.exec(html)?.[1] ?? '';
+  assert.match(desc, /loops back to 05 Be found/);
+  assert.doesNotMatch(html, /then again!/, 'the scribble was removed in round 13');
+  for (const part of ['return', 'c1', 'c2']) {
+    assert.equal((html.match(new RegExp(`data-cycle="${part}"`, 'g')) ?? []).length, 2, `${part} in both drawings`);
+  }
+});
+test('05 and 06 carry loop-only notes beside their first-play notes', () => {
+  assert.equal((html.match(/data-note-loop/g) ?? []).filter(() => true).length >= 4, true);
+  assert.ok(html.includes('rank on Google + AI') && html.includes('keep posting'));
+  assert.ok(html.includes('Google, Maps, AI') && html.includes('social posts'));
+});
+test('each rough stroke is its own path (one M), so double strokes draw together', () => {
+  const loop = /<div[^>]*data-sketch-wrap[\s\S]*?<\/svg>\s*<svg[\s\S]*?<\/svg>/.exec(html)?.[0] ?? '';
+  const ds = [...loop.matchAll(/<path\b[^>]*\bd="([^"]*)"/g)].map((m) => m[1] ?? '');
+  assert.ok(ds.length > 20);
+  for (const d of ds) assert.equal((d.match(/M/g) ?? []).length, 1, d.slice(0, 40));
+});
+test('arrows split line and head', () => {
+  assert.ok((html.match(/data-part="head"/g) ?? []).length >= 16);
+  assert.ok((html.match(/data-part="line"/g) ?? []).length >= 16);
+});
+test('every loop stroke is drawable (pathLength="1")', () => {
+  const loop = /<div[^>]*data-sketch-wrap[\s\S]*?<\/svg>\s*<svg[\s\S]*?<\/svg>/.exec(html)?.[0] ?? '';
+  const pathsTotal = (loop.match(/<path\b/g) ?? []).length;
+  const drawable = (loop.match(/<path\b[^>]*pathLength="1"/g) ?? []).length;
+  assert.ok(pathsTotal > 20, `found ${pathsTotal} paths`);
+  assert.equal(drawable, pathsTotal);
+});
+test('light sections fill one screen', () => {
+  for (const id of ['about', 'contact']) {
+    assert.match(html, new RegExp(`<section[^>]*id="${id}"[^>]*class="[^"]*v3-screen|<section[^>]*class="[^"]*v3-screen[^"]*"[^>]*id="${id}"`), id);
+  }
 });
 test('contact is a mailto', () => assert.match(html, /href="mailto:[^"]+"/));
 test('no mobile menu and no v2 backlink', () => {
@@ -34,14 +113,24 @@ test('no mobile menu and no v2 backlink', () => {
 test('the header CTA reads Let’s talk', () => {
   assert.match(html, /Let(?:&#39;|&#x27;|')s talk/);
 });
-test('footer links to LinkedIn, Instagram, TikTok and Devsign8', () => {
-  assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/jayson-erboila\/"/);
-  assert.match(html, /href="https:\/\/www\.instagram\.com\/hello\.devsign8\/"/);
-  assert.match(html, /href="https:\/\/www\.tiktok\.com\/@devsign8"/);
-  assert.match(html, /href="https:\/\/www\.devsign8\.com"/);
+const footer = /<footer[\s\S]*?<\/footer>/.exec(html)?.[0] ?? '';
+test('footer links to LinkedIn, Instagram and Devsign8 — no TikTok for now', () => {
+  assert.match(footer, /href="https:\/\/www\.linkedin\.com\/in\/jayson-erboila\/"/);
+  assert.match(footer, /href="https:\/\/www\.instagram\.com\/hello\.devsign8\/"/);
+  assert.match(footer, /href="https:\/\/www\.devsign8\.com"/);
+  assert.doesNotMatch(footer, /tiktok\.com/);
+});
+test('footer puts the © line before the icon links', () => {
+  const copy = footer.indexOf('©') > -1 ? footer.indexOf('©') : footer.indexOf('&copy;');
+  assert.ok(copy > -1, 'no © line');
+  assert.ok(copy < footer.indexOf('v3-footer__socials'), '© should come first');
 });
 test('the contact heading is a discovery-call mailto', () => {
   assert.match(html, /<a class="v3-roll" href="mailto:[^"]*Discovery%20call[^"]*"/);
+});
+test('the contact heading reads the round 5 line', () => {
+  assert.ok(html.includes("Got something epic in mind? Let's build it.") ||
+    html.includes('Got something epic in mind? Let&#39;s build it.'), 'contact heading');
 });
 test('/v3 is not in the sitemap', () => {
   const map = existsSync('dist/sitemap-0.xml') ? readFileSync('dist/sitemap-0.xml', 'utf8') : '';

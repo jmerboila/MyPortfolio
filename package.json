@@ -15,11 +15,13 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/caveat": "^5.3.0",
     "@fontsource-variable/inter-tight": "^5.3.0",
     "@fontsource/instrument-serif": "^5.3.0",
     "astro": "^7.3.1",
     "delaunator": "^5.1.0",
-    "gsap": "^3.15.0"
+    "gsap": "^3.15.0",
+    "roughjs": "^4.6.6"
   },
   "allowScripts": {
     "esbuild": true

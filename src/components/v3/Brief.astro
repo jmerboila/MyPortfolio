@@ -2,45 +2,37 @@
 /* ============================================================================
    Brief.astro — the short intro, right after the hero.
    ----------------------------------------------------------------------------
-   Round 4 moved the mesh portrait into the hero (it now sits inside the name
-   itself) and dropped the "About" eyebrow — a single readable column reads
-   more like a person talking than a résumé section. Keeps `id="about"`: the
-   header/menu never linked here directly, but it is the anchor other docs
-   already reference.
-   ========================================================================= */
+   Round 4 moved the mesh portrait into the hero and dropped the "About"
+   eyebrow — a single readable column reads more like a person talking than a
+   résumé section. Round 5 removed the stats counters. Round 6: Jayson's own
+   rewrite of the paragraph, set bigger, and the section fills one screen
+   (.v3-screen, v3.css). Keeps `id="about"`: other docs reference the anchor.
 
-/* The same three counts as v1 and v2's About. The value is the real text;
-   v3-motion.ts overlays an aria-hidden counter, so assistive tech only ever
-   reads the final value. */
-const STATS = [
-  { value: '40+', label: 'Projects' },
-  { value: '5+', label: 'Years' },
-  { value: '20+', label: 'Clients' },
-];
+   Size (rounds 7–8): two levels of display type that together fill one
+   screen. "Hi, I'm Jayson." is the headline (≈47px phones → 114px wide);
+   the paragraph runs at about half that (≈28px → 58px) at a 24ch measure —
+   display text reads best at roughly 20–30 characters a line, which lands it
+   on 7–8 lines. The words ink in on scroll from a near-invisible ghost
+   ([data-ink], v3-motion.ts / v3.css .v3-word).
+   ========================================================================= */
 ---
 
-<section id="about" class="v3-brief container" aria-labelledby="v3-brief-title">
+<section id="about" class="v3-brief v3-screen container" aria-labelledby="v3-brief-title">
   <div class="v3-brief__body">
     <h2 id="v3-brief-title" data-split>Hi, I'm Jayson.</h2>
     <p class="v3-brief__text" data-ink>
-      I'm a digital marketer and designer in Toronto. For more than five years I've helped
-      brands in different industries, from the first chat to the monthly report, so nothing
-      gets lost between the logo and the likes.
+      I design with depth, crafting work that moves beyond surface aesthetics. By studying user
+      perception, I build visual layers that deliver immediate impact at first glance and deeper
+      discovery on the second.
     </p>
-    <dl class="v3-stats">
-      {STATS.map((s) => (
-        <div class="v3-stats__item">
-          <dt class="v3-stats__label" data-split>{s.label}</dt>
-          <dd class="v3-stats__value" data-count>{s.value}</dd>
-        </div>
-      ))}
-    </dl>
   </div>
 </section>
 
 <style>
+  /* --space-l, not --space-section: the two big type levels already fill the
+     screen, and the larger padding pushed the section past one viewport. */
   .v3-brief {
-    padding-block: var(--space-section);
+    padding-block: var(--space-l);
   }
 
   .v3-brief__body {
@@ -49,36 +41,24 @@ const STATS = [
     text-align: center;
   }
 
+  /* The greeting is the headline, in the sans (round 8 — he didn't want the
+     serif here); round 9 took it down a notch, to ≈41px phones → 96px wide,
+     still well above the paragraph. */
+  .v3-brief h2 {
+    margin: 0;
+    font-size: clamp(2.5rem, 1.3rem + 5.2vw, 6rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
   .v3-brief__text {
-    font-size: var(--step-2);
-    line-height: var(--leading-snug);
-    max-inline-size: 38ch;
-    margin-block: var(--space-s) var(--space-l);
-  }
-
-  .v3-stats {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-l);
-    margin: 0;
-  }
-
-  .v3-stats__item {
-    display: flex;
-    flex-direction: column-reverse;
-  }
-
-  .v3-stats__value {
-    margin: 0;
-    font-size: var(--step-5);
-    font-weight: var(--weight-h1);
-    letter-spacing: var(--tracking-h1);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .v3-stats__label {
-    color: var(--text-dim);
-    font-size: var(--step--1);
+    font-size: clamp(1.75rem, 1.1rem + 2.8vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    max-inline-size: 24ch;
+    margin-block: var(--space-m) 0;
+    text-wrap: pretty;
   }
 </style>

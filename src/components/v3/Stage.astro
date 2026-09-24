@@ -28,7 +28,7 @@ const twoCols = work.length >= 2;
 ---
 
 <section id={stage.id} class="v3-stage" aria-labelledby={titleId}>
-  <div class="v3-stage__inner container">
+  <div class="v3-stage__inner v3-screen container">
     <div class="v3-stage__left">
       <span class="v3-stage__n" aria-hidden="true" data-stage-n>{stage.n}</span>
       <h3 id={titleId} class="v3-stage__title" data-split>
@@ -76,8 +76,11 @@ const twoCols = work.length >= 2;
 </section>
 
 <style>
+  /* .v3-screen (v3.css) makes this a grid on every screen, so the stacked
+     phone layout needs its own gap between the heading and the body. */
   .v3-stage__inner {
     padding-block: var(--space-section);
+    row-gap: var(--space-l);
   }
 
   @media (min-width: 64rem) {
@@ -91,6 +94,14 @@ const twoCols = work.length >= 2;
     .v3-stage__left {
       position: sticky;
       inset-block-start: calc(var(--header-height, 4.5rem) + 2rem);
+    }
+  }
+
+  /* 64–80rem: the progress strip (StageRail.astro) sits under the header
+     here, so the sticky column starts below it too. */
+  @media (min-width: 64rem) and (max-width: 79.99rem) {
+    .v3-stage__left {
+      inset-block-start: calc(var(--header-height, 4.5rem) + 4rem);
     }
   }
 

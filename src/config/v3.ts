@@ -10,8 +10,11 @@
    ========================================================================= */
 import type { BrandIconName } from '../lib/brand-icons';
 
-/* Footer icon links, in brand order: the two most-used social profiles,
-   TikTok, then the studio wordmark last. 'devsign8' renders through
+/* Footer icon links, in brand order: the two most-used social profiles, then
+   the studio wordmark last. TikTok is off the footer for now (round 5, his
+   call); to bring it back, re-add
+     { label: 'TikTok', url: 'https://www.tiktok.com/@devsign8', icon: 'tiktok' }
+   before Devsign8. 'devsign8' renders through
    Devsign8Mark.astro instead of BrandIcon.astro — see V3Layout's footer. */
 export interface V3Social {
   label: string;
@@ -22,6 +25,5 @@ export interface V3Social {
 export const V3_SOCIALS: readonly V3Social[] = [
   { label: 'LinkedIn', url: 'https://www.linkedin.com/in/jayson-erboila/', icon: 'linkedin' },
   { label: 'Instagram', url: 'https://www.instagram.com/hello.devsign8/', icon: 'instagram' },
-  { label: 'TikTok', url: 'https://www.tiktok.com/@devsign8', icon: 'tiktok' },
   { label: 'Devsign8', url: 'https://www.devsign8.com', icon: 'devsign8' },
 ];

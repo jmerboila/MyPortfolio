@@ -1,43 +1,67 @@
 ---
 /* ============================================================================
-   Hero.astro — the "name sandwich": Jayson's full name spans the section,
-   his 3D mesh head is layered into it, and an outlined copy of the name
-   stacks above the head so the letters it covers still read as an outline
-   across his face.
+   Hero.astro — the "name sandwich": Jayson's full name, his 3D mesh head
+   layered into it, and an outlined copy of the name stacked above the head so
+   the letters it covers still read as an outline across his face.
    ----------------------------------------------------------------------------
-   Replaces Open.astro (round 3's "Marketing strategy / and the design to
-   carry it" headline) — Jayson wants his name to be the first thing the page
-   says, not a tagline.
+   Three layouts:
+   - Wide (>= 64rem), his round 5 sketch: the name stacks JAYSON / MERCADO /
+     ERBOILA right-aligned in a left column; the head stands in a right column
+     that starts just before the name ends, so only the head's hair and ear
+     edge meet the letters (round 6 cut the overlap to a sliver).
+   - Tablet (40–64rem): centred stack, the head behind the name. He likes it.
+   - Phones (< 40rem): the head sits ABOVE the name, its chin just touching
+     the top of JAYSON (round 6).
 
-   THREE LAYERS, one stacking context (v3-hero__namewrap):
-     0. the real <h1> — the accessible name, in normal flow, sets the box.
-     1. the head image — absolutely positioned over it, `z-index: 1`.
-     2. an aria-hidden copy of the name, same box, same type, painted as an
-        outline only (`color: transparent; -webkit-text-stroke`) — `z-index:
-        2`, so where the head covers the filled letters underneath, the
-        outline still traces them across the face.
-   The outline is a sibling of the h1 (not a child, not wrapping the head), so
-   each layer's z-index compares directly within one stacking context — no
-   layer's own `transform` (the cursor tilt) can accidentally nest another.
+   ONE GRID, every layer in flow (v3-hero__namewrap). No absolute positioning:
+   the head's own height sets the rows, and the name and the typewriter line
+   centre against it.
+     z0  the real <h1> — the accessible name.
+     z1  the head image.
+     z2  an aria-hidden copy of the name in the SAME grid cell, drawn as an
+         outline only, so where the head covers the filled letters the outline
+         still traces them.
+     z3  the typewriter line.
+   h1 and outline share `.v3-hero__title` (identical metrics, identical cell),
+   which is what keeps them pixel-aligned.
 
-   Both layers 0 and 2 share `.v3-hero__title` for identical font metrics —
-   required for the two to stay pixel-aligned — and per-word spans so CSS can
-   flip between one inline line (>= 64rem) and three stacked lines (< 64rem)
-   without touching markup.
+   HOW THE OUTLINE IS DRAWN. Not -webkit-text-stroke: Inter Tight builds its
+   letters from overlapping pieces (the A's crossbar over its legs, the R's
+   leg over its bowl, the D's stem) and a text stroke traces every piece, so
+   lines showed inside the letters. The static Google cut has the same
+   overlaps, so a font swap does not help. Instead the copy is painted SOLID
+   and the #v3-hero-outline SVG filter below keeps only a thin ring inside the
+   rendered letter's edge (the letter minus itself shrunk by 1.25px). It works
+   on pixels, not glyph pieces, so no inner join can show.
 
-   Motion (cursor tilt, touch parallax, the load-time rise, the head's fade-up)
-   lives in src/scripts/v3-motion.ts's heroTilt()/heroParallax()/intro()/
-   heroHeadReveal() — this component only marks the elements those functions
-   need with data attributes.
+   Motion (cursor tilt, touch parallax, the load-time rise, the head's fade-up,
+   the typewriter) lives in src/scripts/v3-motion.ts — this component only
+   marks the elements with data attributes.
    ========================================================================= */
 import { Image } from 'astro:assets';
 import meshPortrait from '../../assets/jayson-mesh-portrait.webp';
 import { PERSON } from '../../config/site';
 
 const WORDS = PERSON.name.split(' ');
+
+/* The typewriter: a fixed start, three endings typed in turn. The full
+   sentence below is what screen readers, reduced motion and no-JS get. */
+const TYPE_LEAD = 'I help businesses';
+/* Each ending carries its period (round 9): every phrase is a complete
+   sentence, and the full stop lands it as a statement before it erases. */
+const TYPE_ENDINGS = ['look good.', 'get found.', 'grow online.'];
+const TYPE_FULL = 'I help businesses look good, get found and grow online.';
+const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a));
 ---
 
 <section class="v3-hero container" aria-labelledby="v3-hero-title" data-hero>
+  <svg class="v3-hero__defs" aria-hidden="true" focusable="false" width="0" height="0">
+    <filter id="v3-hero-outline" color-interpolation-filters="sRGB">
+      <feMorphology in="SourceAlpha" operator="erode" radius="1.25" result="core" />
+      <feComposite in="SourceGraphic" in2="core" operator="out" />
+    </filter>
+  </svg>
+
   <div class="v3-hero__namewrap">
     <h1 id="v3-hero-title" class="v3-hero__title" data-intro data-hero-tilt>
       {WORDS.map((word, i) => (
@@ -54,7 +78,7 @@ const WORDS = PERSON.name.split(' ');
         src={meshPortrait}
         alt="Jayson's head rendered as a grey 3D polygon mesh, a fine wireframe traced over his face beneath swept-back hair."
         widths={[480, 726]}
-        sizes="(min-width: 64rem) 44rem, 70vw"
+        sizes="(min-width: 64rem) 30rem, 70vw"
         loading="eager"
         fetchpriority="high"
         data-hero-head-target
@@ -69,11 +93,16 @@ const WORDS = PERSON.name.split(' ');
         </>
       ))}
     </p>
-  </div>
 
-  <div class="v3-hero__lines">
-    <p class="v3-hero__line" data-split>I help businesses look good, get found and grow online.</p>
-    <p class="v3-hero__sub" data-split>Digital marketing &amp; design · Toronto</p>
+    <p class="v3-hero__line v3-type" data-typewriter data-endings={JSON.stringify(TYPE_ENDINGS)}>
+      <span class="v3-type__full">{TYPE_FULL}</span>
+      {/* The sizer holds the longest ending invisibly, so the box never
+          changes width while the live copy types — nothing around it moves. */}
+      <span class="v3-type__anim" aria-hidden="true">
+        <span class="v3-type__sizer">{TYPE_LEAD} <em class="v3-type__ending">{longestEnding}</em></span>
+        <span class="v3-type__live">{TYPE_LEAD} <em class="v3-type__ending" data-type-text>{TYPE_ENDINGS[0]}</em><span class="v3-type__caret"></span></span>
+      </span>
+    </p>
   </div>
 </section>
 
@@ -82,47 +111,45 @@ const WORDS = PERSON.name.split(' ');
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: var(--space-l);
     min-block-size: calc(100svh - var(--header-height, 4.5rem));
-    /* Deliberately smaller than most sections' --space-2xl: the head's own
-       min(72svh, 44rem) height already claims most of this section's block
-       size, so a generous padding here would push the whole hero past one
-       screen rather than just filling it. */
+    /* The head's soft halo (::before, inset -60% sideways) reaches past the
+       screen edge; on phones the browser then widened the whole layout
+       viewport to fit it (426px of page on a 390px screen, everything off
+       centre). Clip sideways only, so the head's tilt and the name's rise
+       can still spill vertically. */
+    overflow-x: clip;
+    /* Smaller than most sections' --space-2xl: the head already claims most of
+       this section's height, and a big padding would push the hero past one
+       screen. */
     padding-block: var(--space-l);
   }
 
-  /* namewrap's block-size matches the head's (both min(Nsvh, Nrem)) so the
-     head's full visual height is counted when .v3-hero centres its content —
-     otherwise the head, being absolutely positioned, would rise out of the
-     flex flow unnoticed and the section would look bottom-heavy (all the
-     "extra" height counted below the name, none of it above the head).
-     The single in-flow child (h1 — the head and outline are both position:
-     absolute, so they don't participate here) sits at the BOTTOM of that box,
-     with a little padding so the head's own bottom edge (chin/neck) can dip
-     past the name's baseline rather than stopping flush with it. */
+  /* -- Phones and tablets (< 64rem): centred stack, head behind the name --- */
   .v3-hero__namewrap {
-    position: relative;
+    container-type: inline-size;
     display: grid;
-    /* justify-items stays default (stretch): h1 keeps spanning the full
-       width it always did, with text-align: center doing the centring — the
-       outline copy below replicates this box exactly with inset-inline: 0. */
-    align-items: end;
-    min-block-size: min(55svh, 34rem);
-    padding-block-end: 4rem;
+    grid-template-areas:
+      'stage'
+      'line';
+    row-gap: var(--space-l);
   }
 
-  @media (min-width: 64rem) {
-    .v3-hero__namewrap {
-      min-block-size: min(72svh, 44rem);
-      padding-block-end: 8rem;
-    }
+  .v3-hero__title,
+  .v3-hero__head {
+    grid-area: stage;
   }
 
-  /* Shared by the filled h1 and the outline copy — any property that affects
-     line-breaking or box size (font, tracking, line-height, text-align, word
-     display) MUST live here so the two stay pixel-aligned. */
+  .v3-hero__line {
+    grid-area: line;
+  }
+
+  /* Shared by the filled h1 and the outline copy — anything that affects line
+     breaks or box size MUST live here so the two stay pixel-aligned. */
   .v3-hero__title {
-    margin: 0;
+    position: relative;
+    z-index: 0;
+    align-self: end;
+    margin: 0 0 4rem;
     font-family: var(--font-ui);
     font-weight: 600;
     text-transform: uppercase;
@@ -130,15 +157,8 @@ const WORDS = PERSON.name.split(' ');
     line-height: 0.85;
     text-align: center;
     color: var(--text);
-    /* Below 64rem: three stacked lines, one word each — "Mercado" (the
-       longest) sets the ceiling, so the other two land short of the edge
-       rather than the longest word overflowing it. Measured against real
-       Inter Tight Variable metrics (a Range over the rendered word, not the
-       word's own block box, which a `display: block` span always reports as
-       100% of its container regardless of glyph width): a single word needs
-       far more font-size per pixel of width than three words sharing a line,
-       so this curve is unrelated to the >= 64rem one below it and legitimately
-       jumps at the breakpoint rather than blending into it. */
+    /* Three stacked lines, one word each — "Mercado" (the longest) sets the
+       ceiling so it never overflows. */
     font-size: clamp(3.6rem, -0.3rem + 20.3vw, 13rem);
   }
 
@@ -146,44 +166,15 @@ const WORDS = PERSON.name.split(' ');
     display: block;
   }
 
-  @media (min-width: 64rem) {
-    .v3-hero__word {
-      display: inline;
-    }
-    /* >= 64rem: one line filling the container. --gutter keeps growing with
-       viewport width even after --max-width (78rem) caps the container's own
-       box, so the content width available to the text actually PEAKS around
-       80rem and eases back down toward wider viewports — measured 933.8px at
-       1024, 1160px at 1280, 1152px at 1440, 1128px at 1920. A single
-       monotonic clamp cannot hit a peak, so this is calibrated to the
-       smallest of those (1920's 1128px) for the ceiling, which slightly
-       underfills 1280/1440 rather than ever overflowing them. */
-    .v3-hero__title {
-      font-size: clamp(4.7rem, 0.7rem + 6.1vw, 5.7rem);
-    }
-  }
-
-  /* Layer 1: the head, filling namewrap's box exactly (same min-block-size),
-     bottom-anchored so its chin/neck lands past the name's padding-block-end
-     gap — past the name's baseline — while the hair rises through the empty
-     space the grid above leaves above the bottom-aligned h1. */
   .v3-hero__head {
-    position: absolute;
+    position: relative;
     z-index: 1;
-    inset-inline-start: 50%;
-    inset-block-end: 0;
-    translate: -50% 0;
+    justify-self: center;
+    align-self: end;
     block-size: min(55svh, 34rem);
     perspective: 1000px;
-    /* Dark hair on night has no silhouette without a lift (v2B finding) —
-       same halo Brief.astro used to draw behind the portrait. */
+    /* Dark hair on night has no silhouette without a lift (v2B finding). */
     --mesh-halo: transparent;
-  }
-
-  @media (min-width: 64rem) {
-    .v3-hero__head {
-      block-size: min(72svh, 44rem);
-    }
   }
 
   @media (prefers-color-scheme: dark) {
@@ -208,48 +199,182 @@ const WORDS = PERSON.name.split(' ');
     display: block;
     block-size: 100%;
     inline-size: auto;
-    margin-inline: auto;
   }
 
-  /* Layer 2: the outline, exactly over the h1's box, above the head. h1 is
-     bottom-aligned within namewrap's taller grid cell (above), so this
-     replicates that box directly — inset-inline: 0 for the same full width,
-     inset-block-end matching namewrap's own padding-block-end for the same
-     bottom edge — rather than `inset: 0`, which would stretch the outline to
-     namewrap's full (head-height) box and start its text at the top. */
   .v3-hero__title--outline {
-    position: absolute;
-    inset-inline: 0;
-    inset-block-end: 4rem;
     z-index: 2;
-    color: transparent;
-    -webkit-text-stroke: 1.25px var(--text);
+    filter: url('#v3-hero-outline');
     pointer-events: none;
   }
 
+  .v3-hero__defs {
+    position: absolute;
+    inline-size: 0;
+    block-size: 0;
+    overflow: hidden;
+  }
+
+  /* -- Wide screens (>= 64rem): his sketch ---------------------------------
+     Three columns as percentages of the content width:
+       0 ─ 54.5%   the name's own space
+       54.5 ─ 62%  the overlap column. The portrait file has ≈5% of empty,
+                   transparent margin on its left, so the VISIBLE hair starts
+                   near 59.5% — only ≈2.5% (the hair and ear edge) actually
+                   meets the letters, as he asked in round 6
+       62 ─ 100%   the rest of the head
+     The typewriter line centres under the name (0–62%).
+     The head spans every row, so its height sets the block; the 1fr rows
+     above and below centre the name + line against it. Placed by line
+     numbers, not grid-template-areas: the name and the head share the
+     overlap column, and named areas must be non-overlapping rectangles — the
+     browser drops the whole map otherwise. */
   @media (min-width: 64rem) {
-    .v3-hero__title--outline {
-      inset-block-end: 8rem;
+    .v3-hero__namewrap {
+      grid-template-columns: 54.5fr 7.5fr 38fr;
+      grid-template-rows: 1fr auto auto 1fr;
+      grid-template-areas: none;
+      row-gap: 0;
+    }
+
+    .v3-hero__title {
+      grid-area: 2 / 1 / 3 / 3;
+      align-self: auto;
+      margin: 0;
+      text-align: right;
+      /* MERCADO is 4.58em wide in this cut, so 62% of the content width ÷
+         4.58 ≈ 13.5cqi fills the name's column exactly at every width (cqi =
+         1% of .v3-hero__namewrap, the container). A vw clamp could not: the
+         content width peaks near 80rem and shrinks again past it. */
+      font-size: 13.4cqi;
+    }
+
+    .v3-hero__head {
+      grid-area: 1 / 2 / 5 / 4;
+      justify-self: start;
+      align-self: center;
+      /* 70cqi caps the height so the head's width (0.62 × height) never
+         exceeds the 45.5% it has from 54.5% to the edge — a tall 1024-wide
+         tablet in landscape would otherwise push it past the container. */
+      block-size: min(74svh, 46rem, 70cqi);
     }
   }
 
-  .v3-hero__lines {
+  /* -- The typewriter line --------------------------------------------------
+     Sized so the LONGEST phrase ("I help businesses grow online", ≈12.5em
+     with the serif ending) fits one line of its column with room for the
+     caret: column width ÷ 13.2. Capped at 2.25rem on wide screens, floored at
+     1.125rem so zooming still enlarges it (WCAG 1.4.4); below the floor it
+     simply wraps. Centred everywhere; the box is fixed-width (the sizer), so
+     centring never makes "I help businesses" shift while the ending types. */
+  .v3-hero__line {
+    --type-col: 100cqi;
     position: relative;
     z-index: 3;
-    display: grid;
-    gap: var(--space-2xs);
+    justify-self: center;
+    margin: 0;
+    font-size: max(1.125rem, min(2.25rem, var(--type-col) / 13.2));
+    line-height: var(--leading-snug);
     text-align: center;
+    text-wrap: balance;
   }
 
-  .v3-hero__line {
-    margin: 0;
-    font-size: var(--step-2);
-    max-inline-size: 34ch;
-    margin-inline: auto;
+  /* After the base rule above on purpose: same specificity, so the later
+     rule wins — placed earlier, its margin was overridden. */
+  @media (min-width: 64rem) {
+    .v3-hero__line {
+      --type-col: 62cqi;
+      grid-area: 3 / 1 / 4 / 3;
+      /* The name's 0.85 line-height leaves almost no room under ERBOILA. */
+      margin-block-start: var(--space-l);
+    }
   }
 
-  .v3-hero__sub {
-    margin: 0;
-    color: var(--text-dim);
+  /* -- Phones (< 40rem): head above the name ------------------------------ */
+  @media (max-width: 39.99rem) {
+    .v3-hero__namewrap {
+      grid-template-areas:
+        'head'
+        'name'
+        'line';
+      row-gap: 0;
+    }
+
+    .v3-hero__head {
+      grid-area: head;
+      block-size: min(40svh, 22rem);
+    }
+
+    /* Pulled up so the chin just meets JAYSON's top — about 1.1 lines,
+       because the bottom quarter of the portrait file is the neck fading to
+       nothing; a smaller pull left a visible gap. The outline copy (same
+       class) traces the letters the neck covers. */
+    .v3-hero__title {
+      grid-area: name;
+      align-self: start;
+      margin: -1.1em 0 0;
+    }
+
+    .v3-hero__line {
+      margin-block-start: var(--space-l);
+    }
+  }
+
+  /* The typed ending: the brand's serif-italic accent in purple — the same
+     move as the contact line's "Let's build it." A touch larger than the
+     sans lead because Instrument Serif's x-height is smaller. Contrast: the
+     accent passes AA on both grounds (6.03:1 paper, 7.43:1 night). */
+  .v3-type__ending {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.12em;
+    letter-spacing: 0;
+    color: var(--accent);
+  }
+
+  /* Static by default (no JS, reduced motion): the full sentence shows and
+     the animated copy stays out of the way. v3-motion.ts adds .is-typing. */
+  .v3-type__anim {
+    display: none;
+  }
+
+  .v3-type.is-typing .v3-type__full {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .v3-type.is-typing .v3-type__anim {
+    display: inline-grid;
+    text-align: start;
+  }
+
+  .v3-type__sizer,
+  .v3-type__live {
+    grid-area: 1 / 1;
+  }
+
+  .v3-type__sizer {
+    visibility: hidden;
+    padding-inline-end: 0.15em;
+  }
+
+  .v3-type__caret {
+    display: inline-block;
+    inline-size: 0.08em;
+    block-size: 1em;
+    margin-inline-start: 0.06em;
+    vertical-align: -0.12em;
+    background: var(--accent);
+    animation: v3-caret 1s steps(1) infinite;
+  }
+
+  @keyframes v3-caret {
+    50% {
+      opacity: 0;
+    }
   }
 </style>

@@ -10,40 +10,67 @@
    CSS alone can't do to real text: the hover roll (each .v3-roll__char is an
    independent clipped window — see v3.css) and the scroll-in stagger
    (v3-motion.ts targets .v3-roll__char directly). A .visually-hidden span
-   carries the real sentence so a screen reader hears one heading, not 26
-   single-letter announcements — see the aria-hidden split below.
+   carries the real sentence so a screen reader hears one heading, not dozens
+   of single-letter announcements — see the aria-hidden split below.
+
+   Round 6: bigger, with an arrow. On hover the arrow leaves top-right and a
+   fresh one slides in from bottom-left (v3.css). (Round 6's "magnetic" drift
+   toward the cursor was removed in round 10 — he preferred the text still.)
+   Round 7: the letter roll is per word — only the word under the cursor
+   rolls, and it lands in a random font and colour (rollRandom() in
+   v3-motion.ts; --j below is each letter's index within its word).
    ========================================================================= */
 import { CONTACT_HREF } from '../../config/lifecycle';
+import Icon from './Icon.astro';
 
-const HEADING = "Let's build the next one.";
+/* Round 5: his line, "You got" tightened to "Got". Two sentences, each on
+   its own line — the question, then the answer in the Instrument Serif
+   italic accent (h2 em, base.css), same move as v2's hero. */
+const SENTENCES = [
+  { text: 'Got something epic in mind?', em: false },
+  { text: "Let's build it.", em: true },
+];
+const HEADING = SENTENCES.map((s) => s.text).join(' ');
 
-/* Last two words keep the Instrument Serif italic accent (h2 em, base.css) —
-   same move as v2's hero. Splitting per word, not per sentence, is what lets
-   .v3-roll__word's white-space: nowrap stop a word breaking mid-roll. */
-const EM_FROM = 3;
+/* Splitting per word, not per sentence, is what lets .v3-roll__word's
+   white-space: nowrap stop a word breaking mid-roll. */
 let i = 0;
-const words = HEADING.split(' ').map((word, wi) => ({
-  em: wi >= EM_FROM,
-  chars: [...word].map((char) => ({ char, i: i++ })),
+const sentences = SENTENCES.map((s) => ({
+  em: s.em,
+  words: s.text.split(' ').map((word) => [...word].map((char) => ({ char, i: i++ }))),
 }));
 ---
 
-<section id="contact" class="v3-contact container" aria-labelledby="v3-contact-title">
+<section id="contact" class="v3-contact v3-screen container" aria-labelledby="v3-contact-title">
   <h2 id="v3-contact-title" class="v3-contact__title">
     <a class="v3-roll" href={CONTACT_HREF} data-reveal-chars>
       <span class="visually-hidden">{HEADING}</span>
       <span aria-hidden="true">
-        {words.map((w, wi) => {
-          const charsMarkup = w.chars.map((c) => (
-            <span class="v3-roll__char" style={`--i:${c.i}`}>
-              <span class="v3-roll__inner" data-char={c.char}>{c.char}</span>
-            </span>
-          ));
-          return (
+        {sentences.map((s) => {
+          const wordsMarkup = s.words.map((chars, wi) => (
             <>
               {wi > 0 && ' '}
-              {w.em ? <em class="v3-roll__word">{charsMarkup}</em> : <span class="v3-roll__word">{charsMarkup}</span>}
+              <span class="v3-roll__word" data-roll-word>
+                {chars.map((c, ci) => (
+                  <span class="v3-roll__char" style={`--i:${c.i};--j:${ci}`}>
+                    <span class="v3-roll__inner" data-char={c.char}>{c.char}</span>
+                  </span>
+                ))}
+              </span>
             </>
+          ));
+          return s.em ? (
+            <em class="v3-contact__line">
+              {wordsMarkup}{' '}
+              {/* Two arrows in one clipped box: the first flies out, the
+                  second flies in (v3.css .v3-arrow). */}
+              <span class="v3-arrow">
+                <Icon name="arrow-up-right" class="v3-arrow__a" />
+                <Icon name="arrow-up-right" class="v3-arrow__b" />
+              </span>
+            </em>
+          ) : (
+            <span class="v3-contact__line">{wordsMarkup}</span>
           );
         })}
       </span>
@@ -53,14 +80,20 @@ const words = HEADING.split(' ').map((word, wi) => ({
 
 <style>
   .v3-contact {
-    display: grid;
     padding-block: var(--space-section);
   }
 
+  /* Round 6: bigger. At wide screens the question takes two lines and the
+     answer a third; text-wrap: balance keeps the question's two lines even
+     rather than leaving "mind?" alone. */
   .v3-contact__title {
-    font-size: clamp(3rem, 2rem + 6vw, 7.5rem);
-    line-height: 1.05;
+    font-size: clamp(2.75rem, 0.5rem + 9vw, 9rem);
+    line-height: 1.02;
     margin: 0;
-    max-inline-size: 12ch;
+  }
+
+  .v3-contact__line {
+    display: block;
+    text-wrap: balance;
   }
 </style>
