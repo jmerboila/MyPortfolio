@@ -1,6 +1,6 @@
 # v3 to-do
 
-The running list for the `/v3` portfolio. Branch: `feat/v3-phase-a`.
+The running list for the v3 portfolio — the homepage since 2026-09-24 (it was previewed at `/v3`). Branch: `master`, pushed to `main` on `jmerboila/MyPortfolio`.
 `[x]` done (with commit), `[ ]` open.
 
 ## Round 3 — header, contact, footer, reveals (2026-09-22)
@@ -157,7 +157,7 @@ His call: this project replaces v1 in `jmerboila/MyPortfolio`, v3 as the homepag
 - [ ] Answer the case-study questionnaire (in the copy deck)
 - [ ] Analytics exports (GA4, Search Console, social) — kept outside the repo
 - [x] Contact email: `jmerboila@gmail.com` (his pick, 2026-09-24 — already the value in `src/config/site.ts`)
-- [x] Merge `feat/v3-phase-a` into `main` (his pick, 2026-09-24)
+- [x] Merge `feat/v3-phase-a` into `master` (his pick, 2026-09-24 — `7b02014`)
 
 ## Later phases
 
