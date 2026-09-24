@@ -141,8 +141,8 @@ Verified at 1440, 768 and 390 wide; `npm test` 12/12, build tests 29/29. Not com
 - [ ] Approve or rewrite the copy deck (`docs/copy/v3-copy-deck.md`), incl. the seven stage one-liners in `src/config/lifecycle.ts`
 - [ ] Answer the case-study questionnaire (in the copy deck)
 - [ ] Analytics exports (GA4, Search Console, social) — kept outside the repo
-- [ ] Contact email: `jmerboila@gmail.com` or `hello.devsign8@gmail.com`
-- [ ] Merge / PR / keep decision for `feat/v3-phase-a`
+- [x] Contact email: `jmerboila@gmail.com` (his pick, 2026-09-24 — already the value in `src/config/site.ts`)
+- [x] Merge `feat/v3-phase-a` into `main` (his pick, 2026-09-24)
 
 ## Later phases
 

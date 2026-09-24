@@ -21,7 +21,8 @@ Naming rule (Jayson, 2026-09-23): the discipline is written **Design & Digital M
 | story.h2 | `src/components/v3/Story.astro` | How a project runs | draft |
 | story.line | `src/components/v3/Story.astro` | Seven steps, from the first chat to real results. | draft |
 | contact.h2 | `src/components/v3/Contact.astro` | Got something epic in mind? *Let's build it.* | approved (round 5) |
-| contact.button | `src/components/v3/Contact.astro` | Email {address} | draft (address still pending: jmerboila@gmail.com vs hello.devsign8@gmail.com) |
+| contact.link | `src/config/lifecycle.ts` (`CONTACT_HREF`) | The heading and the header's "Let's talk" open https://cal.com/jmerboila/discovery-call | done (2026-09-24; the email button was dropped in round 3) |
+| contact.email | — | Published address: jmerboila@gmail.com (confirmed 2026-09-24). Whether v3 shows it under the heading is still open | pending |
 
 ## The seven stages (`STAGES` in `src/config/lifecycle.ts`)
 

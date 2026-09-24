@@ -31,9 +31,8 @@ export const PERSON = {
   /* The positioning line. Your research is emphatic that a named service beats
      a job title — Grellier sells "pixel-perfect precision", not "developer". */
   tagline: 'Digital Marketing Specialist & Designer',
-  /* TODO(jayson): v1 published jmerboila@gmail.com as the contact address
-     while your account email is hello.devsign8@gmail.com. Confirm which one
-     you want on the live site. */
+  /* The published contact address — confirmed by Jayson 2026-09-24 over
+     hello.devsign8@gmail.com (his account email, never published). */
   email: 'jmerboila@gmail.com',
   location: {
     city: 'Toronto',
