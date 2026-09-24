@@ -134,6 +134,21 @@ Verified at 1440, 768 and 390 wide; `npm test` 12/12, build tests 29/29. Not com
 - [x] Cal.com event set up (2026-09-24): Google Meet + attendee-phone locations, email confirmation, six booking questions (identifiers `business`, `links`, `services`, `goal`, `timeline`, `budget` — usable as URL prefills, e.g. `?services=Website`), description, minimum notice. Checked on the public page as a visitor, stopping before Confirm
 - [x] ~~"Or email me" line under the contact heading~~ — declined (his call, 2026-09-24): booking is the only contact action on v3. The build test "no mailto left on the page" holds it
 
+## Launch — v3 replaces v1 (2026-09-24)
+
+His call: this project replaces v1 in `jmerboila/MyPortfolio`, v3 as the homepage.
+
+- [x] v1 backed up: `v1-final` tag + `v1-archive` branch on GitHub, and `Desktop\MyPortfolio\MyPortfolio-v1-backup-2026-09-24.bundle` (full history, verified)
+- [x] Base path `/MyPortfolio2` → `/MyPortfolio` (`astro.config.mjs` + `src/config/site.ts`)
+- [x] v3 is `/`: indexable, with the shared `SeoHead` (canonical, share tags, JSON-LD) and `GoogleTagManager` it lacked as a preview. v2's homepage and the v2b preview removed (in git history); `/v3` redirects to `/`
+- [x] v1's six root pages (`DigiSkills.html`, `JM-Showcase.html`, …) redirect to their `/work/` case studies; v1's `/work/<slug>/` URLs already match
+- [x] Case-study header: Services → **Process** (`/#story`); breadcrumb "Work" → `/work/`
+- [x] `.github/workflows/deploy.yml` (withastro/action@v6 → deploy-pages@v5, on push to `main`)
+- [ ] **His step:** repo Settings → Pages → Source → **GitHub Actions** (before the push, or Pages would publish the raw source)
+- [ ] Push: `master` → `main`, joined to v1's history (merge `-s ours`, so it's a normal push, no force)
+- [ ] After it's live: resubmit the sitemap in Search Console (`/MyPortfolio/sitemap-index.xml`; v1's was `sitemap.xml`)
+- [ ] Known: `audio/ambient.mp3` 404s on the case-study pages (v2's music toggle; the file was never added) — pre-existing
+
 ## Waiting on Jayson
 
 - [ ] Approve the new hero line, intro and 7-stage copy (copy deck)
