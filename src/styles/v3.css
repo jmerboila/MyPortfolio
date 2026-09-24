@@ -1,0 +1,699 @@
+/* ============================================================================
+   v3.css — the /v3 variant's global layer.
+   ----------------------------------------------------------------------------
+   GLOBAL ON PURPOSE. Astro scopes a component's <style> to its own markup, so
+   anything shared between v3 components, or aimed at a child component such
+   as DotGrid, has to live here.
+
+   THE PALETTE IS AN OVERRIDE, NOT A FORK. tokens.css maps semantic tokens
+   (--accent…) to raw ones (--raw-light-accent…) on :root. html IS :root, so
+   redefining the raw tokens here, at higher specificity, changes what those
+   same var() references resolve to, and every downstream rule turns purple
+   without a single component knowing. Verified by tests/unit/contrast.test.ts.
+   ========================================================================= */
+
+html.v3 {
+  /* Devsign8 purple. Light ground: #5a3fe0 6.03:1 on paper. */
+  --raw-light-accent: #5a3fe0;
+  --raw-light-accent-strong: #4527c4;
+  --raw-light-accent-dim: #8a78e6;
+  --raw-light-border: rgb(90 63 224 / 0.18);
+  --raw-light-border-strong: rgb(90 63 224 / 0.38);
+
+  /* Night ground: #a98dff 7.43:1 on night. */
+  --raw-dark-accent: #a98dff;
+  --raw-dark-accent-strong: #c4b1ff;
+  --raw-dark-accent-dim: #7a5ee6;
+  --raw-dark-border: rgb(169 141 255 / 0.18);
+  --raw-dark-border-strong: rgb(169 141 255 / 0.38);
+
+  /* Dot field tint, read by DotGrid.astro. Alphas stay in DotGrid. */
+  --dotgrid-rgb-light: 90 63 224;
+  --dotgrid-rgb-dark: 169 141 255;
+}
+
+/* ==========================================================================
+   SHELL
+   ========================================================================== */
+/* Lucide icons (Icon.astro). Lighter than Lucide's default 2px stroke so they
+   sit with Inter Tight at text sizes rather than shouting over it. */
+.v3-icon {
+  inline-size: 1.15em;
+  block-size: 1.15em;
+  flex-shrink: 0;
+  stroke-width: 1.75;
+}
+
+/* -- Header (SiteNav.astro) --------------------------------------------------
+   Solid ground and a hairline, deliberately NOT a translucent blur. */
+.v3-nav {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-sticky);
+  background: var(--bg);
+  border-block-end: 1px solid var(--border);
+}
+
+.v3-nav__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  min-block-size: 4.5rem;
+}
+
+.v3-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-inline-end: auto;
+  font-weight: 600;
+  letter-spacing: var(--tracking-h3);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* The monogram stands alone in the bar, so it gets a little more height.
+   Bigger from 64rem up, where the bar has room to spare. */
+.v3-nav__mark {
+  block-size: 2.5rem;
+  inline-size: auto;
+}
+
+@media (min-width: 64rem) {
+  .v3-nav__mark {
+    block-size: 3rem;
+  }
+}
+
+/* A pressed state, not just hover: the control answers the click. */
+.v3-iconbtn:active,
+.v3-button:active,
+.v3-talk:active {
+  translate: 0 1px;
+}
+
+.v3-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  flex-shrink: 0;
+}
+
+.v3-iconbtn {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--tap-min);
+  block-size: var(--tap-min);
+  border-radius: var(--radius-full);
+  color: inherit;
+}
+
+.v3-iconbtn .v3-icon {
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+}
+
+/* The theme button shows where it takes you: the moon on paper ("go dark"),
+   the sun at night ("go light") — so the icon and the aria-label ("Switch to
+   dark theme") say the same thing. Round 5 flipped this from showing the
+   theme in force. */
+.v3-theme__sun {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .v3-theme__moon { display: none; }
+  :root:not([data-theme='light']) .v3-theme__sun { display: block; }
+}
+:root[data-theme='dark'] .v3-theme__moon { display: none; }
+:root[data-theme='dark'] .v3-theme__sun { display: block; }
+
+/* -- "Let's talk" CTA (SiteNav.astro) --------------------------------------
+   Smaller and outlined, unlike the filled .v3-button: this is the header's
+   one action, not a page CTA. The border beam is a short bright arc that
+   travels the pill's ring — @property makes the angle animatable so the
+   conic-gradient can rotate through a CSS transition/keyframe rather than a
+   rAF loop (the header stays live even if the JS bundle never runs).
+
+   Loops forever (round 5, Jayson's call, 2026-09-23). Known trade-off: WCAG
+   2.2.2 Pause/Stop/Hide asks for a way to pause motion that runs past 5 s,
+   and this page offers none — the beam stops only for visitors with reduced
+   motion set in their OS (below), and browsers freeze it in hidden tabs.
+   Rounds 3–4 played it 3 times (4.8 s) then stopped, which was compliant. */
+@property --v3-beam {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes v3-beam {
+  to {
+    --v3-beam: 360deg;
+  }
+}
+
+.v3-talk {
+  position: relative;
+  z-index: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--tap-min);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+}
+
+/* The animation runs ON the ::before, not the button: --v3-beam is registered
+   with inherits: false, so an angle animated on the parent never reaches the
+   pseudo-element that paints the ring — the beam would sit still. */
+.v3-talk::before {
+  animation: v3-beam 1.6s linear infinite;
+}
+
+.v3-talk::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--v3-beam),
+    transparent 0 70%,
+    var(--accent) 85%,
+    var(--accent-strong) 92%,
+    transparent 100%
+  );
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-talk {
+    border-color: var(--accent);
+  }
+  .v3-talk::before {
+    content: none;
+  }
+}
+
+/* -- Stage rail (StageRail.astro), wide screens only ----------------------- */
+.v3-rail {
+  display: none;
+}
+
+@media (min-width: 80rem) {
+  .v3-rail:not([hidden]) {
+    display: block;
+    position: fixed;
+    inset-inline-end: 1rem;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    z-index: var(--z-sticky);
+  }
+}
+
+.v3-rail ol {
+  position: relative;
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The thread the stages hang on. */
+.v3-rail ol::before {
+  content: '';
+  position: absolute;
+  inset-block: 0.9rem;
+  inset-inline-end: calc(0.3rem - 0.5px);
+  inline-size: 1px;
+  background: var(--border-strong);
+}
+
+/* The rail sits on the right edge (round 5), so each row reads right to
+   left from the thread: dot, number, then the label opening leftward. */
+.v3-rail a {
+  position: relative;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 1.75rem;
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  text-decoration: none;
+}
+
+.v3-rail__dot {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.v3-rail__n {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Only the current stage's name shows; the rest reveal on hover or focus,
+   so the rail stays a thin thread beside the content. */
+.v3-rail__label {
+  padding-inline: 0.25rem;
+  border-radius: var(--radius-s);
+  background: var(--bg);
+  white-space: nowrap;
+  opacity: 0;
+  translate: 0.25rem 0;
+  transition:
+    opacity var(--dur-base) var(--ease-out-expo),
+    translate var(--dur-base) var(--ease-out-expo);
+}
+
+.v3-rail a:hover .v3-rail__label,
+.v3-rail a:focus-visible .v3-rail__label,
+.v3-rail a[aria-current] .v3-rail__label {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.v3-rail a[aria-current] {
+  color: var(--text);
+}
+
+.v3-rail a[aria-current] .v3-rail__dot {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+/* -- Progress strip (StageRail.astro), below 80rem ------------------------
+   Slides out from under the header while the story is on screen. Segment
+   fill is a scaleX driven by --fill (0–1) from the script. */
+.v3-progress {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-start: var(--header-height, 4.5rem);
+  z-index: calc(var(--z-sticky) - 1);
+  background: var(--bg);
+  border-block-end: 1px solid var(--border);
+  translate: 0 -100%;
+  visibility: hidden;
+  transition:
+    translate var(--dur-base) var(--ease-out-expo),
+    visibility 0s linear var(--dur-base);
+}
+
+.v3-progress[data-active] {
+  translate: 0 0;
+  visibility: visible;
+  transition: translate var(--dur-base) var(--ease-out-expo);
+}
+
+@media (min-width: 80rem) {
+  .v3-progress {
+    display: none;
+  }
+}
+
+.v3-progress__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-block-size: 2.25rem;
+}
+
+.v3-progress__label {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.v3-progress__n {
+  margin-inline-end: 0.35em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.v3-progress__segs {
+  display: flex;
+  flex: 1;
+  gap: 4px;
+}
+
+.v3-progress__seg {
+  --fill: 0;
+  position: relative;
+  flex: 1;
+  block-size: 3px;
+  border-radius: 2px;
+  background: var(--border-strong);
+  overflow: hidden;
+}
+
+.v3-progress__seg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: left;
+  scale: var(--fill) 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-progress,
+  .v3-progress[data-active] {
+    transition: none;
+  }
+}
+
+/* -- One screen per light section (round 6) ------------------------------
+   The intro, the story heading, each stage and the contact fill at least one
+   viewport below the header, content centred. min-, never fixed: a stage
+   with three work cards simply runs longer. */
+.v3-screen {
+  display: grid;
+  align-content: center;
+  min-block-size: calc(100svh - var(--header-height, 4.5rem));
+}
+
+/* ==========================================================================
+   STORY / STAGES (Story.astro, Stage.astro) — the hairline between stages.
+   ----------------------------------------------------------------------------
+   Lives here rather than in Stage.astro because it is a relationship between
+   sibling instances of that component: Astro scopes a component's own <style>
+   to its own markup, so a rule written in Stage.astro never matches the NEXT
+   Stage.astro instance (see the shared-CSS binding rule at the top of v3.css).
+   ========================================================================== */
+.v3-stage + .v3-stage {
+  border-block-start: 1px solid var(--border);
+}
+
+/* © on the left, icon links on the right (round 5). */
+.v3-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  padding-block: var(--space-xl);
+  color: var(--text-dim);
+}
+
+/* Round 7: the © line steps down to small print. */
+.v3-footer > p {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.v3-footer__socials {
+  display: flex;
+  gap: var(--space-2xs);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.v3-footer__socials a {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--tap-min);
+  block-size: var(--tap-min);
+  border-radius: var(--radius-full);
+  color: var(--text-dim);
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+
+.v3-footer__socials a:hover,
+.v3-footer__socials a:focus-visible {
+  color: var(--text);
+}
+
+.v3-footer__icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+/* The wordmark reads at a different size than the square platform icons —
+   "small but readable" rather than icon-sized. base.css's global
+   `svg { max-width: 100% }` resolves against the link's own definite
+   inline-size (var(--tap-min), a fixed 44px square) rather than the
+   wordmark's true aspect ratio, clamping the auto width down and squashing
+   the glyph — max-inline-size: none opts this one svg back out. */
+.v3-footer__mark {
+  block-size: 1.1rem;
+  inline-size: auto;
+  max-inline-size: none;
+}
+
+/* The wordmark is wider than the 44px square the icons use, so its link
+   grows to fit it (keeping the 44px height) instead of letting the glyph
+   spill out of its own tap target and crowd the icon beside it. */
+.v3-footer__socials a:has(.v3-footer__mark) {
+  inline-size: auto;
+  padding-inline: var(--space-2xs);
+  border-radius: var(--radius-m);
+}
+
+/* ==========================================================================
+   SHARED
+   ========================================================================== */
+.v3-eyebrow {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.v3-link {
+  display: inline-flex;
+  gap: 0.4em;
+  align-items: center;
+  min-block-size: var(--tap-min);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.v3-button {
+  display: inline-flex;
+  gap: 0.5em;
+  align-items: center;
+  min-block-size: var(--tap-min);
+  padding: var(--space-xs) var(--space-m);
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.v3-button:hover,
+.v3-button:focus-visible {
+  background: var(--accent-strong);
+}
+
+/* ==========================================================================
+   MOTION HOOKS — styles v3-motion.ts relies on. Every default is the fully
+   visible, fully inked state, so no-JS and reduced motion need nothing.
+   ========================================================================== */
+
+/* The ONLY thing hidden before JS runs. See V3Layout's inline script. */
+html.v3-intro [data-intro] {
+  visibility: hidden;
+}
+
+/* SplitText's line masks are overflow: clip at the line box, and display type
+   runs at line-height 1.06 — shorter than the glyphs. Measured at 100px: g/y
+   ink ends 5.5px below the line box in Inter Tight, 3px in Instrument Serif,
+   so every descender was being sliced off. Extend each mask 0.12em down and
+   cancel it with a negative margin, so the clip grows and the layout does not.
+   The masks are SplitText's direct div children; unsplit text (reduced
+   motion, no JS) has none, so this rule only ever touches split lines. */
+:is([data-intro], [data-split]) > div {
+  padding-block-end: 0.12em;
+  margin-block-end: -0.12em;
+}
+
+/* Brief words ink from a faint ghost to full text as you scroll (round 7:
+   the old start, --text-dim, was already readable, so the reveal barely
+   showed). Trade-off, on purpose: un-inked words sit well below AA contrast.
+   The scrub finishes by the time the paragraph is centred in the viewport
+   (v3-motion.ts inkIn), so the resting, readable state is always full
+   --text; reduced motion and no-JS never split the text and show it inked. */
+.v3-word {
+  --ink: 1;
+  color: color-mix(
+    in srgb,
+    var(--text) calc(var(--ink) * 100%),
+    color-mix(in srgb, var(--text) 6%, var(--bg))
+  );
+}
+
+/* ==========================================================================
+   CONTACT ROLL (Contact.astro) — hover split-letter roll on the one link.
+   ----------------------------------------------------------------------------
+   Each character is its own clipped window (.v3-roll__char) around a sliding
+   pair (.v3-roll__inner): the real glyph on top, a second copy — painted via
+   ::after so no character is duplicated in the accessible name — parked just
+   below. Hovering slides the pair up by its own height plus the gap, so the
+   real glyph exits the top as the accent copy arrives at the bottom, both in
+   one continuous translate.
+
+   THE GAP MATTERS. .v3-roll__char's padding (protecting descenders and the
+   italic accent's overhang from .v3-word-style clipping) already reserves
+   some space below the line box. Parking the ::after copy at exactly 100%
+   would sit inside that reserved space and peek out at rest. Pushing it to
+   100% + 0.3em clears the padding, and translating the same extra distance
+   keeps the arrival exactly aligned with the resting position. */
+.v3-roll {
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.v3-roll__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Round 7: the roll is PER WORD — only the word under the cursor rolls
+   (keyboard focus on the link still rolls them all, since a keyboard can't
+   point at one word). The arriving copy lands in a random font and colour:
+   v3-motion.ts's rollRandom() sets --roll-font/-style/-weight/-color on the
+   word as the pointer enters; without JS it falls back to the purple accent
+   in the word's own font.
+
+   Clipped vertically only (overflow-y: clip): a random font's glyph can be
+   wider than the original's window, and a sideways clip would slice it. The
+   copy is centred under the original so any extra width spills evenly. */
+.v3-roll__char {
+  display: inline-block;
+  overflow-x: visible;
+  overflow-y: clip;
+  padding: 0.08em 0.06em 0.22em;
+  margin: -0.08em -0.06em -0.22em;
+}
+
+.v3-roll__inner {
+  display: inline-block;
+  position: relative;
+  /* --j is the letter's index WITHIN its word, so every word's roll starts
+     at once instead of waiting behind the words before it. */
+  transition: translate var(--dur-slow) var(--ease-out-expo) calc(var(--j, 0) * 22ms);
+}
+
+.v3-roll__inner::after {
+  content: attr(data-char);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 0.3em);
+  translate: -50% 0;
+  white-space: nowrap;
+  font-family: var(--roll-font, inherit);
+  font-style: var(--roll-style, inherit);
+  font-weight: var(--roll-weight, inherit);
+  color: var(--roll-color, var(--accent));
+}
+
+.v3-roll__word:hover .v3-roll__inner,
+.v3-roll:focus-visible .v3-roll__inner {
+  translate: 0 calc(-100% - 0.3em);
+}
+
+/* The random-colour set, one hue family per slot, tuned per theme. Every
+   value passes AA on its own ground (checked 2026-09-23): paper — purple
+   6.03, magenta 6.11, teal 5.06, orange 5.11, blue 6.20; night — purple
+   7.43, magenta 8.17, teal 13.29, orange 11.66, blue 10.90. */
+.v3 {
+  --roll-c1: #5a3fe0;
+  --roll-c2: #b0156e;
+  --roll-c3: #0f766e;
+  --roll-c4: #b8410c;
+  --roll-c5: #1d4ed8;
+}
+@media (prefers-color-scheme: dark) {
+  :root.v3:not([data-theme='light']) {
+    --roll-c1: #a98dff;
+    --roll-c2: #ff7ab8;
+    --roll-c3: #5eead4;
+    --roll-c4: #fdba74;
+    --roll-c5: #93c5fd;
+  }
+}
+:root.v3[data-theme='dark'] {
+  --roll-c1: #a98dff;
+  --roll-c2: #ff7ab8;
+  --roll-c3: #5eead4;
+  --roll-c4: #fdba74;
+  --roll-c5: #93c5fd;
+}
+
+/* The contact arrow (round 6): two copies in one clipped box. On hover the
+   first flies out top-right while the second flies in from bottom-left —
+   reads as "go", never loops. Lives here, not in Contact.astro, because
+   Icon.astro's set:html SVGs carry no Astro scope attribute. */
+.v3-arrow {
+  display: inline-grid;
+  vertical-align: -0.02em;
+  inline-size: 0.72em;
+  block-size: 0.72em;
+  overflow: clip;
+  color: var(--accent);
+}
+
+.v3-arrow .v3-icon {
+  grid-area: 1 / 1;
+  inline-size: 100%;
+  block-size: 100%;
+  stroke-width: 2.25;
+  transition: translate var(--dur-slow) var(--ease-out-expo);
+}
+
+.v3-arrow__b {
+  translate: -110% 110%;
+}
+
+.v3-roll:hover .v3-arrow__a,
+.v3-roll:focus-visible .v3-arrow__a {
+  translate: 110% -110%;
+}
+
+.v3-roll:hover .v3-arrow__b,
+.v3-roll:focus-visible .v3-arrow__b {
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-arrow .v3-icon {
+    transition: none;
+  }
+  .v3-roll__inner {
+    transition: none;
+  }
+  .v3-roll__word:hover .v3-roll__inner,
+  .v3-roll:focus-visible .v3-roll__inner {
+    translate: none;
+  }
+  .v3-roll:hover,
+  .v3-roll:focus-visible {
+    text-decoration: underline;
+  }
+}

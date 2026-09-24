@@ -1,0 +1,419 @@
+---
+/* ============================================================================
+   StoryLoop.astro — the hand-drawn diagram of the seven stages (round 8–9).
+   ----------------------------------------------------------------------------
+   Fills the "How a project runs" screen.
+
+   WHAT IT SAYS (round 9, Jayson's correction): the process is NOT one big
+   repeating loop. 01–04 happen once; 05 Be found → 06 Show up → 07 Measure
+   is the part that repeats (search/answer-engine improvements, then social,
+   then the report — and back to 05). So:
+     - the first pass draws 01 → 07 once, in ink;
+     - then a purple cycle plays: an arrow from 07 curves back to 05, and
+       05, 06, 07 with the arrows between them are rubbed out and redrawn in
+       purple as one continuous pen stroke (rounds 10–13; round 13 dropped
+       the "then again!" scribble). That cycle — the monthly retainer —
+       repeats while the section is on screen (v3-motion.ts sketch()).
+   The static drawing (no JS, reduced motion, print) shows the purple cycle
+   already drawn, so the meaning survives without the motion.
+
+   Two drawings of the same diagram, one per screen shape:
+     wide  (>= 48rem) — stops round an open loop; the section heading sits in
+                        the middle (Story.astro stacks them in one grid cell),
+                        and the 07 → 05 return cuts across below it.
+     tall  (<  48rem) — stops down a line, labels to the right, the 07 → 05
+                        return curving up the left. Sized to fit one screen.
+   CSS shows one and display:none's the other, which also drops the hidden
+   one from the accessibility tree.
+
+   HAND-DRAWN AT BUILD TIME. rough.js runs here in the frontmatter (its
+   generator needs no DOM), turning plain geometry into sketchy SVG paths;
+   none of it ships to the browser. `seed` keeps every build identical.
+   Labels use Caveat, a handwriting face.
+
+   Accessibility: each SVG is role="img" with a <title> and a <desc> that
+   reads the stages and the repeat in plain words. Nothing is interactive.
+
+   Motion hooks: every stroke has pathLength="100". First-pass groups are
+   [data-sk] (node / seg, in draw order); the purple cycle is [data-cycle]
+   (return, c1 = 05→06, c2 = 06→07). Arrows mark their paths
+   data-part="line" / "head" so the head draws after the line lands.
+   ========================================================================= */
+import rough from 'roughjs';
+import { STAGES } from '../../config/lifecycle';
+
+/* One short doodle note per stage — plain words, no jargon. */
+const NOTES: Record<string, string> = {
+  discover: 'we talk',
+  plan: 'set the goals',
+  brand: 'logo + look',
+  build: 'your website',
+  'be-found': 'Google, Maps, AI',
+  'show-up': 'social posts',
+  measure: 'monthly report',
+};
+
+/* Round 12: once the monthly loop starts, 05 and 06 describe the ongoing
+   work instead. The first play keeps NOTES; the first lap cross-fades these
+   in (v3-motion.ts) and they stay while the loop runs. Static (no JS,
+   reduced motion) shows NOTES. SEO/AEO/GEO live in stage 05's body text
+   (lifecycle.ts), where search engines read them and the doodle stays plain. */
+const LOOP_NOTES: Record<string, string> = {
+  'be-found': 'rank on Google + AI',
+  'show-up': 'keep posting',
+};
+
+/* The repeating part: from the last stage back to this one. */
+const REPEAT_FROM = STAGES.findIndex((s) => s.id === 'be-found');
+const LAST = STAGES.length - 1;
+
+type Pt = [number, number];
+type Drawable = ReturnType<ReturnType<typeof rough.generator>['circle']>;
+
+const gen = rough.generator();
+let seed = 7;
+const style = (extra: Record<string, unknown> = {}) => ({
+  seed: seed++,
+  roughness: 1.15,
+  bowing: 1.4,
+  strokeWidth: 2.2,
+  stroke: 'currentColor',
+  ...extra,
+});
+/* rough.js draws each shape as TWO overlapping pen strokes inside one path
+   (two `M` subpaths). With pathLength="100" the draw-on effect then traced
+   the first stroke, and only after it finished the second one over it — the
+   line looked done, then "paused" while the retrace ran (round 13). Split
+   them into separate paths so both strokes draw at the same time. */
+const paths = (d: Drawable) =>
+  gen.toPaths(d).flatMap((p) =>
+    p.d
+      .split(/(?=M)/)
+      .map((s) => s.trim())
+      .filter(Boolean),
+  );
+
+/** A small open arrowhead whose tip sits at `tip`, pointing along `dir`. */
+function arrowHead(tip: Pt, dir: Pt, size = 15): string[] {
+  const len = Math.hypot(dir[0], dir[1]) || 1;
+  const t: Pt = [dir[0] / len, dir[1] / len];
+  const n: Pt = [-t[1], t[0]];
+  const back: Pt = [tip[0] - t[0] * size, tip[1] - t[1] * size];
+  const left: Pt = [back[0] + n[0] * size * 0.6, back[1] + n[1] * size * 0.6];
+  const right: Pt = [back[0] - n[0] * size * 0.6, back[1] - n[1] * size * 0.6];
+  return paths(gen.linearPath([left, tip, right], style({ roughness: 0.8 })));
+}
+
+interface NodeDraw {
+  n: string;
+  label: string;
+  note: string;
+  loopNote?: string;
+  circle: string[];
+  c: Pt;
+  labelAt: Pt;
+  noteAt: Pt;
+  anchor: 'start' | 'middle' | 'end';
+}
+/** An arrow keeps its line and its head apart, so the head can be drawn
+ *  after the line reaches it (round 13 — it used to draw at the same time,
+ *  appearing before the line got there). */
+interface Arrow {
+  line: string[];
+  head: string[];
+}
+/** A stage-to-stage arrow: the ink version (first pass) plus a purple copy
+ *  for segments inside the repeating part (redrawn by the cycle). */
+interface SegDraw {
+  ink: Arrow;
+  purple: Arrow | null;
+}
+interface Drawing {
+  key: 'wide' | 'tall';
+  w: number;
+  h: number;
+  nodes: NodeDraw[];
+  segs: SegDraw[];
+  ret: Arrow;
+}
+
+const arrow = (pts: Pt[], tip: Pt, dir: Pt, head = 15): Arrow => ({
+  line: paths(gen.curve(pts, style())),
+  head: arrowHead(tip, dir, head),
+});
+
+/** Rough curve + arrowhead; a second, independently seeded copy when the
+ *  segment belongs to the repeating part. */
+function segment(pts: Pt[], tip: Pt, dir: Pt, repeats: boolean, head = 15): SegDraw {
+  return { ink: arrow(pts, tip, dir, head), purple: repeats ? arrow(pts, tip, dir, head) : null };
+}
+
+/* ---- Wide: the open loop --------------------------------------------------- */
+const W = { w: 1120, h: 700, cx: 560, cy: 350, rx: 380, ry: 215, r: 30 };
+const START = -130;
+const STEP = 360 / STAGES.length;
+const rad = (deg: number) => (deg * Math.PI) / 180;
+const onLoop = (deg: number, grow = 0): Pt => [
+  W.cx + (W.rx + grow) * Math.cos(rad(deg)),
+  W.cy + (W.ry + grow * 0.75) * Math.sin(rad(deg)),
+];
+/* Clockwise on screen: increasing angle with y pointing down. */
+const loopTangent = (deg: number): Pt => [-W.rx * Math.sin(rad(deg)), W.ry * Math.cos(rad(deg))];
+
+const wideNodes: NodeDraw[] = STAGES.map((s, i) => {
+  const a = START + i * STEP;
+  const c = onLoop(a);
+  const cos = Math.cos(rad(a));
+  const sin = Math.sin(rad(a));
+  const out = onLoop(a, 70);
+  /* Top stops stack label-then-note ABOVE the node, bottom stops below it,
+     side stops beside it. */
+  const labelY = sin < -0.5 ? out[1] - 30 : sin > 0.5 ? out[1] + 4 : out[1] - 6;
+  return {
+    n: s.n,
+    label: s.label,
+    note: NOTES[s.id] ?? '',
+    loopNote: LOOP_NOTES[s.id],
+    circle: paths(gen.circle(c[0], c[1], W.r * 2, style({ roughness: 1.3 }))),
+    c,
+    labelAt: [out[0], labelY],
+    noteAt: [out[0], labelY + 28],
+    anchor: cos > 0.35 ? 'start' : cos < -0.35 ? 'end' : 'middle',
+  };
+});
+
+/* 01 → 07 only: the loop is open between 07 and 01. */
+const wideSegs: SegDraw[] = STAGES.slice(0, LAST).map((_, i) => {
+  const a = START + i * STEP;
+  const gap = 8;
+  const from = a + gap;
+  const to = a + STEP - gap;
+  const pts: Pt[] = [];
+  for (let k = 0; k <= 10; k++) pts.push(onLoop(from + ((to - from) * k) / 10));
+  return segment(pts, onLoop(to), loopTangent(to), i >= REPEAT_FROM);
+});
+
+/* 07 → 05: a chord across the inside, below the heading, clear of 06. */
+const wFrom = wideNodes[LAST]!.c;
+const wTo = wideNodes[REPEAT_FROM]!.c;
+const wideRetPts: Pt[] = [
+  [wFrom[0] + 27, wFrom[1] + 21],
+  [300, 452],
+  [450, 492],
+  [560, 525],
+  [wTo[0] - 32, wTo[1] - 11],
+];
+const wideRet = arrow(wideRetPts, [wTo[0] - 32, wTo[1] - 11], [1, 0.35]);
+
+/* ---- Tall: the line ---------------------------------------------------------- */
+const T = { w: 400, h: 620, x: 96, top: 50, gap: 84, r: 24 };
+const tY = (i: number) => T.top + i * T.gap;
+
+const tallNodes: NodeDraw[] = STAGES.map((s, i) => {
+  const c: Pt = [T.x, tY(i)];
+  return {
+    n: s.n,
+    label: s.label,
+    note: NOTES[s.id] ?? '',
+    loopNote: LOOP_NOTES[s.id],
+    circle: paths(gen.circle(c[0], c[1], T.r * 2, style({ roughness: 1.3 }))),
+    c,
+    labelAt: [T.x + 46, c[1] - 2],
+    noteAt: [T.x + 46, c[1] + 24],
+    anchor: 'start',
+  };
+});
+
+const tallSegs: SegDraw[] = STAGES.slice(0, LAST).map((_, i) => {
+  const y0 = tY(i) + T.r + 5;
+  const y1 = tY(i + 1) - T.r - 6;
+  const pts: Pt[] = [];
+  for (let k = 0; k <= 4; k++) {
+    const t = k / 4;
+    pts.push([T.x + Math.sin(t * Math.PI * 2) * 4, y0 + (y1 - y0) * t]);
+  }
+  return segment(pts, [T.x, y1], [0, 1], i >= REPEAT_FROM, 10);
+});
+
+/* 07 → 05: out of 07's left side, up the left margin, into 05's left side. */
+const tFromY = tY(LAST);
+const tToY = tY(REPEAT_FROM);
+const tallEnd: Pt = [T.x - T.r - 3, tToY + 2];
+const tallRetPts: Pt[] = [
+  [T.x - T.r - 2, tFromY + 8],
+  [44, tFromY - 6],
+  [34, (tFromY + tToY) / 2],
+  [46, tToY + 10],
+  tallEnd,
+];
+const tallRet = arrow(tallRetPts, tallEnd, [1, -0.15], 11);
+
+const drawings: Drawing[] = [
+  {
+    key: 'wide',
+    w: W.w,
+    h: W.h,
+    nodes: wideNodes,
+    segs: wideSegs,
+    ret: wideRet,
+  },
+  {
+    key: 'tall',
+    w: T.w,
+    h: T.h,
+    nodes: tallNodes,
+    segs: tallSegs,
+    ret: tallRet,
+  },
+];
+
+const repeatNames = STAGES.slice(REPEAT_FROM)
+  .map((s) => `${s.n} ${s.label} (${LOOP_NOTES[s.id] ?? NOTES[s.id]})`)
+  .join(', ');
+const desc =
+  `${STAGES.map((s) => `${s.n} ${s.label} (${NOTES[s.id]})`).join(', ')}. ` +
+  `After ${STAGES[LAST]?.n} ${STAGES[LAST]?.label}, the work loops back to ${STAGES[REPEAT_FROM]?.n} ${STAGES[REPEAT_FROM]?.label}: ${repeatNames}, and round again every month.`;
+---
+
+<div class="v3-loop" data-sketch-wrap>
+  {drawings.map((d) => (
+    <svg
+      class={`v3-loop__svg v3-loop__svg--${d.key}`}
+      viewBox={`0 0 ${d.w} ${d.h}`}
+      role="img"
+      aria-labelledby={`v3-loop-${d.key}-title v3-loop-${d.key}-desc`}
+      data-sketch
+    >
+      <title id={`v3-loop-${d.key}-title`}>How a project runs, in seven stages</title>
+      <desc id={`v3-loop-${d.key}-desc`}>{desc}</desc>
+
+      {/* data-repeat marks what the purple cycle rubs out and redraws each
+          lap: the circles of 05, 06 and 07 (n0, n1, n2) and the ink arrows
+          between them (c1, c2). */}
+      {d.nodes.map((node, i) => (
+        <>
+          <g data-sk="node" data-repeat={i === REPEAT_FROM ? 'n0' : i === REPEAT_FROM + 1 ? 'n1' : i === REPEAT_FROM + 2 ? 'n2' : undefined}>
+            {node.circle.map((p) => <path class="sk-accent" d={p} pathLength="100" />)}
+            <text class="sk-n" x={node.c[0]} y={node.c[1]} text-anchor="middle" dominant-baseline="central">{node.n}</text>
+            <text class="sk-label" x={node.labelAt[0]} y={node.labelAt[1]} text-anchor={node.anchor}>{node.label}</text>
+            <text class="sk-note" x={node.noteAt[0]} y={node.noteAt[1]} text-anchor={node.anchor} data-note-first={node.loopNote ? '' : undefined}>{node.note}</text>
+            {node.loopNote && (
+              <text class="sk-note sk-note--loop" x={node.noteAt[0]} y={node.noteAt[1]} text-anchor={node.anchor} data-note-loop>{node.loopNote}</text>
+            )}
+          </g>
+          {d.segs[i] && (
+            <g data-sk="seg" data-repeat={i === REPEAT_FROM ? 'c1' : i === REPEAT_FROM + 1 ? 'c2' : undefined}>
+              {d.segs[i]!.ink.line.map((p) => <path class="sk-ink" d={p} pathLength="100" data-part="line" />)}
+              {d.segs[i]!.ink.head.map((p) => <path class="sk-ink" d={p} pathLength="100" data-part="head" />)}
+            </g>
+          )}
+        </>
+      ))}
+
+      {/* The repeating part, drawn over the ink by the cycle. */}
+      <g data-cycle="return">
+        {d.ret.line.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="100" data-part="line" />)}
+        {d.ret.head.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="100" data-part="head" />)}
+      </g>
+      {d.segs
+        .map((s, i) => ({ s, i }))
+        .filter(({ s }) => s.purple)
+        .map(({ s, i }) => (
+          <g data-cycle={i === REPEAT_FROM ? 'c1' : 'c2'}>
+            {s.purple!.line.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="100" data-part="line" />)}
+            {s.purple!.head.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="100" data-part="head" />)}
+          </g>
+        ))}
+    </svg>
+  ))}
+</div>
+
+<style>
+  .v3-loop__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    overflow: visible;
+  }
+
+  .v3-loop__svg--wide {
+    display: none;
+    /* The whole screen is the section: cap the drawing's height so heading
+       + loop still fit one viewport. The SVG letterboxes (default
+       preserveAspectRatio), so the heading overlay stays centred. */
+    max-block-size: calc(100svh - var(--header-height, 4.5rem) - 6rem);
+  }
+
+  /* Phones: heading above, drawing below, both inside one screen — the
+     drawing gets what the heading and padding leave (≈15rem). */
+  .v3-loop__svg--tall {
+    max-inline-size: 26rem;
+    max-block-size: calc(100svh - var(--header-height, 4.5rem) - 15rem);
+    margin-inline: auto;
+  }
+
+  @media (min-width: 48rem) {
+    .v3-loop__svg--wide {
+      display: block;
+    }
+    .v3-loop__svg--tall {
+      display: none;
+    }
+  }
+
+  /* SVG internals are keyed off the svg's own class with :global, so a rule
+     never depends on Astro's scope hash reaching every generated path. */
+  .v3-loop__svg :global(path) {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .v3-loop__svg :global(.sk-ink) {
+    stroke: var(--text);
+  }
+
+  .v3-loop__svg :global(.sk-accent) {
+    stroke: var(--accent);
+  }
+
+  /* The loop's alternate notes wait hidden; v3-motion.ts fades them in when
+     the loop starts. */
+  .v3-loop__svg :global(.sk-note--loop) {
+    opacity: 0;
+  }
+
+  /* One bold weight for everything in the monthly loop (round 12): the
+     return arrow, the purple arrows, and — once the loop redraws
+     them — the circles of 05–07 (v3-motion.ts sets theirs to match, so
+     keep LOOP_STROKE there in step with this). */
+  .v3-loop__svg :global(.sk-loop) {
+    stroke-width: 3;
+  }
+
+  .v3-loop__svg :global(text) {
+    font-family: 'Caveat Variable', 'Caveat', cursive;
+  }
+
+  .v3-loop__svg :global(.sk-n) {
+    font-size: 26px;
+    font-weight: 700;
+    fill: var(--accent);
+  }
+
+  .v3-loop__svg :global(.sk-label) {
+    font-size: 36px;
+    font-weight: 700;
+    fill: var(--text);
+  }
+
+  .v3-loop__svg :global(.sk-note) {
+    font-size: 25px;
+    font-weight: 500;
+    fill: var(--text-dim);
+  }
+
+  .v3-loop__svg--tall :global(.sk-n) {
+    font-size: 22px;
+  }
+</style>

@@ -1,0 +1,114 @@
+---
+/* ============================================================================
+   StageRail.astro — where you are in the seven-stage story, on every screen.
+   ----------------------------------------------------------------------------
+   Two views of the same state:
+   - >= 80rem: the rail — 01 Discover … 07 Measure down the right edge
+     (moved from the left in round 5), links to each stage, the current one
+     lit and marked aria-current="location".
+   - < 80rem (round 6): a thin progress strip under the header — seven
+     segments that fill as you read, and "03 · Brand" beside them. It shows
+     only while the story is on screen. It is aria-hidden: purely a visual
+     aid, since each stage's own heading already says where you are, and it
+     holds nothing to click.
+
+   Both are hidden until the script finds the stage sections (so neither
+   points at anchors that do not exist) and stay hidden without JS.
+
+   Current stage = the section crossing the middle of the viewport, measured
+   on scroll (rAF-throttled). Round 6 replaced an IntersectionObserver that
+   only ever SET the current stage: scrolling back up to the hero left the
+   last stage lit. Now nothing is current outside the story.
+   ========================================================================= */
+import { STAGES } from '../../config/lifecycle';
+---
+
+<nav class="v3-rail" aria-label="Project stages" data-rail hidden>
+  <ol role="list">
+    {STAGES.map((s) => (
+      <li>
+        <a href={`#${s.id}`} data-rail-link={s.id}>
+          <span class="v3-rail__dot" aria-hidden="true"></span>
+          <span class="v3-rail__n">{s.n}</span>
+          <span class="v3-rail__label">{s.label}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<div class="v3-progress" aria-hidden="true" data-progress>
+  <div class="v3-progress__bar container">
+    <span class="v3-progress__label">
+      <span class="v3-progress__n" data-progress-n>{STAGES[0]?.n}</span>
+      <span data-progress-label>{STAGES[0]?.label}</span>
+    </span>
+    <span class="v3-progress__segs">
+      {STAGES.map(() => <span class="v3-progress__seg" data-progress-seg></span>)}
+    </span>
+  </div>
+</div>
+
+<script>
+  import { STAGES } from '../../config/lifecycle';
+
+  const rail = document.querySelector<HTMLElement>('[data-rail]');
+  const strip = document.querySelector<HTMLElement>('[data-progress]');
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-rail-link]')];
+  const segs = [...document.querySelectorAll<HTMLElement>('[data-progress-seg]')];
+  const nOut = document.querySelector<HTMLElement>('[data-progress-n]');
+  const labelOut = document.querySelector<HTMLElement>('[data-progress-label]');
+  const sections = STAGES.map((s) => document.getElementById(s.id)).filter(
+    (el): el is HTMLElement => el !== null,
+  );
+
+  if (rail && strip && sections.length) {
+    rail.hidden = false;
+    let current = -2;
+
+    const update = () => {
+      const mid = window.innerHeight / 2;
+      let idx = -1;
+      let progress = 0;
+      sections.forEach((s, i) => {
+        const r = s.getBoundingClientRect();
+        if (r.top <= mid && r.bottom > mid) {
+          idx = i;
+          progress = (mid - r.top) / r.height;
+        }
+      });
+
+      segs.forEach((seg, i) =>
+        seg.style.setProperty('--fill', String(i < idx ? 1 : i === idx ? progress : 0)),
+      );
+
+      if (idx === current) return;
+      current = idx;
+      const id = sections[idx]?.id;
+      links.forEach((a) =>
+        a.dataset.railLink === id
+          ? a.setAttribute('aria-current', 'location')
+          : a.removeAttribute('aria-current'),
+      );
+      strip.toggleAttribute('data-active', idx >= 0);
+      const stage = STAGES[idx];
+      if (stage && nOut && labelOut) {
+        nOut.textContent = stage.n;
+        labelOut.textContent = stage.label;
+      }
+    };
+
+    let queued = false;
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        update();
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    update();
+  }
+</script>

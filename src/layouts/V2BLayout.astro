@@ -121,7 +121,7 @@ const year = new Date().getFullYear();
     </footer>
 
     <script>
-      import { currentTheme, toggleTheme } from '../scripts/theme';
+      import { bindThemeToggle } from '../scripts/theme';
 
       /* ------------------------------------------------------------------
          Publish the header's real height so the hero can subtract it.
@@ -150,28 +150,7 @@ const year = new Date().getFullYear();
 
       const btn = document.getElementById('v2b-theme');
       const label = btn?.querySelector<HTMLElement>('[data-theme-label]');
-
-      if (btn && label) {
-        /* The visible word says the CURRENT theme; the accessible name says
-           the ACTION. Deliberately different, and the same split v2's icon
-           toggle uses — a sighted user reads state, a screen-reader user needs
-           to know what pressing it will do. */
-        const sync = () => {
-          const now = currentTheme();
-          label.textContent = now === 'dark' ? 'Dark' : 'Light';
-          btn.setAttribute(
-            'aria-label',
-            `Switch to ${now === 'dark' ? 'light' : 'dark'} theme`,
-          );
-        };
-
-        btn.addEventListener('click', () => {
-          toggleTheme();
-          sync();
-        });
-        window.addEventListener('themechange', sync);
-        sync();
-      }
+      if (btn && label) bindThemeToggle(btn, label);
     </script>
   </body>
 </html>

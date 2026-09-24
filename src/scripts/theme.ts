@@ -103,3 +103,23 @@ export function watchSystemTheme(): void {
 export function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
+
+/* ---------------------------------------------------------------------------
+   A word-labelled toggle, as used by the v2B and v3 shells.
+   The visible word states the CURRENT theme; the accessible name states the
+   ACTION. Deliberately different: a sighted user reads state, a screen-reader
+   user needs to know what pressing it will do.
+   ------------------------------------------------------------------------ */
+export function bindThemeToggle(btn: HTMLElement, label: HTMLElement): void {
+  const sync = () => {
+    const now = currentTheme();
+    label.textContent = now === 'dark' ? 'Dark' : 'Light';
+    btn.setAttribute('aria-label', `Switch to ${now === 'dark' ? 'light' : 'dark'} theme`);
+  };
+  btn.addEventListener('click', () => {
+    toggleTheme();
+    sync();
+  });
+  window.addEventListener('themechange', sync);
+  sync();
+}

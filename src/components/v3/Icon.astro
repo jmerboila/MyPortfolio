@@ -1,0 +1,30 @@
+---
+/* ============================================================================
+   Icon.astro — one Lucide icon, inlined.
+   ----------------------------------------------------------------------------
+   Always decorative: every icon on v3 sits beside a visible text label, which
+   is what names the link or button. Icon-only controls get their name from
+   aria-label on the control, never from the icon.
+
+   Sized in em so an icon tracks the text it sits with. Styled from v3.css
+   (.v3-icon), because set:html output carries no Astro scope attribute.
+   ========================================================================= */
+import { ICONS, type IconName } from '../../lib/icons';
+
+interface Props {
+  name: IconName;
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+const cls = ['v3-icon', className].filter(Boolean).join(' ');
+
+const svg = ICONS[name]
+  .replace(/<!--[\s\S]*?-->\s*/, '')
+  .replace(/\sclass="[^"]*"/, '')
+  .replace(/\swidth="24"/, ' width="1em"')
+  .replace(/\sheight="24"/, ' height="1em"')
+  .replace('<svg', `<svg class="${cls}" aria-hidden="true" focusable="false"`);
+---
+
+<Fragment set:html={svg} />

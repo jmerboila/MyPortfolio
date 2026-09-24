@@ -1,0 +1,56 @@
+---
+/* ============================================================================
+   SiteNav.astro — v3's header.
+   ----------------------------------------------------------------------------
+   Round 3 simplified this to four controls, same on every viewport: the JM
+   monogram (left), a spacer, the sun/moon theme toggle, and the "Let's talk"
+   CTA. No primary links, no mobile menu, no v2 backlink — StageRail.astro
+   already tracks where a visitor is on the page, and the story map this
+   header used to open is superseded by the coming stage sections (see
+   docs/v3-todo.md's "Next" list).
+
+   Every icon still sits beside a visible label, or (the theme button) gets
+   its name from aria-label — the icon never names a control alone.
+   ========================================================================= */
+import { PERSON } from '../../config/site';
+import { CONTACT_HREF } from '../../config/lifecycle';
+import { href } from '../../lib/url';
+import JMMark from '../JMMark.astro';
+import Icon from './Icon.astro';
+---
+
+<header class="v3-nav" data-v3-header>
+  <div class="v3-nav__bar container">
+    {/* The monogram alone — the name is the hero's job. The mark carries the
+        link's accessible name, since there is no visible text in it. */}
+    <a class="v3-nav__brand" href={href('/v3/')}>
+      <JMMark class="v3-nav__mark" label={`${PERSON.name}, home`} />
+    </a>
+
+    <div class="v3-nav__actions">
+      <a class="v3-talk" href={CONTACT_HREF}>Let's talk</a>
+      <button type="button" class="v3-iconbtn" id="v3-theme" aria-label="Switch to dark theme">
+        <Icon name="sun" class="v3-theme__sun" />
+        <Icon name="moon" class="v3-theme__moon" />
+        <span class="visually-hidden" data-theme-label>Theme</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  import { bindThemeToggle } from '../../scripts/theme';
+
+  /* Measured, not guessed: DotGrid and the sticky plates both read it. */
+  const header = document.querySelector<HTMLElement>('[data-v3-header]');
+  if (header) {
+    const publish = () =>
+      document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+    publish();
+    new ResizeObserver(publish).observe(header);
+  }
+
+  const btn = document.getElementById('v3-theme');
+  const label = btn?.querySelector<HTMLElement>('[data-theme-label]');
+  if (btn && label) bindThemeToggle(btn, label);
+</script>

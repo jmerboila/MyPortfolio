@@ -1,0 +1,252 @@
+---
+/* ============================================================================
+   Stage.astro — one step of "How a project runs".
+   ----------------------------------------------------------------------------
+   >= 64rem: two columns. The left column (numeral + heading) sticks under the
+   header while the right column (body, "you get", and any sample work) scrolls
+   past it — plain CSS sticky, GSAP only decorates. Below 64rem everything is a
+   single flowing column; nothing sticks.
+
+   The hairline between stages (.v3-stage + .v3-stage) lives in v3.css, not
+   here, because it is a relationship between sibling instances of this
+   component and Astro's per-component scope hash would otherwise stop a rule
+   written here from ever matching the next Stage.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import type { Stage as StageData } from '../../config/lifecycle';
+import { href } from '../../lib/url';
+
+interface Props {
+  stage: StageData;
+  work: CollectionEntry<'work'>[];
+}
+
+const { stage, work } = Astro.props;
+const titleId = `v3-stage-${stage.id}-title`;
+const twoCols = work.length >= 2;
+---
+
+<section id={stage.id} class="v3-stage" aria-labelledby={titleId}>
+  <div class="v3-stage__inner v3-screen container">
+    <div class="v3-stage__left">
+      <span class="v3-stage__n" aria-hidden="true" data-stage-n>{stage.n}</span>
+      <h3 id={titleId} class="v3-stage__title" data-split>
+        <span class="v3-stage__label">{stage.label}</span> <span class="v3-stage__headline">{stage.headline}</span>
+      </h3>
+    </div>
+
+    <div class="v3-stage__right">
+      <p class="v3-stage__body" data-split>{stage.body}</p>
+      <hr class="v3-stage__rule" />
+      <p class="v3-stage__gets" data-split>
+        <span class="v3-stage__gets-label">You get</span> {stage.gets}
+      </p>
+
+      {work.length > 0 && (
+        <ul class:list={['v3-stage__work', twoCols && 'v3-stage__work--pair']} role="list">
+          {work.map((entry) => {
+            const d = entry.data;
+            const name = d.shortTitle ?? d.title;
+            const line = d.brief ?? d.summary;
+            return (
+              <li class="v3-stage__card" data-stage-card>
+                <a href={href(`/work/${entry.id}/`)}>
+                  <figure class="v3-stage__frame" data-stage-frame>
+                    <Image
+                      src={d.cover}
+                      alt={d.coverAlt}
+                      widths={[400, 640]}
+                      sizes="(min-width: 48rem) 22rem, 90vw"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </figure>
+                  <h4>{name}</h4>
+                  <p>{line}</p>
+                  <span class="v3-stage__cta">See the project <span aria-hidden="true">→</span></span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* .v3-screen (v3.css) makes this a grid on every screen, so the stacked
+     phone layout needs its own gap between the heading and the body. */
+  .v3-stage__inner {
+    padding-block: var(--space-section);
+    row-gap: var(--space-l);
+  }
+
+  @media (min-width: 64rem) {
+    .v3-stage__inner {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    .v3-stage__left {
+      position: sticky;
+      inset-block-start: calc(var(--header-height, 4.5rem) + 2rem);
+    }
+  }
+
+  /* 64–80rem: the progress strip (StageRail.astro) sits under the header
+     here, so the sticky column starts below it too. */
+  @media (min-width: 64rem) and (max-width: 79.99rem) {
+    .v3-stage__left {
+      inset-block-start: calc(var(--header-height, 4.5rem) + 4rem);
+    }
+  }
+
+  /* StageRail (v3.css) sits fixed at 1rem from the left edge and only
+     appears at this same >= 80rem breakpoint; measured, its "01 Discover"
+     style pill reaches ~113px from the edge, further than --gutter alone
+     clears at 1280–1440. Nudging the sticky left column right keeps the
+     numeral and heading from sitting under it. */
+  @media (min-width: 80rem) {
+    .v3-stage__left {
+      padding-inline-start: 5rem;
+    }
+  }
+
+  .v3-stage__n {
+    display: block;
+    font-family: var(--font-display);
+    font-style: normal;
+    font-size: clamp(5rem, 10vw, 11rem);
+    line-height: 0.8;
+    color: var(--accent);
+  }
+
+  .v3-stage__title {
+    margin: var(--space-xs) 0 0;
+    font-weight: 500;
+  }
+
+  .v3-stage__label {
+    display: block;
+    font-size: var(--step-0);
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+
+  .v3-stage__headline {
+    display: block;
+    margin-block-start: 0.15em;
+    font-size: var(--step-5);
+    font-weight: 500;
+    line-height: var(--leading-tight);
+    color: var(--text);
+  }
+
+  .v3-stage__body {
+    margin: 0;
+    font-size: var(--step-1);
+    max-inline-size: 36ch;
+    color: var(--text);
+  }
+
+  .v3-stage__rule {
+    margin: var(--space-l) 0;
+    border: none;
+    border-block-start: 1px solid var(--border);
+  }
+
+  .v3-stage__gets {
+    margin: 0;
+    font-size: var(--step-0);
+  }
+
+  .v3-stage__gets-label {
+    color: var(--text-dim);
+    margin-inline-end: 0.5em;
+  }
+
+  .v3-stage__work {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-m);
+    padding: 0;
+    margin: var(--space-l) 0 0;
+    list-style: none;
+  }
+
+  @media (min-width: 48rem) {
+    .v3-stage__work--pair {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* An odd count (e.g. Brand's three) leaves one card alone in the last
+       row — let it span both columns instead of sitting half-width with an
+       empty cell beside it. */
+    .v3-stage__work--pair .v3-stage__card:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .v3-stage__card a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .v3-stage__frame {
+    margin: 0;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    transition: border-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .v3-stage__frame :global(img) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+    transition: scale var(--dur-base) var(--ease-out-quart);
+  }
+
+  .v3-stage__card a:hover .v3-stage__frame,
+  .v3-stage__card a:focus-visible .v3-stage__frame {
+    border-color: var(--accent);
+  }
+
+  .v3-stage__card a:hover .v3-stage__frame :global(img),
+  .v3-stage__card a:focus-visible .v3-stage__frame :global(img) {
+    scale: 1.03;
+  }
+
+  .v3-stage__card a:active {
+    translate: 0 1px;
+  }
+
+  .v3-stage__card h4 {
+    margin: var(--space-s) 0 0;
+    font-size: var(--step-1);
+    font-weight: 600;
+  }
+
+  .v3-stage__card p {
+    margin: 0.25em 0 0;
+    color: var(--text-dim);
+    font-size: var(--step--1);
+  }
+
+  .v3-stage__cta {
+    display: inline-flex;
+    gap: 0.4em;
+    align-items: center;
+    margin-block-start: var(--space-2xs);
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--accent);
+  }
+</style>

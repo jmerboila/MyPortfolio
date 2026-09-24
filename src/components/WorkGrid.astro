@@ -402,8 +402,28 @@ const present = WORK_CATEGORIES.filter((c) =>
       status.textContent = label;
     };
 
+    /* Deep links: /work/?cat=logo opens filtered, and every choice is written
+       back to the URL so a filtered view can be shared. replaceState, not
+       pushState: a filter is a view of this page, not a new history entry.
+       Unknown keys are ignored rather than showing an empty grid, since the
+       buttons only exist for categories that actually have work. */
+    const keys = new Set(buttons.map((b) => b.dataset.filter));
+    const writeUrl = (filter: string) => {
+      const url = new URL(window.location.href);
+      if (filter === 'all') url.searchParams.delete('cat');
+      else url.searchParams.set('cat', filter);
+      history.replaceState(history.state, '', url);
+    };
+
     for (const b of buttons) {
-      b.addEventListener('click', () => apply(b.dataset.filter || 'all'));
+      b.addEventListener('click', () => {
+        const filter = b.dataset.filter || 'all';
+        apply(filter);
+        writeUrl(filter);
+      });
     }
+
+    const initial = new URLSearchParams(window.location.search).get('cat');
+    if (initial && keys.has(initial)) apply(initial);
   }
 </script>

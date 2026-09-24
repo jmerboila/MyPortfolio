@@ -111,26 +111,28 @@ const config = {
 
        Base and active must DIFFER or the proximity effect does nothing: the
        React Bits example passes the same colour for both, so its interpolation
-       resolves to where it started. */
-    --dot-base: rgb(18 58 143 / 0.12);
-    --dot-active: rgb(18 58 143 / 0.15);
+       resolves to where it started.
+
+       The RGB comes from --dotgrid-rgb-light/-dark when a page sets them (v3's purple); the fallback is v2's cobalt, so v2 renders exactly as before. */
+    --dot-base: rgb(var(--dotgrid-rgb-light, 18 58 143) / 0.12);
+    --dot-active: rgb(var(--dotgrid-rgb-light, 18 58 143) / 0.15);
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) .dotgrid {
-      --dot-base: rgb(110 155 255 / 0.18);
-      --dot-active: rgb(110 155 255 / 0.28);
+      --dot-base: rgb(var(--dotgrid-rgb-dark, 110 155 255) / 0.18);
+      --dot-active: rgb(var(--dotgrid-rgb-dark, 110 155 255) / 0.28);
     }
   }
 
   :root[data-theme='dark'] .dotgrid {
-    --dot-base: rgb(110 155 255 / 0.18);
-    --dot-active: rgb(110 155 255 / 0.28);
+    --dot-base: rgb(var(--dotgrid-rgb-dark, 110 155 255) / 0.18);
+    --dot-active: rgb(var(--dotgrid-rgb-dark, 110 155 255) / 0.28);
   }
 
   :root[data-theme='light'] .dotgrid {
-    --dot-base: rgb(18 58 143 / 0.12);
-    --dot-active: rgb(18 58 143 / 0.15);
+    --dot-base: rgb(var(--dotgrid-rgb-light, 18 58 143) / 0.12);
+    --dot-active: rgb(var(--dotgrid-rgb-light, 18 58 143) / 0.15);
   }
 
   canvas {

@@ -14,6 +14,8 @@ coverAlt: "The DigiSkills app icon — an open white book on a deep navy rounded
 gallery:
   - src: "../../assets/projects/DigiSkills-Logo-Full.webp"
     alt: "The DigiSkills book mark on its construction grid, with guides labelled pixel field, book mouth, centre and baseline."
+brief: "A digital-safety app for kids needed a mark that felt like play."
+showcase: 1
 featured: false
 order: 60
 ---
