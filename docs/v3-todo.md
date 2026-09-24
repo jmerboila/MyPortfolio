@@ -131,7 +131,7 @@ Verified at 1440, 768 and 390 wide; `npm test` 12/12, build tests 29/29. Not com
 ## Next
 
 - [x] **Booking: Cal.com (his pick, 2026-09-24).** "Let's talk" and the contact heading now open https://cal.com/jmerboila/discovery-call (30 min, Cal Video, Toronto time) — `CONTACT_HREF` in `src/config/lifecycle.ts`. A plain link, no Cal.com embed script (keeps third-party JS and cookies off the page until the Phase B consent banner exists). The mailto and its prompt list are gone; the questions belong in the Cal.com event's booking form
-- [ ] Cal.com event: description + the booking-form questions (his side, in Cal.com)
+- [x] Cal.com event set up (2026-09-24): Google Meet + attendee-phone locations, email confirmation, six booking questions (identifiers `business`, `links`, `services`, `goal`, `timeline`, `budget` — usable as URL prefills, e.g. `?services=Website`), description, minimum notice. Checked on the public page as a visitor, stopping before Confirm
 - [ ] Decide: a small "or email me" line under the contact heading for people who won't book a call?
 
 ## Waiting on Jayson
