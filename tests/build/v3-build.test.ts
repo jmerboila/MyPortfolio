@@ -93,10 +93,10 @@ test('arrows split line and head', () => {
   assert.ok((html.match(/data-part="head"/g) ?? []).length >= 16);
   assert.ok((html.match(/data-part="line"/g) ?? []).length >= 16);
 });
-test('every loop stroke is drawable (pathLength="1")', () => {
+test('every loop stroke is drawable (pathLength="100")', () => {
   const loop = /<div[^>]*data-sketch-wrap[\s\S]*?<\/svg>\s*<svg[\s\S]*?<\/svg>/.exec(html)?.[0] ?? '';
   const pathsTotal = (loop.match(/<path\b/g) ?? []).length;
-  const drawable = (loop.match(/<path\b[^>]*pathLength="1"/g) ?? []).length;
+  const drawable = (loop.match(/<path\b[^>]*pathLength="100"/g) ?? []).length;
   assert.ok(pathsTotal > 20, `found ${pathsTotal} paths`);
   assert.equal(drawable, pathsTotal);
 });

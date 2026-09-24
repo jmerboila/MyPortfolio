@@ -229,14 +229,19 @@ function sketch(): void {
   if (!wrap) return;
   const section = wrap.closest<HTMLElement>('header, section') ?? wrap;
 
-  /* Dash set-up for every stroke (round 16). With a plain "1" dash array and
-     offsets of exactly ±1, a hidden or erased stroke still had a dash edge
-     sitting ON the path's first or last point — a zero-length dash — and
-     with round line caps that paints as a small dot (most visible on phones,
-     where the drawing is scaled down). A "1 on, 2 off" pattern with hidden
-     states just past ±1 keeps every hidden dash fully off the path. */
-  const DASH = '1 2';
-  const HIDE = 1.02;
+  /* Dash set-up for every stroke (round 16). Strokes use pathLength="100"
+     (StoryLoop.astro), so 0 = fully drawn and ±HIDE = hidden.
+     - Hidden must sit PAST the path's ends, never on them: an offset of
+       exactly ±100 leaves a zero-length dash on the first/last point, and
+       with round caps that paints a small dot (most visible on phones). A
+       "100 on, 200 off" pattern with hidden at ±102 keeps it fully off.
+     - Why 100 and not 1: GSAP rounds px values to whole numbers in several
+       places even with autoRound: false (a fromTo's immediate render, and
+       again when a repeating timeline rewinds). On a 0–1 scale that rounded
+       1.02 to 1 — a dot after every loop — and snapped draw-ons to all or
+       nothing. On a 0–100 scale a rounded value is still whole and safe. */
+  const DASH = '100 200';
+  const HIDE = 102;
 
   let onScreen = false;
   const firstPass = gsap.timeline({ paused: true });
@@ -262,10 +267,16 @@ function sketch(): void {
     const drawing = gsap.timeline();
     /* autoRound: false is ESSENTIAL here (round 13). GSAP rounds px values to
        whole numbers by default, and with pathLength="1" the dash offset only
-       ever runs between -1 and 1 — so every stroke snapped from hidden to
+       used to run between -1 and 1 — so every stroke snapped from hidden to
        fully drawn halfway through its tween instead of drawing on. That was
-       the "delay" before each arrow appeared. */
-    const pen = { ease: 'power1.inOut', autoRound: false };
+       the "delay" before each arrow appeared. (Round 16 also moved to a
+       0–100 scale; see DASH/HIDE.) */
+    const pen = { ease: 'power1.inOut', autoRound: false, immediateRender: false };
+    /* Park every stroke hidden BEFORE the first pass, with rounding off. A
+       fromTo's own immediate render of its start values still rounds 1.02 to
+       exactly 1 — the dot-making value — so undrawn strokes waited with a dot
+       at their start. The tweens below therefore skip that immediate render. */
+    gsap.set(svg.querySelectorAll('[data-sk] path'), { strokeDasharray: DASH, strokeDashoffset: HIDE, autoRound: false });
     for (const group of svg.querySelectorAll<SVGGElement>('[data-sk]')) {
       /* The loop's alternate notes stay out of the first pass. */
       const texts = group.querySelectorAll('text:not([data-note-loop])');
@@ -273,7 +284,7 @@ function sketch(): void {
         const line = group.querySelectorAll('[data-part="line"]');
         const head = group.querySelectorAll('[data-part="head"]');
         drawing.fromTo(line, { strokeDasharray: DASH, strokeDashoffset: HIDE }, { strokeDashoffset: 0, duration: 0.28, ...pen }, '>-0.04');
-        drawing.fromTo(head, { strokeDasharray: DASH, strokeDashoffset: HIDE }, { strokeDashoffset: 0, duration: 0.1, ease: 'none', autoRound: false }, '>');
+        drawing.fromTo(head, { strokeDasharray: DASH, strokeDashoffset: HIDE }, { strokeDashoffset: 0, duration: 0.1, ease: 'none', autoRound: false, immediateRender: false }, '>');
       } else {
         const strokes = group.querySelectorAll('path');
         drawing.fromTo(strokes, { strokeDasharray: DASH, strokeDashoffset: HIDE }, { strokeDashoffset: 0, duration: 0.26, ...pen }, '>-0.04');
@@ -300,7 +311,10 @@ function sketch(): void {
     const swap05 = noteSwap('n0');
     const swap06 = noteSwap('n1');
     const purpleAll = [...ret.line, ...ret.head, ...purple1.line, ...purple1.head, ...purple2.line, ...purple2.head];
-    gsap.set(purpleAll, { strokeDasharray: DASH, strokeDashoffset: HIDE });
+    /* autoRound off here too: a plain set rounded 1.02 back to exactly 1 —
+       the dot-making value — so the purple strokes sat hidden with a dot at
+       their start until the loop first drew them (round 16 follow-up). */
+    gsap.set(purpleAll, { strokeDasharray: DASH, strokeDashoffset: HIDE, autoRound: false });
 
     /* THE CYCLE, rounds 14–15 (his description): a cycle is 05 → 06 → 07 →
        back to 05. When it completes, the loop clears — the arrows, and the

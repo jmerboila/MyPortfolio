@@ -34,7 +34,7 @@
    Accessibility: each SVG is role="img" with a <title> and a <desc> that
    reads the stages and the repeat in plain words. Nothing is interactive.
 
-   Motion hooks: every stroke has pathLength="1". First-pass groups are
+   Motion hooks: every stroke has pathLength="100". First-pass groups are
    [data-sk] (node / seg, in draw order); the purple cycle is [data-cycle]
    (return, c1 = 05→06, c2 = 06→07). Arrows mark their paths
    data-part="line" / "head" so the head draws after the line lands.
@@ -81,7 +81,7 @@ const style = (extra: Record<string, unknown> = {}) => ({
   ...extra,
 });
 /* rough.js draws each shape as TWO overlapping pen strokes inside one path
-   (two `M` subpaths). With pathLength="1" the draw-on effect then traced
+   (two `M` subpaths). With pathLength="100" the draw-on effect then traced
    the first stroke, and only after it finished the second one over it — the
    line looked done, then "paused" while the retrace ran (round 13). Split
    them into separate paths so both strokes draw at the same time. */
@@ -293,7 +293,7 @@ const desc =
       {d.nodes.map((node, i) => (
         <>
           <g data-sk="node" data-repeat={i === REPEAT_FROM ? 'n0' : i === REPEAT_FROM + 1 ? 'n1' : i === REPEAT_FROM + 2 ? 'n2' : undefined}>
-            {node.circle.map((p) => <path class="sk-accent" d={p} pathLength="1" />)}
+            {node.circle.map((p) => <path class="sk-accent" d={p} pathLength="100" />)}
             <text class="sk-n" x={node.c[0]} y={node.c[1]} text-anchor="middle" dominant-baseline="central">{node.n}</text>
             <text class="sk-label" x={node.labelAt[0]} y={node.labelAt[1]} text-anchor={node.anchor}>{node.label}</text>
             <text class="sk-note" x={node.noteAt[0]} y={node.noteAt[1]} text-anchor={node.anchor} data-note-first={node.loopNote ? '' : undefined}>{node.note}</text>
@@ -303,8 +303,8 @@ const desc =
           </g>
           {d.segs[i] && (
             <g data-sk="seg" data-repeat={i === REPEAT_FROM ? 'c1' : i === REPEAT_FROM + 1 ? 'c2' : undefined}>
-              {d.segs[i]!.ink.line.map((p) => <path class="sk-ink" d={p} pathLength="1" data-part="line" />)}
-              {d.segs[i]!.ink.head.map((p) => <path class="sk-ink" d={p} pathLength="1" data-part="head" />)}
+              {d.segs[i]!.ink.line.map((p) => <path class="sk-ink" d={p} pathLength="100" data-part="line" />)}
+              {d.segs[i]!.ink.head.map((p) => <path class="sk-ink" d={p} pathLength="100" data-part="head" />)}
             </g>
           )}
         </>
@@ -312,16 +312,16 @@ const desc =
 
       {/* The repeating part, drawn over the ink by the cycle. */}
       <g data-cycle="return">
-        {d.ret.line.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="1" data-part="line" />)}
-        {d.ret.head.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="1" data-part="head" />)}
+        {d.ret.line.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="100" data-part="line" />)}
+        {d.ret.head.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="100" data-part="head" />)}
       </g>
       {d.segs
         .map((s, i) => ({ s, i }))
         .filter(({ s }) => s.purple)
         .map(({ s, i }) => (
           <g data-cycle={i === REPEAT_FROM ? 'c1' : 'c2'}>
-            {s.purple!.line.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="1" data-part="line" />)}
-            {s.purple!.head.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="1" data-part="head" />)}
+            {s.purple!.line.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="100" data-part="line" />)}
+            {s.purple!.head.map((p) => <path class="sk-accent sk-loop" d={p} pathLength="100" data-part="head" />)}
           </g>
         ))}
     </svg>

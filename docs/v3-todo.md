@@ -126,6 +126,7 @@ Verified at 1440, 768 and 390 wide; `npm test` 12/12, build tests 29/29. Not com
 ## Round 16 — no dots after a clear (2026-09-24)
 
 - [x] Small dots were left where erased strokes started/ended (most visible on phones): a dash edge sat exactly on the path's end, and a zero-length dash with round caps paints as a dot. Dash pattern is now "1 on, 2 off" with hidden states just past ±1 (±1.02), so a hidden dash never touches the path. Verified side by side on a cloned drawing: old settings dotted, new clean
+- [x] Follow-up: dots still came back after the loop repeated. GSAP rounds values in places `autoRound: false` doesn't reach (a fromTo's immediate render, and a repeating timeline's rewind), turning 1.02 back into the dot value 1. Strokes now use pathLength="100" (hidden at ±102), where a rounded value is still safe. Scanned 40 s / 7 clears on a phone viewport: no stroke ever rests on a dot value
 
 ## Next
 
