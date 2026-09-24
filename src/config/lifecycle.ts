@@ -1,6 +1,6 @@
 /* ============================================================================
    lifecycle.ts — the story v3 tells: how Jayson takes a client from first
-   call to measured growth, and the discovery-call email that starts one.
+   call to measured growth, and the discovery-call booking link that starts one.
    ----------------------------------------------------------------------------
    STAGES drives the stage rail AND the page's seven story sections
    (Story.astro + Stage.astro), so they cannot drift apart. Order follows the
@@ -13,11 +13,9 @@
    old three discipline plates with this: sample work now sits at the moment
    in the process it was actually produced, rather than grouped by medium.
 
-   CONTACT_HREF is the one mailto on the page (header CTA + the contact
-   heading). The body's line breaks are \r\n before encodeURIComponent, since
-   RFC 6068 mailto bodies expect CRLF and some mail clients collapse bare \n.
+   CONTACT_HREF is the one contact link on the page (header CTA + the contact
+   heading): the Cal.com discovery-call page since 2026-09-24 (was a mailto).
    ========================================================================= */
-import { PERSON } from './site';
 
 export interface Stage {
   /** Section id on the page, and the rail/menu anchor. */
@@ -100,25 +98,8 @@ export const STAGES: readonly Stage[] = [
   },
 ];
 
-const CONTACT_SUBJECT = "Discovery call — [your business name]";
-
-const CONTACT_BODY = [
-  'Hi Jayson,',
-  '',
-  "I'd like to book a discovery call.",
-  '',
-  'About me / my business:',
-  'Website or social links:',
-  'What I need help with (brand, website, search, social, or the whole journey):',
-  'What a win looks like in six months:',
-  'Timeline:',
-  'Budget range:',
-  'Two or three times that suit me (with my time zone):',
-  '',
-  'Thanks,',
-].join('\r\n');
-
-/* Email until Jayson has a booking page; swap this one value then. */
-export const CONTACT_HREF =
-  `mailto:${PERSON.email}?subject=${encodeURIComponent(CONTACT_SUBJECT)}` +
-  `&body=${encodeURIComponent(CONTACT_BODY)}`;
+/* The Cal.com discovery-call page (30 min, Cal Video, America/Toronto). A
+   plain link, no Cal.com embed script: that would put third-party JS and
+   cookies on the page before the Phase B consent banner exists. The
+   questions the old mailto body asked now live in the event's booking form. */
+export const CONTACT_HREF = 'https://cal.com/jmerboila/discovery-call';

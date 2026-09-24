@@ -105,7 +105,11 @@ test('light sections fill one screen', () => {
     assert.match(html, new RegExp(`<section[^>]*id="${id}"[^>]*class="[^"]*v3-screen|<section[^>]*class="[^"]*v3-screen[^"]*"[^>]*id="${id}"`), id);
   }
 });
-test('contact is a mailto', () => assert.match(html, /href="mailto:[^"]+"/));
+const BOOKING = 'href="https://cal.com/jmerboila/discovery-call"';
+test('the header CTA opens the Cal.com booking page', () => {
+  assert.match(html, new RegExp(`<a class="v3-talk" ${BOOKING}`));
+});
+test('no mailto left on the page', () => assert.doesNotMatch(html, /href="mailto:/));
 test('no mobile menu and no v2 backlink', () => {
   assert.doesNotMatch(html, /data-menu-open/);
   assert.doesNotMatch(html, /&larr; v2|← v2/);
@@ -125,8 +129,8 @@ test('footer puts the © line before the icon links', () => {
   assert.ok(copy > -1, 'no © line');
   assert.ok(copy < footer.indexOf('v3-footer__socials'), '© should come first');
 });
-test('the contact heading is a discovery-call mailto', () => {
-  assert.match(html, /<a class="v3-roll" href="mailto:[^"]*Discovery%20call[^"]*"/);
+test('the contact heading opens the Cal.com booking page', () => {
+  assert.match(html, new RegExp(`<a class="v3-roll" ${BOOKING}`));
 });
 test('the contact heading reads the round 5 line', () => {
   assert.ok(html.includes("Got something epic in mind? Let's build it.") ||

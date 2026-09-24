@@ -130,7 +130,9 @@ Verified at 1440, 768 and 390 wide; `npm test` 12/12, build tests 29/29. Not com
 
 ## Next
 
-- [ ] **Booking: Cal.com (his pick, 2026-09-24).** Needs his Cal.com link (e.g. `cal.com/<username>/discovery-call`). Then swap `CONTACT_HREF` in `src/config/lifecycle.ts` — one value feeds both the header "Let's talk" and the contact heading. Plan: a plain link, no Cal.com embed script (keeps third-party JS and cookies off the page until the Phase B consent banner exists). Move the discovery-call questions into the Cal.com event's booking form so they aren't lost with the mailto body
+- [x] **Booking: Cal.com (his pick, 2026-09-24).** "Let's talk" and the contact heading now open https://cal.com/jmerboila/discovery-call (30 min, Cal Video, Toronto time) — `CONTACT_HREF` in `src/config/lifecycle.ts`. A plain link, no Cal.com embed script (keeps third-party JS and cookies off the page until the Phase B consent banner exists). The mailto and its prompt list are gone; the questions belong in the Cal.com event's booking form
+- [ ] Cal.com event: description + the booking-form questions (his side, in Cal.com)
+- [ ] Decide: a small "or email me" line under the contact heading for people who won't book a call?
 
 ## Waiting on Jayson
 
@@ -140,7 +142,6 @@ Verified at 1440, 768 and 390 wide; `npm test` 12/12, build tests 29/29. Not com
 - [ ] Answer the case-study questionnaire (in the copy deck)
 - [ ] Analytics exports (GA4, Search Console, social) — kept outside the repo
 - [ ] Contact email: `jmerboila@gmail.com` or `hello.devsign8@gmail.com`
-- [ ] Cal.com booking link (decided: Cal.com — see Next)
 - [ ] Merge / PR / keep decision for `feat/v3-phase-a`
 
 ## Later phases
