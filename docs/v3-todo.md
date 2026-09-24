@@ -144,8 +144,8 @@ His call: this project replaces v1 in `jmerboila/MyPortfolio`, v3 as the homepag
 - [x] v1's six root pages (`DigiSkills.html`, `JM-Showcase.html`, …) redirect to their `/work/` case studies; v1's `/work/<slug>/` URLs already match
 - [x] Case-study header: Services → **Process** (`/#story`); breadcrumb "Work" → `/work/`
 - [x] `.github/workflows/deploy.yml` (withastro/action@v6 → deploy-pages@v5, on push to `main`)
-- [ ] **His step:** repo Settings → Pages → Source → **GitHub Actions** (before the push, or Pages would publish the raw source)
-- [ ] Push: `master` → `main`, joined to v1's history (merge `-s ours`, so it's a normal push, no force)
+- [x] **His step:** repo Settings → Pages → Source → **GitHub Actions**
+- [x] **LIVE 2026-09-24** at https://jmerboila.github.io/MyPortfolio/ — pushed `master` → `main` (`1ade51b..8f9a71f`, a fast-forward on top of v1's history, no force). Actions run 35965678417: build + deploy green. Checked live: home, /work, a case study, /social, sitemap, robots all 200; /v3 and the old .html pages redirect; homepage indexable with canonical, JSON-LD, GTM, Cal.com link; hero renders in headless Chrome at 1440
 - [ ] After it's live: resubmit the sitemap in Search Console (`/MyPortfolio/sitemap-index.xml`; v1's was `sitemap.xml`)
 - [ ] Known: `audio/ambient.mp3` 404s on the case-study pages (v2's music toggle; the file was never added) — pre-existing
 
