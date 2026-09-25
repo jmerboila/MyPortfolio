@@ -26,47 +26,60 @@ export type SocialType = CollectionEntry<'social'>['data']['type'];
 export interface SocialAccount {
   /** Platform name, used in accessible labels and the "View on" link. */
   platform: string;
+  /** The name drawn in the frame, where the platform shows the handle. */
+  name: string;
   /** Handle without the @. */
   handle: string;
   /** Profile URL. */
   url: string;
-  /** Square-ish artwork shown in a circle. Contained, not cropped. */
-  avatar: ImageMetadata;
+  /** Square-ish artwork shown in a circle. Leave out for a blank circle. */
+  avatar?: ImageMetadata;
 }
 
-export const SOCIAL_ACCOUNTS = {
+export type AccountKey = 'instagram' | 'tiktok';
+
+export const SOCIAL_ACCOUNTS: Record<AccountKey, SocialAccount> = {
+  /* 2026-09-25, his call: the frames show "JM Design" with a blank avatar. */
   instagram: {
     platform: 'Instagram',
+    name: 'JM Design',
     handle: 'hello.devsign8',
     url: 'https://www.instagram.com/hello.devsign8/',
-    avatar: devsign8Avatar,
   },
   /* Confirmed by Jayson 2026-09-22: TikTok is @devsign8, not the Instagram
      handle it used to mirror. */
   tiktok: {
     platform: 'TikTok',
+    name: 'devsign8',
     handle: 'devsign8',
     url: 'https://www.tiktok.com/@devsign8',
     avatar: devsign8Avatar,
   },
-} as const satisfies Record<string, SocialAccount>;
-
-export type AccountKey = keyof typeof SOCIAL_ACCOUNTS;
+};
 
 interface PostTypeInfo {
   account: AccountKey;
-  /** What the platform calls it, shown as the small badge on the card. */
-  label: string;
-  /** The filter chip text. */
-  filterLabel: string;
 }
 
-/* Order here is the order of the filter chips. */
 export const POST_TYPES = {
-  'instagram-post': { account: 'instagram', label: 'Post', filterLabel: 'Instagram posts' },
-  'instagram-reel': { account: 'instagram', label: 'Reel', filterLabel: 'Reels' },
-  'tiktok-video': { account: 'tiktok', label: 'Video', filterLabel: 'TikTok' },
+  'instagram-post': { account: 'instagram' },
+  'instagram-reel': { account: 'instagram' },
+  'tiktok-video': { account: 'tiktok' },
 } as const satisfies Record<SocialType, PostTypeInfo>;
+
+/* The page files posts as Reel, Post or Carousel (his call, 2026-09-25) —
+   what the post IS, not which platform it's on. Order here is the order of
+   the filter chips. */
+export const CATEGORIES = { reel: 'Reels', post: 'Posts', carousel: 'Carousels' } as const;
+export type Category = keyof typeof CATEGORIES;
+
+/** A post's `category:` if it sets one, else read from its shape: one
+ *  image or video is a Post, several a Carousel, a vertical video a Reel. */
+export function postCategory(data: CollectionEntry<'social'>['data']): Category {
+  if (data.category) return data.category;
+  if (data.type === 'instagram-post') return data.slides.length > 1 ? 'carousel' : 'post';
+  return 'reel';
+}
 
 /** Splits a caption so #hashtags and @mentions can be tinted the way the
  *  platforms tint them. They stay plain text, not links: a link to a hashtag
@@ -95,4 +108,18 @@ export function compactCount(n: number): string {
     notation: 'compact',
     maximumFractionDigits: 1,
   }).format(n);
+}
+
+/** The feed's order: `order` ascending, then newest first. Shared by /social
+ *  and the "How I made it" pages' previous / next links. */
+export function sortPosts<T extends CollectionEntry<'social'>>(entries: T[]): T[] {
+  return [...entries].sort((a, b) => {
+    if (a.data.order !== b.data.order) return a.data.order - b.data.order;
+    return (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0);
+  });
+}
+
+/** A post has a "How I made it" page once there is something to put on it. */
+export function hasMakingOf(entry: CollectionEntry<'social'>): boolean {
+  return Boolean(entry.body?.trim()) || entry.data.tools.length > 0 || entry.data.screens.length > 0;
 }

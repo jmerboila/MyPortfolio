@@ -2,8 +2,13 @@
 /* ============================================================================
    /social — posts shown the way each platform shows them.
    ----------------------------------------------------------------------------
-   Content is src/content/social/*.md; frames are src/components/social/.
-   Adding a platform or post type: see the checklist in src/config/social.ts.
+   Content is one folder per post in src/content/social/ (copy _new-post/);
+   frames are src/components/social/. Adding a platform or post type: see the
+   checklist in src/config/social.ts.
+
+   Since 2026-09-25 it renders in the homepage's v3 shell (header, purple
+   palette, footer, scroll reveals) and ends on the same contact section, so
+   leaving the homepage for this page doesn't feel like leaving the site.
 
    Drafts appear under `astro dev` with a "Draft · dev only" badge and are
    dropped from every build, so a sample can sit in the folder safely.
@@ -16,19 +21,17 @@
    ========================================================================= */
 import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import SiteHeader from '../../components/SiteHeader.astro';
-import SiteFooter from '../../components/SiteFooter.astro';
+import V3Layout from '../../layouts/V3Layout.astro';
+import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
+import Contact from '../../components/v3/Contact.astro';
 import SocialFeed from '../../components/social/SocialFeed.astro';
-import { href, asset } from '../../lib/url';
+import { withMediaUrls } from '../../lib/social-media';
+import { sortPosts } from '../../config/social';
 import { absoluteUrl, PERSON, SITE_ORIGIN } from '../../config/site';
 
-const entries = (
-  await getCollection('social', ({ data }) => import.meta.env.DEV || !data.draft)
-).sort((a, b) => {
-  if (a.data.order !== b.data.order) return a.data.order - b.data.order;
-  return (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0);
-});
+const entries = sortPosts(
+  await getCollection('social', ({ data }) => import.meta.env.DEV || !data.draft),
+).map(withMediaUrls);
 
 const description =
   `Social media creative by ${PERSON.name} — Instagram carousels and Reels, ` +
@@ -45,7 +48,7 @@ const videoObjects = await Promise.all(
         name: d.title,
         description: d.caption || d.video.alt,
         thumbnailUrl: `${SITE_ORIGIN}${thumb.src}`,
-        contentUrl: `${SITE_ORIGIN}${asset(d.video.src)}`,
+        contentUrl: new URL(d.video.src, SITE_ORIGIN).href,
         uploadDate: d.date!.toISOString(),
         ...(d.video.durationISO && { duration: d.video.durationISO }),
         creator: { '@id': `${absoluteUrl('/')}#person` },
@@ -66,54 +69,55 @@ const schema = [
 ];
 ---
 
-<BaseLayout title="Social" description={description} path="/social/" schema={schema}>
-  <SiteHeader slot="header" />
-  <SiteFooter slot="footer" />
+<V3Layout title="Social" description={description} path="/social/" schema={schema}>
+  <section class="v3-social container" aria-labelledby="v3-social-title">
+    <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Social' }]} />
 
-  <div class="social-page section container">
-    <nav class="crumbs" aria-label="Breadcrumb">
-      <a href={href('/')}>Home</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">Social</span>
-    </nav>
-
-    <p class="section__label">Social media creative</p>
-    <h1 class="section__title">Made for the <em>feed</em></h1>
-    <p class="section__lede">
-      Carousels, Reels and short-form video, shown exactly as they land on the
-      platform. Swipe the carousels, and tap any video to pause it.
-    </p>
+    <header class="v3-social__head">
+      <h1 id="v3-social-title" class="v3-social__title" data-split>
+        Made for the <em>feed</em>
+      </h1>
+      <p class="v3-social__lede" data-split>
+        Carousels, Reels and short-form video, shown exactly as they land on the
+        platform. Swipe the carousels, and tap any video to play it.
+      </p>
+    </header>
 
     {
       entries.length ? (
         <SocialFeed entries={entries} />
       ) : (
-        <p class="section__lede">New posts are on the way.</p>
+        <p class="v3-social__lede">New posts are on the way.</p>
       )
     }
-  </div>
-</BaseLayout>
+  </section>
+
+  <Contact />
+</V3Layout>
 
 <style>
-  .social-page {
-    padding-block-start: calc(var(--header-height, 4.5rem) + var(--space-xl));
+  /* Same measure and scale as the homepage's section heads (Story.astro):
+     600 weight, tight tracking, the serif italic on the one accent word. */
+  .v3-social {
+    padding-block: var(--space-m) var(--space-section);
   }
 
-  .crumbs {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2xs);
-    font-size: var(--step--1);
+  .v3-social__head {
+    margin-block: var(--space-xl) var(--space-l);
+  }
+
+  .v3-social__title {
+    margin: 0 0 var(--space-s);
+    font-size: clamp(2.5rem, 1rem + 5vw, 5.5rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+  }
+
+  .v3-social__lede {
+    margin: 0;
+    max-inline-size: 46ch;
+    font-size: var(--step-1);
     color: var(--text-dim);
-    margin-block-end: var(--space-l);
-  }
-
-  .crumbs a {
-    color: inherit;
-  }
-
-  .crumbs a:hover {
-    color: var(--accent);
   }
 </style>

@@ -29,17 +29,17 @@ interface Props {
 const { data, id } = Astro.props;
 const account = SOCIAL_ACCOUNTS.instagram;
 const n = data.slides.length;
-const RATIOS = { '1x1': '1 / 1', '4x5': '4 / 5', '3x4': '3 / 4', '191x100': '1.91 / 1' };
+const RATIOS = { '1x1': '1 / 1', '4x5': '4 / 5', '3x4': '3 / 4', '16x9': '16 / 9', '191x100': '1.91 / 1' };
 const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
 ---
 
 <article class="sp-ig" aria-label={`Instagram post: ${data.title}`}>
   <header class="sp-ig__head">
     <span class="sp-avatar">
-      <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />
+      {account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
     </span>
     <p class="sp-ig__who">
-      <span class="sp-ig__handle">{account.handle}</span>
+      <span class="sp-ig__handle">{account.name}</span>
       {
         data.date && (
           <>
@@ -55,7 +55,6 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
   <div
     class="sp-carousel"
     data-sp-carousel
-    data-sp-media
     style={`--sp-ratio: ${RATIOS[data.ratio]}`}
   >
     <ul
@@ -105,9 +104,6 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
       )
     }
 
-    <span class="sp-burst" data-sp-burst aria-hidden="true">
-      <SocialIcon name="heart" filled size={96} />
-    </span>
   </div>
 
   <div class="sp-ig__actions">
@@ -141,7 +137,7 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
       data.caption && (
         <div class="sp-caption" data-sp-caption>
           <p class="sp-caption__text" id={`cap-${id}`}>
-            <span class="sp-ig__handle">{account.handle}</span>{' '}
+            <span class="sp-ig__handle">{account.name}</span>{' '}
             {captionParts(data.caption).map((p) => (p.tag ? <span class="sp-tag">{p.text}</span> : p.text))}
           </p>
           <button type="button" class="sp-caption__more" data-sp-more aria-controls={`cap-${id}`} hidden>

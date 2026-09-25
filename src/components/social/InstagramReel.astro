@@ -34,7 +34,6 @@ const { stats } = data;
     poster={data.video.poster}
     alt={data.video.alt}
     label={data.title}
-    silent={data.video.silent}
     captions={data.video.captions}
   >
     <span class="sp-vert__scrim" aria-hidden="true"></span>
@@ -60,16 +59,16 @@ const { stats } = data;
       </span>
       <span class="sp-rail__item" aria-hidden="true"><SocialIcon name="more" size={26} /></span>
       <span class="sp-reel__audio-art" aria-hidden="true">
-        <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />
+        {account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
       </span>
     </div>
 
     <div class="sp-vert__bottom">
       <p class="sp-vert__who">
         <span class="sp-avatar sp-avatar--sm">
-          <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />
+          {account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
         </span>
-        <span class="sp-vert__handle">{account.handle}</span>
+        <span class="sp-vert__handle">{account.name}</span>
         <span class="sp-reel__follow" aria-hidden="true">Follow</span>
       </p>
 
@@ -91,7 +90,7 @@ const { stats } = data;
           <p class="sp-vert__audio">
             <SocialIcon name="music" size={13} />
             <span>
-              {account.handle} · {data.audio}
+              {account.name} · {data.audio}
             </span>
           </p>
         )

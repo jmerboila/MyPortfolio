@@ -71,8 +71,7 @@ export function applyTheme(theme: Theme): void {
   );
   if (meta) meta.content = theme === 'dark' ? '#0a0b10' : '#f7f6f3';
 
-  /* Anything that needs to react — the toggle's pressed state, the music
-     button's icon — listens for this instead of being called directly. */
+  /* Anything that needs to react — the toggle's pressed state — listens for this instead of being called directly. */
   window.dispatchEvent(
     new CustomEvent<Theme>('themechange', { detail: theme }),
   );

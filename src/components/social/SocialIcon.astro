@@ -18,8 +18,6 @@ interface Props {
     | 'music'
     | 'play'
     | 'pause'
-    | 'volume'
-    | 'muted'
     | 'chevron-left'
     | 'chevron-right'
     | 'share'
@@ -47,8 +45,6 @@ const PATHS: Record<Props['name'], string> = {
     'M9 18.5V5.5l11-2.2v12.9M9 18.5a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 0 1 5.2 0zM20 16.2a2.6 2.6 0 1 1-5.2 0 2.6 2.6 0 0 1 5.2 0z',
   play: 'M7 4.4v15.2L20 12z',
   pause: 'M7 4.5h3.2v15H7zM13.8 4.5H17v15h-3.2z',
-  volume: 'M4 9.5h3.5L12 5.5v13l-4.5-4H4zM15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11',
-  muted: 'M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9.5l5 5M21 9.5l-5 5',
   'chevron-left': 'M14.5 6 8.5 12l6 6',
   'chevron-right': 'M9.5 6l6 6-6 6',
   share: 'M13.5 4.5v4.2C7.3 9.4 4 13.6 3 19.5c2.7-3.3 6-4.7 10.5-4.8v4.3L21 11.7z',

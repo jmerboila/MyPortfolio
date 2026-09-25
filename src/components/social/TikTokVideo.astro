@@ -37,7 +37,6 @@ const { stats } = data;
     poster={data.video.poster}
     alt={data.video.alt}
     label={data.title}
-    silent={data.video.silent}
     captions={data.video.captions}
   >
     <span class="sp-vert__scrim" aria-hidden="true"></span>
@@ -53,7 +52,7 @@ const { stats } = data;
     <div class="sp-rail sp-tt__rail">
       <span class="sp-tt__avatar" aria-hidden="true">
         <span class="sp-avatar sp-avatar--lg">
-          <Image src={account.avatar} alt="" width={96} height={96} loading="lazy" />
+          {account.avatar && <Image src={account.avatar} alt="" width={96} height={96} loading="lazy" />}
         </span>
         <span class="sp-tt__follow"><SocialIcon name="plus" size={12} /></span>
       </span>
@@ -76,7 +75,7 @@ const { stats } = data;
         {stats.shares !== undefined && <span class="sp-rail__n">{compactCount(stats.shares)}</span>}
       </span>
       <span class="sp-tt__disc" aria-hidden="true">
-        <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />
+        {account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
       </span>
     </div>
 

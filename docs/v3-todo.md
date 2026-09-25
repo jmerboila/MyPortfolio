@@ -147,7 +147,23 @@ His call: this project replaces v1 in `jmerboila/MyPortfolio`, v3 as the homepag
 - [x] **His step:** repo Settings → Pages → Source → **GitHub Actions**
 - [x] **LIVE 2026-09-24** at https://jmerboila.github.io/MyPortfolio/ — pushed `master` → `main` (`1ade51b..8f9a71f`, a fast-forward on top of v1's history, no force). Actions run 35965678417: build + deploy green. Checked live: home, /work, a case study, /social, sitemap, robots all 200; /v3 and the old .html pages redirect; homepage indexable with canonical, JSON-LD, GTM, Cal.com link; hero renders in headless Chrome at 1440
 - [ ] After it's live: resubmit the sitemap in Search Console (`/MyPortfolio/sitemap-index.xml`; v1's was `sitemap.xml`)
-- [ ] Known: `audio/ambient.mp3` 404s on the case-study pages (v2's music toggle; the file was never added) — pre-existing
+- [x] ~~`audio/ambient.mp3` 404 on the case-study pages~~ — the music toggle is removed (his call, 2026-09-25)
+
+## Social page (2026-09-25)
+
+- [x] /social moved onto the v3 shell: monogram header + "Let's talk", purple palette, v3 footer, heading reveals, and the homepage's contact section at the end. `V3Layout` takes `rail` (homepage only) so the stage rail stays off sub-pages
+- [x] Breadcrumbs fixed: "Home" sat ~10px above "/ Social" (the link was a 44px block with its text pinned to the top). Now `src/components/v3/Breadcrumbs.astro`, items centred on one line
+- [x] **One folder per post:** `src/content/social/<post>/index.md` with its images and video beside it. Copy `_new-post/` to start (folders starting with `_` never publish). Videos in the folder are resolved by `src/lib/social-media.ts`; verified in dev and in a build
+- [x] Sample TikTok removed (the template replaces it)
+- [x] His first four posts in (2026-09-25): Lexus NX 350h poster, Lexus animated poster (4:5 feed video, silent), UNF (16:9 feed video — new `16x9` ratio), Devsign8 safe-zone toolkit (10 Reels as one 3:4 carousel). Covers pulled from the videos, alt text written, files with spaces renamed. Video slides can now be `silent: true`
+- [x] **Video playback (his call, 2026-09-25):** nothing autoplays; a press plays WITH sound (mute buttons and the `silent` field removed); starting one pauses any other; a video pauses when under 2% of it shows (scrolled away or swiped off in a carousel). Verified with real clicks
+- [x] **Cards cleaned up (his call, 2026-09-25):** platform badge, client line and case-study / "View on" links removed; filters are now Reels / Posts / Carousels (optional `category:` per post, else read from the shape — his three `-reel` folders are set to reel); carousel arrows are the play button's see-through dark disc; Instagram frames show "JM Design" with a blank grey avatar (TikTok unchanged)
+- [x] Card clean-up round 2 (2026-09-25): "Describe this video" removed; double-tap-to-like removed so every heart behaves the same (click = red, click again = clear); the "Showing…" filter status is screen-reader only
+- [x] **"How I made it" pages** (`src/pages/social/[slug].astro`, 2026-09-25): playable frame, caption, "What I used" (`tools`), the Markdown body as the write-up, "Behind the scenes" (`screens`), prev/next, contact. A card links to its page once the post has any of those. Six Hook / Story / Offer write-ups drafted (Russell Brunson's framework, his pick) — each marked DRAFT in an HTML comment. Build tests in `tests/build/social-build.test.ts`
+- [ ] **His step:** check the six write-ups; tools for the Lexus poster, Lexus animated poster and UNF (left empty rather than guessed); confirm After Effects + Premiere Pro for the toolkit; drop Premiere / After Effects screenshots into each post's folder
+- [ ] **His step:** real captions for all six posts (every caption is a draft, marked TODO); `client:` for UNF / Lexus if they were client work; confirm UNF and the toolkit have no speech (else they need .vtt captions)
+- [ ] Optional: re-encode UNF (8.7 MB, 8.5 Mbps) and the Lexus video (6 MB) for the web — videos autoplay when scrolled to, so they download on view
+- [ ] /work and the case studies still use the v2 header and palette — same move as /social when he wants it
 
 ## Waiting on Jayson
 
@@ -160,6 +176,8 @@ His call: this project replaces v1 in `jmerboila/MyPortfolio`, v3 as the homepag
 - [x] Merge `feat/v3-phase-a` into `master` (his pick, 2026-09-24 — `7b02014`)
 
 ## Later phases
+
+Parked (his call, 2026-09-25): Phase B and C come back together later as one GA4 + GTM setup and the whole SEO/AEO/GEO pass.
 
 - [ ] **Phase B:** Consent Mode v2 banner (site-wide; v2 runs GTM with no consent today), GTM events, UTM convention
 - [ ] **Phase C:** launch pack — custom domain, Bing Webmaster + IndexNow, JSON-LD, share image, Core Web Vitals budget (the hero headline waits for fonts before revealing — an LCP risk to measure). Check Cloudflare isn't blocking Bingbot/AI crawlers on devsign8.com.

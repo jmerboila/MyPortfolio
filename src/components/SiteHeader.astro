@@ -17,7 +17,6 @@
    ========================================================================= */
 import { PERSON } from '../config/site';
 import { href, asset } from '../lib/url';
-import MusicToggle from './MusicToggle.astro';
 
 /* "Work" points at the real /work page rather than the homepage's #work
    fragment, now that the page exists. The fragment only resolves from the
@@ -71,8 +70,6 @@ const NAV_LINKS = [
     </nav>
 
     <div class="site-header__controls">
-      <MusicToggle />
-
       <button
         type="button"
         class="icon-button"

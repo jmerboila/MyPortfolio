@@ -1,0 +1,331 @@
+---
+/* ============================================================================
+   /social/<folder>/ — "How I made it": one post, the thinking behind it, and
+   the workspace it came out of.
+   ----------------------------------------------------------------------------
+   Built from the post's own folder: the frame (playable / swipeable, the
+   same component as the feed), the caption, `tools`, the Markdown body as
+   the write-up, and `screens` as the behind-the-scenes gallery. Only posts
+   with at least one of those get a page (hasMakingOf), so there are no thin
+   pages and no card links to them.
+
+   Previous / next walk the posts that have pages, in feed order, and wrap.
+   ========================================================================= */
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import V3Layout from '../../layouts/V3Layout.astro';
+import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
+import Contact from '../../components/v3/Contact.astro';
+import SocialPost from '../../components/social/SocialPost.astro';
+import { withMediaUrls } from '../../lib/social-media';
+import {
+  CATEGORIES,
+  captionParts,
+  hasMakingOf,
+  postCategory,
+  sortPosts,
+} from '../../config/social';
+import { href } from '../../lib/url';
+import '../../styles/social.css';
+
+export async function getStaticPaths() {
+  const posts = sortPosts(
+    await getCollection('social', (e) => (import.meta.env.DEV || !e.data.draft) && hasMakingOf(e)),
+  );
+  return posts.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      prev: posts.length > 1 ? posts[(i - 1 + posts.length) % posts.length] : undefined,
+      next: posts.length > 1 ? posts[(i + 1) % posts.length] : undefined,
+    },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'social'>;
+  prev?: CollectionEntry<'social'>;
+  next?: CollectionEntry<'social'>;
+}
+
+const { entry: raw, prev, next } = Astro.props;
+const entry = withMediaUrls(raw);
+const { data } = entry;
+const { Content } = await render(raw);
+const hasWriteUp = Boolean(raw.body?.trim());
+const category = CATEGORIES[postCategory(data)].replace(/s$/, '');
+
+const description = (data.caption || data.title).replace(/\s+/g, ' ').slice(0, 155);
+---
+
+<V3Layout title={`How I made it: ${data.title}`} description={description} path={`/social/${entry.id}/`}>
+  <article class="v3-making container" aria-labelledby="v3-making-title">
+    <Breadcrumbs
+      items={[{ label: 'Home', path: '/' }, { label: 'Social', path: '/social/' }, { label: data.title }]}
+    />
+
+    <header class="v3-making__head">
+      <p class="v3-making__kicker">{category} · How I made it</p>
+      <h1 id="v3-making-title" class="v3-making__title" data-split>{data.title}</h1>
+    </header>
+
+    <div class="v3-making__grid">
+      <div class="v3-making__frame" data-sp-feed>
+        <SocialPost entry={entry} link={false} />
+      </div>
+
+      <div class="v3-making__notes">
+        {
+          data.caption && (
+            <section aria-labelledby="v3-making-caption">
+              <h2 id="v3-making-caption" class="v3-making__h2">Caption</h2>
+              <p class="v3-making__caption">
+                {captionParts(data.caption).map((p) => (p.tag ? <span class="v3-making__tag">{p.text}</span> : p.text))}
+              </p>
+            </section>
+          )
+        }
+
+        {
+          data.tools.length > 0 && (
+            <section aria-labelledby="v3-making-tools">
+              <h2 id="v3-making-tools" class="v3-making__h2">What I used</h2>
+              <ul class="v3-making__tools" role="list">
+                {data.tools.map((t) => <li>{t}</li>)}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          hasWriteUp && (
+            <section aria-labelledby="v3-making-how" class="v3-making__how">
+              <h2 id="v3-making-how" class="v3-making__h2">How I made it</h2>
+              <Content />
+            </section>
+          )
+        }
+      </div>
+    </div>
+
+    {
+      data.screens.length > 0 && (
+        <section class="v3-making__bts" aria-labelledby="v3-making-bts">
+          <h2 id="v3-making-bts" class="v3-making__h2">Behind the scenes</h2>
+          <ul class="v3-making__screens" role="list">
+            {data.screens.map((s) => (
+              <li>
+                <figure>
+                  <Image src={s.image} alt={s.alt} widths={[800, 1400, 2000]} sizes="(min-width: 75rem) 1100px, 100vw" loading="lazy" />
+                  {s.note && <figcaption>{s.note}</figcaption>}
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      prev && next && (
+        <nav class="v3-making__pager" aria-label="More posts">
+          <a href={href(`/social/${prev.id}/`)} rel="prev">
+            <span class="v3-making__pager-dir">← Previous</span>
+            <strong>{prev.data.title}</strong>
+          </a>
+          <a href={href(`/social/${next.id}/`)} rel="next" class="v3-making__pager-next">
+            <span class="v3-making__pager-dir">Next →</span>
+            <strong>{next.data.title}</strong>
+          </a>
+        </nav>
+      )
+    }
+  </article>
+
+  <Contact />
+</V3Layout>
+
+<script>
+  import { initSocial } from '../../scripts/social';
+  initSocial();
+</script>
+
+<style>
+  .v3-making {
+    padding-block: var(--space-m) var(--space-section);
+  }
+
+  .v3-making__head {
+    margin-block: var(--space-xl) var(--space-l);
+  }
+
+  .v3-making__kicker {
+    margin: 0 0 var(--space-2xs);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .v3-making__title {
+    margin: 0;
+    max-inline-size: 22ch;
+    font-size: clamp(2.25rem, 1rem + 4vw, 4.5rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+  }
+
+  /* Frame left, notes right from 56rem; the frame stays in view while the
+     notes scroll past it. Stacked below that, frame first. */
+  .v3-making__grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .v3-making__frame {
+    justify-self: center;
+    inline-size: min(100%, 26rem);
+  }
+
+  @media (min-width: 56rem) {
+    .v3-making__grid {
+      grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+      align-items: start;
+      gap: var(--space-2xl, 4rem);
+    }
+
+    .v3-making__frame {
+      position: sticky;
+      inset-block-start: calc(var(--header-height, 4.5rem) + var(--space-m));
+    }
+  }
+
+  .v3-making__notes {
+    display: grid;
+    gap: var(--space-xl);
+    max-inline-size: 42rem;
+  }
+
+  .v3-making__h2 {
+    margin: 0 0 var(--space-s);
+    font-size: var(--step-1);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .v3-making__caption {
+    margin: 0;
+    white-space: pre-line;
+    font-size: var(--step-0);
+    color: var(--text-dim);
+  }
+
+  .v3-making__tag {
+    color: var(--accent);
+  }
+
+  .v3-making__tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .v3-making__tools li {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  /* The write-up is rendered Markdown, so its elements carry no scope hash. */
+  .v3-making__how :global(p),
+  .v3-making__how :global(li) {
+    font-size: var(--step-0);
+    line-height: 1.65;
+    color: var(--text-dim);
+  }
+
+  .v3-making__how :global(p) {
+    margin: 0 0 var(--space-s);
+  }
+
+  .v3-making__how :global(h3) {
+    margin: var(--space-l) 0 var(--space-2xs);
+    font-size: var(--step-0);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .v3-making__how :global(strong) {
+    color: var(--text);
+  }
+
+  .v3-making__how :global(ol),
+  .v3-making__how :global(ul) {
+    margin: 0 0 var(--space-s);
+    padding-inline-start: 1.25rem;
+  }
+
+  .v3-making__bts {
+    margin-block-start: var(--space-section);
+  }
+
+  .v3-making__screens {
+    display: grid;
+    gap: var(--space-xl);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .v3-making__screens figure {
+    margin: 0;
+  }
+
+  .v3-making__screens img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m, 10px);
+  }
+
+  .v3-making__screens figcaption {
+    margin-block-start: var(--space-2xs);
+    font-size: 0.875rem;
+    color: var(--text-dim);
+  }
+
+  .v3-making__pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-m);
+    margin-block-start: var(--space-section);
+    padding-block-start: var(--space-l);
+    border-block-start: 1px solid var(--border);
+  }
+
+  .v3-making__pager a {
+    display: grid;
+    gap: 0.25rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .v3-making__pager-next {
+    text-align: end;
+  }
+
+  .v3-making__pager-dir {
+    font-size: 0.875rem;
+    color: var(--text-dim);
+  }
+
+  .v3-making__pager a:hover strong {
+    color: var(--accent);
+  }
+</style>

@@ -7,6 +7,10 @@
    entity graph) and GoogleTagManager as BaseLayout, so the homepage and the
    case-study pages describe one person with one graph.
 
+   Since 2026-09-25 it is also the shell for /social, so the site's pages share
+   one header, palette and footer. Only the homepage passes `rail`: the stage
+   rail tracks the story sections, which exist nowhere else.
+
    The header is sticky and publishes --header-height, because DotGrid insets
    its canvas by that variable so no dot ever paints behind the navigation.
    ========================================================================= */
@@ -29,7 +33,12 @@ import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/v3.css';
 
-type Props = SeoProps;
+type Props = SeoProps & {
+  /** Show the stage rail / progress strip (the homepage's story only). */
+  rail?: boolean;
+};
+
+const { rail = false, ...seo } = Astro.props;
 
 const year = new Date().getFullYear();
 ---
@@ -65,7 +74,7 @@ const year = new Date().getFullYear();
 
     {/* Title, description, canonical, share tags, icons (the JM monogram)
         and the JSON-LD entity graph — shared with BaseLayout. */}
-    <SeoHead {...Astro.props} />
+    <SeoHead {...seo} />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f3" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0b10" />
   </head>
@@ -74,7 +83,7 @@ const year = new Date().getFullYear();
     <a class="skip-link" href="#main">Skip to main content</a>
 
     <SiteNav />
-    <StageRail />
+    {rail && <StageRail />}
 
     <DotGrid />
 

@@ -1,0 +1,96 @@
+---
+/* ============================================================================
+   Breadcrumbs.astro — "Home / Social" on the v3 pages that aren't the home.
+   ----------------------------------------------------------------------------
+   The v3 header has no page links (round 3), so this trail is the visible way
+   back from a sub-page. The last item is the current page: plain text with
+   aria-current, never a link to itself.
+
+   The old per-page .crumbs had the link grow to the 44px tap target as a
+   block, which pinned "Home" to the top of that box — it sat ~10px above the
+   "/ Social" beside it. Here every item is an inline-flex box of the same
+   height, centred, so the text shares one line whatever the target size.
+   ========================================================================= */
+import { href } from '../../lib/url';
+
+interface Crumb {
+  label: string;
+  /** Site-relative path. Omit on the last (current) crumb. */
+  path?: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="v3-crumbs" aria-label="Breadcrumb">
+  <ol role="list">
+    {
+      items.map((c, i) => {
+        const last = i === items.length - 1;
+        return (
+          <li>
+            {last || !c.path ? (
+              <span aria-current={last ? 'page' : undefined}>{c.label}</span>
+            ) : (
+              <a href={href(c.path)}>{c.label}</a>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>
+
+<style>
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+    line-height: 1;
+    color: var(--text-dim);
+  }
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap-min);
+  }
+
+  /* The separator is drawn, not typed, so it is never read out. */
+  li + li::before {
+    content: '/' / '';
+    padding-inline: 0.6em;
+    color: var(--border-strong);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap-min);
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--border-strong);
+    text-underline-offset: 0.3em;
+    transition:
+      color var(--dur-fast) ease,
+      text-decoration-color var(--dur-fast) ease;
+  }
+
+  a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  [aria-current] {
+    color: var(--text);
+    font-weight: 500;
+  }
+</style>

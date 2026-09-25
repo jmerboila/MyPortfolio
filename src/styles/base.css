@@ -136,13 +136,13 @@ figcaption a[href] {
 }
 
 /* -- Icon buttons --------------------------------------------------------- */
-/* The round hairline control used for the theme toggle, the music toggle and
-   the mobile menu trigger.
+/* The round hairline control used for the theme toggle and the mobile menu
+   trigger.
 
    This lives here rather than in SiteHeader because Astro scopes a component's
-   styles to that component's own template — a rule written in SiteHeader does
-   NOT reach <MusicToggle />, which renders with its own scope hash. Defining
-   it once globally is what keeps the three buttons in the header identical.
+   styles to that component's own template, so a rule written there would not
+   reach a control rendered by a child component. Defining it once globally is
+   what keeps the header buttons identical.
 
    v1 drew this as a 38px square with a hairline; same idea, but round. Since
    box-sizing is border-box, the ring sits inside the 44px target rather than
@@ -397,8 +397,7 @@ ol {
 /* -- Print ---------------------------------------------------------------- */
 @media print {
   .skip-link,
-  .site-header,
-  .music-toggle {
+  .site-header {
     display: none !important;
   }
 

@@ -4,31 +4,36 @@
    Four independent pieces, each keyed off data-sp-* attributes so the markup
    says what it is and nothing here knows which platform it is driving:
 
-     videos     play muted while 60% on screen, pause off screen; a tap
-                toggles; one video with sound at a time
+     videos     wait to be pressed, then play with sound; one at a time;
+                pause when they leave the screen
      carousels  arrows, dots, counter and arrow keys over native scroll-snap
-     reactions  like / save toggles, double-tap to like on image posts
+     reactions  like / save toggles: a click turns the heart red, a second
+                click clears it — the same on every frame
      captions   "more" appears only when the caption actually overflows
 
    Likes and saves are a local flourish: they change nothing anywhere and
    reset on reload. They exist because a frame whose heart cannot be pressed
    reads as a screenshot, not as the product.
    ========================================================================= */
-import { motionReduced, onMotionChange } from './motion';
+import { motionReduced } from './motion';
 
-/* -- Videos --------------------------------------------------------------- */
+/* -- Videos ---------------------------------------------------------------
+   Nothing plays on its own (his call, 2026-09-25). A press plays the video
+   WITH sound — a click is the user gesture browsers require for audible
+   playback, so play() is allowed. Starting one pauses every other, like a
+   feed with one voice at a time; and a video that leaves the screen (scrolled
+   away, or a carousel slide swiped off) pauses, so sound never comes from
+   something unseen. */
 
 interface VideoState {
   root: HTMLElement;
   video: HTMLVideoElement;
   toggle: HTMLButtonElement;
-  mute: HTMLButtonElement | null;
   bar: HTMLElement | null;
-  visible: boolean;
-  /** The visitor paused it; do not let scrolling restart it. */
-  userPaused: boolean;
-  /** The visitor pressed play; honour it even under reduced motion. */
-  userStarted: boolean;
+  /** The visitor asked for it to play. Set on the press, not on the 'play'
+   *  event: with preload="none" the first play waits for the file, and a
+   *  second press in that gap must cancel, not ask again. */
+  wanted: boolean;
 }
 
 function initVideos(scope: ParentNode) {
@@ -38,97 +43,79 @@ function initVideos(scope: ParentNode) {
     const video = root.querySelector('video');
     const toggle = root.querySelector<HTMLButtonElement>('[data-sp-toggle]');
     if (!video || !toggle) continue;
-    states.push({
-      root,
-      video,
-      toggle,
-      mute: root.querySelector('[data-sp-mute]'),
-      bar: root.querySelector('[data-sp-progress]'),
-      visible: false,
-      userPaused: false,
-      userStarted: false,
-    });
+    states.push({ root, video, toggle, bar: root.querySelector('[data-sp-progress]'), wanted: false });
   }
   if (!states.length) return;
 
   const byRoot = new Map(states.map((s) => [s.root, s]));
 
-  const wantsToPlay = (s: VideoState) =>
-    s.visible && !s.userPaused && (s.userStarted || !motionReduced());
-
-  const play = (s: VideoState) => {
-    /* play() rejects if the browser refuses autoplay (data saver, some
-       in-app browsers). The poster stays up and the button still works. */
-    s.video.play().catch(() => {});
-  };
-
   const sync = (s: VideoState) => {
-    const paused = s.video.paused;
     const label = s.root.dataset.label ?? 'video';
-    s.root.dataset.state = paused ? 'paused' : 'playing';
-    s.toggle.setAttribute('aria-label', `${paused ? 'Play' : 'Pause'} video: ${label}`);
+    s.root.dataset.state = s.wanted ? 'playing' : 'paused';
+    s.toggle.setAttribute('aria-label', `${s.wanted ? 'Pause' : 'Play'} video: ${label}`);
   };
 
-  const setSound = (s: VideoState, on: boolean) => {
-    s.video.muted = !on;
-    s.mute?.setAttribute('aria-pressed', String(on));
-    s.root.dataset.sound = on ? 'on' : 'off';
+  /* pause() also cancels a play() still waiting for data (its promise
+     rejects), so a slow video can never start late over the newer one. */
+  const stop = (s: VideoState) => {
+    s.wanted = false;
+    s.video.pause();
+    sync(s);
+  };
+
+  const start = (s: VideoState) => {
+    for (const other of states) if (other !== s && other.wanted) stop(other);
+    s.wanted = true;
+    s.video.muted = false;
+    sync(s);
+    /* Rejects if the browser refuses playback (some in-app browsers) or the
+       visitor pressed again first; either way the state goes back to paused
+       and the button still works. */
+    s.video.play().catch(() => {
+      if (s.wanted && s.video.paused) {
+        s.wanted = false;
+        sync(s);
+      }
+    });
   };
 
   for (const s of states) {
-    s.video.addEventListener('play', () => sync(s));
-    s.video.addEventListener('pause', () => sync(s));
+    /* Pauses the browser makes on its own (media keys, OS controls) and
+       plays it resumes are reflected too. */
+    s.video.addEventListener('play', () => {
+      if (!s.wanted) start(s);
+    });
+    s.video.addEventListener('pause', () => {
+      if (s.wanted && !s.video.seeking) {
+        s.wanted = false;
+        sync(s);
+      }
+    });
     s.video.addEventListener('timeupdate', () => {
       if (s.bar && s.video.duration) {
         s.bar.style.transform = `scaleX(${s.video.currentTime / s.video.duration})`;
       }
     });
 
-    s.toggle.addEventListener('click', () => {
-      if (s.video.paused) {
-        s.userPaused = false;
-        s.userStarted = true;
-        play(s);
-      } else {
-        s.userPaused = true;
-        s.video.pause();
-      }
-    });
-
-    s.mute?.addEventListener('click', () => {
-      const on = s.video.muted;
-      /* One voice at a time, as in any feed. */
-      if (on) for (const other of states) if (other !== s) setSound(other, false);
-      setSound(s, on);
-      if (on && s.video.paused) {
-        s.userPaused = false;
-        s.userStarted = true;
-        play(s);
-      }
-    });
+    s.toggle.addEventListener('click', () => (s.wanted ? stop(s) : start(s)));
   }
 
+  /* Pause once (almost) none of it shows. IntersectionObserver clips by
+     scroll containers, so a carousel slide swiped out counts too — but a
+     slide swiped exactly one width away sits edge-to-edge with the frame,
+     which the spec reports as isIntersecting with ratio 0. Hence the ratio
+     test, and a small second threshold so the callback fires on the way. */
+  const GONE = 0.02;
   const io = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
         const s = byRoot.get(entry.target as HTMLElement);
-        if (!s) continue;
-        s.visible = entry.intersectionRatio >= 0.6;
-        if (wantsToPlay(s)) play(s);
-        else if (!s.visible && !s.video.paused) s.video.pause();
+        if (s && s.wanted && entry.intersectionRatio < GONE) stop(s);
       }
     },
-    { threshold: [0, 0.6] },
+    { threshold: [0, GONE] },
   );
   for (const s of states) io.observe(s.root);
-
-  /* Turning reduced motion on mid-visit stops anything that started itself. */
-  onMotionChange((reduced) => {
-    for (const s of states) {
-      if (reduced && !s.userStarted) s.video.pause();
-      else if (wantsToPlay(s)) play(s);
-    }
-  });
 }
 
 /* -- Carousels ------------------------------------------------------------ */
@@ -237,33 +224,15 @@ function initCarousels(scope: ParentNode) {
 /* -- Reactions ------------------------------------------------------------ */
 
 function initReactions(scope: ParentNode) {
-  const flip = (b: HTMLElement, on?: boolean) => {
-    const next = on ?? b.getAttribute('aria-pressed') !== 'true';
-    b.setAttribute('aria-pressed', String(next));
+  /* Double-tap-to-like was removed 2026-09-25: it only worked on image
+     posts and could like but never unlike, so hearts behaved differently
+     from card to card. */
+  const flip = (b: HTMLElement) => {
+    b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
   };
 
   for (const b of scope.querySelectorAll<HTMLElement>('[data-sp-like], [data-sp-save]')) {
     b.addEventListener('click', () => flip(b));
-  }
-
-  /* Double-tap to like, on image media only. On video the tap already means
-     play/pause, and splitting single from double taps would put a delay on
-     every press. */
-  for (const media of scope.querySelectorAll<HTMLElement>('[data-sp-media]')) {
-    const post = media.closest('article');
-    const like = post?.querySelector<HTMLElement>('[data-sp-like]');
-    const burst = media.querySelector<HTMLElement>('[data-sp-burst]');
-    if (!like) continue;
-
-    media.addEventListener('dblclick', (e) => {
-      if ((e.target as HTMLElement).closest('button, [data-sp-video]')) return;
-      flip(like, true);
-      if (burst) {
-        burst.classList.remove('is-on');
-        void burst.offsetWidth; // restart the animation
-        burst.classList.add('is-on');
-      }
-    });
   }
 }
 
@@ -301,7 +270,7 @@ function initFilters(feed: HTMLElement) {
   if (!bar || !status) return;
 
   const buttons = Array.from(bar.querySelectorAll<HTMLButtonElement>('[data-filter]'));
-  const items = Array.from(feed.querySelectorAll<HTMLElement>('li[data-type]'));
+  const items = Array.from(feed.querySelectorAll<HTMLElement>('li[data-category]'));
   bar.hidden = false;
 
   for (const b of buttons) {
@@ -309,7 +278,7 @@ function initFilters(feed: HTMLElement) {
       const filter = b.dataset.filter ?? 'all';
       let shown = 0;
       for (const item of items) {
-        const match = filter === 'all' || item.dataset.type === filter;
+        const match = filter === 'all' || item.dataset.category === filter;
         item.hidden = !match;
         if (match) shown++;
       }

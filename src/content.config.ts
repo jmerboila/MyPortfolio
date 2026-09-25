@@ -166,34 +166,38 @@ const work = defineCollection({
 /* ============================================================================
    social — posts shown on /social as the platform draws them.
    ----------------------------------------------------------------------------
-   One file per post in src/content/social/. `type` picks the frame; each type
+   One FOLDER per post in src/content/social/: <post>/index.md plus the post's
+   own images and video beside it (copy _new-post/ to start one; folders that
+   start with "_" are never published). `type` picks the frame; each type
    is built from one of two media shapes, so a new platform is usually a single
    line in the union below (see src/config/social.ts for the full checklist).
 
    MEDIA IS SELF-HOSTED, NOT EMBEDDED. Instagram's and TikTok's embed scripts
    each pull several hundred KB of third-party JavaScript and tracking per
    post, render in an iframe that ignores the site theme, and break when the
-   post is deleted or the account goes private. Posters and slides go in
-   src/assets (Astro optimises them); video goes in public/social/.
+   post is deleted or the account goes private. Images are optimised by
+   Astro; videos are copied as-is (src/lib/social-media.ts resolves them).
 
    NO INVENTED NUMBERS. `stats` is optional and every count renders only when
    it is present. Leave it out rather than guess — a like count on a portfolio
    is a claim.
    ========================================================================= */
+/* "./reel.mp4" (in the post's folder) or "/projects/reel.mp4" (in public/). */
+const mediaPath = z.string().regex(/^(\.{1,2})?\//, 'Use "./file.mp4" (next to index.md) or "/path" under public/.');
+
 const social = defineCollection({
-  loader: glob({ base: './src/content/social', pattern: '**/*.md' }),
+  loader: glob({
+    base: './src/content/social',
+    pattern: ['**/*.md', '!**/_*/**', '!**/_*.md'],
+  }),
   schema: ({ image }) => {
     const video = z.object({
-      /* Path under public/, e.g. "/social/launch-reel.mp4". */
-      src: z.string().startsWith('/'),
+      src: mediaPath,
       poster: image(),
       /* REQUIRED for the same reason as work.video.alt: WCAG 1.2.1. */
       alt: z.string(),
-      /* No audio track. Hides the mute button, which would otherwise be a
-         control that does nothing. */
-      silent: z.boolean().default(false),
-      /* WebVTT under public/. Needed whenever the video has speech (1.2.2). */
-      captions: z.string().startsWith('/').optional(),
+      /* WebVTT. Needed whenever the video has speech (1.2.2). */
+      captions: mediaPath.optional(),
       durationISO: z.string().optional(),
     });
 
@@ -201,7 +205,7 @@ const social = defineCollection({
     const slide = z
       .object({
         image: image().optional(),
-        video: z.string().startsWith('/').optional(),
+        video: mediaPath.optional(),
         poster: image().optional(),
         alt: z.string(),
       })
@@ -234,18 +238,34 @@ const social = defineCollection({
         })
         .partial()
         .default({}),
-      /* Links the card to its case study on /work. */
+      /* Reel, Post or Carousel on the page's filters. Optional: read from
+         the post's shape when left out (see postCategory in config/social). */
+      category: z.enum(['reel', 'post', 'carousel']).optional(),
+      /* Kept as data, not shown since 2026-09-25 (his call: no badge,
+         client or links under the cards). */
       work: reference('work').optional(),
       client: z.string().optional(),
       order: z.number().default(100),
       /* Drafts render in `astro dev` only, never in a build. */
       draft: z.boolean().default(false),
+
+      /* -- "How I made it" page (/social/<folder>/) -----------------------
+         The write-up itself is the Markdown body under the frontmatter.
+         A post gets a page, and its card a "How I made it" link, once it
+         has any of the three (hasMakingOf in config/social). */
+      tools: z.array(z.string()).default([]),
+      /* Workspace screenshots (Premiere, After Effects…), in the post's
+         folder. `note` is the one-line caption under each. */
+      screens: z
+        .array(z.object({ image: image(), alt: z.string(), note: z.string().optional() }))
+        .default([]),
     });
 
     const slidesPost = base.extend({
       slides: z.array(slide).min(1).max(20),
-      /* Instagram's feed crops. 4:5 is the tallest and the usual choice. */
-      ratio: z.enum(['1x1', '4x5', '3x4', '191x100']).default('4x5'),
+      /* Instagram's feed shapes. 4:5 is the tallest and the usual choice;
+         16:9 is a landscape video, shown uncropped (it sits inside 1.91:1). */
+      ratio: z.enum(['1x1', '4x5', '3x4', '16x9', '191x100']).default('4x5'),
     });
 
     const videoPost = base.extend({ video });
