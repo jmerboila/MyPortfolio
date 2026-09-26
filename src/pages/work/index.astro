@@ -21,6 +21,7 @@ import V3Layout from '../../layouts/V3Layout.astro';
 import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
 import WorkGrid from '../../components/WorkGrid.astro';
 import { absoluteUrl, PERSON } from '../../config/site';
+import { projectPath } from '../../lib/work-path';
 
 const entries = await getCollection('work', ({ data }) => !data.draft);
 const sorted = entries.sort((a, b) =>
@@ -52,7 +53,7 @@ const schema = [
       itemListElement: sorted.map((entry, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        url: absoluteUrl(`/work/${entry.id}/`),
+        url: absoluteUrl(projectPath(entry)),
         name: entry.data.title,
       })),
     },

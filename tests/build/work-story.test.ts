@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from 'node:fs';
 
 /* The 2026 Ford Mustang GTD project page and its launch story (2026-09-25). */
 const SLUG = '2026-ford-mustang-gtd';
-const PAGE = `dist/work/${SLUG}/index.html`;
+const PAGE = `dist/work/social/${SLUG}/index.html`;
 const read = (p: string) => (existsSync(p) ? readFileSync(p, 'utf8') : '');
 const html = read(PAGE);
 
@@ -13,8 +13,10 @@ test('the project page is built at its new address, under its full name', () => 
   assert.match(html, /<h1[^>]*>[\s\S]*2026 Ford Mustang GTD[\s\S]*<\/h1>/);
 });
 
-test('the old address redirects to the new one', () => {
-  assert.match(read('dist/work/mustang-gtd/index.html'), new RegExp(`url=/MyPortfolio/work/${SLUG}/"`));
+test('the old addresses redirect to the new one', () => {
+  for (const old of ['mustang-gtd', SLUG]) {
+    assert.match(read(`dist/work/${old}/index.html`), new RegExp(`url=/MyPortfolio/work/social/${SLUG}/"`), old);
+  }
 });
 
 test('no em dashes in the project content files', () => {
@@ -28,7 +30,7 @@ test('no em dashes in the project content files', () => {
 });
 
 test('Work pages use the v3 shell', () => {
-  for (const p of ['dist/work/index.html', `dist/work/${SLUG}/index.html`, 'dist/work/digiskills/index.html']) {
+  for (const p of ['dist/work/index.html', PAGE, 'dist/work/logo/index.html', 'dist/work/logo/digiskills-logo/index.html']) {
     const h = read(p);
     assert.match(h, /<html[^>]*class="v3"/, p);
     assert.match(h, /data-v3-header/, p);

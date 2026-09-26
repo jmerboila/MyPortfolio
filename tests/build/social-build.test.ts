@@ -2,8 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 
-/* /social as project shelves (2026-09-25). */
-const PAGE = 'dist/social/index.html';
+/* /work/social as project shelves (2026-09-25; moved from /social 2026-09-26). */
+const PAGE = 'dist/work/social/index.html';
 const html = existsSync(PAGE) ? readFileSync(PAGE, 'utf8') : '';
 
 test('/social is built on the v3 shell, with no stage rail', () => {
@@ -17,7 +17,7 @@ test('/social shows project shelves, and the Mustang shelf links to its story', 
   const shelves = html.match(/class="sp-shelf"/g) ?? [];
   assert.ok(shelves.length >= 2, `found ${shelves.length} shelves`);
   assert.match(html, /2026 Ford Mustang GTD/);
-  assert.match(html, /class="sp-shelf__story" href="\/MyPortfolio\/work\/2026-ford-mustang-gtd\/"/);
+  assert.match(html, /class="sp-shelf__story" href="\/MyPortfolio\/work\/social\/2026-ford-mustang-gtd\/"/);
 });
 
 test('every "Read the story" link resolves', () => {
@@ -28,7 +28,7 @@ test('every "Read the story" link resolves', () => {
 
 test('no filters and no per-post pages remain', () => {
   assert.doesNotMatch(html, /data-sp-filters|sp-card__more/);
-  assert.ok(!existsSync('dist/social/mustang-gtd-reel/index.html'));
+  assert.ok(!existsSync('dist/work/social/mustang-gtd-reel/index.html'));
 });
 
 test('the cards carry no badge, client line, case-study link or video description', () => {
@@ -42,6 +42,6 @@ test('videos wait to be pressed: no autoplay, no mute, no mute button', () => {
 });
 
 test('the template folder never publishes', () => {
-  assert.ok(!existsSync('dist/social/_new-post/index.html'));
+  assert.ok(!existsSync('dist/work/social/_new-post/index.html'));
   assert.doesNotMatch(html, /Spring launch carousel/);
 });

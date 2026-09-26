@@ -26,18 +26,22 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import { WORK_CATEGORIES, CATEGORY_LABELS, type WorkCategory } from '../content.config';
 import { href } from '../lib/url';
+import { projectPath, workType } from '../lib/work-path';
 
 interface Props {
   /** Show only featured entries. The homepage does; /work will not. */
   featuredOnly?: boolean;
+  /** Only this type's projects, with no filter bar (the /work/<type>/ pages). */
+  type?: WorkCategory;
 }
 
-const { featuredOnly = false } = Astro.props;
+const { featuredOnly = false, type } = Astro.props;
 
 const all = await getCollection('work', ({ data }) => !data.draft);
 
 const entries = all
   .filter((e) => (featuredOnly ? e.data.featured : true))
+  .filter((e) => (type ? workType(e) === type : true))
   /* Explicit `order`, then title. Never filesystem order, which differs
      between machines and makes the grid reshuffle for no reason. */
   .sort((a, b) =>
@@ -54,7 +58,7 @@ const present = WORK_CATEGORIES.filter((c) =>
 
 <div class="work">
   {
-    present.length > 1 && (
+    !type && present.length > 1 && (
       <div class="work__filters" data-filters hidden>
         <div role="group" aria-label="Filter projects by type" class="work__filter-row">
           <button type="button" class="chip" data-filter="all" aria-pressed="true">
@@ -110,7 +114,7 @@ const present = WORK_CATEGORIES.filter((c) =>
                 {/* The whole card is clickable via ::after, but the LINK is on
                     the title — so the accessible name is the project name and
                     not a dump of every word in the card. */}
-                <a class="card__link" href={href(`/work/${entry.id}/`)}>
+                <a class="card__link" href={href(projectPath(entry))}>
                   {entry.data.title}
                 </a>
               </h3>

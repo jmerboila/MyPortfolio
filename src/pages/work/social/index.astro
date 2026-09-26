@@ -1,6 +1,8 @@
 ---
 /* ============================================================================
-   /social — posts shown the way each platform shows them.
+   /work/social: posts shown the way each platform shows them.
+   Moved from /social on 2026-09-26: Social is one type of work, next to
+   Logo and Web. /social still redirects here (astro.config.mjs).
    ----------------------------------------------------------------------------
    Content is one folder per post in src/content/social/ (copy _new-post/);
    frames are src/components/social/. Adding a platform or post type: see the
@@ -21,13 +23,13 @@
    ========================================================================= */
 import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
-import V3Layout from '../../layouts/V3Layout.astro';
-import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
-import Contact from '../../components/v3/Contact.astro';
-import SocialShelves from '../../components/social/SocialShelves.astro';
-import { withMediaUrls } from '../../lib/social-media';
-import { sortPosts } from '../../config/social';
-import { absoluteUrl, PERSON, SITE_ORIGIN } from '../../config/site';
+import V3Layout from '../../../layouts/V3Layout.astro';
+import Breadcrumbs from '../../../components/v3/Breadcrumbs.astro';
+import Contact from '../../../components/v3/Contact.astro';
+import SocialShelves from '../../../components/social/SocialShelves.astro';
+import { withMediaUrls } from '../../../lib/social-media';
+import { sortPosts } from '../../../config/social';
+import { absoluteUrl, PERSON, SITE_ORIGIN } from '../../../config/site';
 
 const entries = sortPosts(
   await getCollection('social', ({ data }) => import.meta.env.DEV || !data.draft),
@@ -60,7 +62,7 @@ const videoObjects = await Promise.all(
 const schema = [
   {
     '@type': 'CollectionPage',
-    '@id': `${absoluteUrl('/social/')}#collection`,
+    '@id': `${absoluteUrl('/work/social/')}#collection`,
     name: 'Social',
     description,
     isPartOf: { '@id': `${absoluteUrl('/')}#website` },
@@ -70,9 +72,9 @@ const schema = [
 ];
 ---
 
-<V3Layout title="Social" description={description} path="/social/" schema={schema}>
+<V3Layout title="Social" description={description} path="/work/social/" schema={schema}>
   <section class="v3-social container" aria-labelledby="v3-social-title">
-    <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Social' }]} />
+    <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label: 'Social' }]} />
 
     <header class="v3-social__head">
       <h1 id="v3-social-title" class="v3-social__title" data-split>

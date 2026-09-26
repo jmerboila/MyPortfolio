@@ -21,19 +21,21 @@ test('/v3 redirects to the homepage', () => {
   assert.match(v3, /http-equiv="refresh" content="0;url=\/MyPortfolio\/"/);
 });
 test('the v2b preview is gone', () => assert.ok(!existsSync('dist/v2b/index.html')));
-test("v1's old root pages redirect to their case studies", () => {
+test("v1's old root pages redirect straight to their final pages", () => {
+  /* 2026-09-26: projects moved under their type; DigiSkills (the app) and
+     Orange Magazine are gone from the site, so theirs land on /work/. */
   const moved: Record<string, string> = {
-    'DigiSkills.html': 'digiskills',
-    'OrangeMagazine.html': 'orange-magazine',
-    'Devsign8-Showcase.html': 'devsign8',
-    'DigiSkills-Showcase.html': 'digiskills-logo',
-    'JM-Showcase.html': 'jm-design',
-    'OrangeMagazine-Showcase.html': 'orange-magazine-logo',
+    'DigiSkills.html': 'work/',
+    'OrangeMagazine.html': 'work/',
+    'Devsign8-Showcase.html': 'work/logo/devsign8/',
+    'DigiSkills-Showcase.html': 'work/logo/digiskills-logo/',
+    'JM-Showcase.html': 'work/logo/jm-design/',
+    'OrangeMagazine-Showcase.html': 'work/',
   };
-  for (const [file, slug] of Object.entries(moved)) {
+  for (const [file, to] of Object.entries(moved)) {
     const stub = existsSync(`dist/${file}`) ? readFileSync(`dist/${file}`, 'utf8') : '';
-    assert.match(stub, new RegExp(`url=/MyPortfolio/work/${slug}/"`), file);
-    assert.ok(existsSync(`dist/work/${slug}/index.html`), `target of ${file}`);
+    assert.match(stub, new RegExp(`url=/MyPortfolio/${to}"`), file);
+    assert.ok(existsSync(`dist/${to}index.html`), `target of ${file}`);
   }
 });
 test('exactly one h1, and it is the full name', () => {
@@ -187,8 +189,8 @@ test('every stage headline is present', () => {
   for (const h of headlines) assert.ok(html.includes(h), h);
 });
 test('sample work at the matching stage links to its case page', () => {
-  for (const slug of ['digiskills-logo', 'jm-design', 'devsign8', 'devsign8-website', '2026-ford-mustang-gtd']) {
-    assert.match(html, new RegExp(`href="/MyPortfolio/work/${slug}/"`));
+  for (const path of ['logo/digiskills-logo', 'logo/jm-design', 'logo/devsign8', 'web/devsign8-website', 'social/2026-ford-mustang-gtd']) {
+    assert.match(html, new RegExp(`href="/MyPortfolio/work/${path}/"`));
   }
 });
 test('no discipline-plate markup remains', () => {

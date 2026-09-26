@@ -20,6 +20,7 @@
    ========================================================================= */
 import type { CollectionEntry } from 'astro:content';
 import devsign8Avatar from '../assets/projects/Devsign8-Logo.webp';
+import { projectPath } from '../lib/work-path';
 
 export type SocialType = CollectionEntry<'social'>['data']['type'];
 
@@ -147,7 +148,7 @@ export function groupShelves(
             title: project.data.title,
             label: project.data.category,
             idea: project.data.story?.lede ?? project.data.summary,
-            storyPath: project.data.story ? `/work/${project.id}/` : undefined,
+            storyPath: project.data.story ? projectPath(project) : undefined,
             posts: [],
           }
         : { key, title: e.data.title, label: KIND_LABELS[postCategory(e.data)], posts: [] };

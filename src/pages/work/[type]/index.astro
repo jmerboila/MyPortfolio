@@ -1,0 +1,78 @@
+---
+/* ============================================================================
+   /work/[type]: one page per type of work, e.g. /work/logo/ (2026-09-26).
+   ----------------------------------------------------------------------------
+   A page exists only for a type that has a visible project (liveTypes), so a
+   new type appears on its own once its first project lands. Social is left
+   out here: it has its own page, /work/social/, with the playable posts.
+   ========================================================================= */
+import { getCollection } from 'astro:content';
+import V3Layout from '../../../layouts/V3Layout.astro';
+import Breadcrumbs from '../../../components/v3/Breadcrumbs.astro';
+import WorkGrid from '../../../components/WorkGrid.astro';
+import { absoluteUrl, PERSON } from '../../../config/site';
+import { CATEGORY_LABELS, WORK_CATEGORIES, type WorkCategory } from '../../../content.config';
+import { liveTypes, projectPath, typePath, workType } from '../../../lib/work-path';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('work', ({ data }) => !data.draft);
+  return liveTypes(WORK_CATEGORIES, entries)
+    .filter((t) => t !== 'social')
+    .map((type) => ({ params: { type }, props: { type } }));
+}
+
+const { type } = Astro.props as { type: WorkCategory };
+const label = CATEGORY_LABELS[type];
+const path = typePath(type);
+
+const entries = (await getCollection('work', ({ data }) => !data.draft))
+  .filter((e) => workType(e) === type)
+  .sort((a, b) =>
+    a.data.order !== b.data.order
+      ? a.data.order - b.data.order
+      : a.data.title.localeCompare(b.data.title),
+  );
+
+const description = `${label} design projects by ${PERSON.name}.`;
+
+const schema = [
+  {
+    '@type': 'CollectionPage',
+    '@id': `${absoluteUrl(path)}#collection`,
+    name: label,
+    description,
+    isPartOf: { '@id': `${absoluteUrl('/')}#website` },
+    about: { '@id': `${absoluteUrl('/')}#person` },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: entries.length,
+      itemListElement: entries.map((entry, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: absoluteUrl(projectPath(entry)),
+        name: entry.data.title,
+      })),
+    },
+  },
+];
+---
+
+<V3Layout title={label} description={description} path={path} schema={schema}>
+  <div class="work-page section container">
+    <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label }]} />
+
+    <p class="section__label">Work</p>
+    <h1 class="section__title"><em>{label}</em></h1>
+    <p class="section__lede">
+      {entries.length} {entries.length === 1 ? 'project' : 'projects'}. Open any one for the full artwork.
+    </p>
+
+    <WorkGrid type={type} />
+  </div>
+</V3Layout>
+
+<style>
+  .work-page {
+    padding-block: var(--space-m) var(--space-section);
+  }
+</style>

@@ -16,6 +16,7 @@ import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import type { Stage as StageData } from '../../config/lifecycle';
 import { href } from '../../lib/url';
+import { projectPath } from '../../lib/work-path';
 
 interface Props {
   stage: StageData;
@@ -51,7 +52,7 @@ const twoCols = work.length >= 2;
             const line = d.brief ?? d.summary;
             return (
               <li class="v3-stage__card" data-stage-card>
-                <a href={href(`/work/${entry.id}/`)}>
+                <a href={href(projectPath(entry))}>
                   <figure class="v3-stage__frame" data-stage-frame>
                     <Image
                       src={d.cover}
