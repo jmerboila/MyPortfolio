@@ -114,6 +114,14 @@ const work = defineCollection({
         events: z.array(z.object({ time: z.string(), label: z.string() })).min(1),
       }),
       z.object({ kind: z.literal('results') }),
+      /* A small data table (e.g. formats and their safe areas). */
+      z.object({
+        kind: z.literal('table'),
+        caption: z.string(),
+        columns: z.array(z.string()).min(2),
+        rows: z.array(z.array(z.string())).min(1),
+        source: z.string().optional(),
+      }),
     ]);
 
     return z.object({

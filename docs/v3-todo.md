@@ -174,7 +174,9 @@ Spec `docs/superpowers/specs/2026-09-25-social-projects-mustang-story-design.md`
 - [x] All Work pages on the v3 shell
 - [x] The launch story: 7 chapters over 6 homepage stages (research chart, plan, Photoshop and After Effects screens, the artboard slicer with 3 earlier versions, captions, launch-day clock, results), sources, then the two posts. Scroll motion verified in headless Chrome; reduced motion shows the finished state; keyboard focus never hidden
 - [x] Page titles use " | " instead of an em dash (his no-em-dash rule)
-- [ ] Next projects: Lexus NX 350h (poster + animated), UNF, the Devsign8 toolkit, each as a Work entry with a story. Their draft notes are in their post folders
+- [x] **Devsign8 Instagram Safe-Zone Toolkit** story (2026-09-26) at `/work/devsign8-ig-safe-zone-toolkit/`: 7 chapters, a formats table from his `Devsign8-IG-Template.jsx` (revision 3), Photoshop templates built by that script, the hook-then-card formula, a real caption, the 3 to 29 September timeline, and results from Buffer (326 reach, best 84, 0 comments). Shelf moved to second
+- [ ] After 29 September: add the tenth Reel's numbers to the toolkit results (Buffer)
+- [ ] Next projects: Lexus NX 350h (poster + animated), UNF. Their draft notes are in their post folders
 - [ ] Em-dash sweep of older copy (site default description, JM Design intro, other case studies)
 - [ ] Toolkit: swap the draft captions for the real ones in Buffer
 

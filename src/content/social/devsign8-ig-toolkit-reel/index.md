@@ -5,11 +5,12 @@
 # when pressed.
 type: instagram-post
 category: reel   # filed under Reels; the frame keeps the video's own shape
-title: "Devsign8 Instagram safe-zone toolkit"
-# TODO(jayson): drafted caption — replace with the one you posted.
-caption: "Every Instagram format, and where its safe zone ends: Reels, Stories, feed posts, carousels, covers and highlights. Swipe the Devsign8 toolkit. #InstagramTips #SafeZones #SocialMediaDesign #Devsign8"
-tools: ["After Effects", "Premiere Pro"]
-order: 50
+title: "Devsign8 Instagram Safe-Zone Toolkit series"
+piece: "Ten-Reel series"
+work: devsign8-ig-safe-zone-toolkit
+caption: "A Reel cover can't be edited after upload. Get it right once.\n\nIt has to work twice: full-screen at 9:16, and again as a 3:4 tile on your profile, where the top and bottom 240px are cropped away.\n\nComment TOOLKIT for the script that builds the cover canvas with the grid crop already marked. Also at www.devsign8.com\n\n#brandingagency #digitalmarketing #creativedirection #marketingtips #designstudio"
+tools: ["Photoshop", "Premiere Pro", "After Effects"]
+order: 15
 ratio: "3x4"
 slides:
   - video: "./1-devsign8-ig-02-reel-dark-hook.mp4"
@@ -32,7 +33,7 @@ slides:
     alt: "On a light purple ground, the line “Corners are always clipped. Test your mark at thumbnail size.” Then the Devsign8 spec card for the Profile photo: upload 1080 × 1080, renders at 320 × 320, a 918 px safe circle."
   - video: "./7-devsign8-ig-04-feed-3x4-dark-hook.mp4"
     poster: "./7-cover.jpg"
-    alt: "On a dark purple ground, the line “Instagram never draws over a feed post. Only the grid crops.” Then the Devsign8 spec card for the Feed 3:4: 1080 × 1440 canvas, 120 px inset, 840 × 1200 safe area, no grid crop — every profile thumbnail is 3:4 since the grid redesign."
+    alt: "On a dark purple ground, the line “Instagram never draws over a feed post. Only the grid crops.” Then the Devsign8 spec card for the Feed 3:4: 1080 × 1440 canvas, 120 px inset, 840 × 1200 safe area, no grid crop, every profile thumbnail is 3:4 since the grid redesign."
   - video: "./8-devsign8-ig-08-carousel-slide-light-hook.mp4"
     poster: "./8-cover.jpg"
     alt: "On a light purple ground, the line “Slide one locks the ratio for every slide that follows.” Then the Devsign8 spec card for the Carousel slide: 1080 × 1440 canvas, 3:4, 2 to 10 slides, 120 px inset, 840 × 1200 safe area. Mixed ratios get force-cropped, so build the whole set at one size."
@@ -41,18 +42,5 @@ slides:
     alt: "On a dark purple ground, the line “Only the centre circle survives. Everything else is invisible.” Then the Devsign8 spec card for the Highlight cover: 720 × 720 visible, centred at 540 · 960. Centre the icon on both axes."
   - video: "./10-devsign8-ig-03-reel-story-ad-light-hook.mp4"
     poster: "./10-cover.jpg"
-    alt: "On a light purple ground, the line “Build one 9:16 master. It covers all four placements.” Then the Devsign8 spec card for the Reel / Story ad: 1080 × 1920 canvas, 9:16, 270 px top, 672 px bottom, 65 px sides, 950 × 978 safe area — one asset for Instagram and Facebook, Stories and Reels, organic and paid."
+    alt: "On a light purple ground, the line “Build one 9:16 master. It covers all four placements.” Then the Devsign8 spec card for the Reel / Story ad: 1080 × 1920 canvas, 9:16, 270 px top, 672 px bottom, 65 px sides, 950 × 978 safe area, one asset for Instagram and Facebook, Stories and Reels, organic and paid."
 ---
-
-<!-- DRAFT write-up by Claude, Hook / Story / Offer. Check every line is true before it goes live. -->
-
-Ten Reels, one for each Instagram format, built to answer the question every designer gets wrong at least once: *where does Instagram cover my design?* Each one runs on Hook, Story, Offer.
-
-### Hook
-Every Reel opens on a pain point, not a product. *Your logo is under Instagram's share button right now. Square posts lose 135px per side on your profile grid. Reel covers can't be edited after upload.* Each line is short, specific and a little uncomfortable, and that's what stops the scroll.
-
-### Story
-The spec card answers it straight away with exact numbers: canvas, ratio, the top, bottom and side danger zones, the safe area, and what the profile grid keeps. The danger zones are drawn around the card, so you *see* the problem instead of reading about it. Dark and light versions alternate so the set reads as a series.
-
-### Offer
-Every card signs off with **devsign8.com**. The value comes first, and the ask is a quiet link at the end. Ten Reels means ten different hooks leading to the same offer, and the carousel here lets you swipe through all ten.
