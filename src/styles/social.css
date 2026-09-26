@@ -25,6 +25,10 @@
    On the class AND the attribute: a project page's "The posts" is a
    [data-sp-feed] section without the class. */
 :where(.sp-feed, [data-sp-feed]) {
+  /* Every Instagram post shows at real phone size: the app draws a post the
+     full width of the screen, about 390px on a typical iPhone (his call,
+     2026-09-26). One value, so every frame on the site matches. */
+  --sp-post-w: 390px;
   --sp-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
   --ig-bg: #ffffff;
@@ -128,7 +132,7 @@
 }
 
 .sp-shelf__pieces > li {
-  inline-size: min(100%, 22rem);
+  inline-size: min(100%, var(--sp-post-w));
 }
 
 .sp-card {
@@ -859,7 +863,7 @@ button.sp-rail__item:focus-visible {
 }
 
 .sp-reel-row > li {
-  flex: 0 0 min(78%, 16rem);
+  flex: 0 0 min(88%, var(--sp-post-w));
   scroll-snap-align: start;
 }
 
