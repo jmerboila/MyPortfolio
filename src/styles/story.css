@@ -1,0 +1,390 @@
+/* ============================================================================
+   story.css: the launch-story layout (LaunchStory.astro, StoryVisual.astro).
+   Global with an st- prefix, because the visuals are child components and
+   Astro's scoped styles would not reach them.
+   ========================================================================= */
+
+.st-story {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+/* -- Chapters ------------------------------------------------------------- */
+.st-ch {
+  display: grid;
+  gap: var(--space-l);
+}
+
+.st-ch__stage {
+  margin: 0 0 var(--space-2xs);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.st-ch__stage span {
+  margin-inline-end: 0.35em;
+  font-variant-numeric: tabular-nums;
+}
+
+.st-ch__h {
+  margin: 0 0 var(--space-s);
+  font-size: clamp(1.75rem, 1rem + 2.4vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+
+.st-ch__h3 {
+  margin: var(--space-l) 0 var(--space-2xs);
+  font-size: var(--step-0);
+  font-weight: 600;
+}
+
+.st-ch__text > p {
+  margin: 0 0 var(--space-s);
+  max-inline-size: 40ch;
+  font-size: var(--step-1);
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.st-ch__text > p.st-ch__insight {
+  color: var(--text);
+}
+
+.st-ch__next {
+  margin: 0;
+  padding-inline-start: 1.2rem;
+  color: var(--text-dim);
+}
+
+.st-ch__next li + li {
+  margin-block-start: 0.35rem;
+}
+
+/* Wide screens: text left, the visual sticky on the right. Each chapter is
+   at least a screen tall so its visual has room to hold. */
+@media (min-width: 60rem) {
+  .st-ch {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 34rem);
+    grid-template-areas: 'text visual';
+    align-items: start;
+    gap: var(--space-2xl);
+    min-block-size: 100svh;
+  }
+
+  .st-ch__text {
+    grid-area: text;
+    padding-block: 18svh;
+  }
+
+  .st-ch__visual {
+    grid-area: visual;
+    position: sticky;
+    inset-block-start: calc(var(--header-height, 4.5rem) + var(--space-l));
+  }
+}
+
+/* -- Visuals: shared -------------------------------------------------------- */
+.st-v {
+  margin: 0;
+}
+
+.st-v figcaption,
+.st-cap__head span {
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+
+.st-v img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: 10px;
+}
+
+.st-v--gallery {
+  display: grid;
+  gap: var(--space-s);
+}
+
+.st-v--gallery img {
+  border: 1px solid var(--border);
+}
+
+.st-v--gallery figcaption {
+  margin-block-start: 0.35rem;
+}
+
+/* -- Chart: one series, bars from a baseline, values printed -------------- */
+.st-chart {
+  display: grid;
+  gap: var(--space-l);
+}
+
+.st-chart__metric {
+  margin: 0 0 var(--space-2xs);
+  font-weight: 600;
+}
+
+.st-chart ul {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st-chart__row {
+  display: grid;
+  grid-template-columns: 6rem 1fr 4.5rem;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* The plot area carries the baseline: a 1px rule on its start edge. */
+.st-chart__plot,
+.st-results__plot {
+  display: block;
+  border-inline-start: 1px solid var(--border-strong);
+}
+
+.st-chart__bar,
+.st-results__bar {
+  display: block;
+  block-size: 0.875rem;
+  inline-size: max(var(--w), 3px);
+  background: var(--accent);
+  border-radius: 0 4px 4px 0;
+}
+
+.st-chart__value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: end;
+}
+
+.st-chart__note {
+  grid-column: 2 / -1;
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+
+/* -- Plan: two posts and the hour between them ---------------------------- */
+.st-plan ol {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-s);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st-plan__step img {
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+}
+
+.st-plan__step p {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+}
+
+.st-plan__gap {
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* -- Slicer: one artboard as N tiles; --gap opens the cuts ---------------
+   Each tile clips a copy of the whole artboard, shifted by its index, so it
+   shows exactly its slice. The resting state (no JS, reduced motion) is
+   open; story-motion.ts scrubs --gap from 0 as it scrolls in. */
+.st-slicer {
+  --gap: 10px;
+}
+
+.st-slicer__board {
+  display: grid;
+  grid-template-columns: repeat(var(--panels), 1fr);
+  gap: var(--gap);
+}
+
+.st-slicer__tile {
+  position: relative;
+  display: block;
+  aspect-ratio: 1080 / 1350;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.st-slicer .st-slicer__tile img {
+  position: absolute;
+  inset-block: 0;
+  block-size: 100%;
+  max-inline-size: none;
+  border-radius: 0;
+}
+
+.st-slicer figcaption {
+  margin-block-start: 0.5rem;
+}
+
+.st-slicer__drafts {
+  margin-block-start: var(--space-m);
+}
+
+.st-slicer__drafts p {
+  margin: 0 0 0.4rem;
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+
+.st-slicer__drafts ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st-slicer__drafts img {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+/* -- Captions: Instagram-style blocks under his display name -------------- */
+.st-captions {
+  display: grid;
+  gap: var(--space-s);
+}
+
+.st-cap {
+  margin: 0;
+  padding: var(--space-s);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.st-cap__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.st-cap__avatar {
+  inline-size: 28px;
+  block-size: 28px;
+  border-radius: 50%;
+  background: #dbdbdb;
+}
+
+.st-cap__text {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.st-cap__tag {
+  color: var(--accent);
+}
+
+/* -- Clock: a track that fills from the first post to the second --------- */
+.st-clock {
+  --p: 1;
+  display: grid;
+  gap: var(--space-s);
+}
+
+.st-clock__day {
+  margin: 0;
+  font-weight: 600;
+}
+
+.st-clock__track {
+  block-size: 6px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.st-clock__fill {
+  display: block;
+  block-size: 100%;
+  inline-size: calc(var(--p) * 100%);
+  background: var(--accent);
+}
+
+.st-clock__events {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-s);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* -- Results: reach on one scale, the rest as small stats ----------------- */
+.st-results ul {
+  display: grid;
+  gap: var(--space-l);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st-results__name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.st-results__reach {
+  margin: 0.2rem 0 0.4rem;
+}
+
+.st-results__reach strong {
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.st-results dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  margin: 0.6rem 0 0;
+}
+
+.st-results dt {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.st-results dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.st-results figcaption {
+  margin-block-start: var(--space-s);
+}
+
+/* -- Sources -------------------------------------------------------------- */
+.st-sources {
+  font-size: 0.875rem;
+  color: var(--text-dim);
+}
+
+.st-sources ol {
+  padding-inline-start: 1.2rem;
+}
+
+.st-sources a {
+  color: inherit;
+}

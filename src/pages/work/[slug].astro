@@ -16,8 +16,13 @@ import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import V3Layout from '../../layouts/V3Layout.astro';
 import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
+import LaunchStory from '../../components/story/LaunchStory.astro';
+import SocialPost from '../../components/social/SocialPost.astro';
 import { href } from '../../lib/url';
 import { absoluteUrl } from '../../config/site';
+import { withMediaUrls } from '../../lib/social-media';
+import { sortPosts } from '../../config/social';
+import '../../styles/social.css';
 
 export async function getStaticPaths() {
   const entries = await getCollection('work', ({ data }) => !data.draft);
@@ -42,6 +47,22 @@ export async function getStaticPaths() {
 const { entry, prev, next } = Astro.props;
 const d = entry.data;
 const { Content } = await render(entry);
+
+/* A launch story (2026-09-25) replaces the classic body: the story, then the
+   project's real social posts, playable. */
+const story = d.story;
+const posts = story
+  ? sortPosts(
+      await getCollection('social', (p) => !p.data.draft && p.data.work?.id === entry.id),
+    ).map(withMediaUrls)
+  : [];
+const launched = story?.launched.toLocaleDateString('en-CA', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
 
 const hasCaseStudy = Boolean(d.problem || d.approach || d.outcome || d.constraints.length);
 const meta = [
@@ -77,10 +98,39 @@ const schema = [
 
       <p class="project__cat">{d.category}</p>
       <h1 class="project__title">{d.title}</h1>
-      {d.intro && <p class="project__intro prose">{d.intro}</p>}
+      {!story && d.intro && <p class="project__intro prose">{d.intro}</p>}
 
       {
-        meta.length > 0 && (
+        story && (
+          <>
+            <p class="project__intro prose">{story.lede}</p>
+            <dl class="project__meta">
+              {d.role && (
+                <div>
+                  <dt>Role</dt>
+                  <dd>{d.role}</dd>
+                </div>
+              )}
+              <div>
+                <dt>Tools</dt>
+                <dd>{d.tools.join(', ')}</dd>
+              </div>
+              <div>
+                <dt>Channel</dt>
+                <dd>{story.channel}</dd>
+              </div>
+              <div>
+                <dt>Launched</dt>
+                <dd>{launched}</dd>
+              </div>
+            </dl>
+            <p class="project__disclaimer">{story.disclaimer}</p>
+          </>
+        )
+      }
+
+      {
+        !story && meta.length > 0 && (
           <dl class="project__meta">
             {meta.map(([k, v]) => (
               <div>
@@ -93,19 +143,47 @@ const schema = [
       }
     </header>
 
-    <div class="project__cover container">
-      <Image
-        src={d.cover}
-        alt={d.coverAlt}
-        widths={[640, 1024, 1600]}
-        sizes="(min-width: 78rem) 74rem, 92vw"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </div>
+    {
+      story && (
+        <>
+          <div class="container">
+            <LaunchStory story={story} />
+          </div>
+          {posts.length > 0 && (
+            <section class="project__posts container" aria-labelledby="posts-heading" data-sp-feed>
+              <h2 id="posts-heading" class="project__sub">
+                The posts
+              </h2>
+              <ul role="list" class="project__posts-list">
+                {posts.map((p) => (
+                  <li>
+                    <SocialPost entry={p} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </>
+      )
+    }
 
     {
-      hasCaseStudy && (
+      !story && (
+        <div class="project__cover container">
+          <Image
+            src={d.cover}
+            alt={d.coverAlt}
+            widths={[640, 1024, 1600]}
+            sizes="(min-width: 78rem) 74rem, 92vw"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+      )
+    }
+
+    {
+      !story && hasCaseStudy && (
         <section class="project__case container" aria-labelledby="case-heading">
           <h2 id="case-heading" class="visually-hidden">
             Case study
@@ -145,7 +223,7 @@ const schema = [
     }
 
     {
-      d.video && (
+      !story && d.video && (
         <section class="project__video container" aria-labelledby="video-heading">
           <h2 id="video-heading" class="project__sub">
             Motion
@@ -180,7 +258,7 @@ const schema = [
     }
 
     {
-      d.gallery.length > 0 && (
+      !story && d.gallery.length > 0 && (
         <section class="project__gallery container" aria-labelledby="gallery-heading">
           <h2 id="gallery-heading" class="project__sub">
             Gallery
@@ -203,9 +281,13 @@ const schema = [
       )
     }
 
-    <div class="project__body container prose">
-      <Content />
-    </div>
+    {
+      !story && (
+        <div class="project__body container prose">
+          <Content />
+        </div>
+      )
+    }
 
     <nav class="project__nav container" aria-label="More projects">
       <a class="project__nav-link" href={href(`/work/${prev.id}/`)} rel="prev">
@@ -220,7 +302,31 @@ const schema = [
   </article>
 </V3Layout>
 
+<script>
+  import { initSocial } from '../../scripts/social';
+  initSocial();
+</script>
+
 <style>
+  .project__disclaimer {
+    margin: var(--space-s) 0 0;
+    font-size: 0.875rem;
+    color: var(--text-dim);
+  }
+
+  .project__posts-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xl);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .project__posts-list > li {
+    inline-size: min(100%, 24rem);
+  }
+
   .project {
     padding-block: var(--space-2xl) var(--space-section);
     display: grid;

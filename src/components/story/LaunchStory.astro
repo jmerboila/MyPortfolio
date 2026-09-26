@@ -1,0 +1,92 @@
+---
+/* ============================================================================
+   LaunchStory.astro: a project told as chapters, numbered with the
+   homepage's lifecycle stages, so the process the homepage promises shows on
+   real work (his pick, 2026-09-25).
+
+   Wide screens: text left, the chapter's visual sticky on the right, in plain
+   CSS, so it holds while that chapter is read and leaves with it. Phones: the
+   visual sits above its text. The sticky visual lives in its own column, so
+   it never covers a focused element in the text.
+   ========================================================================= */
+import type { CollectionEntry } from 'astro:content';
+import { STAGES } from '../../config/lifecycle';
+import StoryVisual from './StoryVisual.astro';
+import '../../styles/story.css';
+
+type Story = NonNullable<CollectionEntry<'work'>['data']['story']>;
+interface Props {
+  story: Story;
+}
+const { story } = Astro.props;
+const stage = (id: string) => {
+  const s = STAGES.find((x) => x.id === id);
+  if (!s) throw new Error(`Unknown lifecycle stage "${id}" in a launch story`);
+  return s;
+};
+---
+
+<div class="st-story">
+  {
+    story.chapters.map((c, i) => {
+      const s = stage(c.stage);
+      return (
+        <section class="st-ch" aria-labelledby={`st-h-${i}`} data-st-chapter>
+          <div class="st-ch__visual">
+            <StoryVisual visual={c.visual} results={story.results} />
+          </div>
+          <div class="st-ch__text">
+            <p class="st-ch__stage">
+              <span>{s.n}</span> {s.label}
+            </p>
+            <h2 id={`st-h-${i}`} class="st-ch__h" data-split>
+              {c.heading}
+            </h2>
+            {c.body.map((p) => (
+              <p>{p}</p>
+            ))}
+            {c.visual.kind === 'results' && story.results && (
+              <>
+                <p class="st-ch__insight">{story.results.insight}</p>
+                {story.results.next.length > 0 && (
+                  <>
+                    <h3 class="st-ch__h3">What I'd test next</h3>
+                    <ul class="st-ch__next">
+                      {story.results.next.map((n) => (
+                        <li>{n}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+      );
+    })
+  }
+
+  {
+    story.sources.length > 0 && (
+      <aside class="st-sources" aria-labelledby="st-sources-h">
+        <h2 id="st-sources-h" class="st-ch__h3">
+          Sources
+        </h2>
+        <ol>
+          {story.sources.map((s) => (
+            <li>
+              <a href={s.url} rel="noopener" target="_blank">
+                {s.label}
+                <span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </aside>
+    )
+  }
+</div>
+
+<script>
+  import '../../scripts/story-motion';
+</script>

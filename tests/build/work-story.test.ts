@@ -35,3 +35,24 @@ test('Work pages use the v3 shell', () => {
     assert.match(h, /class="v3-crumbs"/, p);
   }
 });
+
+test('the story renders seven chapter blocks across six homepage stages', () => {
+  assert.equal((html.match(/data-st-chapter/g) ?? []).length, 7);
+  const stages = new Set(
+    [...html.matchAll(/class="st-ch__stage"[^>]*>([\s\S]*?)<\/p>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').trim()),
+  );
+  assert.equal(stages.size, 6, [...stages].join(' | '));
+});
+
+test('the disclaimer and the results source are on the page', () => {
+  assert.ok(html.includes('Self-initiated concept. Not affiliated with or endorsed by Ford Motor Company.'));
+  assert.ok(html.includes('Instagram Insights via Buffer, as of 25 September 2026'));
+});
+
+test('the slicer, the clock and the two real posts render', () => {
+  assert.match(html, /data-st-slicer/);
+  assert.match(html, /data-st-clock/);
+  assert.match(html, /Reel Reveal/);
+  assert.match(html, /Seamless Carousel/);
+  assert.match(html, /data-sp-video/);
+});

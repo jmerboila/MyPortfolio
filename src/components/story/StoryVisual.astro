@@ -1,0 +1,203 @@
+---
+/* ============================================================================
+   StoryVisual.astro: the one visual a launch-story chapter shows beside its
+   text. Every kind carries its own text alternative (alt, printed values or
+   a list), so a screen reader gets what the picture shows.
+
+   Charts follow the dataviz rules: one series per chart (no legend), bars
+   from a visible baseline with 4px rounded ends, no background track (it
+   would imply a 100% total), values printed in text colour beside each bar.
+   No hover tooltips: every value is already on screen.
+   ========================================================================= */
+import { Image, getImage } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { SOCIAL_ACCOUNTS, captionParts } from '../../config/social';
+
+type Story = NonNullable<CollectionEntry<'work'>['data']['story']>;
+interface Props {
+  visual: Story['chapters'][number]['visual'];
+  results?: Story['results'];
+}
+const { visual: v, results } = Astro.props;
+const who = SOCIAL_ACCOUNTS.instagram.name;
+const artboard =
+  v.kind === 'slicer' ? await getImage({ src: v.artboard, width: 2160, format: 'webp' }) : undefined;
+const maxReach = results ? Math.max(...results.pieces.map((p) => p.reach), 1) : 1;
+const fmt = (n: number, unit: string) => `${n.toFixed(2)}${unit}`;
+---
+
+{
+  v.kind === 'image' && (
+    <figure class="st-v st-v--image">
+      <Image src={v.src} alt={v.alt} widths={[640, 1080]} sizes="(min-width: 60rem) 34rem, 92vw" />
+      {v.note && <figcaption>{v.note}</figcaption>}
+    </figure>
+  )
+}
+
+{
+  v.kind === 'gallery' && (
+    <div class="st-v st-v--gallery">
+      {v.items.map((it) => (
+        <figure>
+          <Image src={it.src} alt={it.alt} widths={[800, 1400]} sizes="(min-width: 60rem) 34rem, 92vw" loading="lazy" />
+          {it.note && <figcaption>{it.note}</figcaption>}
+        </figure>
+      ))}
+    </div>
+  )
+}
+
+{
+  v.kind === 'chart' && (
+    <figure class="st-v st-chart">
+      {v.groups.map((g) => {
+        const max = Math.max(...g.bars.map((b) => b.value));
+        return (
+          <div class="st-chart__group">
+            <p class="st-chart__metric">{g.metric}</p>
+            <ul role="list">
+              {g.bars.map((b) => (
+                <li class="st-chart__row">
+                  <span class="st-chart__label">{b.label}</span>
+                  <span class="st-chart__plot" aria-hidden="true">
+                    <span class="st-chart__bar" style={`--w:${(b.value / max) * 100}%`} />
+                  </span>
+                  <span class="st-chart__value">{fmt(b.value, g.unit)}</span>
+                  {b.note && <span class="st-chart__note">{b.note}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+      <figcaption>Source: {v.source}</figcaption>
+    </figure>
+  )
+}
+
+{
+  v.kind === 'plan' && (
+    <figure class="st-v st-plan">
+      <ol role="list">
+        <li class="st-plan__step">
+          <Image src={v.steps[0].src} alt={v.steps[0].alt} widths={[480]} sizes="12rem" />
+          <p>
+            <strong>{v.steps[0].time}</strong> {v.steps[0].label}
+          </p>
+        </li>
+        <li class="st-plan__gap" aria-hidden="true">
+          {v.gap}
+        </li>
+        <li class="st-plan__step">
+          <Image src={v.steps[1].src} alt={v.steps[1].alt} widths={[480]} sizes="12rem" />
+          <p>
+            <strong>{v.steps[1].time}</strong> {v.steps[1].label}
+          </p>
+        </li>
+      </ol>
+    </figure>
+  )
+}
+
+{
+  v.kind === 'slicer' && artboard && (
+    <figure class="st-v st-slicer" data-st-slicer style={`--panels:${v.panels}`}>
+      <div class="st-slicer__board">
+        {Array.from({ length: v.panels }, (_, i) => (
+          <span class="st-slicer__tile">
+            <img
+              src={artboard.src}
+              alt={i === 0 ? v.alt : ''}
+              aria-hidden={i === 0 ? undefined : 'true'}
+              style={`inset-inline-start:${-i * 100}%;inline-size:${v.panels * 100}%`}
+              loading="lazy"
+              decoding="async"
+            />
+          </span>
+        ))}
+      </div>
+      <figcaption>One artboard, sliced into {v.panels} panels.</figcaption>
+      {v.drafts.length > 0 && (
+        <div class="st-slicer__drafts">
+          <p>Earlier versions</p>
+          <ul role="list">
+            {v.drafts.map((d) => (
+              <li>
+                <Image src={d.src} alt={d.alt} widths={[480]} sizes="10rem" loading="lazy" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </figure>
+  )
+}
+
+{
+  v.kind === 'captions' && (
+    <div class="st-v st-captions">
+      {v.items.map((c) => (
+        <figure class="st-cap">
+          <p class="st-cap__head">
+            <span class="st-cap__avatar" aria-hidden="true" />
+            <strong>{who}</strong>
+            <span>
+              {c.time} · {c.label}
+            </span>
+          </p>
+          <p class="st-cap__text">
+            {captionParts(c.text).map((p) => (p.tag ? <span class="st-cap__tag">{p.text}</span> : p.text))}
+          </p>
+        </figure>
+      ))}
+    </div>
+  )
+}
+
+{
+  v.kind === 'clock' && (
+    <figure class="st-v st-clock" data-st-clock>
+      <p class="st-clock__day">{v.day}</p>
+      <div class="st-clock__track" aria-hidden="true">
+        <span class="st-clock__fill" />
+      </div>
+      <ol role="list" class="st-clock__events">
+        {v.events.map((e) => (
+          <li>
+            <strong>{e.time}</strong> {e.label}
+          </li>
+        ))}
+      </ol>
+    </figure>
+  )
+}
+
+{
+  v.kind === 'results' && results && (
+    <figure class="st-v st-results">
+      <ul role="list">
+        {results.pieces.map((p) => (
+          <li class="st-results__piece">
+            <p class="st-results__name">{p.name}</p>
+            <p class="st-results__reach">
+              <strong>{p.reach}</strong> people reached
+            </p>
+            <span class="st-results__plot" aria-hidden="true">
+              <span class="st-results__bar" style={`--w:${(p.reach / maxReach) * 100}%`} />
+            </span>
+            <dl>
+              {p.stats.map((s) => (
+                <div>
+                  <dt>{s.label}</dt>
+                  <dd>{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </li>
+        ))}
+      </ul>
+      <figcaption>Source: {results.source}</figcaption>
+    </figure>
+  )
+}
