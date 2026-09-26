@@ -24,7 +24,7 @@ import { getImage } from 'astro:assets';
 import V3Layout from '../../layouts/V3Layout.astro';
 import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
 import Contact from '../../components/v3/Contact.astro';
-import SocialFeed from '../../components/social/SocialFeed.astro';
+import SocialShelves from '../../components/social/SocialShelves.astro';
 import { withMediaUrls } from '../../lib/social-media';
 import { sortPosts } from '../../config/social';
 import { absoluteUrl, PERSON, SITE_ORIGIN } from '../../config/site';
@@ -32,6 +32,7 @@ import { absoluteUrl, PERSON, SITE_ORIGIN } from '../../config/site';
 const entries = sortPosts(
   await getCollection('social', ({ data }) => import.meta.env.DEV || !data.draft),
 ).map(withMediaUrls);
+const projects = await getCollection('work', ({ data }) => !data.draft);
 
 const description =
   `Social media creative by ${PERSON.name} — Instagram carousels and Reels, ` +
@@ -78,14 +79,14 @@ const schema = [
         Made for the <em>feed</em>
       </h1>
       <p class="v3-social__lede" data-split>
-        Carousels, Reels and short-form video, shown exactly as they land on the
-        platform. Swipe the carousels, and tap any video to play it.
+        Social campaigns, one project at a time. Tap any video to play it, and
+        open a story to see how it was made.
       </p>
     </header>
 
     {
       entries.length ? (
-        <SocialFeed entries={entries} />
+        <SocialShelves entries={entries} projects={projects} />
       ) : (
         <p class="v3-social__lede">New posts are on the way.</p>
       )

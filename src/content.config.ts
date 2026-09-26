@@ -343,16 +343,11 @@ const social = defineCollection({
       /* Drafts render in `astro dev` only, never in a build. */
       draft: z.boolean().default(false),
 
-      /* -- "How I made it" page (/social/<folder>/) -----------------------
-         The write-up itself is the Markdown body under the frontmatter.
-         A post gets a page, and its card a "How I made it" link, once it
-         has any of the three (hasMakingOf in config/social). */
+      /* The tools the piece was made with. Kept as data for a project's
+         story; the per-post "How I made it" pages it once fed were replaced
+         by project stories on /work (2026-09-25). A post's Markdown body is
+         kept too, as notes, and is not rendered. */
       tools: z.array(z.string()).default([]),
-      /* Workspace screenshots (Premiere, After Effects…), in the post's
-         folder. `note` is the one-line caption under each. */
-      screens: z
-        .array(z.object({ image: image(), alt: z.string(), note: z.string().optional() }))
-        .default([]),
     });
 
     const slidesPost = base.extend({

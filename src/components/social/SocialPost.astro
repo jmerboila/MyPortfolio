@@ -1,11 +1,11 @@
 ---
 /* ============================================================================
-   SocialPost.astro — picks the frame for a post; underneath, the "How I made
-   it" link when the post has that page (and a draft marker in dev).
+   SocialPost.astro: picks the frame for a post; underneath, the piece's name
+   inside its project (e.g. "Reel Reveal") and, in dev, a draft marker.
    ----------------------------------------------------------------------------
    The platform badge, client line and case-study / "View on" links were
-   removed 2026-09-25 (his call): the filters already say Reel, Post or
-   Carousel, and the cards read cleaner as just the work.
+   removed 2026-09-25 (his call): the shelves name the project and each
+   piece, and the cards read cleaner as just the work.
 
    New post type: add its branch below. The `never` check at the end turns a
    forgotten branch into a type error rather than an empty card.
@@ -14,16 +14,12 @@ import type { CollectionEntry } from 'astro:content';
 import InstagramPost from './InstagramPost.astro';
 import InstagramReel from './InstagramReel.astro';
 import TikTokVideo from './TikTokVideo.astro';
-import { hasMakingOf } from '../../config/social';
-import { href } from '../../lib/url';
 
 interface Props {
   entry: CollectionEntry<'social'>;
-  /** Off on the post's own page, where the link would point at itself. */
-  link?: boolean;
 }
 
-const { entry, link = true } = Astro.props;
+const { entry } = Astro.props;
 const { data, id } = entry;
 
 function assertNever(x: never): never {
@@ -47,14 +43,9 @@ function assertNever(x: never): never {
   </div>
 
   {
-    ((link && hasMakingOf(entry)) || data.draft) && (
+    (data.piece || data.draft) && (
       <div class="sp-card__meta">
-        {link && hasMakingOf(entry) && (
-          <a class="sp-card__more" href={href(`/social/${id}/`)}>
-            How I made it<span class="visually-hidden">: {data.title}</span>
-            <span aria-hidden="true"> →</span>
-          </a>
-        )}
+        {data.piece && <p class="sp-card__piece">{data.piece}</p>}
         {data.draft && (
           <p class="sp-card__line"><span class="sp-badge sp-badge--draft">Draft · dev only</span></p>
         )}

@@ -262,39 +262,8 @@ function initCaptions(scope: ParentNode) {
   }
 }
 
-/* -- Filters -------------------------------------------------------------- */
-
-function initFilters(feed: HTMLElement) {
-  const bar = feed.querySelector<HTMLElement>('[data-sp-filters]');
-  const status = feed.querySelector<HTMLElement>('[data-sp-status]');
-  if (!bar || !status) return;
-
-  const buttons = Array.from(bar.querySelectorAll<HTMLButtonElement>('[data-filter]'));
-  const items = Array.from(feed.querySelectorAll<HTMLElement>('li[data-category]'));
-  bar.hidden = false;
-
-  for (const b of buttons) {
-    b.addEventListener('click', () => {
-      const filter = b.dataset.filter ?? 'all';
-      let shown = 0;
-      for (const item of items) {
-        const match = filter === 'all' || item.dataset.category === filter;
-        item.hidden = !match;
-        if (match) shown++;
-      }
-      for (const other of buttons) {
-        other.setAttribute('aria-pressed', String(other === b));
-      }
-      const label = b.firstChild?.textContent?.trim() ?? '';
-      status.textContent =
-        filter === 'all' ? `Showing all ${shown} posts` : `Showing ${shown} · ${label}`;
-    });
-  }
-}
-
 export function initSocial() {
   for (const feed of document.querySelectorAll<HTMLElement>('[data-sp-feed]')) {
-    initFilters(feed);
     initVideos(feed);
     initCarousels(feed);
     initReactions(feed);

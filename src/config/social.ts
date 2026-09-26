@@ -67,11 +67,10 @@ export const POST_TYPES = {
   'tiktok-video': { account: 'tiktok' },
 } as const satisfies Record<SocialType, PostTypeInfo>;
 
-/* The page files posts as Reel, Post or Carousel (his call, 2026-09-25) —
-   what the post IS, not which platform it's on. Order here is the order of
-   the filter chips. */
-export const CATEGORIES = { reel: 'Reels', post: 'Posts', carousel: 'Carousels' } as const;
-export type Category = keyof typeof CATEGORIES;
+/* What a post IS (Reel, Post or Carousel), not which platform it's on. Used
+   as the shelf label for a post that belongs to no project. */
+export const KIND_LABELS = { reel: 'Reel', post: 'Post', carousel: 'Carousel' } as const;
+export type Category = keyof typeof KIND_LABELS;
 
 /** A post's `category:` if it sets one, else read from its shape: one
  *  image or video is a Post, several a Carousel, a vertical video a Reel. */
@@ -110,8 +109,8 @@ export function compactCount(n: number): string {
   }).format(n);
 }
 
-/** The feed's order: `order` ascending, then newest first. Shared by /social
- *  and the "How I made it" pages' previous / next links. */
+/** The feed's order: `order` ascending, then newest first. Shared by the
+ *  /social shelves and a project page's "The posts". */
 export function sortPosts<T extends CollectionEntry<'social'>>(entries: T[]): T[] {
   return [...entries].sort((a, b) => {
     if (a.data.order !== b.data.order) return a.data.order - b.data.order;
@@ -119,7 +118,42 @@ export function sortPosts<T extends CollectionEntry<'social'>>(entries: T[]): T[
   });
 }
 
-/** A post has a "How I made it" page once there is something to put on it. */
-export function hasMakingOf(entry: CollectionEntry<'social'>): boolean {
-  return Boolean(entry.body?.trim()) || entry.data.tools.length > 0 || entry.data.screens.length > 0;
+export interface Shelf {
+  key: string;
+  title: string;
+  label: string;
+  idea?: string;
+  /** Site-relative path of the project's story, when it has one. */
+  storyPath?: string;
+  posts: CollectionEntry<'social'>[];
+}
+
+/** One shelf per project (the posts' `work`), then one per loose post, in
+ *  the order of each shelf's first post. Posts keep feed order inside. */
+export function groupShelves(
+  entries: CollectionEntry<'social'>[],
+  projects: CollectionEntry<'work'>[],
+): Shelf[] {
+  const byId = new Map(projects.map((p) => [p.id, p]));
+  const shelves = new Map<string, Shelf>();
+  for (const e of sortPosts(entries)) {
+    const project = e.data.work ? byId.get(e.data.work.id) : undefined;
+    const key = project ? `work:${project.id}` : `post:${e.id}`;
+    let shelf = shelves.get(key);
+    if (!shelf) {
+      shelf = project
+        ? {
+            key,
+            title: project.data.title,
+            label: project.data.category,
+            idea: project.data.story?.lede ?? project.data.summary,
+            storyPath: project.data.story ? `/work/${project.id}/` : undefined,
+            posts: [],
+          }
+        : { key, title: e.data.title, label: KIND_LABELS[postCategory(e.data)], posts: [] };
+      shelves.set(key, shelf);
+    }
+    shelf.posts.push(e);
+  }
+  return [...shelves.values()];
 }

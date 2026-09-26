@@ -1,0 +1,56 @@
+---
+/* ============================================================================
+   SocialShelves.astro: /social as one band per project (his pick,
+   2026-09-25). A project is a Work entry; posts join it through `work:`.
+   The pieces stay playable in place, and "Read the story" appears when the
+   project has a launch story. Posts with no project get a shelf of their own.
+   ========================================================================= */
+import type { CollectionEntry } from 'astro:content';
+import SocialPost from './SocialPost.astro';
+import { groupShelves } from '../../config/social';
+import { href } from '../../lib/url';
+import '../../styles/social.css';
+
+interface Props {
+  entries: CollectionEntry<'social'>[];
+  projects: CollectionEntry<'work'>[];
+}
+const { entries, projects } = Astro.props;
+const shelves = groupShelves(entries, projects);
+---
+
+<div class="sp-shelves sp-feed" data-sp-feed>
+  {
+    shelves.map((s, i) => (
+      <section class="sp-shelf" aria-labelledby={`sp-shelf-${i}`}>
+        <div class="sp-shelf__info">
+          <p class="sp-shelf__label">
+            {String(i + 1).padStart(2, '0')} · {s.label}
+          </p>
+          <h2 id={`sp-shelf-${i}`} class="sp-shelf__title">
+            {s.title}
+          </h2>
+          {s.idea && <p class="sp-shelf__idea">{s.idea}</p>}
+          {s.storyPath && (
+            <a class="sp-shelf__story" href={href(s.storyPath)}>
+              Read the story<span class="visually-hidden">: {s.title}</span>
+              <span aria-hidden="true"> →</span>
+            </a>
+          )}
+        </div>
+        <ul class="sp-shelf__pieces" role="list">
+          {s.posts.map((p) => (
+            <li>
+              <SocialPost entry={p} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  import { initSocial } from '../../scripts/social';
+  initSocial();
+</script>

@@ -22,6 +22,9 @@ type: instagram-post
 # A short internal name. Not shown on the card.
 title: "Spring launch carousel"
 
+# work: 2026-ford-mustang-gtd   # the project this post belongs to (its /work page)
+# piece: "Reel Reveal"          # its name inside the project, shown under the frame
+
 # The real caption, exactly as posted (hashtags included).
 caption: "Your caption here. #hashtag"
 
@@ -42,15 +45,6 @@ slides:
 #  - video: "./video.mp4"
 #    poster: "./cover.jpg"
 #    alt: "TODO"
-
-# ---- "HOW I MADE IT" PAGE (optional) ---------------------------------------
-# Fill any of these and the card gets a "How I made it" link to its own page.
-# tools: ["Premiere Pro", "After Effects", "Photoshop"]
-# screens:                     # workspace screenshots, dropped in this folder
-#   - image: "./premiere-1.png"
-#     alt: "TODO"
-#     note: "One line about what the screenshot shows"
-# The write-up goes BELOW the closing --- line, as normal text.
 
 # ---- REEL / TIKTOK (type: instagram-reel or tiktok-video) ------------------
 # audio: "Original audio"

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 
-/* /social and its "How I made it" pages (2026-09-25). */
+/* /social as project shelves (2026-09-25). */
 const PAGE = 'dist/social/index.html';
 const html = existsSync(PAGE) ? readFileSync(PAGE, 'utf8') : '';
 
@@ -13,14 +13,22 @@ test('/social is built on the v3 shell, with no stage rail', () => {
   assert.doesNotMatch(html, /data-rail\b/);
 });
 
-test('every "How I made it" link on /social has a built page', () => {
-  const links = [...html.matchAll(/class="sp-card__more"[^>]*href="\/MyPortfolio\/social\/([^/"]+)\/"/g)]
-    .concat([...html.matchAll(/href="\/MyPortfolio\/social\/([^/"]+)\/"[^>]*class="sp-card__more"/g)])
-    .map((m) => m[1]);
-  assert.ok(links.length > 0, 'no "How I made it" links found');
-  for (const slug of links) {
-    assert.ok(existsSync(`dist/social/${slug}/index.html`), `page for ${slug}`);
-  }
+test('/social shows project shelves, and the Mustang shelf links to its story', () => {
+  const shelves = html.match(/class="sp-shelf"/g) ?? [];
+  assert.ok(shelves.length >= 2, `found ${shelves.length} shelves`);
+  assert.match(html, /2026 Ford Mustang GTD/);
+  assert.match(html, /class="sp-shelf__story" href="\/MyPortfolio\/work\/2026-ford-mustang-gtd\/"/);
+});
+
+test('every "Read the story" link resolves', () => {
+  const links = [...html.matchAll(/class="sp-shelf__story" href="\/MyPortfolio\/(work\/[^"]+)"/g)].map((m) => m[1]);
+  assert.ok(links.length > 0);
+  for (const l of links) assert.ok(existsSync(`dist/${l}index.html`), l);
+});
+
+test('no filters and no per-post pages remain', () => {
+  assert.doesNotMatch(html, /data-sp-filters|sp-card__more/);
+  assert.ok(!existsSync('dist/social/mustang-gtd-reel/index.html'));
 });
 
 test('the cards carry no badge, client line, case-study link or video description', () => {
