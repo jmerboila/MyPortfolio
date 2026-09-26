@@ -59,7 +59,7 @@ export const CATEGORY_LABELS: Record<WorkCategory, string> = {
   graphic: 'Graphic',
   web: 'Web',
   mobile: 'Mobile',
-  social: 'Social Media Creatives',
+  social: 'Social',
   marketing: 'Digital Marketing',
 };
 

@@ -3,7 +3,7 @@ title: "Devsign8 Instagram Safe-Zone Toolkit"
 shortTitle: "Devsign8 Instagram Safe-Zone Toolkit"
 summary: "A ten-Reel series and a Photoshop template that keep designs clear of Instagram's buttons."
 intro: "A research-led content series for Devsign8: every Instagram format, where the interface covers it, and a Photoshop script that builds each canvas with its safe zones marked."
-category: "Social"
+category: "Content series"
 cats:
   - "social"
 tags:

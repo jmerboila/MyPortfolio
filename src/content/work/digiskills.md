@@ -22,6 +22,8 @@ constraints:
   - "Readable and usable by children aged 7–11"
 featured: true
 order: 30
+# Hidden 2026-09-26 (his call): DigiSkills shows as the logo only for now.
+draft: true
 ---
 <!-- CASE STUDY INCOMPLETE — missing: role, year, problem, approach, outcome.
      This body is where the long-form narrative goes once written. -->
