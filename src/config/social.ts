@@ -21,6 +21,7 @@
 import type { CollectionEntry } from 'astro:content';
 import devsign8Avatar from '../assets/projects/Devsign8-Logo.webp';
 import { projectPath } from '../lib/work-path';
+import { SOCIAL_SERIES, type SeriesCopy } from './social-series';
 
 export type SocialType = CollectionEntry<'social'>['data']['type'];
 
@@ -124,13 +125,16 @@ export interface Shelf {
   title: string;
   label: string;
   idea?: string;
+  /** Small print under the idea (a series' disclaimer). */
+  note?: string;
   /** Site-relative path of the project's story, when it has one. */
   storyPath?: string;
   posts: CollectionEntry<'social'>[];
 }
 
-/** One shelf per project (the posts' `work`), then one per loose post, in
- *  the order of each shelf's first post. Posts keep feed order inside. */
+/** One shelf per project (the posts' `work`) or series (`series`), then one
+ *  per loose post, in the order of each shelf's first post. Posts keep feed
+ *  order inside. */
 export function groupShelves(
   entries: CollectionEntry<'social'>[],
   projects: CollectionEntry<'work'>[],
@@ -139,7 +143,8 @@ export function groupShelves(
   const shelves = new Map<string, Shelf>();
   for (const e of sortPosts(entries)) {
     const project = e.data.work ? byId.get(e.data.work.id) : undefined;
-    const key = project ? `work:${project.id}` : `post:${e.id}`;
+    const series: SeriesCopy | undefined = e.data.series ? SOCIAL_SERIES[e.data.series] : undefined;
+    const key = project ? `work:${project.id}` : series ? `series:${e.data.series}` : `post:${e.id}`;
     let shelf = shelves.get(key);
     if (!shelf) {
       shelf = project
@@ -151,7 +156,9 @@ export function groupShelves(
             storyPath: project.data.story ? projectPath(project) : undefined,
             posts: [],
           }
-        : { key, title: e.data.title, label: KIND_LABELS[postCategory(e.data)], posts: [] };
+        : series
+          ? { key, title: series.title, label: series.label, idea: series.idea, note: series.note, posts: [] }
+          : { key, title: e.data.title, label: KIND_LABELS[postCategory(e.data)], posts: [] };
       shelves.set(key, shelf);
     }
     shelf.posts.push(e);

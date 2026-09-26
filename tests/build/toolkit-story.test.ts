@@ -40,7 +40,11 @@ test('no em dashes in the toolkit content files', () => {
 });
 
 test('the toolkit shows as a row of nine uncropped Reels (the tenth is a draft)', () => {
-  const shelf = social.slice(social.indexOf('Devsign8 Instagram Safe-Zone Toolkit'));
+  /* Its own shelf: the Mustang shelf above is a row too since 2026-09-26. */
+  const shelf =
+    social
+      .split('<section class="shelf"')
+      .find((s) => /class="shelf__title"[^>]*>\s*Devsign8 Instagram Safe-Zone Toolkit\s*</.test(s)) ?? '';
   const row = shelf.slice(shelf.indexOf('class="sp-reel-row"'), shelf.indexOf('</ul>', shelf.indexOf('class="sp-reel-row"')));
   assert.ok(row.length > 0, 'no Reel row on the toolkit shelf');
   assert.equal((row.match(/data-sp-video/g) ?? []).length, 9);

@@ -1,7 +1,8 @@
 ---
 /* ============================================================================
-   SocialPost.astro: picks the frame for a post; underneath, the piece's name
-   inside its project (e.g. "Reel Reveal") and, in dev, a draft marker.
+   SocialPost.astro: picks the frame for a post and, in dev, marks drafts.
+   The piece's name (e.g. "Seamless Carousel") sits in the frame's own top
+   bar since 2026-09-26, so it is no longer repeated under the card.
    ----------------------------------------------------------------------------
    The platform badge, client line and case-study / "View on" links were
    removed 2026-09-25 (his call): the shelves name the project and each
@@ -43,9 +44,8 @@ function assertNever(x: never): never {
   </div>
 
   {
-    ((data.piece && data.type !== 'instagram-reel') || data.draft) && (
+    data.draft && (
       <div class="sp-card__meta">
-        {data.piece && data.type !== 'instagram-reel' && <p class="sp-card__piece">{data.piece}</p>}
         {data.draft && (
           <p class="sp-card__line"><span class="sp-badge sp-badge--draft">Draft · dev only</span></p>
         )}

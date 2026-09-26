@@ -881,11 +881,6 @@ button.sp-rail__item:focus-visible {
   outline-offset: 4px;
 }
 
-.sp-card__piece {
-  margin: 0;
-  font-weight: 600;
-}
-
 .sp-card__meta {
   display: grid;
   gap: var(--space-3xs);

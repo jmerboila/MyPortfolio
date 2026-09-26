@@ -433,8 +433,9 @@ html.v3 {
 }
 
 /* © on the left, icon links on the right (round 5). */
-/* 2026-09-26: two rows (SiteFooter.astro). Top: the large JM mark and the
-   Work menu. Bottom: the © line and the icons, as before. */
+/* 2026-09-26, on devsign8.com's footer layout (SiteFooter.astro). Top row:
+   the mark and tagline left, Explore and Connect columns right. Then a
+   hairline and the credit line, left aligned on the mark's edge. */
 .v3-footer {
   padding-block: var(--space-2xl) var(--space-l);
   color: var(--text-dim);
@@ -443,9 +444,9 @@ html.v3 {
 .v3-footer__top {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-xl);
+  gap: var(--space-xl) var(--space-2xl);
   padding-block-end: var(--space-xl);
 }
 
@@ -461,14 +462,28 @@ html.v3 {
   inline-size: auto;
 }
 
-.v3-footer__nav {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.v3-footer__tagline {
+  margin: var(--space-s) 0 0;
+  font-size: 0.9375rem;
 }
 
-/* A vertical list under the Work heading (his layout, 2026-09-26). Each
-   link keeps a 44px row, so the list sits tight without shrinking targets. */
+/* Side by side even on a phone: the two columns are narrow. */
+.v3-footer__cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xl) clamp(var(--space-xl), 6vw, var(--space-2xl));
+}
+
+/* devsign8.com's column heads: small, bold, spaced capitals. */
+.v3-footer__head {
+  margin: 0 0 var(--space-2xs);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
 .v3-footer__nav ul {
   display: grid;
   padding: 0;
@@ -480,40 +495,38 @@ html.v3 {
   display: inline-flex;
   align-items: center;
   min-block-size: var(--tap-min);
-  color: var(--text-dim);
+  color: var(--text);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-out-quart);
 }
 
-.v3-footer__nav .v3-footer__head {
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--text);
-}
-
 .v3-footer__nav a:hover,
 .v3-footer__nav a:focus-visible {
-  color: var(--text);
+  color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 0.3em;
 }
 
-.v3-footer__bottom {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-m);
-  padding-block-start: var(--space-m);
-  border-block-start: 1px solid var(--border);
+/* The icons keep their 44px targets; pull the row left by the icon's inset
+   so the first glyph lines up with the "Connect" head. */
+.v3-footer__connect .v3-footer__socials {
+  margin-inline-start: calc((1.25rem - var(--tap-min)) / 2);
 }
 
-/* Round 7: the © line steps down to small print. */
-.v3-footer__bottom > p {
+.v3-footer__credit {
   margin: 0;
+  padding-block-start: var(--space-m);
+  border-block-start: 1px solid var(--border);
   font-size: 0.8125rem;
+}
+
+/* Phones and tablets: leave a Back to top pill's worth of room under the
+   credit line, so at the very bottom of the page the fixed pill sits in
+   empty space instead of over the links (his report, 2026-09-26). */
+@media (max-width: 63.99rem) {
+  .v3-footer {
+    padding-block-end: calc(var(--tap-min) + var(--space-m) * 2);
+  }
 }
 
 .v3-footer__socials {

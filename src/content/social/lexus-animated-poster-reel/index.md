@@ -4,6 +4,9 @@
 type: instagram-post
 category: reel   # filed under Reels; the frame keeps the video's own shape
 title: "Lexus NX 350h animated poster"
+piece: "NX 350h Animated Poster"
+series: 2026-lexus-nx
+tools: ["InDesign", "After Effects"]
 # TODO(jayson): drafted caption — replace with the one you posted.
 caption: "The NX 350h poster, in motion. #Lexus #NX350h #MotionDesign #AnimatedPoster"
 order: 31

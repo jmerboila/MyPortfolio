@@ -1,6 +1,9 @@
 ---
 type: instagram-post
 title: "Lexus NX 350h poster"
+piece: "NX 350h Poster"
+series: 2026-lexus-nx
+tools: ["InDesign"]
 # TODO(jayson): drafted caption — replace with the one you posted.
 caption: "Bold, sculpted, self-charging. The Lexus NX 350h: 240 HP, 200 km/h, and a cabin finished in rich red leather. #Lexus #NX350h #PosterDesign #AutomotiveDesign"
 order: 30

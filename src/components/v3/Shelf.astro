@@ -14,6 +14,8 @@ interface Props {
   label: string;
   title: string;
   idea?: string;
+  /** Small print under the idea, e.g. a trademark disclaimer. */
+  note?: string;
   link?: {
     text: string;
     path: string;
@@ -24,7 +26,7 @@ interface Props {
   id: string;
 }
 
-const { index, label, title, idea, link, id } = Astro.props;
+const { index, label, title, idea, note, link, id } = Astro.props;
 ---
 
 <section class="shelf" aria-labelledby={id}>
@@ -32,6 +34,7 @@ const { index, label, title, idea, link, id } = Astro.props;
     <p class="shelf__label">{String(index + 1).padStart(2, '0')} · {label}</p>
     <h2 id={id} class="shelf__title">{title}</h2>
     {idea && <p class="shelf__idea">{idea}</p>}
+    {note && <p class="shelf__note">{note}</p>}
     {
       link && (
         <a class="shelf__link" href={href(link.path)}>

@@ -14,6 +14,9 @@
 
 .shelf {
   display: grid;
+  /* minmax(0, 1fr), not the implicit auto column: an auto column grows to
+     the Reel row's full width, and the page scrolled sideways on phones. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-l);
   padding-block-start: var(--space-l);
   border-block-start: 1px solid var(--border);
@@ -49,6 +52,12 @@
 
 .shelf__idea {
   margin: 0 0 var(--space-s);
+  color: var(--text-dim);
+}
+
+.shelf__note {
+  margin: 0 0 var(--space-s);
+  font-size: 0.8125rem;
   color: var(--text-dim);
 }
 

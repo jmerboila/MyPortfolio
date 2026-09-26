@@ -1,14 +1,16 @@
 ---
 /* ============================================================================
-   SiteFooter.astro: the v3 footer (2026-09-26, his layout).
+   SiteFooter.astro: the v3 footer, on devsign8.com's layout (his pick,
+   2026-09-26).
    ----------------------------------------------------------------------------
-   Top row: the JM Design mark, large, on the left; a short Work menu on the
-   right (Work, then one link per type). Bottom row: the © line and the
-   social icons, unchanged from before.
+   Top row: the large JM Design mark and the tagline on the left; on the
+   right, two columns, Explore (one link per type of work) and Connect (the
+   social links, drawn as before, not as devsign8.com's round buttons).
+   Bottom row, left aligned on the same edge as the mark: the credit line.
 
-   The type links come from liveTypes(), the same list that builds the
+   The Explore links come from liveTypes(), the same list that builds the
    /work/<type>/ pages, so a new type shows up here once its first project
-   lands and a hidden one drops out, with no edit to this file.
+   lands, with no edit to this file.
 
    Not to be confused with ../SiteFooter.astro, the old v2 footer that only
    the 404 page (BaseLayout) still uses.
@@ -30,36 +32,43 @@ const year = new Date().getFullYear();
 
 <footer class="v3-footer container">
   <div class="v3-footer__top">
-    <a class="v3-footer__brand" href={href('/')}>
-      <JMMark class="v3-footer__jm" label={`${PERSON.name}, home`} />
-    </a>
+    <div class="v3-footer__id">
+      <a class="v3-footer__brand" href={href('/')}>
+        <JMMark class="v3-footer__jm" label="JM Design, home" />
+      </a>
+      <p class="v3-footer__tagline">Planned, made and measured</p>
+    </div>
 
-    <nav class="v3-footer__nav" aria-label="Work">
-      <a class="v3-footer__head" href={href('/work/')}>Work</a>
-      <ul role="list">
-        {
-          types.map((t) => (
-            <li>
-              <a href={href(typePath(t))}>{CATEGORY_LABELS[t]}</a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+    <div class="v3-footer__cols">
+      <nav class="v3-footer__nav" aria-labelledby="v3-footer-explore">
+        <h2 id="v3-footer-explore" class="v3-footer__head">Explore</h2>
+        <ul role="list">
+          {
+            types.map((t) => (
+              <li>
+                <a href={href(typePath(t))}>{CATEGORY_LABELS[t]}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="v3-footer__connect">
+        <h2 class="v3-footer__head">Connect</h2>
+        <ul class="v3-footer__socials" role="list">
+          {
+            V3_SOCIALS.map((s) => (
+              <li>
+                <a href={s.url} target="_blank" rel="noopener me" aria-label={`${s.label} (opens in a new tab)`}>
+                  {s.icon === 'devsign8' ? <Devsign8Mark class="v3-footer__mark" /> : <BrandIcon name={s.icon} />}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
   </div>
 
-  <div class="v3-footer__bottom">
-    <p>&copy; {year} {PERSON.name}</p>
-    <ul class="v3-footer__socials" role="list">
-      {
-        V3_SOCIALS.map((s) => (
-          <li>
-            <a href={s.url} target="_blank" rel="noopener me" aria-label={`${s.label} (opens in a new tab)`}>
-              {s.icon === 'devsign8' ? <Devsign8Mark class="v3-footer__mark" /> : <BrandIcon name={s.icon} />}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </div>
+  <p class="v3-footer__credit">&copy; {year} JM Design. Designed and built by {PERSON.name}.</p>
 </footer>

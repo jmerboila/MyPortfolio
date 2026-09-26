@@ -60,17 +60,21 @@ test('the Show up stage links to all the social work', () => {
   const stage = home.slice(home.indexOf('id="show-up"'), home.indexOf('id="measure"'));
   assert.match(stage, /href="\/MyPortfolio\/work\/social\/"[^>]*>\s*See all my social media work/);
 });
-test('the footer has the large mark and the Work menu', () => {
+test('the footer: mark and tagline left, Explore and Connect right, credit line last', () => {
   const footer = /<footer[\s\S]*?<\/footer>/.exec(read('dist/index.html'))?.[0] ?? '';
   assert.match(footer, /class="v3-footer__brand"[^>]*href="\/MyPortfolio\/"/);
-  const menu = /<nav class="v3-footer__nav"[\s\S]*?<\/nav>/.exec(footer)?.[0] ?? '';
-  const links = [...menu.matchAll(/href="([^"]+)"[^>]*>([^<]+)</g)].map((m) => `${m[2].trim()} ${m[1]}`);
+  assert.match(footer, /class="v3-footer__tagline"[^>]*>\s*Planned, made and measured\s*</);
+  const explore = /<nav class="v3-footer__nav"[\s\S]*?<\/nav>/.exec(footer)?.[0] ?? '';
+  assert.match(explore, /Explore/);
+  const links = [...explore.matchAll(/href="([^"]+)"[^>]*>([^<]+)</g)].map((m) => `${m[2].trim()} ${m[1]}`);
   assert.deepEqual(links, [
-    'Work /MyPortfolio/work/',
     'Logo Design /MyPortfolio/work/logo/',
     'Web Design /MyPortfolio/work/web/',
     'Social Media /MyPortfolio/work/social/',
   ]);
+  assert.match(footer, /Connect/);
+  assert.doesNotMatch(footer, /All rights reserved/);
+  assert.match(footer, /(?:©|&copy;) \d{4} JM Design\. Designed and built by Jayson Mercado Erboila\./);
 });
 
 /* One layout under Work (2026-09-26): the Social page's heading and shelves. */

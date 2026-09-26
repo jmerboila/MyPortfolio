@@ -39,7 +39,9 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
       {account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
     </span>
     <p class="sp-ig__who">
-      <span class="sp-ig__handle">{account.name}</span>
+      {/* The piece's name where Instagram shows the account (his call,
+          2026-09-26, as the Reels already do); the caption keeps the handle. */}
+      <span class="sp-ig__handle sp-ig__name">{data.piece ?? data.title}</span>
       {
         data.date && (
           <>

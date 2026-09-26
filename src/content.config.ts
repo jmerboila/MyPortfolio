@@ -25,6 +25,7 @@
    are still missing, so the gap stays visible instead of quietly shipping.
    ========================================================================= */
 import { defineCollection, reference } from 'astro:content';
+import { SERIES_IDS } from './config/social-series';
 import { glob } from 'astro/loaders';
 /* `z` from 'astro:content' is deprecated in Astro 7 and emits a hint on every
    single use — 39 of them here. The zod re-export moved to 'astro/zod'. */
@@ -349,6 +350,8 @@ const social = defineCollection({
       /* Kept as data, not shown since 2026-09-25 (his call: no badge,
          client or links under the cards). */
       work: reference('work').optional(),
+      /* A shelf for posts with no project page yet (config/social-series.ts). */
+      series: z.enum(SERIES_IDS).optional(),
       client: z.string().optional(),
       order: z.number().default(100),
       /* Drafts render in `astro dev` only, never in a build. */

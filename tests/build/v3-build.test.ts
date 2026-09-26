@@ -151,10 +151,10 @@ test('footer links to LinkedIn, Instagram and Devsign8 — no TikTok for now', (
   assert.match(footer, /href="https:\/\/www\.devsign8\.com"/);
   assert.doesNotMatch(footer, /tiktok\.com/);
 });
-test('footer puts the © line before the icon links', () => {
+test('footer ends on the © credit line, after the Connect links (2026-09-26)', () => {
   const copy = footer.indexOf('©') > -1 ? footer.indexOf('©') : footer.indexOf('&copy;');
   assert.ok(copy > -1, 'no © line');
-  assert.ok(copy < footer.indexOf('v3-footer__socials'), '© should come first');
+  assert.ok(copy > footer.indexOf('v3-footer__socials'), '© should come last');
 });
 test('the contact heading opens the Cal.com booking page', () => {
   assert.match(html, new RegExp(`<a class="v3-roll" ${BOOKING}`));

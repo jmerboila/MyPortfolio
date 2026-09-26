@@ -30,11 +30,13 @@ const shelves = groupShelves(entries, projects);
         label={s.label}
         title={s.title}
         idea={s.idea}
+        note={s.note}
         link={s.storyPath ? { text: 'Read the story', path: s.storyPath, context: `: ${s.title}` } : undefined}
       >
-        {/* More than three pieces (a Reel series): one swipeable row, each
-            uncropped, instead of wrapping into stacked rows. */}
-        {s.posts.length > 3 ? (
+        {/* More than one piece: one swipeable row, each uncropped and side
+            by side, instead of wrapping into stacked rows (his call for the
+            Mustang, 2026-09-26, matching the Toolkit). */}
+        {s.posts.length > 1 ? (
           <PostRow posts={s.posts} label={s.title} />
         ) : (
           <ul class="sp-shelf__pieces" role="list">
