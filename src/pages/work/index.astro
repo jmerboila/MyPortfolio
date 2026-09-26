@@ -17,11 +17,9 @@
    script has run. Nothing extra is needed here.
    ========================================================================= */
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import SiteHeader from '../../components/SiteHeader.astro';
-import SiteFooter from '../../components/SiteFooter.astro';
+import V3Layout from '../../layouts/V3Layout.astro';
+import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
 import WorkGrid from '../../components/WorkGrid.astro';
-import { href } from '../../lib/url';
 import { absoluteUrl, PERSON } from '../../config/site';
 
 const entries = await getCollection('work', ({ data }) => !data.draft);
@@ -62,16 +60,10 @@ const schema = [
 ];
 ---
 
-<BaseLayout title="Work" description={description} path="/work/" schema={schema}>
-  <SiteHeader slot="header" />
-  <SiteFooter slot="footer" />
+<V3Layout title="Work" description={description} path="/work/" schema={schema}>
 
   <div class="work-page section container">
-    <nav class="crumbs" aria-label="Breadcrumb">
-      <a href={href('/')}>Home</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">Work</span>
-    </nav>
+    <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Work' }]} />
 
     <p class="section__label">Selected work</p>
     <h1 class="section__title">Every <em>project</em></h1>
@@ -83,33 +75,15 @@ const schema = [
     {/* No featuredOnly: this is the whole collection. */}
     <WorkGrid />
   </div>
-</BaseLayout>
+</V3Layout>
 
 <style>
   /* The page heading is an <h1> here rather than the <h2> the homepage uses,
      but it is the same visual rank — so it borrows .section__title from
      base.css instead of inheriting the much larger default h1 size. */
   .work-page {
-    /* Clears the sticky header, which the homepage gets from the hero's own
-       top padding and this page has no hero to provide. */
-    padding-block-start: calc(var(--header-height, 4.5rem) + var(--space-xl));
+    /* The v3 header is sticky, not fixed, so nothing needs clearing. */
+    padding-block: var(--space-m) var(--space-section);
   }
 
-  .crumbs {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2xs);
-    font-size: var(--step--1);
-    color: var(--text-dim);
-    margin-block-end: var(--space-l);
-  }
-
-  .crumbs a {
-    color: inherit;
-  }
-
-  .crumbs a:hover {
-    color: var(--accent);
-  }
 </style>

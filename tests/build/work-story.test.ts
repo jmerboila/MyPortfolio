@@ -26,3 +26,12 @@ test('no em dashes in the project content files', () => {
     assert.doesNotMatch(read(f), /—/, f);
   }
 });
+
+test('Work pages use the v3 shell', () => {
+  for (const p of ['dist/work/index.html', `dist/work/${SLUG}/index.html`, 'dist/work/digiskills/index.html']) {
+    const h = read(p);
+    assert.match(h, /<html[^>]*class="v3"/, p);
+    assert.match(h, /data-v3-header/, p);
+    assert.match(h, /class="v3-crumbs"/, p);
+  }
+});

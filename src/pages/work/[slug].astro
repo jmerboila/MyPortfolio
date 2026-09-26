@@ -14,9 +14,8 @@
    ========================================================================= */
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import SiteHeader from '../../components/SiteHeader.astro';
-import SiteFooter from '../../components/SiteFooter.astro';
+import V3Layout from '../../layouts/V3Layout.astro';
+import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
 import { href } from '../../lib/url';
 import { absoluteUrl } from '../../config/site';
 
@@ -68,24 +67,13 @@ const schema = [
 ];
 ---
 
-<BaseLayout
-  title={d.title}
-  description={d.summary}
-  path={`/work/${entry.id}/`}
-  schema={schema}
->
-  <SiteHeader slot="header" />
-  <SiteFooter slot="footer" />
+<V3Layout title={d.title} description={d.summary} path={`/work/${entry.id}/`} schema={schema}>
 
   <article class="project">
     <header class="project__head container">
-      <nav class="crumbs" aria-label="Breadcrumb">
-        <a href={href('/')}>Home</a>
-        <span aria-hidden="true">/</span>
-        <a href={href('/work/')}>Work</a>
-        <span aria-hidden="true">/</span>
-        <span aria-current="page">{d.shortTitle ?? d.title}</span>
-      </nav>
+      <Breadcrumbs
+        items={[{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label: d.shortTitle ?? d.title }]}
+      />
 
       <p class="project__cat">{d.category}</p>
       <h1 class="project__title">{d.title}</h1>
@@ -230,7 +218,7 @@ const schema = [
       </a>
     </nav>
   </article>
-</BaseLayout>
+</V3Layout>
 
 <style>
   .project {
@@ -239,23 +227,6 @@ const schema = [
     gap: var(--space-xl);
   }
 
-  .crumbs {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2xs);
-    font-size: var(--step--1);
-    color: var(--text-dim);
-    margin-block-end: var(--space-l);
-  }
-
-  .crumbs a {
-    color: inherit;
-  }
-
-  .crumbs a:hover {
-    color: var(--accent);
-  }
 
   .project__cat {
     font-size: var(--step--1);
