@@ -72,6 +72,12 @@ const twoCols = work.length >= 2;
           })}
         </ul>
       )}
+
+      {stage.more && (
+        <a class="v3-stage__more" href={href(stage.more.path)}>
+          {stage.more.label} <span aria-hidden="true">→</span>
+        </a>
+      )}
     </div>
   </div>
 </section>
@@ -249,5 +255,23 @@ const twoCols = work.length >= 2;
     font-size: var(--step--1);
     font-weight: 500;
     color: var(--accent);
+  }
+
+  /* Same voice as the card's "See the project", but its own 44px target. */
+  .v3-stage__more {
+    display: inline-flex;
+    gap: 0.4em;
+    align-items: center;
+    min-block-size: var(--tap-min);
+    margin-block-start: var(--space-s);
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .v3-stage__more:hover,
+  .v3-stage__more:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
   }
 </style>

@@ -49,3 +49,26 @@ test('shelf labels read Launch campaign and Content series', () => {
   assert.match(social, /01 · Launch campaign/);
   assert.match(social, /02 · Content series/);
 });
+test('the header has a Work link on every page', () => {
+  for (const p of ['dist/index.html', 'dist/work/social/index.html']) {
+    const header = /<header class="v3-nav"[\s\S]*?<\/header>/.exec(read(p))?.[0] ?? '';
+    assert.match(header, /<a class="v3-navlink"[^>]*href="\/MyPortfolio\/work\/"[^>]*>Work</, p);
+  }
+});
+test('the Show up stage links to all the social work', () => {
+  const home = read('dist/index.html');
+  const stage = home.slice(home.indexOf('id="show-up"'), home.indexOf('id="measure"'));
+  assert.match(stage, /href="\/MyPortfolio\/work\/social\/"[^>]*>\s*See all my social media work/);
+});
+test('the footer has the large mark and the Work menu', () => {
+  const footer = /<footer[\s\S]*?<\/footer>/.exec(read('dist/index.html'))?.[0] ?? '';
+  assert.match(footer, /class="v3-footer__brand"[^>]*href="\/MyPortfolio\/"/);
+  const menu = /<nav class="v3-footer__nav"[\s\S]*?<\/nav>/.exec(footer)?.[0] ?? '';
+  const links = [...menu.matchAll(/href="([^"]+)"[^>]*>([^<]+)</g)].map((m) => `${m[2].trim()} ${m[1]}`);
+  assert.deepEqual(links, [
+    'Work /MyPortfolio/work/',
+    'Logo /MyPortfolio/work/logo/',
+    'Web /MyPortfolio/work/web/',
+    'Social /MyPortfolio/work/social/',
+  ]);
+});

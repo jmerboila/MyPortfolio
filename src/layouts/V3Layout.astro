@@ -14,15 +14,13 @@
    The header is sticky and publishes --header-height, because DotGrid insets
    its canvas by that variable so no dot ever paints behind the navigation.
    ========================================================================= */
-import { PERSON, SEO } from '../config/site';
-import { V3_SOCIALS } from '../config/v3';
+import { SEO } from '../config/site';
 import type { Props as SeoProps } from '../components/SeoHead.astro';
 import SeoHead from '../components/SeoHead.astro';
 import GoogleTagManager from '../components/GoogleTagManager.astro';
-import BrandIcon from '../components/v3/BrandIcon.astro';
-import Devsign8Mark from '../components/Devsign8Mark.astro';
 import DotGrid from '../components/DotGrid.astro';
 import SiteNav from '../components/v3/SiteNav.astro';
+import SiteFooter from '../components/v3/SiteFooter.astro';
 import StageRail from '../components/v3/StageRail.astro';
 
 import '@fontsource-variable/inter-tight/wght.css';
@@ -40,7 +38,6 @@ type Props = SeoProps & {
 
 const { rail = false, ...seo } = Astro.props;
 
-const year = new Date().getFullYear();
 ---
 
 <!doctype html>
@@ -91,22 +88,7 @@ const year = new Date().getFullYear();
       <slot />
     </main>
 
-    <footer class="v3-footer container">
-      <p>&copy; {year} {PERSON.name}</p>
-      <ul class="v3-footer__socials" role="list">
-        {V3_SOCIALS.map((s) => (
-          <li>
-            <a href={s.url} target="_blank" rel="noopener me" aria-label={`${s.label} (opens in a new tab)`}>
-              {s.icon === 'devsign8' ? (
-                <Devsign8Mark class="v3-footer__mark" />
-              ) : (
-                <BrandIcon name={s.icon} />
-              )}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </footer>
+    <SiteFooter />
 
     <script>
       /* Header height publishing and the theme toggle now live in SiteNav. */

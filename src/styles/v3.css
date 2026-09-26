@@ -100,6 +100,32 @@ html.v3 {
   flex-shrink: 0;
 }
 
+/* The one page link (2026-09-26). Dim until hovered, focused or current,
+   so it never competes with the "Let's talk" CTA beside it. */
+.v3-navlink {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--tap-min);
+  padding-inline: 0.75rem;
+  border-radius: var(--radius-full);
+  color: var(--text-dim);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+
+.v3-navlink:hover,
+.v3-navlink:focus-visible,
+.v3-navlink[aria-current] {
+  color: var(--text);
+}
+
+.v3-navlink[aria-current] {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.35em;
+}
+
 .v3-iconbtn {
   display: inline-grid;
   place-items: center;
@@ -406,18 +432,85 @@ html.v3 {
 }
 
 /* © on the left, icon links on the right (round 5). */
+/* 2026-09-26: two rows (SiteFooter.astro). Top: the large JM mark and the
+   Work menu. Bottom: the © line and the icons, as before. */
 .v3-footer {
+  padding-block: var(--space-2xl) var(--space-l);
+  color: var(--text-dim);
+}
+
+.v3-footer__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  padding-block-end: var(--space-xl);
+}
+
+.v3-footer__brand {
+  display: inline-block;
+  color: var(--text);
+  border-radius: var(--radius-m);
+}
+
+.v3-footer__jm {
+  display: block;
+  block-size: clamp(4.5rem, 3rem + 5vw, 7rem);
+  inline-size: auto;
+}
+
+.v3-footer__nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.v3-footer__nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-m);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.v3-footer__nav a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--tap-min);
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out-quart);
+}
+
+.v3-footer__nav .v3-footer__head {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.v3-footer__nav a:hover,
+.v3-footer__nav a:focus-visible {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.v3-footer__bottom {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-m);
-  padding-block: var(--space-xl);
-  color: var(--text-dim);
+  padding-block-start: var(--space-m);
+  border-block-start: 1px solid var(--border);
 }
 
 /* Round 7: the © line steps down to small print. */
-.v3-footer > p {
+.v3-footer__bottom > p {
   margin: 0;
   font-size: 0.8125rem;
 }

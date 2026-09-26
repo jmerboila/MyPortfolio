@@ -9,6 +9,10 @@
    header used to open is superseded by the coming stage sections (see
    docs/v3-todo.md's "Next" list).
 
+   2026-09-26: one page link came back, Work, so the work pages (which
+   nothing linked to) can be found from anywhere. It is marked current on
+   /work/ itself ("page") and anywhere under it ("true").
+
    Every icon still sits beside a visible label, or (the theme button) gets
    its name from aria-label — the icon never names a control alone.
    ========================================================================= */
@@ -17,6 +21,10 @@ import { CONTACT_HREF } from '../../config/lifecycle';
 import { href } from '../../lib/url';
 import JMMark from '../JMMark.astro';
 import Icon from './Icon.astro';
+
+const workHref = href('/work/');
+const here = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const workCurrent = here === workHref ? 'page' : here.startsWith(workHref) ? 'true' : undefined;
 ---
 
 <header class="v3-nav" data-v3-header>
@@ -28,6 +36,7 @@ import Icon from './Icon.astro';
     </a>
 
     <div class="v3-nav__actions">
+      <a class="v3-navlink" href={workHref} aria-current={workCurrent}>Work</a>
       <a class="v3-talk" href={CONTACT_HREF}>Let's talk</a>
       <button type="button" class="v3-iconbtn" id="v3-theme" aria-label="Switch to dark theme">
         <Icon name="sun" class="v3-theme__sun" />

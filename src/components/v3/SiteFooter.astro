@@ -1,0 +1,65 @@
+---
+/* ============================================================================
+   SiteFooter.astro: the v3 footer (2026-09-26, his layout).
+   ----------------------------------------------------------------------------
+   Top row: the JM Design mark, large, on the left; a short Work menu on the
+   right (Work, then one link per type). Bottom row: the © line and the
+   social icons, unchanged from before.
+
+   The type links come from liveTypes(), the same list that builds the
+   /work/<type>/ pages, so a new type shows up here once its first project
+   lands and a hidden one drops out, with no edit to this file.
+
+   Not to be confused with ../SiteFooter.astro, the old v2 footer that only
+   the 404 page (BaseLayout) still uses.
+   ========================================================================= */
+import { getCollection } from 'astro:content';
+import { PERSON } from '../../config/site';
+import { V3_SOCIALS } from '../../config/v3';
+import { CATEGORY_LABELS, WORK_CATEGORIES } from '../../content.config';
+import { href } from '../../lib/url';
+import { liveTypes, typePath } from '../../lib/work-path';
+import BrandIcon from './BrandIcon.astro';
+import Devsign8Mark from '../Devsign8Mark.astro';
+import JMMark from '../JMMark.astro';
+
+const work = await getCollection('work', ({ data }) => !data.draft);
+const types = liveTypes(WORK_CATEGORIES, work);
+const year = new Date().getFullYear();
+---
+
+<footer class="v3-footer container">
+  <div class="v3-footer__top">
+    <a class="v3-footer__brand" href={href('/')}>
+      <JMMark class="v3-footer__jm" label={`${PERSON.name}, home`} />
+    </a>
+
+    <nav class="v3-footer__nav" aria-label="Work">
+      <a class="v3-footer__head" href={href('/work/')}>Work</a>
+      <ul role="list">
+        {
+          types.map((t) => (
+            <li>
+              <a href={href(typePath(t))}>{CATEGORY_LABELS[t]}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+
+  <div class="v3-footer__bottom">
+    <p>&copy; {year} {PERSON.name}</p>
+    <ul class="v3-footer__socials" role="list">
+      {
+        V3_SOCIALS.map((s) => (
+          <li>
+            <a href={s.url} target="_blank" rel="noopener me" aria-label={`${s.label} (opens in a new tab)`}>
+              {s.icon === 'devsign8' ? <Devsign8Mark class="v3-footer__mark" /> : <BrandIcon name={s.icon} />}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>

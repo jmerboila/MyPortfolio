@@ -30,6 +30,8 @@ export interface Stage {
   gets: string;
   /** content/work entry ids shown as sample work at this stage. */
   work: readonly string[];
+  /** A link under the sample work to see more of that kind (2026-09-26). */
+  more?: { label: string; path: string };
 }
 
 export const STAGES: readonly Stage[] = [
@@ -86,6 +88,7 @@ export const STAGES: readonly Stage[] = [
     body: 'Social media set up and filled with posts people stop for, planned ahead and on brand.',
     gets: 'Social channels and a posting plan',
     work: ['2026-ford-mustang-gtd'],
+    more: { label: 'See all my social media work', path: '/work/social/' },
   },
   {
     id: 'measure',
