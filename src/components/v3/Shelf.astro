@@ -1,0 +1,46 @@
+---
+/* ============================================================================
+   Shelf.astro: one band on a Work page (2026-09-26). The Social page's
+   layout, shared: on the left "01 · label", the title, one line and a link
+   (sticky on wide screens); on the right, whatever the slot holds (posts,
+   project covers). Styles: .shelf in src/styles/shelves.css.
+   ========================================================================= */
+import { href } from '../../lib/url';
+import '../../styles/shelves.css';
+
+interface Props {
+  /** 0-based position; shown as 01, 02... */
+  index: number;
+  label: string;
+  title: string;
+  idea?: string;
+  link?: {
+    text: string;
+    path: string;
+    /** Read after the link text by screen readers only, e.g. ": JM Design". */
+    context?: string;
+  };
+  /** Unique per page: the heading id the section is labelled by. */
+  id: string;
+}
+
+const { index, label, title, idea, link, id } = Astro.props;
+---
+
+<section class="shelf" aria-labelledby={id}>
+  <div class="shelf__info">
+    <p class="shelf__label">{String(index + 1).padStart(2, '0')} · {label}</p>
+    <h2 id={id} class="shelf__title">{title}</h2>
+    {idea && <p class="shelf__idea">{idea}</p>}
+    {
+      link && (
+        <a class="shelf__link" href={href(link.path)}>
+          {link.text}
+          {link.context && <span class="visually-hidden">{link.context}</span>}
+          <span aria-hidden="true"> →</span>
+        </a>
+      )
+    }
+  </div>
+  <slot />
+</section>

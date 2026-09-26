@@ -1,0 +1,58 @@
+---
+/* ============================================================================
+   BackToTop.astro: one "Back to top" link, bottom right (2026-09-26).
+   ----------------------------------------------------------------------------
+   Built to Nielsen Norman Group's back-to-top guidelines
+   (nngroup.com/articles/back-to-top/): for pages longer than about four
+   screens; one persistent link in the lower right; labelled "Back to top",
+   since an arrow alone is ambiguous; and it stays still once it appears.
+
+   - It fades in only after about three screens of scrolling, so short
+     pages never show it.
+   - The arrow always points up (his first idea was an arrow that turns on
+     hover; phones have no hover, so it would have read as "down" there).
+     On hover and focus it nudges upward instead.
+   - href="#top" works with no script: browsers scroll to the top for a
+     "top" fragment that matches no element. With script it scrolls without
+     adding #top to the address, following base.css (smooth, or instant
+     under reduced motion), and moves focus to the header's home link so a
+     keyboard user continues from the top.
+   - Hidden with visibility, not just opacity, so it is out of the tab order
+     until it shows.
+   Styles: .v3-totop in v3.css.
+   ========================================================================= */
+import Icon from './Icon.astro';
+---
+
+<a class="v3-totop" href="#top" data-totop>
+  <Icon name="arrow-up" class="v3-totop__arrow" />
+  Back to top
+</a>
+
+<script>
+  const link = document.querySelector<HTMLAnchorElement>('[data-totop]');
+  if (link) {
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      link.toggleAttribute('data-visible', window.scrollY > window.innerHeight * 3);
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.scrollTo({ top: 0 });
+      document.querySelector<HTMLElement>('.v3-nav__brand')?.focus({ preventScroll: true });
+    });
+  }
+</script>

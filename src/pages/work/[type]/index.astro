@@ -5,11 +5,16 @@
    A page exists only for a type that has a visible project (liveTypes), so a
    new type appears on its own once its first project lands. Social is left
    out here: it has its own page, /work/social/, with the playable posts.
+
+   Same layout as /work/social/ (his call, 2026-09-26): the big heading, then
+   one shelf per project with its cover large on the right.
    ========================================================================= */
 import { getCollection } from 'astro:content';
 import V3Layout from '../../../layouts/V3Layout.astro';
-import Breadcrumbs from '../../../components/v3/Breadcrumbs.astro';
-import WorkGrid from '../../../components/WorkGrid.astro';
+import PageHead from '../../../components/v3/PageHead.astro';
+import Shelf from '../../../components/v3/Shelf.astro';
+import WorkCover from '../../../components/v3/WorkCover.astro';
+import { TYPE_COPY } from '../../../config/work-types';
 import { absoluteUrl, PERSON } from '../../../config/site';
 import { CATEGORY_LABELS, WORK_CATEGORIES, type WorkCategory } from '../../../content.config';
 import { liveTypes, projectPath, typePath, workType } from '../../../lib/work-path';
@@ -33,7 +38,8 @@ const entries = (await getCollection('work', ({ data }) => !data.draft))
       : a.data.title.localeCompare(b.data.title),
   );
 
-const description = `${label} design projects by ${PERSON.name}.`;
+const copy = TYPE_COPY[type] ?? { title: label, accent: 'work', lede: '' };
+const description = `${label} projects by ${PERSON.name}. ${copy.lede}`.trim();
 
 const schema = [
   {
@@ -58,16 +64,30 @@ const schema = [
 ---
 
 <V3Layout title={label} description={description} path={path} schema={schema}>
-  <div class="work-page section container">
-    <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label }]} />
+  <div class="work-page container">
+    <PageHead
+      crumbs={[{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label }]}
+      title={copy.title}
+      accent={copy.accent}
+      lede={copy.lede}
+    />
 
-    <p class="section__label">Work</p>
-    <h1 class="section__title"><em>{label}</em></h1>
-    <p class="section__lede">
-      {entries.length} {entries.length === 1 ? 'project' : 'projects'}. Open any one for the full artwork.
-    </p>
-
-    <WorkGrid type={type} />
+    <div class="shelves">
+      {
+        entries.map((entry, i) => (
+          <Shelf
+            index={i}
+            id={`shelf-${entry.id}`}
+            label={entry.data.category}
+            title={entry.data.title}
+            idea={entry.data.summary}
+            link={{ text: 'See the project', path: projectPath(entry), context: `: ${entry.data.title}` }}
+          >
+            <WorkCover entry={entry} size="large" />
+          </Shelf>
+        ))
+      }
+    </div>
   </div>
 </V3Layout>
 

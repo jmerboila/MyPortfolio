@@ -1,0 +1,131 @@
+/* ============================================================================
+   shelves.css: the band layout every Work page shares (2026-09-26).
+   ----------------------------------------------------------------------------
+   Born on the Social page (his pick, 2026-09-25), moved here from social.css
+   when Work, Logo Design and Web Design took the same layout. Global, not
+   scoped: Shelf.astro's slot content comes from other components, and an
+   Astro scoped rule never reaches a child component's markup.
+   ========================================================================= */
+
+.shelves {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+.shelf {
+  display: grid;
+  gap: var(--space-l);
+  padding-block-start: var(--space-l);
+  border-block-start: 1px solid var(--border);
+}
+
+@media (min-width: 64rem) {
+  .shelf {
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-xl);
+  }
+
+  .shelf__info {
+    position: sticky;
+    inset-block-start: calc(var(--header-height, 4.5rem) + var(--space-m));
+  }
+}
+
+.shelf__label {
+  margin: 0 0 var(--space-2xs);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.shelf__title {
+  margin: 0 0 var(--space-2xs);
+  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.shelf__idea {
+  margin: 0 0 var(--space-s);
+  color: var(--text-dim);
+}
+
+.shelf__link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--tap-min);
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 0.3em;
+}
+
+.shelf__link:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+
+/* -- Project covers (WorkCover.astro) -------------------------------------
+   The frame is 4:3 with the cover contained, not cropped: logo covers are
+   wide wordmarks and square monograms, and cropping cuts the mark. */
+/* Three across on a laptop, two on a tablet, one on a phone. */
+.covers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: var(--space-l);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cover {
+  display: grid;
+  gap: var(--space-2xs);
+  color: inherit;
+  text-decoration: none;
+}
+
+
+.cover--large {
+  inline-size: min(100%, 44rem);
+}
+
+.cover__frame {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  background: var(--bg-2);
+  transition: border-color var(--dur-fast) var(--ease-out-quart);
+}
+
+.cover__frame img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  transition: scale var(--dur-base) var(--ease-out-quart);
+}
+
+.cover__name {
+  font-weight: 600;
+}
+
+.cover:hover .cover__frame,
+.cover:focus-visible .cover__frame {
+  border-color: var(--accent);
+}
+
+.cover:hover .cover__frame img,
+.cover:focus-visible .cover__frame img {
+  scale: 1.03;
+}
+
+.cover:hover .cover__name,
+.cover:focus-visible .cover__name {
+  color: var(--accent);
+}

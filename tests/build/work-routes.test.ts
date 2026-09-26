@@ -41,7 +41,7 @@ test('a project page has the four-level breadcrumb', () => {
   const html = read('dist/work/social/2026-ford-mustang-gtd/index.html');
   const crumbs = /<nav class="v3-crumbs"[\s\S]*?<\/nav>/.exec(html)?.[0] ?? '';
   assert.match(crumbs, /href="\/MyPortfolio\/work\/"[^>]*>Work</);
-  assert.match(crumbs, /href="\/MyPortfolio\/work\/social\/"[^>]*>Social</);
+  assert.match(crumbs, /href="\/MyPortfolio\/work\/social\/"[^>]*>Social Media</);
   assert.match(crumbs, /aria-current="page"[^>]*>2026 Ford Mustang GTD</);
 });
 test('shelf labels read Launch campaign and Content series', () => {
@@ -67,8 +67,40 @@ test('the footer has the large mark and the Work menu', () => {
   const links = [...menu.matchAll(/href="([^"]+)"[^>]*>([^<]+)</g)].map((m) => `${m[2].trim()} ${m[1]}`);
   assert.deepEqual(links, [
     'Work /MyPortfolio/work/',
-    'Logo /MyPortfolio/work/logo/',
-    'Web /MyPortfolio/work/web/',
-    'Social /MyPortfolio/work/social/',
+    'Logo Design /MyPortfolio/work/logo/',
+    'Web Design /MyPortfolio/work/web/',
+    'Social Media /MyPortfolio/work/social/',
   ]);
+});
+
+/* One layout under Work (2026-09-26): the Social page's heading and shelves. */
+const shelfLinks = (html: string) => [...html.matchAll(/class="shelf__link" href="([^"]+)"/g)].map((m) => m[1]);
+
+test('/work/ is a hub: one shelf per type, linking to its type page and its projects', () => {
+  const html = read('dist/work/index.html');
+  assert.doesNotMatch(html, /data-filters|work__grid/);
+  assert.deepEqual(shelfLinks(html), ['/MyPortfolio/work/logo/', '/MyPortfolio/work/web/', '/MyPortfolio/work/social/']);
+  for (const [slug, type] of Object.entries(LIVE)) {
+    assert.match(html, new RegExp(`href="/MyPortfolio/work/${type}/${slug}/"`), slug);
+  }
+});
+test('type pages list one shelf per project under the big heading', () => {
+  const logo = read('dist/work/logo/index.html');
+  assert.match(logo, /class="v3-pagehead__title"[^>]*>[\s\S]*?Marks that[\s\S]*?<em>last<\/em>/);
+  assert.deepEqual(shelfLinks(logo).sort(), [
+    '/MyPortfolio/work/logo/devsign8/',
+    '/MyPortfolio/work/logo/digiskills-logo/',
+    '/MyPortfolio/work/logo/jm-design/',
+  ]);
+  for (const p of ['dist/work/index.html', 'dist/work/web/index.html', 'dist/work/social/index.html']) {
+    assert.match(read(p), /class="v3-pagehead__title"/, p);
+  }
+});
+test('every page has exactly one Back to top link, and it works without script', () => {
+  for (const p of ['dist/index.html', 'dist/work/social/2026-ford-mustang-gtd/index.html']) {
+    const links = read(p).match(/<a class="v3-totop"[^>]*>[\s\S]*?<\/a>/g) ?? [];
+    assert.equal(links.length, 1, p);
+    assert.match(links[0], /href="#top"/);
+    assert.match(links[0], /Back to top/);
+  }
 });

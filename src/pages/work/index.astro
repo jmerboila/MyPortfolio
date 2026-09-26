@@ -1,27 +1,24 @@
 ---
 /* ============================================================================
-   /work — the full body of work.
+   /work: the hub. One shelf per type of work (Logo Design, Web Design, Social
+   Media), each with its projects' covers and a link to the type's page.
    ----------------------------------------------------------------------------
-   WHY THIS PAGE EXISTS. WorkGrid has always taken a `featuredOnly` prop and
-   nothing ever passed it, so the homepage rendered all seven projects and
-   there was nowhere else to send anyone. The homepage now shows the featured
-   set and hands off here, which is what that prop was written for.
+   2026-09-26 (his call): every page under Work shares the Social page's
+   layout, the big heading and the shelves, so this replaced the old
+   filterable card grid; the type pages do the filtering now.
 
-   IT IS ALSO AN SEO ASSET IN ITS OWN RIGHT. "/#work" is a fragment — it cannot
-   rank, cannot be linked to as a distinct result, and cannot carry its own
-   title or description. "/work/" can do all three, and it is the URL worth
-   giving to anyone who asks to see the portfolio.
-
-   THE FILTER BAR COMES FOR FREE. It lives in WorkGrid, derives its buttons
-   from the categories actually present, and reveals itself only once its
-   script has run. Nothing extra is needed here.
+   It is also an SEO asset in its own right: "/work/" can rank, be linked to
+   and carry its own title and description, unlike a "/#work" fragment.
    ========================================================================= */
 import { getCollection } from 'astro:content';
 import V3Layout from '../../layouts/V3Layout.astro';
-import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
-import WorkGrid from '../../components/WorkGrid.astro';
+import PageHead from '../../components/v3/PageHead.astro';
+import Shelf from '../../components/v3/Shelf.astro';
+import WorkCover from '../../components/v3/WorkCover.astro';
+import { TYPE_COPY } from '../../config/work-types';
+import { CATEGORY_LABELS, WORK_CATEGORIES } from '../../content.config';
 import { absoluteUrl, PERSON } from '../../config/site';
-import { projectPath } from '../../lib/work-path';
+import { liveTypes, projectPath, typePath, workType } from '../../lib/work-path';
 
 const entries = await getCollection('work', ({ data }) => !data.draft);
 const sorted = entries.sort((a, b) =>
@@ -30,9 +27,12 @@ const sorted = entries.sort((a, b) =>
     : a.data.title.localeCompare(b.data.title),
 );
 
-const description =
-  `Selected design and marketing projects by ${PERSON.name} — logo and brand ` +
-  'identity, web and app interfaces, and social campaign work.';
+const types = liveTypes(WORK_CATEGORIES, sorted);
+const labels = types.map((t) => CATEGORY_LABELS[t].toLowerCase());
+const across = labels.length > 1 ? `${labels.slice(0, -1).join(', ')} and ${labels.at(-1)}` : (labels[0] ?? '');
+
+const lede = `${sorted.length} projects across ${across}. Pick a type, or open any one.`;
+const description = `Selected projects by ${PERSON.name}: ${across}.`;
 
 /* An ItemList of the projects in the order they appear. This is what lets a
    search result show the collection rather than a single page, and what an
@@ -62,29 +62,40 @@ const schema = [
 ---
 
 <V3Layout title="Work" description={description} path="/work/" schema={schema}>
+  <div class="work-page container">
+    <PageHead crumbs={[{ label: 'Home', path: '/' }, { label: 'Work' }]} title="Every" accent="project" lede={lede} />
 
-  <div class="work-page section container">
-    <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Work' }]} />
-
-    <p class="section__label">Selected work</p>
-    <h1 class="section__title">Every <em>project</em></h1>
-    <p class="section__lede">
-      {sorted.length} projects across brand identity, digital product and social
-      campaign work. Filter by type, or open any one for the full artwork.
-    </p>
-
-    {/* No featuredOnly: this is the whole collection. */}
-    <WorkGrid />
+    <div class="shelves">
+      {
+        types.map((t, i) => {
+          const projects = sorted.filter((e) => workType(e) === t);
+          const label = CATEGORY_LABELS[t];
+          return (
+            <Shelf
+              index={i}
+              id={`shelf-${t}`}
+              label={`${projects.length} ${projects.length === 1 ? 'project' : 'projects'}`}
+              title={label}
+              idea={TYPE_COPY[t]?.blurb}
+              link={{ text: `See all ${label.toLowerCase()}`, path: typePath(t) }}
+            >
+              <ul class="covers" role="list">
+                {projects.map((e) => (
+                  <li>
+                    <WorkCover entry={e} name={e.data.shortTitle ?? e.data.title} size="small" />
+                  </li>
+                ))}
+              </ul>
+            </Shelf>
+          );
+        })
+      }
+    </div>
   </div>
 </V3Layout>
 
 <style>
-  /* The page heading is an <h1> here rather than the <h2> the homepage uses,
-     but it is the same visual rank — so it borrows .section__title from
-     base.css instead of inheriting the much larger default h1 size. */
   .work-page {
-    /* The v3 header is sticky, not fixed, so nothing needs clearing. */
     padding-block: var(--space-m) var(--space-section);
   }
-
 </style>

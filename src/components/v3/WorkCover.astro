@@ -1,0 +1,38 @@
+---
+/* ============================================================================
+   WorkCover.astro: a project's cover as a link to its page (2026-09-26).
+   ----------------------------------------------------------------------------
+   With `name` (the /work/ hub rows) the visible name is the link text and
+   the image is decorative, so a screen reader hears the project once.
+   Without it (the type pages, where the shelf's "See the project" link
+   already goes there) the cover is a mouse convenience only: out of the tab
+   order and hidden from assistive tech, so it is not a second, unnamed stop.
+   Styles: .cover in src/styles/shelves.css.
+   ========================================================================= */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { href } from '../../lib/url';
+import { projectPath } from '../../lib/work-path';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  name?: string;
+  size: 'small' | 'large';
+}
+
+const { entry, name, size } = Astro.props;
+const sizes = size === 'large' ? '(min-width: 64rem) 44rem, 92vw' : '(min-width: 64rem) 17rem, (min-width: 40rem) 45vw, 92vw';
+const widths = size === 'large' ? [640, 960, 1400] : [320, 640];
+---
+
+<a
+  class:list={['cover', `cover--${size}`]}
+  href={href(projectPath(entry))}
+  aria-hidden={name ? undefined : 'true'}
+  tabindex={name ? undefined : -1}
+>
+  <span class="cover__frame">
+    <Image src={entry.data.cover} alt="" widths={widths} sizes={sizes} loading="lazy" decoding="async" />
+  </span>
+  {name && <span class="cover__name">{name}</span>}
+</a>

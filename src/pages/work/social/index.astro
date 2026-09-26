@@ -24,12 +24,16 @@
 import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
 import V3Layout from '../../../layouts/V3Layout.astro';
-import Breadcrumbs from '../../../components/v3/Breadcrumbs.astro';
+import PageHead from '../../../components/v3/PageHead.astro';
 import Contact from '../../../components/v3/Contact.astro';
 import SocialShelves from '../../../components/social/SocialShelves.astro';
 import { withMediaUrls } from '../../../lib/social-media';
 import { sortPosts } from '../../../config/social';
 import { absoluteUrl, PERSON, SITE_ORIGIN } from '../../../config/site';
+import { TYPE_COPY } from '../../../config/work-types';
+import { CATEGORY_LABELS } from '../../../content.config';
+
+const copy = TYPE_COPY.social!;
 
 const entries = sortPosts(
   await getCollection('social', ({ data }) => import.meta.env.DEV || !data.draft),
@@ -63,7 +67,7 @@ const schema = [
   {
     '@type': 'CollectionPage',
     '@id': `${absoluteUrl('/work/social/')}#collection`,
-    name: 'Social',
+    name: CATEGORY_LABELS.social,
     description,
     isPartOf: { '@id': `${absoluteUrl('/')}#website` },
     about: { '@id': `${absoluteUrl('/')}#person` },
@@ -72,55 +76,29 @@ const schema = [
 ];
 ---
 
-<V3Layout title="Social" description={description} path="/work/social/" schema={schema}>
-  <section class="v3-social container" aria-labelledby="v3-social-title">
-    <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label: 'Social' }]} />
-
-    <header class="v3-social__head">
-      <h1 id="v3-social-title" class="v3-social__title" data-split>
-        Made for the <em>feed</em>
-      </h1>
-      <p class="v3-social__lede" data-split>
-        Social campaigns, one project at a time. Tap any video to play it, and
-        open a story to see how it was made.
-      </p>
-    </header>
+<V3Layout title={CATEGORY_LABELS.social} description={description} path="/work/social/" schema={schema}>
+  <div class="v3-social container">
+    <PageHead
+      crumbs={[{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label: CATEGORY_LABELS.social }]}
+      title={copy.title}
+      accent={copy.accent}
+      lede={copy.lede}
+    />
 
     {
       entries.length ? (
         <SocialShelves entries={entries} projects={projects} />
       ) : (
-        <p class="v3-social__lede">New posts are on the way.</p>
+        <p class="v3-pagehead__lede">New posts are on the way.</p>
       )
     }
-  </section>
+  </div>
 
   <Contact />
 </V3Layout>
 
 <style>
-  /* Same measure and scale as the homepage's section heads (Story.astro):
-     600 weight, tight tracking, the serif italic on the one accent word. */
   .v3-social {
     padding-block: var(--space-m) var(--space-section);
-  }
-
-  .v3-social__head {
-    margin-block: var(--space-xl) var(--space-l);
-  }
-
-  .v3-social__title {
-    margin: 0 0 var(--space-s);
-    font-size: clamp(2.5rem, 1rem + 5vw, 5.5rem);
-    font-weight: 600;
-    letter-spacing: -0.035em;
-    line-height: 1.02;
-  }
-
-  .v3-social__lede {
-    margin: 0;
-    max-inline-size: 46ch;
-    font-size: var(--step-1);
-    color: var(--text-dim);
   }
 </style>

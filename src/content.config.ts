@@ -55,11 +55,11 @@ export const WORK_CATEGORIES = [
 export type WorkCategory = (typeof WORK_CATEGORIES)[number];
 
 export const CATEGORY_LABELS: Record<WorkCategory, string> = {
-  logo: 'Logo',
+  logo: 'Logo Design',
   graphic: 'Graphic',
-  web: 'Web',
+  web: 'Web Design',
   mobile: 'Mobile',
-  social: 'Social',
+  social: 'Social Media',
   marketing: 'Digital Marketing',
 };
 

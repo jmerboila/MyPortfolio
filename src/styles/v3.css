@@ -467,10 +467,10 @@ html.v3 {
   align-items: flex-start;
 }
 
+/* A vertical list under the Work heading (his layout, 2026-09-26). Each
+   link keeps a 44px row, so the list sits tight without shrinking targets. */
 .v3-footer__nav ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-m);
+  display: grid;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -565,9 +565,97 @@ html.v3 {
   border-radius: var(--radius-m);
 }
 
+/* -- Back to top (BackToTop.astro) ----------------------------------------
+   Lower right, clear of the stage rail (which sits mid-height). Hidden until
+   the script sets data-visible; visibility keeps it out of the tab order. */
+.v3-totop {
+  position: fixed;
+  inset-block-end: max(var(--space-m), env(safe-area-inset-bottom));
+  inset-inline-end: max(var(--space-m), env(safe-area-inset-right));
+  z-index: var(--z-sticky);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-block-size: var(--tap-min);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.12);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--dur-base) var(--ease-out-quart),
+    visibility 0s linear var(--dur-base),
+    border-color var(--dur-fast) var(--ease-out-quart);
+}
+
+.v3-totop[data-visible] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--dur-base) var(--ease-out-quart),
+    visibility 0s,
+    border-color var(--dur-fast) var(--ease-out-quart);
+}
+
+.v3-totop:hover,
+.v3-totop:focus-visible {
+  border-color: var(--accent);
+}
+
+.v3-totop__arrow {
+  transition: translate var(--dur-fast) var(--ease-out-quart);
+}
+
+/* The arrow nudges up; the button itself never moves once shown. */
+.v3-totop:hover .v3-totop__arrow,
+.v3-totop:focus-visible .v3-totop__arrow {
+  translate: 0 -3px;
+}
+
+@media (min-width: 64rem) {
+  .v3-totop {
+    inset-block-end: var(--space-l);
+    inset-inline-end: var(--space-l);
+  }
+}
+
 /* ==========================================================================
    SHARED
    ========================================================================== */
+/* -- Page head (PageHead.astro): how every page under Work opens --------
+   2026-09-26: lifted from the Social page so Work, Logo Design, Web Design
+   and each project page share one heading scale. Same measure as the
+   homepage's section heads: 600 weight, tight tracking, the serif italic
+   on the one accent word (base.css `h1 em`). */
+.v3-pagehead {
+  margin-block-end: var(--space-l);
+}
+
+.v3-pagehead__title,
+.project__title {
+  font-size: clamp(2.5rem, 1rem + 5vw, 5.5rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+}
+
+.v3-pagehead__title {
+  margin: var(--space-xl) 0 var(--space-s);
+}
+
+.v3-pagehead__lede {
+  margin: 0;
+  max-inline-size: 46ch;
+  font-size: var(--step-1);
+  color: var(--text-dim);
+}
+
 .v3-eyebrow {
   margin: 0;
   font-size: 0.875rem;

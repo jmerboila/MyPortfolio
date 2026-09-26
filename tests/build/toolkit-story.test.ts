@@ -25,8 +25,8 @@ test('the formats table carries the script\'s safe areas', () => {
 });
 
 test('the toolkit shelf links to its story, second after the Mustang', () => {
-  assert.match(social, new RegExp(`class="sp-shelf__story" href="/MyPortfolio/work/social/${SLUG}/"`));
-  const titles = [...social.matchAll(/class="sp-shelf__title"[^>]*>\s*([^<]+?)\s*</g)].map((m) => m[1]);
+  assert.match(social, new RegExp(`class="shelf__link" href="/MyPortfolio/work/social/${SLUG}/"`));
+  const titles = [...social.matchAll(/class="shelf__title"[^>]*>\s*([^<]+?)\s*</g)].map((m) => m[1]);
   assert.equal(titles[0], '2026 Ford Mustang GTD');
   assert.equal(titles[1], 'Devsign8 Instagram Safe-Zone Toolkit');
 });

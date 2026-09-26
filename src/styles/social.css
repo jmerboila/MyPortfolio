@@ -68,68 +68,8 @@
   --ig-tag: #e0f1ff;
 }
 
-/* -- Shelves: one band per project (his pick, 2026-09-25) ---------------- */
-.sp-shelves {
-  display: grid;
-  gap: var(--space-2xl);
-}
-
-.sp-shelf {
-  display: grid;
-  gap: var(--space-l);
-  padding-block-start: var(--space-l);
-  border-block-start: 1px solid var(--border);
-}
-
-@media (min-width: 64rem) {
-  .sp-shelf {
-    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
-    align-items: start;
-    gap: var(--space-xl);
-  }
-
-  .sp-shelf__info {
-    position: sticky;
-    inset-block-start: calc(var(--header-height, 4.5rem) + var(--space-m));
-  }
-}
-
-.sp-shelf__label {
-  margin: 0 0 var(--space-2xs);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--accent);
-}
-
-.sp-shelf__title {
-  margin: 0 0 var(--space-2xs);
-  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-
-.sp-shelf__idea {
-  margin: 0 0 var(--space-s);
-  color: var(--text-dim);
-}
-
-.sp-shelf__story {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: var(--tap-min);
-  font-weight: 600;
-  color: var(--text);
-  text-decoration: underline;
-  text-decoration-color: var(--border-strong);
-  text-underline-offset: 0.3em;
-}
-
-.sp-shelf__story:hover {
-  color: var(--accent);
-  text-decoration-color: currentColor;
-}
-
+/* -- Shelves: layout lives in shelves.css (shared with every Work page
+   since 2026-09-26). Only the social pieces row is here. ------------------ */
 .sp-shelf__pieces {
   display: flex;
   flex-wrap: wrap;

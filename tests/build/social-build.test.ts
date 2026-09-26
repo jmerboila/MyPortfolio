@@ -14,14 +14,14 @@ test('/social is built on the v3 shell, with no stage rail', () => {
 });
 
 test('/social shows project shelves, and the Mustang shelf links to its story', () => {
-  const shelves = html.match(/class="sp-shelf"/g) ?? [];
+  const shelves = html.match(/class="shelf"/g) ?? [];
   assert.ok(shelves.length >= 2, `found ${shelves.length} shelves`);
   assert.match(html, /2026 Ford Mustang GTD/);
-  assert.match(html, /class="sp-shelf__story" href="\/MyPortfolio\/work\/social\/2026-ford-mustang-gtd\/"/);
+  assert.match(html, /class="shelf__link" href="\/MyPortfolio\/work\/social\/2026-ford-mustang-gtd\/"/);
 });
 
 test('every "Read the story" link resolves', () => {
-  const links = [...html.matchAll(/class="sp-shelf__story" href="\/MyPortfolio\/(work\/[^"]+)"/g)].map((m) => m[1]);
+  const links = [...html.matchAll(/class="shelf__link" href="\/MyPortfolio\/(work\/[^"]+)"/g)].map((m) => m[1]);
   assert.ok(links.length > 0);
   for (const l of links) assert.ok(existsSync(`dist/${l}index.html`), l);
 });

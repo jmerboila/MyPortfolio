@@ -1,0 +1,27 @@
+---
+/* ============================================================================
+   PageHead.astro: how every page under Work opens (2026-09-26, his pick:
+   "make everything consistent" with /work/social/). Breadcrumbs, a big
+   heading with one serif accent word, and a short lede. The shelves that
+   follow draw the hairline, so there is none here.
+   Styles: .v3-pagehead in v3.css.
+   ========================================================================= */
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  crumbs: { label: string; path?: string }[];
+  /** Heading text before the accent word. */
+  title: string;
+  /** The one word set in the serif italic. */
+  accent: string;
+  lede: string;
+}
+
+const { crumbs, title, accent, lede } = Astro.props;
+---
+
+<header class="v3-pagehead">
+  <Breadcrumbs items={crumbs} />
+  <h1 class="v3-pagehead__title" data-split>{title} <em>{accent}</em></h1>
+  <p class="v3-pagehead__lede" data-split>{lede}</p>
+</header>

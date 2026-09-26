@@ -21,6 +21,7 @@ import GoogleTagManager from '../components/GoogleTagManager.astro';
 import DotGrid from '../components/DotGrid.astro';
 import SiteNav from '../components/v3/SiteNav.astro';
 import SiteFooter from '../components/v3/SiteFooter.astro';
+import BackToTop from '../components/v3/BackToTop.astro';
 import StageRail from '../components/v3/StageRail.astro';
 
 import '@fontsource-variable/inter-tight/wght.css';
@@ -89,6 +90,7 @@ const { rail = false, ...seo } = Astro.props;
     </main>
 
     <SiteFooter />
+    <BackToTop />
 
     <script>
       /* Header height publishing and the theme toggle now live in SiteNav. */
