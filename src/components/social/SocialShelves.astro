@@ -7,6 +7,7 @@
    ========================================================================= */
 import type { CollectionEntry } from 'astro:content';
 import SocialPost from './SocialPost.astro';
+import PostRow from './PostRow.astro';
 import { groupShelves } from '../../config/social';
 import { href } from '../../lib/url';
 import '../../styles/social.css';
@@ -38,20 +39,19 @@ const shelves = groupShelves(entries, projects);
             </a>
           )}
         </div>
-        {/* More than three pieces (a Reel series) sit in one swipeable row,
-            each uncropped, instead of wrapping into stacked rows. */}
-        <ul
-          class={s.posts.length > 3 ? 'sp-reel-row' : 'sp-shelf__pieces'}
-          role="list"
-          tabindex={s.posts.length > 3 ? 0 : undefined}
-          aria-label={s.posts.length > 3 ? `${s.title}: ${s.posts.length} pieces, scroll sideways for more` : undefined}
-        >
-          {s.posts.map((p) => (
-            <li>
-              <SocialPost entry={p} />
-            </li>
-          ))}
-        </ul>
+        {/* More than three pieces (a Reel series): one swipeable row, each
+            uncropped, instead of wrapping into stacked rows. */}
+        {s.posts.length > 3 ? (
+          <PostRow posts={s.posts} label={s.title} />
+        ) : (
+          <ul class="sp-shelf__pieces" role="list">
+            {s.posts.map((p) => (
+              <li>
+                <SocialPost entry={p} />
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     ))
   }

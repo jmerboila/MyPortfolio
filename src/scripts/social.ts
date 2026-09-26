@@ -118,6 +118,56 @@ function initVideos(scope: ParentNode) {
   for (const s of states) io.observe(s.root);
 }
 
+/* -- Rows: ‹ › for a row of posts (PostRow.astro) --------------------------
+   Each press moves one post. A button hides at its end; if it had focus,
+   focus moves to the other one rather than dropping to <body>. */
+function initRows(scope: ParentNode) {
+  for (const root of scope.querySelectorAll<HTMLElement>('[data-sp-row]')) {
+    const track = root.querySelector<HTMLElement>('.sp-reel-row');
+    const prev = root.querySelector<HTMLButtonElement>('[data-sp-row-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-sp-row-next]');
+    if (!track || !prev || !next) continue;
+
+    const step = () => {
+      const first = track.firstElementChild as HTMLElement | null;
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return first ? first.getBoundingClientRect().width + gap : track.clientWidth;
+    };
+
+    const update = () => {
+      const atStart = track.scrollLeft <= 2;
+      const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+      const active = document.activeElement;
+      if (atStart && active === prev) next.focus();
+      if (atEnd && active === next) prev.focus();
+      prev.hidden = atStart;
+      next.hidden = atEnd;
+    };
+
+    const go = (dir: number) =>
+      track.scrollBy({ left: dir * step(), behavior: motionReduced() ? 'auto' : 'smooth' });
+
+    prev.addEventListener('click', () => go(-1));
+    next.addEventListener('click', () => go(1));
+
+    let ticking = false;
+    track.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          update();
+          ticking = false;
+        });
+      },
+      { passive: true },
+    );
+    new ResizeObserver(update).observe(track);
+    update();
+  }
+}
+
 /* -- Carousels ------------------------------------------------------------ */
 
 function initCarousels(scope: ParentNode) {
@@ -265,6 +315,7 @@ function initCaptions(scope: ParentNode) {
 export function initSocial() {
   for (const feed of document.querySelectorAll<HTMLElement>('[data-sp-feed]')) {
     initVideos(feed);
+    initRows(feed);
     initCarousels(feed);
     initReactions(feed);
     initCaptions(feed);

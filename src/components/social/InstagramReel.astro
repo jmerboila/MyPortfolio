@@ -39,8 +39,9 @@ const { stats } = data;
     <span class="sp-vert__scrim" aria-hidden="true"></span>
 
     <div class="sp-vert__top" aria-hidden="true">
-      <span class="sp-reel__title">Reels</span>
-      <SocialIcon name="camera" size={24} />
+      {/* The piece's name where Instagram writes "Reels" (his call,
+          2026-09-26), so each Reel in a row is labelled at a glance. */}
+      <span class="sp-reel__title">{data.piece ?? data.title}</span>
     </div>
 
     <div class="sp-rail">

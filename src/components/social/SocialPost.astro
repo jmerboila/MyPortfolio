@@ -43,9 +43,9 @@ function assertNever(x: never): never {
   </div>
 
   {
-    (data.piece || data.draft) && (
+    ((data.piece && data.type !== 'instagram-reel') || data.draft) && (
       <div class="sp-card__meta">
-        {data.piece && <p class="sp-card__piece">{data.piece}</p>}
+        {data.piece && data.type !== 'instagram-reel' && <p class="sp-card__piece">{data.piece}</p>}
         {data.draft && (
           <p class="sp-card__line"><span class="sp-badge sp-badge--draft">Draft · dev only</span></p>
         )}

@@ -46,3 +46,10 @@ test('the toolkit shows as a row of nine uncropped Reels (the tenth is a draft)'
   assert.equal((row.match(/data-sp-video/g) ?? []).length, 9);
   assert.match(html, /class="sp-reel-row"/);
 });
+
+test('Reel rows have arrow buttons, and Reels show their name instead of "Reels"', () => {
+  assert.match(social, /data-sp-row-prev/);
+  assert.match(social, /data-sp-row-next/);
+  assert.doesNotMatch(social, /class="sp-reel__title"[^>]*>\s*Reels\s*</);
+  assert.match(social, /class="sp-reel__title"[^>]*>\s*Share button\s*</);
+});

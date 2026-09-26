@@ -41,6 +41,15 @@
   --tt-red: #fe2c55;
 }
 
+/* On laptops a 390px Reel is about 730px tall, taller than a 1366 x 768
+   screen leaves. Above phone widths, shrink a post just enough that a whole
+   Reel fits under the header; never below 240px. Phones keep full width. */
+@media (min-width: 48rem) {
+  :where(.sp-feed, [data-sp-feed]) {
+    --sp-post-w: min(390px, max(240px, calc((100svh - var(--header-height, 4.5rem) - 3rem) * 9 / 16)));
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) :where(.sp-feed, [data-sp-feed]) {
     --ig-bg: #000000;
@@ -610,10 +619,19 @@ button.sp-act:focus-visible {
   filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.5));
 }
 
+/* The top bar carries the piece's name: a soft fade keeps white text
+   readable over light footage. */
+.sp-reel .sp-vert__top {
+  background: linear-gradient(rgb(0 0 0 / 0.45), transparent);
+}
+
 .sp-reel__title {
-  font-size: 1.25rem;
+  overflow: hidden;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.01em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .sp-rail {
@@ -865,6 +883,57 @@ button.sp-rail__item:focus-visible {
 .sp-reel-row > li {
   flex: 0 0 min(88%, var(--sp-post-w));
   scroll-snap-align: start;
+}
+
+/* ‹ › for mouse users only: touch devices swipe. Same see-through disc as
+   the carousel arrows and the play button. */
+.sp-rowwrap {
+  position: relative;
+}
+
+.sp-row__nav {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sp-row__nav {
+    position: absolute;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    inline-size: 44px;
+    block-size: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(0 0 0 / 0.55);
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .sp-row__nav:hover {
+    background: rgb(0 0 0 / 0.75);
+  }
+
+  .sp-row__nav:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px #000000;
+  }
+
+  .sp-row__nav[hidden] {
+    display: none;
+  }
+
+  .sp-row__nav--prev {
+    inset-inline-start: 8px;
+  }
+
+  .sp-row__nav--next {
+    inset-inline-end: 8px;
+  }
 }
 
 .sp-reel-row:focus-visible {

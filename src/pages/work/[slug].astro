@@ -18,6 +18,7 @@ import V3Layout from '../../layouts/V3Layout.astro';
 import Breadcrumbs from '../../components/v3/Breadcrumbs.astro';
 import LaunchStory from '../../components/story/LaunchStory.astro';
 import SocialPost from '../../components/social/SocialPost.astro';
+import PostRow from '../../components/social/PostRow.astro';
 import { href } from '../../lib/url';
 import { absoluteUrl } from '../../config/site';
 import { withMediaUrls } from '../../lib/social-media';
@@ -166,18 +167,17 @@ const schema = [
               <h2 id="posts-heading" class="project__sub">
                 The posts
               </h2>
-              <ul
-                role="list"
-                class={posts.length > 3 ? 'sp-reel-row' : 'project__posts-list'}
-                tabindex={posts.length > 3 ? 0 : undefined}
-                aria-label={posts.length > 3 ? `The posts: ${posts.length}, scroll sideways for more` : undefined}
-              >
-                {posts.map((p) => (
-                  <li>
-                    <SocialPost entry={p} />
-                  </li>
-                ))}
-              </ul>
+              {posts.length > 3 ? (
+                <PostRow posts={posts} label={d.title} />
+              ) : (
+                <ul role="list" class="project__posts-list">
+                  {posts.map((p) => (
+                    <li>
+                      <SocialPost entry={p} />
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           )}
         </>
