@@ -38,7 +38,14 @@ const shelves = groupShelves(entries, projects);
             </a>
           )}
         </div>
-        <ul class="sp-shelf__pieces" role="list">
+        {/* More than three pieces (a Reel series) sit in one swipeable row,
+            each uncropped, instead of wrapping into stacked rows. */}
+        <ul
+          class={s.posts.length > 3 ? 'sp-reel-row' : 'sp-shelf__pieces'}
+          role="list"
+          tabindex={s.posts.length > 3 ? 0 : undefined}
+          aria-label={s.posts.length > 3 ? `${s.title}: ${s.posts.length} pieces, scroll sideways for more` : undefined}
+        >
           {s.posts.map((p) => (
             <li>
               <SocialPost entry={p} />

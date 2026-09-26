@@ -3,7 +3,7 @@
 # away most of the picture.
 type: instagram-post
 category: reel   # filed under Reels; the frame keeps the video's own shape
-title: "UNF — Term 2 done, Term 3 ready"
+title: "UNF: Term 2 done, Term 3 ready"
 # TODO(jayson): drafted from the file name — replace with the real caption
 # and add `client:` if this was client work.
 caption: "Term 2: done. Term 3: ready. #UNF"

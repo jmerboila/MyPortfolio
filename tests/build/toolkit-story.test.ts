@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 
 /* The Devsign8 Instagram Safe-Zone Toolkit project story (2026-09-26). */
 const SLUG = 'devsign8-ig-safe-zone-toolkit';
@@ -32,7 +32,17 @@ test('the toolkit shelf links to its story, second after the Mustang', () => {
 });
 
 test('no em dashes in the toolkit content files', () => {
-  for (const f of [`src/content/work/${SLUG}.md`, 'src/content/social/devsign8-ig-toolkit-reel/index.md']) {
+  const reels = readdirSync('src/content/social/devsign8-ig-toolkit-reel').filter((f) => f.endsWith('.md'));
+  assert.equal(reels.length, 10);
+  for (const f of [`src/content/work/${SLUG}.md`, ...reels.map((r) => `src/content/social/devsign8-ig-toolkit-reel/${r}`)]) {
     assert.doesNotMatch(read(f), /—/, f);
   }
+});
+
+test('the toolkit shows as a row of nine uncropped Reels (the tenth is a draft)', () => {
+  const shelf = social.slice(social.indexOf('Devsign8 Instagram Safe-Zone Toolkit'));
+  const row = shelf.slice(shelf.indexOf('class="sp-reel-row"'), shelf.indexOf('</ul>', shelf.indexOf('class="sp-reel-row"')));
+  assert.ok(row.length > 0, 'no Reel row on the toolkit shelf');
+  assert.equal((row.match(/data-sp-video/g) ?? []).length, 9);
+  assert.match(html, /class="sp-reel-row"/);
 });

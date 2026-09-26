@@ -841,6 +841,33 @@ button.sp-rail__item:focus-visible {
 }
 
 /* -- Under each frame: the piece name, and a draft marker in dev ------- */
+/* -- A Reel series: one swipeable row -------------------------------------
+   Used when a shelf or a project has more than three pieces. Every Reel keeps
+   its full 9:16 frame; the row scrolls and snaps instead of wrapping. It is
+   focusable, so arrow keys scroll it too. */
+.sp-reel-row {
+  display: flex;
+  gap: var(--space-m);
+  margin: 0;
+  padding: 0 0 var(--space-s);
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.sp-reel-row > li {
+  flex: 0 0 min(78%, 16rem);
+  scroll-snap-align: start;
+}
+
+.sp-reel-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
 .sp-card__piece {
   margin: 0;
   font-weight: 600;

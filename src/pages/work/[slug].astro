@@ -166,7 +166,12 @@ const schema = [
               <h2 id="posts-heading" class="project__sub">
                 The posts
               </h2>
-              <ul role="list" class="project__posts-list">
+              <ul
+                role="list"
+                class={posts.length > 3 ? 'sp-reel-row' : 'project__posts-list'}
+                tabindex={posts.length > 3 ? 0 : undefined}
+                aria-label={posts.length > 3 ? `The posts: ${posts.length}, scroll sideways for more` : undefined}
+              >
                 {posts.map((p) => (
                   <li>
                     <SocialPost entry={p} />
