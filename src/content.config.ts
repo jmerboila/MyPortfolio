@@ -221,6 +221,9 @@ const work = defineCollection({
           launched: z.coerce.date(),
           channel: z.string(),
           disclaimer: z.string(),
+          /* The finished piece, shown before chapter 01. Loaded eagerly: it is
+             the page's first image. */
+          hero: pic.optional(),
           chapters: z
             .array(
               z.object({

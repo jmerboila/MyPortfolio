@@ -54,6 +54,9 @@ story:
   launched: 2026-08-25
   channel: "Instagram"
   disclaimer: "Self-initiated concept. Not affiliated with or endorsed by Ford Motor Company."
+  hero:
+    src: "../../assets/projects/gtd-mockup.webp"
+    alt: "The Seamless Carousel as one continuous strip, with a phone in front showing it in an Instagram feed: the Ford oval and Street Legal, But Just Barely; the car head-on with its Nürburgring time, top speed and 815 HP; and the running horse in the smoke."
   chapters:
     - stage: discover
       heading: "It started at Multimatic"

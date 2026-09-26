@@ -56,3 +56,9 @@ test('the slicer, the clock and the two real posts render', () => {
   assert.match(html, /Seamless Carousel/);
   assert.match(html, /data-sp-video/);
 });
+
+test('the story opens on the phone mockup, loaded eagerly as the first image', () => {
+  assert.match(html, /class="project__hero[^"]*"/);
+  const hero = html.slice(html.indexOf('project__hero'));
+  assert.match(hero, /<img[^>]*loading="eager"/);
+});
