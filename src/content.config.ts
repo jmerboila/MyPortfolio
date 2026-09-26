@@ -65,8 +65,58 @@ export const CATEGORY_LABELS: Record<WorkCategory, string> = {
 
 const work = defineCollection({
   loader: glob({ base: './src/content/work', pattern: '**/*.md' }),
-  schema: ({ image }) =>
-    z.object({
+  schema: ({ image }) => {
+    /* -- Launch story visuals (2026-09-25). One per chapter; `kind` picks the
+       renderer in src/components/story/StoryVisual.astro. */
+    const STAGE_IDS = ['discover', 'plan', 'brand', 'build', 'be-found', 'show-up', 'measure'] as const;
+    const pic = z.object({ src: image(), alt: z.string(), note: z.string().optional() });
+    const storyVisual = z.discriminatedUnion('kind', [
+      pic.extend({ kind: z.literal('image') }),
+      z.object({ kind: z.literal('gallery'), items: z.array(pic).min(1) }),
+      z.object({
+        kind: z.literal('chart'),
+        groups: z
+          .array(
+            z.object({
+              metric: z.string(),
+              unit: z.string(),
+              bars: z
+                .array(z.object({ label: z.string(), value: z.number(), note: z.string().optional() }))
+                .min(2),
+            }),
+          )
+          .min(1),
+        source: z.string(),
+      }),
+      z.object({
+        kind: z.literal('plan'),
+        steps: z
+          .array(z.object({ time: z.string(), label: z.string(), src: image(), alt: z.string() }))
+          .length(2),
+        gap: z.string(),
+      }),
+      z.object({
+        kind: z.literal('slicer'),
+        artboard: image(),
+        panels: z.number().int().min(2).max(10),
+        alt: z.string(),
+        drafts: z.array(z.object({ src: image(), alt: z.string() })).default([]),
+      }),
+      z.object({
+        kind: z.literal('captions'),
+        items: z.array(z.object({ label: z.string(), time: z.string(), text: z.string() })).min(1),
+      }),
+      z.object({
+        kind: z.literal('clock'),
+        day: z.string(),
+        from: z.string(),
+        to: z.string(),
+        events: z.array(z.object({ time: z.string(), label: z.string() })).min(1),
+      }),
+      z.object({ kind: z.literal('results') }),
+    ]);
+
+    return z.object({
       /* -- Identity ------------------------------------------------------ */
       title: z.string(),
       /* Short form for breadcrumbs and prev/next, where the full title is too
@@ -160,7 +210,48 @@ const work = defineCollection({
          zod version Astro 7 bundles. */
       externalUrl: z.url().optional(),
       draft: z.boolean().default(false),
-    }),
+
+      /* -- Launch story (2026-09-25) --------------------------------------
+         An entry with `story` renders the scroll-driven story layout on
+         /work/<id>/ instead of the classic body. Every number in `results`
+         carries its `source`, like `result` above. */
+      story: z
+        .object({
+          lede: z.string(),
+          launched: z.coerce.date(),
+          channel: z.string(),
+          disclaimer: z.string(),
+          chapters: z
+            .array(
+              z.object({
+                stage: z.enum(STAGE_IDS),
+                heading: z.string(),
+                body: z.array(z.string()).min(1),
+                visual: storyVisual,
+              }),
+            )
+            .min(1),
+          results: z
+            .object({
+              source: z.string(),
+              pieces: z
+                .array(
+                  z.object({
+                    name: z.string(),
+                    reach: z.number().int().nonnegative(),
+                    stats: z.array(z.object({ label: z.string(), value: z.string() })),
+                  }),
+                )
+                .min(1),
+              insight: z.string(),
+              next: z.array(z.string()).default([]),
+            })
+            .optional(),
+          sources: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
+        })
+        .optional(),
+    });
+  },
 });
 
 /* ============================================================================
