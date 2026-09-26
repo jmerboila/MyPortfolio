@@ -165,6 +165,19 @@ His call: this project replaces v1 in `jmerboila/MyPortfolio`, v3 as the homepag
 - [ ] Optional: re-encode UNF (8.7 MB, 8.5 Mbps) and the Lexus video (6 MB) for the web — videos autoplay when scrolled to, so they download on view
 - [ ] /work and the case studies still use the v2 header and palette — same move as /social when he wants it
 
+## Projects on /social (2026-09-25)
+
+Spec `docs/superpowers/specs/2026-09-25-social-projects-mustang-story-design.md`, plan `docs/superpowers/plans/2026-09-25-social-projects-mustang-story.md`. Built on branch `feat/social-projects`.
+
+- [x] /social is project shelves: one band per project (a Work entry; posts join through `work:`), pieces playable in place, "Read the story" when the project has one. Filters and the per-post "How I made it" pages are gone
+- [x] The Mustang is **2026 Ford Mustang GTD** everywhere; its page moved to `/work/2026-ford-mustang-gtd/` (old URL redirects). Real captions from Buffer; pieces named Reel Reveal and Seamless Carousel
+- [x] All Work pages on the v3 shell
+- [x] The launch story: 7 chapters over 6 homepage stages (research chart, plan, Photoshop and After Effects screens, the artboard slicer with 3 earlier versions, captions, launch-day clock, results), sources, then the two posts. Scroll motion verified in headless Chrome; reduced motion shows the finished state; keyboard focus never hidden
+- [x] Page titles use " | " instead of an em dash (his no-em-dash rule)
+- [ ] Next projects: Lexus NX 350h (poster + animated), UNF, the Devsign8 toolkit, each as a Work entry with a story. Their draft notes are in their post folders
+- [ ] Em-dash sweep of older copy (site default description, JM Design intro, other case studies)
+- [ ] Toolkit: swap the draft captions for the real ones in Buffer
+
 ## Waiting on Jayson
 
 - [ ] Approve the new hero line, intro and 7-stage copy (copy deck)

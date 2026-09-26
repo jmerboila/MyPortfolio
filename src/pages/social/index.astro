@@ -35,8 +35,8 @@ const entries = sortPosts(
 const projects = await getCollection('work', ({ data }) => !data.draft);
 
 const description =
-  `Social media creative by ${PERSON.name} — Instagram carousels and Reels, ` +
-  'and TikTok videos, shown as they appear in the feed.';
+  `Social media campaigns by ${PERSON.name}: Instagram Reels and carousels, ` +
+  'one project at a time, with the story of how each was made.';
 
 const videoObjects = await Promise.all(
   entries

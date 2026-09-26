@@ -15,7 +15,9 @@
   gap: var(--space-l);
 }
 
-.st-ch__stage {
+/* Written as `.st-ch__text > p.st-ch__stage` so it outranks the chapter
+   paragraph rule below (.st-ch__text > p). */
+.st-ch__text > p.st-ch__stage {
   margin: 0 0 var(--space-2xs);
   font-size: 0.875rem;
   font-weight: 500;

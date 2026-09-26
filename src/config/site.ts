@@ -65,8 +65,10 @@ export const SOCIALS = [
 
 /* -- SEO defaults -------------------------------------------------------- */
 export const SEO = {
-  defaultTitle: `${PERSON.name} — ${PERSON.tagline}`,
-  titleTemplate: (page: string) => `${page} — ${PERSON.name}`,
+  /* A vertical bar, not an em dash: his rule for everything readers see
+     (2026-09-25), and titles show in browser tabs and search results. */
+  defaultTitle: `${PERSON.name} | ${PERSON.tagline}`,
+  titleTemplate: (page: string) => `${page} | ${PERSON.name}`,
   defaultDescription:
     'Portfolio of Jayson Mercado Erboila — Digital Marketing Specialist in ' +
     'Toronto, Ontario. Marketing strategy paired with logo, brand identity, ' +
