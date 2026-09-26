@@ -176,6 +176,8 @@ Spec `docs/superpowers/specs/2026-09-25-social-projects-mustang-story-design.md`
 - [x] Page titles use " | " instead of an em dash (his no-em-dash rule)
 - [x] **Devsign8 Instagram Safe-Zone Toolkit** story (2026-09-26) at `/work/devsign8-ig-safe-zone-toolkit/`: 7 chapters, a formats table from his `Devsign8-IG-Template.jsx` (revision 3), Photoshop templates built by that script, the hook-then-card formula, a real caption, the 3 to 29 September timeline, and results from Buffer (326 reach, best 84, 0 comments). Shelf moved to second
 - [ ] After 29 September: add the tenth Reel's numbers to the toolkit results (Buffer)
+- [x] Toolkit shown as ten real Reels in one swipeable row (uncropped 9:16, real captions, tenth is a draft until 29 Sep); every post at real phone size (390px, shrinking only to fit short laptop screens); ‹ › row arrows for mouse users; Reel top bar shows the piece name, no camera icon
+- [ ] **Resume here (paused 2026-09-26).** Branch `feat/toolkit-story` is committed but NOT merged into `master`, nothing pushed. UX review, proposed next: (1) link /social and /work from the footer and the homepage "Show up" stage (nothing links to them today); (3) meaningful shelf labels instead of "Social"; then merge + push (about 25 commits behind live); then Lexus (one project) and UNF stories; "Jump to results" link on story pages; restyle the /work list; em-dash sweep
 - [ ] Next projects: Lexus NX 350h (poster + animated), UNF. Their draft notes are in their post folders
 - [ ] Em-dash sweep of older copy (site default description, JM Design intro, other case studies)
 - [ ] Toolkit: swap the draft captions for the real ones in Buffer
