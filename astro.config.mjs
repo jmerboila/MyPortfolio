@@ -20,6 +20,8 @@ export default defineConfig({
      not the target, so '/' alone sent visitors to jmerboila.github.io/. */
   redirects: {
     '/v3': `${BASE_PATH}/`,
+    /* Renamed 2026-09-25 to the project's full name. */
+    '/work/mustang-gtd': `${BASE_PATH}/work/2026-ford-mustang-gtd/`,
   },
 
   /* Static output. Keeps the site deployable to GitHub Pages with no server,
@@ -36,7 +38,8 @@ export default defineConfig({
       /* Case studies and the homepage are the pages worth surfacing. The
          filter keeps utility routes out of the index. /v3 is only a redirect
          to the homepage now, so it has no place in the sitemap either. */
-      filter: (page) => !page.includes('/404') && !page.includes('/v3'),
+      filter: (page) =>
+        !page.includes('/404') && !page.includes('/v3') && !page.includes('/work/mustang-gtd/'),
     }),
   ],
 

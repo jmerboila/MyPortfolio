@@ -187,7 +187,7 @@ test('every stage headline is present', () => {
   for (const h of headlines) assert.ok(html.includes(h), h);
 });
 test('sample work at the matching stage links to its case page', () => {
-  for (const slug of ['digiskills-logo', 'jm-design', 'devsign8', 'devsign8-website', 'mustang-gtd']) {
+  for (const slug of ['digiskills-logo', 'jm-design', 'devsign8', 'devsign8-website', '2026-ford-mustang-gtd']) {
     assert.match(html, new RegExp(`href="/MyPortfolio/work/${slug}/"`));
   }
 });

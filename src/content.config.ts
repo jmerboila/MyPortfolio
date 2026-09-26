@@ -220,6 +220,9 @@ const social = defineCollection({
       /* Internal name, and the accessible name of the card. Never shown as a
          headline, because the platforms do not show one. */
       title: z.string(),
+      /* The piece's name inside its project, e.g. "Reel Reveal". Shown under
+         the frame on /social and the project page. */
+      piece: z.string().optional(),
       caption: z.string().default(''),
       /* Optional so nothing has to be invented. Posts without one sort by
          `order` alone and carry no uploadDate in the structured data. */

@@ -85,7 +85,7 @@ export const STAGES: readonly Stage[] = [
     headline: 'Show up where your customers are.',
     body: 'Social media set up and filled with posts people stop for, planned ahead and on brand.',
     gets: 'Social channels and a posting plan',
-    work: ['mustang-gtd'],
+    work: ['2026-ford-mustang-gtd'],
   },
   {
     id: 'measure',
