@@ -1,0 +1,508 @@
+---
+/* ============================================================================
+   StageProof.astro: the short proof a lifecycle stage shows, and its link
+   inside.
+   ----------------------------------------------------------------------------
+   2026-09-28 (round 2), his brief: every stage is a short summary that makes
+   people want to see more. One visual idea, one or two lines, one link into
+   a deeper page. Data: src/config/stage-proof.ts. Five shapes:
+
+     logos    two finished logos as Illustrator stills, each linking to its
+              project page, where the full motion reel plays (03 Brand)
+     site     devsign8.com on desktop and phone, in the OPPOSITE theme to the
+              page so it stands out: the dark site on a light page, the light
+              site on a dark page (his call) (04 Build)
+     found    SEO, AEO and GEO in one line each (05 Be found)
+     social   three posts, the research-backed posting slots (06 Show up)
+     results  three headline numbers, each with its source, each a link
+              (07 Measure)
+
+   Every link ends in the shared Arrow (Arrow.astro).
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import type { Proof } from '../../config/stage-proof';
+import { href } from '../../lib/url';
+import { withUtm } from '../../lib/utm';
+import Arrow from './Arrow.astro';
+
+interface Props {
+  proof: Proof;
+}
+
+const { proof } = Astro.props;
+---
+
+<div class:list={['v3-proof', `v3-proof--${proof.kind}`]} data-proof>
+  {proof.kind === 'logos' && (
+    <ul class="v3-logos" role="list">
+      {proof.items.map((item) => (
+        <li class="v3-logo" data-stage-card>
+          <a href={href(item.path)}>
+            <figure class="v3-logo__frame">
+              <Image src={item.src} alt={item.alt} widths={[360, 540, 720]} sizes="(min-width: 64rem) 17rem, 45vw" loading="lazy" decoding="async" />
+            </figure>
+            <h4 class="v3-logo__title">{item.title}</h4>
+            <p class="v3-logo__line">{item.line}</p>
+            <span class="v3-proof__cta">Watch it <Arrow /></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  {proof.kind === 'site' && (
+    <>
+      {(['dark', 'light'] as const).map((theme) => (
+        <div class:list={['v3-site', `v3-site--${theme}`]} data-stage-card>
+          <figure class="v3-site__desktop">
+            <div class="v3-site__bar" aria-hidden="true"><span></span><span></span><span></span></div>
+            <Image src={proof[theme].desktop.src} alt={proof[theme].desktop.alt} widths={[640, 960, 1440]} sizes="(min-width: 64rem) 36rem, 90vw" loading="lazy" decoding="async" />
+          </figure>
+          <figure class="v3-site__mobile">
+            <Image src={proof[theme].mobile.src} alt={proof[theme].mobile.alt} widths={[240, 390]} sizes="(min-width: 64rem) 9rem, 30vw" loading="lazy" decoding="async" />
+          </figure>
+        </div>
+      ))}
+      <ul class="v3-points" role="list">
+        {proof.points.map((point) => (
+          <li>{point}</li>
+        ))}
+      </ul>
+      {/* The live site first: it is his real company site, not a mock-up. */}
+      <a class="v3-proof__visit" href={withUtm(proof.visit.url, 'stage-build')} target="_blank" rel="noopener" data-cta="visit">
+        {proof.visit.label} <Arrow />
+        <span class="visually-hidden"> (opens in a new tab)</span>
+      </a>
+    </>
+  )}
+
+  {proof.kind === 'found' && (
+    <>
+      <p class="v3-proof__intro">{proof.intro}</p>
+      <ul class="v3-pillars" role="list">
+        {proof.pillars.map((p) => (
+          <li class="v3-pillar" data-stage-card>
+            <span class="v3-pillar__tag">{p.tag}</span>
+            <span class="v3-pillar__name">{p.name}</span>
+            <span class="v3-pillar__line">{p.line}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="v3-proof__note">{proof.note}</p>
+    </>
+  )}
+
+  {proof.kind === 'social' && (
+    <>
+      <p class="v3-proof__intro">{proof.intro}</p>
+      <ul class="v3-tiles" role="list">
+        {proof.tiles.map((t) => (
+          <li class="v3-tile" data-stage-card>
+            <Image src={t.src} alt={t.alt} widths={[240, 360, 480]} sizes="(min-width: 64rem) 12rem, 30vw" loading="lazy" decoding="async" />
+          </li>
+        ))}
+      </ul>
+      <dl class="v3-plan">
+        {proof.plan.map((row) => (
+          <div class="v3-plan__row">
+            <dt>{row.channel}</dt>
+            <dd>{row.slots}</dd>
+          </div>
+        ))}
+      </dl>
+      <p class="v3-proof__note">{proof.source}</p>
+    </>
+  )}
+
+  {proof.kind === 'results' && (
+    <ul class="v3-results" role="list">
+      {proof.tiles.map((t) => (
+        <li class="v3-result" data-stage-card>
+          <a href={href(t.path)}>
+            <span class="v3-result__value">{t.value}{t.unit && <span class="v3-result__unit">{t.unit}</span>}</span>
+            <span class="v3-result__label">{t.label}</span>
+            <span class="v3-result__line">{t.line}</span>
+            <span class="v3-result__source">{t.source}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <a class="v3-proof__link" href={href(proof.link.path)}>
+    {proof.link.label} <Arrow />
+  </a>
+</div>
+
+<style>
+  .v3-proof {
+    margin-block-start: var(--space-l);
+  }
+
+  .v3-proof ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .v3-proof figure {
+    margin: 0;
+  }
+
+  .v3-proof__intro {
+    margin: 0 0 var(--space-s);
+    color: var(--text-dim);
+  }
+
+  .v3-proof__note {
+    margin: var(--space-xs) 0 0;
+    font-size: var(--step--1);
+    color: var(--text-dim);
+  }
+
+  .v3-proof__link,
+  .v3-proof__cta {
+    display: inline-flex;
+    gap: 0.4em;
+    align-items: center;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .v3-proof__link {
+    min-block-size: var(--tap-min);
+    margin-block-start: var(--space-s);
+    text-decoration: none;
+  }
+
+  .v3-proof__link:hover,
+  .v3-proof__link:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  .v3-proof__cta {
+    margin-block-start: var(--space-2xs);
+    font-size: var(--step--1);
+  }
+
+  /* The live-site link: a filled pill, so it reads as the stage's main
+     action, with the "how it was built" text link beside it. */
+  .v3-proof__visit {
+    display: inline-flex;
+    gap: 0.5em;
+    align-items: center;
+    min-block-size: var(--tap-min);
+    margin: var(--space-m) var(--space-m) 0 0;
+    padding-inline: 1.25em;
+    font-weight: 600;
+    color: var(--on-accent);
+    text-decoration: none;
+    background: var(--accent);
+    border-radius: var(--radius-full);
+  }
+
+  .v3-proof__visit:hover,
+  .v3-proof__visit:focus-visible {
+    background: var(--accent-strong);
+  }
+
+  .v3-proof__visit :global(.v3-arrow) {
+    color: inherit;
+  }
+
+  /* Framed media share one look: hairline, soft ground, rounded. */
+  .v3-logo__frame,
+  .v3-site__desktop,
+  .v3-site__mobile,
+  .v3-tile {
+    overflow: hidden;
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+  }
+
+  /* -- Logos --------------------------------------------------------------- */
+  .v3-logos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-m);
+  }
+
+  .v3-logo a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .v3-logo__frame {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-l);
+    transition: border-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .v3-logo__frame :global(img) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    transition: scale var(--dur-base) var(--ease-out-quart);
+  }
+
+  .v3-logo a:hover .v3-logo__frame,
+  .v3-logo a:focus-visible .v3-logo__frame {
+    border-color: var(--accent);
+  }
+
+  .v3-logo a:hover .v3-logo__frame :global(img),
+  .v3-logo a:focus-visible .v3-logo__frame :global(img) {
+    scale: 1.03;
+  }
+
+  .v3-logo__title {
+    margin: var(--space-s) 0 0;
+    font-size: var(--step-1);
+    font-weight: 600;
+  }
+
+  .v3-logo__line {
+    margin: 0.25em 0 0;
+    font-size: var(--step--1);
+    color: var(--text-dim);
+  }
+
+  /* -- Site: desktop in a browser frame, the phone overlapping it ---------- */
+  .v3-site {
+    position: relative;
+    padding-block-end: 12%;
+    padding-inline-end: 14%;
+  }
+
+  /* The opposite theme to the page. Light page (the default): dark shots. */
+  .v3-site--light {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .v3-site--light {
+      display: block;
+    }
+    :global(:root:not([data-theme='light'])) .v3-site--dark {
+      display: none;
+    }
+  }
+
+  :global(:root[data-theme='dark']) .v3-site--light {
+    display: block;
+  }
+
+  :global(:root[data-theme='dark']) .v3-site--dark {
+    display: none;
+  }
+
+  .v3-site__desktop {
+    border-radius: var(--radius-l);
+  }
+
+  .v3-site__bar {
+    display: flex;
+    gap: 6px;
+    padding: 8px 10px;
+    border-block-end: 1px solid var(--border);
+  }
+
+  .v3-site__bar span {
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 50%;
+    background: var(--border-strong);
+  }
+
+  .v3-site :global(img),
+  .v3-tile :global(img) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .v3-site__mobile {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    inline-size: 26%;
+    aspect-ratio: 390 / 844;
+    border-radius: 1rem;
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.28);
+  }
+
+  .v3-proof .v3-points {
+    display: grid;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-m);
+  }
+
+  .v3-points li {
+    padding-inline-start: 1.1em;
+    position: relative;
+  }
+
+  .v3-points li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.6em;
+    inline-size: 0.4em;
+    block-size: 0.4em;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* -- Found: SEO / AEO / GEO ---------------------------------------------- */
+  .v3-pillars {
+    display: grid;
+    gap: var(--space-s);
+  }
+
+  @media (min-width: 48rem) {
+    .v3-pillars {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .v3-pillar {
+    display: grid;
+    align-content: start;
+    gap: 0.3em;
+    padding: var(--space-s);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    background: var(--bg-2);
+  }
+
+  .v3-pillar__tag {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-2);
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .v3-pillar__name {
+    font-weight: 600;
+  }
+
+  .v3-pillar__line {
+    font-size: var(--step--1);
+    color: var(--text-dim);
+  }
+
+  /* -- Social: three posts and the posting slots --------------------------- */
+  /* Every post at its own shape (9:16 Reel covers, a 4:5 poster), all one
+     height, so nothing is cropped. Round 3's 4:5 crop cut the top off the
+     Reel cover. The height fits three across a phone column. */
+  .v3-tiles {
+    display: flex;
+    gap: var(--space-xs);
+    block-size: clamp(9rem, 38vw, 16rem);
+  }
+
+  .v3-tile {
+    flex: 0 1 auto;
+    block-size: 100%;
+    min-inline-size: 0;
+    border-radius: var(--radius-m);
+  }
+
+  .v3-proof .v3-tile :global(img) {
+    inline-size: auto;
+    block-size: 100%;
+    max-inline-size: 100%;
+    object-fit: contain;
+  }
+
+  .v3-plan {
+    display: grid;
+    margin: var(--space-m) 0 0;
+    border-block-start: 1px solid var(--border);
+  }
+
+  .v3-plan__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding-block: var(--space-2xs);
+    border-block-end: 1px solid var(--border);
+  }
+
+  .v3-plan dt {
+    font-weight: 600;
+  }
+
+  .v3-plan dd {
+    margin: 0;
+    color: var(--text-dim);
+    text-align: end;
+  }
+
+  /* -- Results: three numbers ---------------------------------------------- */
+  .v3-results {
+    display: grid;
+    gap: var(--space-s);
+  }
+
+  @media (min-width: 48rem) {
+    .v3-results {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .v3-result a {
+    container-type: inline-size;
+    display: grid;
+    align-content: start;
+    gap: 0.25em;
+    block-size: 100%;
+    padding: var(--space-s) var(--space-m) var(--space-m);
+    color: inherit;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    background: var(--bg-2);
+    transition: border-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .v3-result a:hover,
+  .v3-result a:focus-visible {
+    border-color: var(--accent);
+  }
+
+  /* Sized to the CARD, not the viewport (the round 3 number spilled out of
+     narrow cards): cqi is 1% of the card's width, capped so a wide card
+     does not shout. nowrap keeps "98/100" on one line. */
+  .v3-result__value {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 30cqi, 4rem);
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--accent);
+  }
+
+  .v3-result__unit {
+    margin-inline-start: 0.1em;
+    font-size: 0.4em;
+    color: var(--text-dim);
+  }
+
+  .v3-result__label {
+    font-weight: 600;
+  }
+
+  .v3-result__line {
+    font-size: var(--step--1);
+  }
+
+  .v3-result__source {
+    margin-block-start: 0.35em;
+    font-size: var(--step--1);
+    color: var(--text-dim);
+  }
+</style>

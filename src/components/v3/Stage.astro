@@ -15,6 +15,9 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import type { Stage as StageData } from '../../config/lifecycle';
+import { STAGE_PROOF } from '../../config/stage-proof';
+import StageProof from './StageProof.astro';
+import Arrow from './Arrow.astro';
 import { href } from '../../lib/url';
 import { projectPath } from '../../lib/work-path';
 
@@ -26,6 +29,8 @@ interface Props {
 const { stage, work } = Astro.props;
 const titleId = `v3-stage-${stage.id}-title`;
 const twoCols = work.length >= 2;
+/* 2026-09-28: stages can show proof in place (StageProof.astro). */
+const proof = STAGE_PROOF[stage.id];
 ---
 
 <section id={stage.id} class="v3-stage" aria-labelledby={titleId}>
@@ -43,6 +48,8 @@ const twoCols = work.length >= 2;
       <p class="v3-stage__gets" data-split>
         <span class="v3-stage__gets-label">You get</span> {stage.gets}
       </p>
+
+      {proof && <StageProof proof={proof} />}
 
       {work.length > 0 && (
         <ul class:list={['v3-stage__work', twoCols && 'v3-stage__work--pair']} role="list">
@@ -65,7 +72,7 @@ const twoCols = work.length >= 2;
                   </figure>
                   <h4>{name}</h4>
                   <p>{line}</p>
-                  <span class="v3-stage__cta">See the project <span aria-hidden="true">→</span></span>
+                  <span class="v3-stage__cta">See the project <Arrow /></span>
                 </a>
               </li>
             );
@@ -75,7 +82,7 @@ const twoCols = work.length >= 2;
 
       {stage.more && (
         <a class="v3-stage__more" href={href(stage.more.path)}>
-          {stage.more.label} <span aria-hidden="true">→</span>
+          {stage.more.label} <Arrow />
         </a>
       )}
     </div>

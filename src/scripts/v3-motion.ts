@@ -604,7 +604,8 @@ function stageCards(): void {
     );
   }
 
-  const lists = gsap.utils.toArray<HTMLElement>('.v3-stage__work');
+  /* .v3-proof (2026-09-28): the in-place proof blocks rise the same way. */
+  const lists = gsap.utils.toArray<HTMLElement>('.v3-stage__work, .v3-proof');
   for (const list of lists) {
     const cards = list.querySelectorAll<HTMLElement>('[data-stage-card]');
     if (!cards.length) continue;

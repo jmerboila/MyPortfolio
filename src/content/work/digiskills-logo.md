@@ -10,7 +10,7 @@ tags:
   - "Mobile App"
   - "Symbol"
 cover: "../../assets/projects/DigiSkills-Logo-Preview.webp"
-coverAlt: "The DigiSkills app icon — an open white book on a deep navy rounded square, with three orange squares rising from its pages like pixels."
+coverAlt: "The DigiSkills app icon: an open white book on a deep navy rounded square, with three orange squares rising from its pages like pixels."
 gallery:
   - src: "../../assets/projects/DigiSkills-Logo-Full.webp"
     alt: "The DigiSkills book mark on its construction grid, with guides labelled pixel field, book mouth, centre and baseline."

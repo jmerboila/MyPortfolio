@@ -60,7 +60,9 @@ export const STAGES: readonly Stage[] = [
     headline: 'Your brand gets a face.',
     body: 'Logo, colours, fonts and tone of voice, all built from the plan. Then a short guide, so everyone uses them the same way.',
     gets: 'Logo and brand guide',
-    work: ['digiskills-logo', 'jm-design', 'devsign8'],
+    /* 2026-09-28: the three static logo cards gave way to the two logo
+       animations, shown in place (src/config/stage-proof.ts). */
+    work: [],
   },
   {
     id: 'build',
@@ -69,7 +71,8 @@ export const STAGES: readonly Stage[] = [
     headline: 'A website that works.',
     body: 'A fast site that looks good on every phone and turns visitors into messages and sales. Tracking goes in on day one, so we can see what works.',
     gets: 'Website with tracking',
-    work: ['devsign8-website'],
+    /* devsign8.com is shown in place now, with a link to its case study. */
+    work: [],
   },
   {
     id: 'be-found',
@@ -87,8 +90,8 @@ export const STAGES: readonly Stage[] = [
     headline: 'Show up where your customers are.',
     body: 'Social media set up and filled with posts people stop for, planned ahead and on brand.',
     gets: 'Social channels and a posting plan',
-    work: ['2026-ford-mustang-gtd'],
-    more: { label: 'See all my social media work', path: '/work/social/' },
+    /* 2026-09-28: Mustang off; the real Buffer schedule is shown in place. */
+    work: [],
   },
   {
     id: 'measure',
