@@ -66,7 +66,7 @@ story:
         - "So the plan was not one post but two: a Reel to reach people, a carousel to hold them."
       visual:
         kind: chart
-        source: "Buffer, State of Social Media Engagement 2026 (52M+ posts)"
+        source: "Buffer, State of Social Media Engagement (52M+ posts)"
         groups:
           - metric: "Engagement per person reached"
             unit: "%"
@@ -128,12 +128,12 @@ story:
     - stage: show-up
       heading: "Tuesday, 8:00 and 9:00 AM"
       body:
-        - "I posted on Tuesday, 25 August 2026. Tuesday is one of the strongest days in both of the large 2026 posting studies, behind Wednesday."
+        - "I posted on a Tuesday morning. Tuesday is one of the strongest days in both of the large posting studies, behind Wednesday."
         - "The hour between the posts gives the teaser time to travel before the payoff lands."
         - "One honest note: those studies find Tuesday afternoons stronger than mornings, which is my next test."
       visual:
         kind: clock
-        day: "Tuesday, 25 August 2026 (Toronto)"
+        day: "Tuesday (Toronto)"
         from: "8:00 AM"
         to: "9:00 AM"
         events:
@@ -146,7 +146,7 @@ story:
       visual:
         kind: results
   results:
-    source: "Instagram Insights via Buffer, as of 25 September 2026"
+    source: "Instagram Insights via Buffer, one month after posting"
     pieces:
       - name: "Reel Reveal"
         reach: 104
@@ -167,9 +167,9 @@ story:
       - "Give the Reel a clear call to action."
       - "Add Unofficial concept, not affiliated with Ford, to both captions."
   sources:
-    - { label: "Buffer: State of Social Media Engagement 2026", url: "https://buffer.com/resources/state-of-social-media-engagement-2026/" }
-    - { label: "Socialinsider: 2026 Instagram benchmarks", url: "https://www.socialinsider.io/social-media-benchmarks/instagram" }
+    - { label: "Buffer: State of Social Media Engagement", url: "https://buffer.com/resources/state-of-social-media-engagement-2026/" }
+    - { label: "Socialinsider: Instagram benchmarks", url: "https://www.socialinsider.io/social-media-benchmarks/instagram" }
     - { label: "Dataslayer: the ranking signals Adam Mosseri confirmed", url: "https://www.dataslayer.ai/blog/instagram-algorithm-2025-complete-guide-for-marketers" }
-    - { label: "Buffer: Best time to post on Instagram (September 2026)", url: "https://buffer.com/resources/when-is-the-best-time-to-post-on-instagram/" }
-    - { label: "Sprout Social: Best times to post on Instagram 2026", url: "https://sproutsocial.com/insights/best-times-to-post-on-instagram/" }
+    - { label: "Buffer: Best time to post on Instagram", url: "https://buffer.com/resources/when-is-the-best-time-to-post-on-instagram/" }
+    - { label: "Sprout Social: Best times to post on Instagram", url: "https://sproutsocial.com/insights/best-times-to-post-on-instagram/" }
 ---

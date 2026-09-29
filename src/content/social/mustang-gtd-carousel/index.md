@@ -3,7 +3,7 @@ type: instagram-post
 title: "2026 Ford Mustang GTD Seamless Carousel"
 piece: "Seamless Carousel"
 ratio: "4x5"
-caption: "Ford 2026 Mustang GTD\n#Ford #2026 #Mustang #GTD #StreetLegalButJustBarely"
+caption: "Swipe slowly. Four panels, one car.\n\nThe 2026 Ford Mustang GTD, built as one unbroken frame across the swipe. Street legal, but just barely.\n\nSend this to the person you'd take for the first drive.\n\n#FordMustang #MustangGTD #CarouselDesign #GraphicDesign #StreetLegalButJustBarely"
 work: 2026-ford-mustang-gtd
 tools: ["Photoshop"]
 order: 20

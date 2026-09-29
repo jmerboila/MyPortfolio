@@ -8,7 +8,7 @@ piece: "NX 350h Animated Poster"
 series: 2026-lexus-nx
 tools: ["InDesign", "After Effects"]
 # TODO(jayson): drafted caption — replace with the one you posted.
-caption: "The NX 350h poster, in motion. #Lexus #NX350h #MotionDesign #AnimatedPoster"
+caption: "Same poster. Now it moves.\n\nThe Lexus NX 350h poster, brought to life in After Effects.\n\nStill or in motion: which would stop your scroll?\n\n#Lexus #NX350h #MotionDesign #AnimatedPoster #AfterEffects"
 order: 31
 ratio: "4x5"
 slides:

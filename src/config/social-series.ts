@@ -26,7 +26,7 @@ export const SOCIAL_SERIES = {
   '2026-lexus-nx': {
     title: '2026 Lexus NX',
     label: 'Poster series',
-    idea: 'Designed from scratch in Adobe InDesign, then animated in After Effects: one poster, two formats for the feed. The first of the NX line.',
+    idea: 'Designed in Adobe InDesign, then animated in After Effects: one poster, two formats for the feed. The first of the NX line.',
     note: 'Self-initiated concept. Not affiliated with or endorsed by Lexus or Toyota.',
   },
   /* His call (2026-09-26): where he tries viral and trending formats. */

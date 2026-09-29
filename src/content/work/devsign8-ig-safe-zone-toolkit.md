@@ -25,7 +25,7 @@ story:
   lede: "A ten-Reel Instagram series on safe zones, and the Photoshop template behind it."
   launched: 2026-09-03
   channel: "Instagram"
-  disclaimer: "Specs as of September 2026. Meta changes them without notice, so check Ads Manager before a high-stakes campaign."
+  disclaimer: "Meta changes these specs without notice, so check Ads Manager before a high-stakes campaign."
   chapters:
     - stage: discover
       heading: "It started with posts I couldn't read"
@@ -60,7 +60,7 @@ story:
           - ["Reel cover", "1080 × 1920", "270, 130, 672, 65", "885 × 978"]
           - ["Highlight cover", "1080 × 1920", "600, 180, 600, 180", "720 × 720"]
           - ["Profile photo", "1080 × 1080", "158 each side", "764 × 764"]
-        source: "Devsign8-IG-Template.jsx, revision 3 (2 September 2026). Feed insets are a Devsign8 design margin, not a platform rule."
+        source: "Devsign8-IG-Template.jsx, revision 3. Feed insets are a Devsign8 design margin, not a platform rule."
     - stage: build
       heading: "Gridlines in Photoshop, Premiere Pro and After Effects"
       body:
@@ -90,26 +90,26 @@ story:
       visual:
         kind: captions
         items:
-          - { label: "Reel cover", time: "Wed 10 Sep, 6:00 PM", text: "A Reel cover can't be edited after upload. Get it right once.\n\nIt has to work twice: full-screen at 9:16, and again as a 3:4 tile on your profile, where the top and bottom 240px are cropped away.\n\nComment TOOLKIT for the script that builds the cover canvas with the grid crop already marked. Also at www.devsign8.com\n\n#brandingagency #digitalmarketing #creativedirection #marketingtips #designstudio" }
+          - { label: "Reel cover", time: "Wednesday, 6:00 PM", text: "A Reel cover can't be edited after upload. Get it right once.\n\nIt has to work twice: full-screen at 9:16, and again as a 3:4 tile on your profile, where the top and bottom 240px are cropped away.\n\nComment TOOLKIT for the script that builds the cover canvas with the grid crop already marked. Also at www.devsign8.com\n\n#brandingagency #digitalmarketing #creativedirection #marketingtips #designstudio" }
     - stage: show-up
       heading: "Nine Reels in three weeks"
       body:
-        - "I posted on weekday evenings around 6:00 PM Toronto time, from 3 to 24 September 2026, one or two a week, with a three-Reel push on the 10th."
-        - "The tenth Reel, Build one 9:16 master, goes out on Tuesday 29 September."
+        - "I posted on weekday evenings around 6:00 PM Toronto time over three weeks, one or two a week, with a three-Reel push on day 8."
+        - "The tenth Reel, Build one 9:16 master, closes the series."
       visual:
         kind: clock
-        day: "September 2026 (Toronto)"
-        from: "3 Sep"
-        to: "29 Sep"
+        day: "Four weeks (Toronto)"
+        from: "Day 1"
+        to: "Day 27"
         events:
-          - { time: "3 Sep", label: "Share button" }
-          - { time: "7 Sep", label: "Square grid crop" }
-          - { time: "10 Sep", label: "Reel cover, Story, 4:5" }
-          - { time: "17 Sep", label: "Profile photo" }
-          - { time: "22 Sep", label: "Feed 3:4" }
-          - { time: "23 Sep", label: "Carousel slide" }
-          - { time: "24 Sep", label: "Highlight cover" }
-          - { time: "29 Sep", label: "9:16 master (scheduled)" }
+          - { time: "Day 1", label: "Share button" }
+          - { time: "Day 5", label: "Square grid crop" }
+          - { time: "Day 8", label: "Reel cover, Story, 4:5" }
+          - { time: "Day 15", label: "Profile photo" }
+          - { time: "Day 20", label: "Feed 3:4" }
+          - { time: "Day 21", label: "Carousel slide" }
+          - { time: "Day 22", label: "Highlight cover" }
+          - { time: "Day 27", label: "9:16 master" }
     - stage: measure
       heading: "Results and what I learned"
       body:
@@ -117,7 +117,7 @@ story:
       visual:
         kind: results
   results:
-    source: "Instagram Insights via Buffer, as of 26 September 2026"
+    source: "Instagram Insights via Buffer"
     pieces:
       - name: "The whole series (9 Reels)"
         reach: 326
@@ -138,5 +138,5 @@ story:
       - "Keep the loss-first hooks and drop the abstract ones."
       - "Put the ask in one clear place: the link in bio and a pinned Reel."
       - "Grow the audience before asking for comments, by collaborating with designers."
-      - "Post the tenth Reel on 29 September and compare it with the first nine."
+      - "Compare the tenth Reel with the first nine."
 ---

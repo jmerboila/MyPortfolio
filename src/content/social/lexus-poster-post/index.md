@@ -5,7 +5,7 @@ piece: "NX 350h Poster"
 series: 2026-lexus-nx
 tools: ["InDesign"]
 # TODO(jayson): drafted caption — replace with the one you posted.
-caption: "Bold, sculpted, self-charging. The Lexus NX 350h: 240 HP, 200 km/h, and a cabin finished in rich red leather. #Lexus #NX350h #PosterDesign #AutomotiveDesign"
+caption: "240 HP. 200 km/h. Self-charging.\n\nA poster for the Lexus NX 350h, designed in InDesign: one car, one red band, nothing extra.\n\nWhich detail caught your eye first?\n\n#Lexus #NX350h #PosterDesign #GraphicDesign #AutomotiveDesign"
 order: 30
 ratio: "4x5"
 slides:
