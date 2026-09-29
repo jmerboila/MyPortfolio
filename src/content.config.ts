@@ -227,8 +227,13 @@ const work = defineCollection({
       story: z
         .object({
           lede: z.string(),
-          launched: z.coerce.date(),
+          /* Kept for ordering and records, never shown (2026-09-28: the
+             portfolio is timeless, his call; no visible dates). */
+          launched: z.coerce.date().optional(),
           channel: z.string(),
+          /* The label beside `channel` in the header, e.g. "Live at" for a
+             website rather than "Channel" for a social campaign. */
+          channelLabel: z.string().default('Channel'),
           disclaimer: z.string(),
           /* The finished piece, shown before chapter 01. Loaded eagerly: it is
              the page's first image. */

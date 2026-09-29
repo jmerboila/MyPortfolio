@@ -23,7 +23,9 @@ const who = SOCIAL_ACCOUNTS.instagram.name;
 const artboard =
   v.kind === 'slicer' ? await getImage({ src: v.artboard, width: 2160, format: 'webp' }) : undefined;
 const maxReach = results ? Math.max(...results.pieces.map((p) => p.reach), 1) : 1;
-const fmt = (n: number, unit: string) => `${n.toFixed(2)}${unit}`;
+/* Rates keep two decimals (6.90%, 1.00x). A score out of something ("/100",
+   2026-09-28, the devsign8.com PageSpeed chart) is a whole number. */
+const fmt = (n: number, unit: string) => (unit.startsWith('/') ? `${n}${unit}` : `${n.toFixed(2)}${unit}`);
 ---
 
 {

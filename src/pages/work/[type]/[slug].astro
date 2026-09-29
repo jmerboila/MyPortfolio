@@ -20,6 +20,8 @@ import LaunchStory from '../../../components/story/LaunchStory.astro';
 import SocialPost from '../../../components/social/SocialPost.astro';
 import PostRow from '../../../components/social/PostRow.astro';
 import { href } from '../../../lib/url';
+import { withUtm } from '../../../lib/utm';
+import Arrow from '../../../components/v3/Arrow.astro';
 import { absoluteUrl } from '../../../config/site';
 import { withMediaUrls } from '../../../lib/social-media';
 import { sortPosts } from '../../../config/social';
@@ -61,19 +63,16 @@ const posts = story
       await getCollection('social', (p) => !p.data.draft && p.data.work?.id === entry.id),
     ).map(withMediaUrls)
   : [];
-const launched = story?.launched.toLocaleDateString('en-CA', {
-  weekday: 'short',
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
+/* 2026-09-28: no visible dates anywhere (his call: a timeless portfolio).
+   `launched` and `year` stay in the data; `year` still feeds the JSON-LD
+   dateCreated below, which search engines read but visitors never see. */
+const visitUrl = d.externalUrl ? withUtm(d.externalUrl, 'project-header') : undefined;
+const visitName = d.externalUrl ? new URL(d.externalUrl).hostname.replace(/^www\./, '') : '';
 
 const hasCaseStudy = Boolean(d.problem || d.approach || d.outcome || d.constraints.length);
 const meta = [
   ['Role', d.role],
   ['Client', d.client],
-  ['Year', d.year],
   ['Tools', d.tools.length ? d.tools.join(', ') : ''],
 ].filter(([, v]) => v) as [string, string][];
 
@@ -126,16 +125,21 @@ const schema = [
                 <dd>{d.tools.join(', ')}</dd>
               </div>
               <div>
-                <dt>Channel</dt>
+                <dt>{story.channelLabel}</dt>
                 <dd>{story.channel}</dd>
-              </div>
-              <div>
-                <dt>Launched</dt>
-                <dd>{launched}</dd>
               </div>
             </dl>
             <p class="project__disclaimer">{story.disclaimer}</p>
           </>
+        )
+      }
+
+      {
+        visitUrl && (
+          <a class="project__visit" href={visitUrl} target="_blank" rel="noopener" data-cta="visit">
+            Visit {visitName} <Arrow />
+            <span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
         )
       }
 
@@ -343,6 +347,33 @@ const schema = [
     inline-size: 100%;
     block-size: auto;
     border-radius: var(--radius-m, 10px);
+  }
+
+  /* The live-site link (2026-09-28): the one button in the header, for
+     entries with an externalUrl (devsign8.com). */
+  .project__visit {
+    display: inline-flex;
+    gap: 0.5em;
+    align-items: center;
+    min-block-size: var(--tap-min);
+    margin-block-start: var(--space-m);
+    padding-inline: 1.25em;
+    font-weight: 600;
+    color: var(--on-accent);
+    text-decoration: none;
+    background: var(--accent);
+    border-radius: var(--radius-full);
+  }
+
+  .project__visit:hover,
+  .project__visit:focus-visible {
+    background: var(--accent-strong);
+  }
+
+  /* The shared arrow is accent-coloured; on the accent button it must take
+     the button's text colour instead, or it vanishes. */
+  .project__visit :global(.v3-arrow) {
+    color: inherit;
   }
 
   .project__disclaimer {

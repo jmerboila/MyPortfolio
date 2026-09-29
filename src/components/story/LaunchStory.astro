@@ -30,8 +30,11 @@ const stage = (id: string) => {
   {
     story.chapters.map((c, i) => {
       const s = stage(c.stage);
+      /* 2026-09-28: the first chapter of each stage carries the stage id, so
+         the homepage's stage links can land on it (/work/.../#measure). */
+      const anchor = story.chapters.findIndex((x) => x.stage === c.stage) === i ? c.stage : undefined;
       return (
-        <section class="st-ch" aria-labelledby={`st-h-${i}`} data-st-chapter>
+        <section id={anchor} class="st-ch" aria-labelledby={`st-h-${i}`} data-st-chapter>
           <div class="st-ch__visual">
             <StoryVisual visual={c.visual} results={story.results} />
           </div>
