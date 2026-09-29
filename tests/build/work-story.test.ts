@@ -48,7 +48,7 @@ test('the story renders seven chapter blocks across six homepage stages', () => 
 
 test('the disclaimer and the results source are on the page', () => {
   assert.ok(html.includes('Self-initiated concept. Not affiliated with or endorsed by Ford Motor Company.'));
-  assert.ok(html.includes('Instagram Insights via Buffer, as of 25 September 2026'));
+  assert.ok(html.includes('Instagram Insights via Buffer, one month after posting'));
 });
 
 test('the slicer, the clock and the two real posts render', () => {

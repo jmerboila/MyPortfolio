@@ -69,10 +69,12 @@ export const SEO = {
      (2026-09-25), and titles show in browser tabs and search results. */
   defaultTitle: `${PERSON.name} | ${PERSON.tagline}`,
   titleTemplate: (page: string) => `${page} | ${PERSON.name}`,
+  /* 2026-09-29 launch: no em dash (his rule), and written for the two
+     readers he wants, hiring managers and clients, in the words they search
+     (about 150 characters, so Google shows it whole). */
   defaultDescription:
-    'Portfolio of Jayson Mercado Erboila — Digital Marketing Specialist in ' +
-    'Toronto, Ontario. Marketing strategy paired with logo, brand identity, ' +
-    'graphic, web and UI/UX design.',
+    'Jayson Mercado Erboila, digital marketing specialist and designer in ' +
+    'Toronto: SEO, social media, web design and analytics, with measured results.',
   defaultOgImage: '/images/og-preview.jpg',
   locale: 'en_CA',
   lang: 'en-CA',

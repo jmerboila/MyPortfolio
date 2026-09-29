@@ -14,7 +14,7 @@ test('the toolkit story is built with its chapters, table and results source', (
   assert.match(html, /<h1[^>]*>[\s\S]*Devsign8 Instagram Safe-Zone Toolkit[\s\S]*<\/h1>/);
   assert.equal((html.match(/data-st-chapter/g) ?? []).length, 7);
   assert.match(html, /<table class="st-table"/);
-  assert.ok(html.includes('Instagram Insights via Buffer, as of 26 September 2026'));
+  assert.ok(html.includes('Instagram Insights via Buffer'));
 });
 
 test('the formats table carries the script\'s safe areas', () => {

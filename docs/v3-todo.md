@@ -1,4 +1,6 @@
-# v3 to-do
+# v3 to-do (history log)
+
+**Open items moved to [`docs/TODO.md`](TODO.md), the one master to-do list (2026-09-28). Nothing open is tracked here any more; this file keeps the record of finished rounds.**
 
 The running list for the v3 portfolio — the homepage since 2026-09-24 (it was previewed at `/v3`). Branch: `master`, pushed to `main` on `jmerboila/MyPortfolio`.
 `[x]` done (with commit), `[ ]` open.

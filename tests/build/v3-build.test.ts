@@ -141,8 +141,19 @@ test('no mobile menu and no v2 backlink', () => {
   assert.doesNotMatch(html, /data-menu-open/);
   assert.doesNotMatch(html, /&larr; v2|← v2/);
 });
-test('the header CTA reads Let’s talk', () => {
-  assert.match(html, /Let(?:&#39;|&#x27;|')s talk/);
+test('the header CTA reads Book a call and is tagged for tracking', () => {
+  assert.match(html, /class="v3-talk" href="https:\/\/cal\.com\/jmerboila\/discovery-call" data-cta="header">Book a call</);
+});
+test('the hero states the role and city as static text', () => {
+  assert.match(html, /class="v3-hero__role"[^>]*>Design &amp; Digital Marketing in Toronto\.</);
+});
+test('the contact heading is tagged, and its note rolls like the heading', () => {
+  assert.match(html, /class="v3-roll" href="https:\/\/cal\.com\/[^"]+"[^>]*data-cta="contact"/);
+  assert.match(html, /class="v3-contact__note"[^>]*data-reveal-chars[^>]*><span class="visually-hidden"[^>]*>A 30-minute discovery call, on Google Meet or by phone\.</);
+  assert.doesNotMatch(html, /Hiring\?/);
+});
+test('the hero role line drifts with the name', () => {
+  assert.match(html, /class="v3-hero__role" data-hero-tilt/);
 });
 const footer = /<footer[\s\S]*?<\/footer>/.exec(html)?.[0] ?? '';
 test('footer links to LinkedIn, Instagram and Devsign8 — no TikTok for now', () => {
@@ -188,10 +199,55 @@ test('every stage headline is present', () => {
   ];
   for (const h of headlines) assert.ok(html.includes(h), h);
 });
-test('sample work at the matching stage links to its case page', () => {
-  for (const path of ['logo/digiskills-logo', 'logo/jm-design', 'logo/devsign8', 'web/devsign8-website', 'social/2026-ford-mustang-gtd']) {
-    assert.match(html, new RegExp(`href="/MyPortfolio/work/${path}/"`));
-  }
+/* 2026-09-28: each stage is a short summary with a link inside (StageProof.astro). */
+test('03 Brand shows the two logos as stills linking to their project pages', () => {
+  assert.match(html, /The finished JM monogram in Adobe Illustrator/);
+  assert.match(html, /The finished Devsign8 wordmark selected in Adobe Illustrator/);
+  assert.match(html, /href="\/MyPortfolio\/work\/logo\/jm-design\/"/);
+  assert.match(html, /href="\/MyPortfolio\/work\/logo\/devsign8\/"/);
+  assert.match(html, /href="\/MyPortfolio\/work\/logo\/"/);
+  assert.doesNotMatch(html, /<video[^>]*data-reel/);
+  assert.doesNotMatch(html, /href="\/MyPortfolio\/work\/logo\/digiskills-logo\/"/);
+});
+test('04 Build carries devsign8.com in both themes and links to the case study', () => {
+  assert.match(html, /class="v3-site v3-site--dark"/);
+  assert.match(html, /class="v3-site v3-site--light"/);
+  assert.match(html, /homepage in dark mode on a desktop screen/);
+  assert.match(html, /homepage in light mode on a desktop screen/);
+  assert.match(html, /href="\/MyPortfolio\/work\/web\/devsign8-website\/"/);
+});
+test('05 names SEO, AEO and GEO and links to the search setup', () => {
+  for (const t of ['Rank on Google', 'Be the answer', 'Get cited by AI']) assert.ok(html.includes(t), t);
+  assert.match(html, /href="\/MyPortfolio\/work\/web\/devsign8-website\/#be-found"/);
+});
+test('06 shows posts and the posting slots, not the Mustang card, with one social link', () => {
+  assert.match(html, /class="v3-plan"/);
+  assert.match(html, /Buffer&#39;s study of 52 million posts|Buffer's study of 52 million posts/);
+  assert.equal((html.match(/See all my social media work/g) ?? []).length, 1);
+  assert.doesNotMatch(html, /href="\/MyPortfolio\/work\/social\/2026-ford-mustang-gtd\/"/);
+});
+test('07 shows three sourced results, each a link', () => {
+  assert.equal((html.match(/class="v3-result"/g) ?? []).length, 3);
+  assert.match(html, /href="\/MyPortfolio\/work\/web\/devsign8-website\/#measure"/);
+  assert.match(html, /href="\/MyPortfolio\/work\/social\/devsign8-ig-safe-zone-toolkit\/#measure"/);
+  assert.match(html, /href="\/MyPortfolio\/work\/social\/2026-ford-mustang-gtd\/#measure"/);
+});
+test('04 leads with the live devsign8.com, tagged for GA4', () => {
+  assert.match(html, /href="https:\/\/www\.devsign8\.com\/\?utm_source=portfolio&amp;utm_medium=referral&amp;utm_campaign=jm_portfolio&amp;utm_content=stage-build"[^>]*target="_blank"/);
+});
+/* Timeless (his call, 2026-09-28): no visible dates on the homepage. The
+   footer's auto-updating copyright year is the one allowed exception. */
+test('the homepage shows no dates', () => {
+  const text = html
+    .replace(/<(script|style)[\s\S]*?<\/\1>/g, '')
+    .replace(/<footer[\s\S]*?<\/footer>/g, '')
+    .replace(/<[^>]+>/g, ' ');
+  assert.doesNotMatch(text, /\b20\d\d\b/);
+  assert.doesNotMatch(text, /\b(Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.? \d{1,2}\b/);
+});
+test('every link arrow is the shared up-right arrow, no text arrows left', () => {
+  assert.doesNotMatch(html, /aria-hidden="true">\s*→<\/span>/);
+  assert.ok((html.match(/class="v3-arrow"/g) ?? []).length >= 8);
 });
 test('no discipline-plate markup remains', () => {
   assert.doesNotMatch(html, /data-plate\b/);

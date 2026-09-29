@@ -16,6 +16,10 @@ Naming rule (Jayson, 2026-09-23): the discipline is written **Design & Digital M
 |---|---|---|---|
 | hero.h1 | `src/components/v3/Hero.astro` | Jayson Mercado Erboila *(from site.ts)* | draft |
 | hero.line | `src/components/v3/Hero.astro` | Typewriter, looping: I help businesses *look good.* → *get found.* → *grow online.* Screen readers / reduced motion get: I help businesses look good, get found and grow online. | approved (round 5) |
+| hero.role | `src/components/v3/Hero.astro` | Design & Digital Marketing in Toronto. (static, between the name and the typewriter; marketing audit 2026-09-28) | approved (2026-09-28) |
+| nav.cta | `src/components/v3/SiteNav.astro` | Book a call (was "Let's talk") | approved (2026-09-28) |
+| contact.note | `src/components/v3/Contact.astro` | A 30-minute discovery call, on Google Meet or by phone. (matches the Cal.com event) | approved (2026-09-28) |
+| contact.hire | `src/components/v3/Contact.astro` | Hiring? See my experience on LinkedIn. (swap to a résumé link once a marketing résumé exists) | approved (2026-09-28) |
 | brief.h2 | `src/components/v3/Brief.astro` | Hi, I'm Jayson. | draft |
 | brief.text | `src/components/v3/Brief.astro` | I design with depth, crafting work that moves beyond surface aesthetics. By studying user perception, I build visual layers that deliver immediate impact at first glance and deeper discovery on the second. | approved (round 6, his own words) |
 | story.h2 | `src/components/v3/Story.astro` | How a project runs | draft |

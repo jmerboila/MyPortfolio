@@ -40,6 +40,14 @@ test('every stage work id has a matching content/work file', () => {
   }
 });
 
-test('at least one stage actually features work', () => {
-  assert.ok(STAGE_BLOCKS.some((s) => s.work.length > 0));
+/* 2026-09-28: stages 03 to 07 show their proof in place (stage-proof.ts)
+   instead of work cards, so an empty `work` everywhere is now valid. What
+   must hold instead: every stage the proof file names is a real stage. */
+test('every stage-proof key is a real stage id', () => {
+  const proof = readFileSync('src/config/stage-proof.ts', 'utf8');
+  const body = proof.slice(proof.indexOf('STAGE_PROOF'));
+  const keys = [...body.matchAll(/^  '?([a-z-]+)'?: \{$/gm)].map((m) => m[1]);
+  const ids = new Set(STAGE_BLOCKS.map((s) => s.id));
+  assert.deepEqual(keys, ['brand', 'build', 'be-found', 'show-up', 'measure']);
+  for (const k of keys) assert.ok(ids.has(k), k);
 });
