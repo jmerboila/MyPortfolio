@@ -27,6 +27,7 @@ interface Props {
 }
 
 const { index, label, title, idea, note, link, id } = Astro.props;
+import Arrow from './Arrow.astro';
 ---
 
 <section class="shelf" aria-labelledby={id}>
@@ -40,7 +41,7 @@ const { index, label, title, idea, note, link, id } = Astro.props;
         <a class="shelf__link" href={href(link.path)}>
           {link.text}
           {link.context && <span class="visually-hidden">{link.context}</span>}
-          <span aria-hidden="true"> →</span>
+          {' '}<Arrow />
         </a>
       )
     }

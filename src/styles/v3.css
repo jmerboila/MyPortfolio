@@ -721,10 +721,16 @@ html.v3-intro [data-intro] {
    so every descender was being sliced off. Extend each mask 0.12em down and
    cancel it with a negative margin, so the clip grows and the layout does not.
    The masks are SplitText's direct div children; unsplit text (reduced
-   motion, no JS) has none, so this rule only ever touches split lines. */
+   motion, no JS) has none, so this rule only ever touches split lines.
+   Sides too (2026-09-28): the hero name's -0.04em tracking also trails the
+   LAST letter, so the line box ends inside it and the mask sliced the right
+   edge off JAYSON's N, MERCADO's O and ERBOILA's A. 0.12em each side covers
+   the tracking plus the round letters' overshoot. */
 :is([data-intro], [data-split]) > div {
   padding-block-end: 0.12em;
   margin-block-end: -0.12em;
+  padding-inline: 0.12em;
+  margin-inline: -0.12em;
 }
 
 /* Brief words ink from a faint ghost to full text as you scroll (round 7:
@@ -841,10 +847,12 @@ html.v3-intro [data-intro] {
   --roll-c5: #93c5fd;
 }
 
-/* The contact arrow (round 6): two copies in one clipped box. On hover the
-   first flies out top-right while the second flies in from bottom-left —
-   reads as "go", never loops. Lives here, not in Contact.astro, because
-   Icon.astro's set:html SVGs carry no Astro scope attribute. */
+/* The link arrow (Arrow.astro): two copies in one clipped box. On hover the
+   first flies out top-right while the second flies in from bottom-left;
+   reads as "go", never loops. Round 6 made it for the contact heading;
+   2026-09-28 it became every link's arrow (his call, for consistency), so
+   the hover rules key off any link, not only .v3-roll. Lives here, not in
+   Arrow.astro, because Icon.astro's set:html SVGs carry no scope attribute. */
 .v3-arrow {
   display: inline-grid;
   vertical-align: -0.02em;
@@ -866,13 +874,13 @@ html.v3-intro [data-intro] {
   translate: -110% 110%;
 }
 
-.v3-roll:hover .v3-arrow__a,
-.v3-roll:focus-visible .v3-arrow__a {
+a:hover .v3-arrow__a,
+a:focus-visible .v3-arrow__a {
   translate: 110% -110%;
 }
 
-.v3-roll:hover .v3-arrow__b,
-.v3-roll:focus-visible .v3-arrow__b {
+a:hover .v3-arrow__b,
+a:focus-visible .v3-arrow__b {
   translate: 0 0;
 }
 

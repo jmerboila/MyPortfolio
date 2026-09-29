@@ -1,0 +1,36 @@
+---
+/* ============================================================================
+   RollText.astro: plain text with the contact heading's per-word roll.
+   ----------------------------------------------------------------------------
+   Same markup as Contact.astro's heading (see its header for the why):
+   a .visually-hidden copy for screen readers, and an aria-hidden copy split
+   into .v3-roll__word > .v3-roll__char > .v3-roll__inner, which v3.css rolls
+   on hover and v3-motion.ts (rollRandom, rollChars) gives a random font and
+   colour and a rise-in. Put data-reveal-chars on the parent for the rise-in.
+
+   Added 2026-09-28 for the contact note under the heading (his call: "the
+   same effect"). The heading keeps its own markup for its serif line and
+   arrow.
+   ========================================================================= */
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const words = text.split(' ').map((word) => [...word]);
+---
+
+<span class="visually-hidden">{text}</span><span aria-hidden="true">
+  {words.map((chars, wi) => (
+    <>
+      {wi > 0 && ' '}
+      <span class="v3-roll__word" data-roll-word>
+        {chars.map((char, ci) => (
+          <span class="v3-roll__char" style={`--i:${ci};--j:${ci}`}>
+            <span class="v3-roll__inner" data-char={char}>{char}</span>
+          </span>
+        ))}
+      </span>
+    </>
+  ))}
+</span>

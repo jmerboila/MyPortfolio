@@ -1,0 +1,19 @@
+---
+/* ============================================================================
+   Arrow.astro: the site's one link arrow.
+   ----------------------------------------------------------------------------
+   The "Let's build it." arrow (round 6), made reusable on 2026-09-28 at his
+   request so every link on the site ends the same way. Two copies of the
+   up-right arrow in one clipped box: on hover or keyboard focus of the parent
+   link, the first flies out top-right and the second flies in from
+   bottom-left. Styles live in v3.css (.v3-arrow), because Icon.astro's
+   set:html SVGs carry no Astro scope attribute. Decorative: the link's text
+   names it.
+   ========================================================================= */
+import Icon from './Icon.astro';
+---
+
+<span class="v3-arrow" aria-hidden="true">
+  <Icon name="arrow-up-right" class="v3-arrow__a" />
+  <Icon name="arrow-up-right" class="v3-arrow__b" />
+</span>

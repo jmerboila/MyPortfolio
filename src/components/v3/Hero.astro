@@ -52,6 +52,11 @@ const TYPE_LEAD = 'I help businesses';
 const TYPE_ENDINGS = ['look good.', 'get found.', 'grow online.'];
 const TYPE_FULL = 'I help businesses look good, get found and grow online.';
 const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a));
+
+/* 2026-09-28 marketing audit: the typewriter shows a third of the pitch at a
+   time, so a cold visitor had no static "what and where" above the fold.
+   Worded by the naming rule: Design & Digital Marketing, in that order. */
+const ROLE = `Design & Digital Marketing in ${PERSON.location.city}.`;
 ---
 
 <section class="v3-hero container" aria-labelledby="v3-hero-title" data-hero>
@@ -94,6 +99,8 @@ const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a
       ))}
     </p>
 
+    <p class="v3-hero__role" data-hero-tilt>{ROLE}</p>
+
     <p class="v3-hero__line v3-type" data-typewriter data-endings={JSON.stringify(TYPE_ENDINGS)}>
       <span class="v3-type__full">{TYPE_FULL}</span>
       {/* The sizer holds the longest ending invisibly, so the box never
@@ -130,6 +137,7 @@ const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a
     display: grid;
     grid-template-areas:
       'stage'
+      'role'
       'line';
     row-gap: var(--space-l);
   }
@@ -141,6 +149,10 @@ const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a
 
   .v3-hero__line {
     grid-area: line;
+  }
+
+  .v3-hero__role {
+    grid-area: role;
   }
 
   /* Shared by the filled h1 and the outline copy — anything that affects line
@@ -231,7 +243,7 @@ const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a
   @media (min-width: 64rem) {
     .v3-hero__namewrap {
       grid-template-columns: 54.5fr 7.5fr 38fr;
-      grid-template-rows: 1fr auto auto 1fr;
+      grid-template-rows: 1fr auto auto auto 1fr;
       grid-template-areas: none;
       row-gap: 0;
     }
@@ -249,7 +261,7 @@ const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a
     }
 
     .v3-hero__head {
-      grid-area: 1 / 2 / 5 / 4;
+      grid-area: 1 / 2 / 6 / 4;
       justify-self: start;
       align-self: center;
       /* 70cqi caps the height so the head's width (0.62 × height) never
@@ -283,9 +295,46 @@ const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a
   @media (min-width: 64rem) {
     .v3-hero__line {
       --type-col: 62cqi;
-      grid-area: 3 / 1 / 4 / 3;
+      grid-area: 4 / 1 / 5 / 3;
+      /* On ERBOILA's axis, like the role line above; see that rule. */
+      justify-self: end;
+      inline-size: calc(3.644 * 13.4cqi);
       /* The name's 0.85 line-height leaves almost no room under ERBOILA. */
       margin-block-start: var(--space-l);
+    }
+  }
+
+  /* -- The role line ---------------------------------------------------------
+     Static and quiet: it answers "what and where" in the first seconds while
+     the typewriter is still mid-phrase. text-dim passes AA on both grounds
+     (tokens.css). Centred under the name like the typewriter. */
+  .v3-hero__role {
+    position: relative;
+    z-index: 3;
+    justify-self: center;
+    margin: 0;
+    font-size: clamp(1rem, 0.85rem + 0.6vw, 1.25rem);
+    line-height: var(--leading-snug);
+    text-align: center;
+    color: var(--text-dim);
+  }
+
+  /* Wide screens: the role and the typewriter centre on ERBOILA (his call,
+     2026-09-28), not on the 62% column. The name is right-aligned, so
+     ERBOILA's right edge is the column's end and its centre is a fixed
+     distance in from it. Measured in Inter Tight 600 with the -0.04em
+     tracking: ERBOILA's ink runs from 0.05em to 3.783em, so its centre sits
+     1.822em in from the right edge. A box 2 x 1.822 = 3.644em wide, pinned
+     to the right edge (justify-self: end) and centring its text, puts both
+     lines on that axis at every width, because the name is sized in cqi
+     (13.4cqi, below). Re-measure if the name's font, weight or tracking
+     changes. */
+  @media (min-width: 64rem) {
+    .v3-hero__role {
+      grid-area: 3 / 1 / 4 / 3;
+      justify-self: end;
+      inline-size: calc(3.644 * 13.4cqi);
+      margin-block-start: var(--space-m);
     }
   }
 
@@ -295,6 +344,7 @@ const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a
       grid-template-areas:
         'head'
         'name'
+        'role'
         'line';
       row-gap: 0;
     }
@@ -316,6 +366,12 @@ const longestEnding = TYPE_ENDINGS.reduce((a, b) => (b.length > a.length ? b : a
 
     .v3-hero__line {
       margin-block-start: var(--space-l);
+    }
+
+    /* The name's 0.85 line-height leaves ERBOILA's baseline almost on the
+       box edge; without this the role line touched the letters. */
+    .v3-hero__role {
+      margin-block-start: var(--space-xs);
     }
   }
 

@@ -13,6 +13,10 @@
    nothing linked to) can be found from anywhere. It is marked current on
    /work/ itself ("page") and anywhere under it ("true").
 
+   2026-09-28 (marketing audit): "Let's talk" became "Book a call", so the
+   button names what happens next. data-cta="header" tags it for the
+   booking-click event (v3-motion.ts trackBooking()).
+
    Every icon still sits beside a visible label, or (the theme button) gets
    its name from aria-label — the icon never names a control alone.
    ========================================================================= */
@@ -37,7 +41,7 @@ const workCurrent = here === workHref ? 'page' : here.startsWith(workHref) ? 'tr
 
     <div class="v3-nav__actions">
       <a class="v3-navlink" href={workHref} aria-current={workCurrent}>Work</a>
-      <a class="v3-talk" href={CONTACT_HREF}>Let's talk</a>
+      <a class="v3-talk" href={CONTACT_HREF} data-cta="header">Book a call</a>
       <button type="button" class="v3-iconbtn" id="v3-theme" aria-label="Switch to dark theme">
         <Icon name="sun" class="v3-theme__sun" />
         <Icon name="moon" class="v3-theme__moon" />

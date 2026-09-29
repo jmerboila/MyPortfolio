@@ -22,7 +22,8 @@
    v3-motion.ts; --j below is each letter's index within its word).
    ========================================================================= */
 import { CONTACT_HREF } from '../../config/lifecycle';
-import Icon from './Icon.astro';
+import RollText from './RollText.astro';
+import Arrow from './Arrow.astro';
 
 /* Round 5: his line, "You got" tightened to "Got". Two sentences, each on
    its own line — the question, then the answer in the Instrument Serif
@@ -32,6 +33,13 @@ const SENTENCES = [
   { text: "Let's build it.", em: true },
 ];
 const HEADING = SENTENCES.map((s) => s.text).join(' ');
+
+/* 2026-09-28 (marketing audit): one quiet line under the heading saying
+   what the link opens (the Cal.com event is 30 minutes, Google Meet or
+   phone). Same per-word roll as the heading (his call, via RollText). The
+   "Hiring?" LinkedIn line that sat under it was removed the same day, his
+   call ("for now"). */
+const NOTE = 'A 30-minute discovery call, on Google Meet or by phone.';
 
 /* Splitting per word, not per sentence, is what lets .v3-roll__word's
    white-space: nowrap stop a word breaking mid-roll. */
@@ -44,7 +52,7 @@ const sentences = SENTENCES.map((s) => ({
 
 <section id="contact" class="v3-contact v3-screen container" aria-labelledby="v3-contact-title">
   <h2 id="v3-contact-title" class="v3-contact__title">
-    <a class="v3-roll" href={CONTACT_HREF} data-reveal-chars>
+    <a class="v3-roll" href={CONTACT_HREF} data-reveal-chars data-cta="contact">
       <span class="visually-hidden">{HEADING}</span>
       <span aria-hidden="true">
         {sentences.map((s) => {
@@ -65,10 +73,7 @@ const sentences = SENTENCES.map((s) => ({
               {wordsMarkup}{' '}
               {/* Two arrows in one clipped box: the first flies out, the
                   second flies in (v3.css .v3-arrow). */}
-              <span class="v3-arrow">
-                <Icon name="arrow-up-right" class="v3-arrow__a" />
-                <Icon name="arrow-up-right" class="v3-arrow__b" />
-              </span>
+              <Arrow />
             </em>
           ) : (
             <span class="v3-contact__line">{wordsMarkup}</span>
@@ -77,6 +82,7 @@ const sentences = SENTENCES.map((s) => ({
       </span>
     </a>
   </h2>
+  <p class="v3-contact__note" data-reveal-chars><RollText text={NOTE} /></p>
 </section>
 
 <style>
@@ -91,6 +97,12 @@ const sentences = SENTENCES.map((s) => ({
     font-size: clamp(2.75rem, 0.5rem + 9vw, 9rem);
     line-height: 1.02;
     margin: 0;
+  }
+
+  .v3-contact__note {
+    margin: var(--space-m) 0 0;
+    font-size: clamp(1rem, 0.85rem + 0.6vw, 1.25rem);
+    color: var(--text-dim);
   }
 
   .v3-contact__line {
