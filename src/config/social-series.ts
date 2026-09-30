@@ -20,15 +20,8 @@ export interface SeriesCopy {
 }
 
 export const SOCIAL_SERIES = {
-  /* His words (2026-09-26): made for himself, to show he can design from
-     scratch in InDesign and animate it in After Effects; more NX variants
-     will follow, so the series is the model line, not one car. */
-  '2026-lexus-nx': {
-    title: '2026 Lexus NX',
-    label: 'Poster series',
-    idea: 'Designed in Adobe InDesign, then animated in After Effects: one poster, two formats for the feed. The first of the NX line.',
-    note: 'Self-initiated concept. Not affiliated with or endorsed by Lexus or Toyota.',
-  },
+  /* 2026-lexus-nx was a series here until 2026-09-29, when its story was
+     written; it is now the Work project src/content/work/2026-lexus-nx.md. */
   /* His call (2026-09-26): where he tries viral and trending formats. */
   trends: {
     title: 'Exploring viral trends',

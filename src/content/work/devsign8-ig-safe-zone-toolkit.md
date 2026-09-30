@@ -92,10 +92,10 @@ story:
         items:
           - { label: "Reel cover", time: "Wednesday, 6:00 PM", text: "A Reel cover can't be edited after upload. Get it right once.\n\nIt has to work twice: full-screen at 9:16, and again as a 3:4 tile on your profile, where the top and bottom 240px are cropped away.\n\nComment TOOLKIT for the script that builds the cover canvas with the grid crop already marked. Also at www.devsign8.com\n\n#brandingagency #digitalmarketing #creativedirection #marketingtips #designstudio" }
     - stage: show-up
-      heading: "Nine Reels in three weeks"
+      heading: "Ten Reels in four weeks"
       body:
-        - "I posted on weekday evenings around 6:00 PM Toronto time over three weeks, one or two a week, with a three-Reel push on day 8."
-        - "The tenth Reel, Build one 9:16 master, closes the series."
+        - "I posted on weekday evenings around 6:00 PM Toronto time, one or two a week, with a three-Reel push on day 8."
+        - "The tenth Reel, Build one 9:16 master, went out on day 27 and closes the series: one file for Stories and Reels on Instagram and Facebook."
       visual:
         kind: clock
         day: "Four weeks (Toronto)"
@@ -113,7 +113,7 @@ story:
     - stage: measure
       heading: "Results and what I learned"
       body:
-        - "Three weeks, nine Reels, from an account with almost no followers yet."
+        - "The first nine Reels, from an account with almost no followers yet."
       visual:
         kind: results
   results:

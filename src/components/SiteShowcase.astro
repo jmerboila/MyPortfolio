@@ -1,0 +1,170 @@
+---
+/* ============================================================================
+   SiteShowcase.astro: a live site as the home page's Build stage draws it
+   (moved out of StageProof.astro 2026-09-30, his call, so the Work cards and
+   the devsign8.com story show it the same way).
+   ----------------------------------------------------------------------------
+   The desktop screenshot in a browser frame, the phone over its lower right
+   corner. Both themes are in the markup; CSS shows the one OPPOSITE the page
+   (a dark site on a light page, a light site on a dark page), following the
+   device setting and the site's theme toggle. The hidden set is display:none
+   with lazy images, so it is never downloaded.
+
+   `decorative` (the Work cards, where the project name is the link text)
+   empties the alt text so a screen reader hears the project once.
+
+   `mixed` (the devsign8.com "Built" chapter, his call 2026-09-30) puts the
+   phone in the other theme to the desktop, so the pair shows the site in
+   both light and dark: a dark desktop with a light phone on a light page,
+   a light desktop with a dark phone on a dark page.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import type { SiteShots } from '../config/site-shots';
+
+interface Props {
+  shots: SiteShots;
+  /** `card`: the small Work cover; `full`: a stage or a story chapter. */
+  size?: 'full' | 'card';
+  decorative?: boolean;
+  /** Phone in the other theme to the desktop. */
+  mixed?: boolean;
+  /** Pass-through for the home page's stage reveal (v3-motion.ts). */
+  stageCard?: boolean;
+}
+
+const { shots, size = 'full', decorative = false, mixed = false, stageCard = false } = Astro.props;
+const other = { dark: 'light', light: 'dark' } as const;
+const desktopSizes = size === 'card' ? '(min-width: 64rem) 17rem, (min-width: 40rem) 45vw, 92vw' : '(min-width: 64rem) 36rem, 90vw';
+const mobileSizes = size === 'card' ? '(min-width: 64rem) 5rem, 25vw' : '(min-width: 64rem) 9rem, 30vw';
+const desktopWidths = size === 'card' ? [480, 960] : [640, 960, 1440];
+---
+
+{
+  (['dark', 'light'] as const).map((theme) => (
+    <div class:list={['site-shot', `site-shot--${theme}`]} data-size={size} data-stage-card={stageCard ? '' : undefined}>
+      <figure class="site-shot__desktop">
+        <div class="site-shot__bar" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+        <Image
+          src={shots[theme].desktop.src}
+          alt={decorative ? '' : shots[theme].desktop.alt}
+          widths={desktopWidths}
+          sizes={desktopSizes}
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+      <figure class="site-shot__mobile">
+        <Image
+          src={shots[mixed ? other[theme] : theme].mobile.src}
+          alt={decorative ? '' : shots[mixed ? other[theme] : theme].mobile.alt}
+          widths={[240, 390]}
+          sizes={mobileSizes}
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+    </div>
+  ))
+}
+
+<style>
+  .site-shot {
+    position: relative;
+    padding-block-end: 12%;
+    padding-inline-end: 14%;
+  }
+
+  /* The opposite theme to the page. Light page (the default): dark shots. */
+  .site-shot--light {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .site-shot--light {
+      display: block;
+    }
+    :global(:root:not([data-theme='light'])) .site-shot--dark {
+      display: none;
+    }
+  }
+
+  :global(:root[data-theme='dark']) .site-shot--light {
+    display: block;
+  }
+
+  :global(:root[data-theme='dark']) .site-shot--dark {
+    display: none;
+  }
+
+  /* Framed media: hairline, soft ground, rounded (as the home page's other
+     stage cards). */
+  .site-shot__desktop,
+  .site-shot__mobile {
+    margin: 0;
+    overflow: hidden;
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+  }
+
+  .site-shot__desktop {
+    border-radius: var(--radius-l);
+  }
+
+  .site-shot__bar {
+    display: flex;
+    gap: 6px;
+    padding: 8px 10px;
+    border-block-end: 1px solid var(--border);
+  }
+
+  .site-shot__bar span {
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 50%;
+    background: var(--border-strong);
+  }
+
+  /* Square corners: the frame rounds the outside, so a host page's own image
+     radius (story.css gives .st-v img 10px) must not curve the screenshot's
+     corners under the browser bar (fixed 2026-09-30). */
+  .site-shot :global(img) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: 0;
+  }
+
+  .site-shot__mobile {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    inline-size: 26%;
+    aspect-ratio: 390 / 844;
+    border-radius: 1rem;
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.28);
+  }
+
+  /* The small Work card: tighter bar and corners at a quarter of the size. */
+  .site-shot[data-size='card'] .site-shot__desktop {
+    border-radius: var(--radius-m);
+  }
+
+  .site-shot[data-size='card'] .site-shot__bar {
+    gap: 4px;
+    padding: 5px 7px;
+  }
+
+  .site-shot[data-size='card'] .site-shot__bar span {
+    inline-size: 5px;
+    block-size: 5px;
+  }
+
+  .site-shot[data-size='card'] .site-shot__mobile {
+    border-radius: 0.5rem;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.28);
+  }
+</style>

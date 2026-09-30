@@ -11,7 +11,8 @@
               project page, where the full motion reel plays (03 Brand)
      site     devsign8.com on desktop and phone, in the OPPOSITE theme to the
               page so it stands out: the dark site on a light page, the light
-              site on a dark page (his call) (04 Build)
+              site on a dark page (his call) (04 Build). Drawn by the shared
+              SiteShowcase.astro since 2026-09-30
      found    SEO, AEO and GEO in one line each (05 Be found)
      social   three posts, the research-backed posting slots (06 Show up)
      results  three headline numbers, each with its source, each a link
@@ -24,6 +25,7 @@ import type { Proof } from '../../config/stage-proof';
 import { href } from '../../lib/url';
 import { withUtm } from '../../lib/utm';
 import Arrow from './Arrow.astro';
+import SiteShowcase from '../SiteShowcase.astro';
 
 interface Props {
   proof: Proof;
@@ -52,17 +54,8 @@ const { proof } = Astro.props;
 
   {proof.kind === 'site' && (
     <>
-      {(['dark', 'light'] as const).map((theme) => (
-        <div class:list={['v3-site', `v3-site--${theme}`]} data-stage-card>
-          <figure class="v3-site__desktop">
-            <div class="v3-site__bar" aria-hidden="true"><span></span><span></span><span></span></div>
-            <Image src={proof[theme].desktop.src} alt={proof[theme].desktop.alt} widths={[640, 960, 1440]} sizes="(min-width: 64rem) 36rem, 90vw" loading="lazy" decoding="async" />
-          </figure>
-          <figure class="v3-site__mobile">
-            <Image src={proof[theme].mobile.src} alt={proof[theme].mobile.alt} widths={[240, 390]} sizes="(min-width: 64rem) 9rem, 30vw" loading="lazy" decoding="async" />
-          </figure>
-        </div>
-      ))}
+      <SiteShowcase shots={proof.shots} stageCard />
+
       <ul class="v3-points" role="list">
         {proof.points.map((point) => (
           <li>{point}</li>
@@ -213,8 +206,6 @@ const { proof } = Astro.props;
 
   /* Framed media share one look: hairline, soft ground, rounded. */
   .v3-logo__frame,
-  .v3-site__desktop,
-  .v3-site__mobile,
   .v3-tile {
     overflow: hidden;
     background: var(--bg-2);
@@ -270,68 +261,11 @@ const { proof } = Astro.props;
     color: var(--text-dim);
   }
 
-  /* -- Site: desktop in a browser frame, the phone overlapping it ---------- */
-  .v3-site {
-    position: relative;
-    padding-block-end: 12%;
-    padding-inline-end: 14%;
-  }
-
-  /* The opposite theme to the page. Light page (the default): dark shots. */
-  .v3-site--light {
-    display: none;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .v3-site--light {
-      display: block;
-    }
-    :global(:root:not([data-theme='light'])) .v3-site--dark {
-      display: none;
-    }
-  }
-
-  :global(:root[data-theme='dark']) .v3-site--light {
-    display: block;
-  }
-
-  :global(:root[data-theme='dark']) .v3-site--dark {
-    display: none;
-  }
-
-  .v3-site__desktop {
-    border-radius: var(--radius-l);
-  }
-
-  .v3-site__bar {
-    display: flex;
-    gap: 6px;
-    padding: 8px 10px;
-    border-block-end: 1px solid var(--border);
-  }
-
-  .v3-site__bar span {
-    inline-size: 8px;
-    block-size: 8px;
-    border-radius: 50%;
-    background: var(--border-strong);
-  }
-
-  .v3-site :global(img),
+  /* -- Site: SiteShowcase.astro draws it (and styles itself) ------------- */
   .v3-tile :global(img) {
     display: block;
     inline-size: 100%;
     block-size: auto;
-  }
-
-  .v3-site__mobile {
-    position: absolute;
-    inset-block-end: 0;
-    inset-inline-end: 0;
-    inline-size: 26%;
-    aspect-ratio: 390 / 844;
-    border-radius: 1rem;
-    box-shadow: 0 12px 32px rgb(0 0 0 / 0.28);
   }
 
   .v3-proof .v3-points {

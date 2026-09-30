@@ -1,8 +1,13 @@
 ---
 /* ============================================================================
-   PostRow.astro: a swipeable row of posts, for a project with more than
-   three pieces (the toolkit's ten Reels). Every post keeps its full frame;
+   PostRow.astro: a swipeable row of posts. Every post keeps its full frame;
    the row scrolls and snaps instead of wrapping.
+
+   Two or three posts (`data-fit`, 2026-09-29, his call): when the row's own
+   width has room for all of them at 240px or more, they sit side by side
+   with no scrolling, no arrows and no scroll bar (a container query in
+   social.css). Narrower, they fall back to the swipe row. Four or more (the
+   toolkit's ten Reels) always swipe.
 
    Touch devices swipe. Devices with a mouse also get ‹ › buttons, because a
    thin horizontal scrollbar is easy to miss (UX review, 2026-09-26).
@@ -18,10 +23,17 @@ interface Props {
   label: string;
 }
 const { posts, label } = Astro.props;
+const fit = posts.length <= 3 ? posts.length : undefined;
 ---
 
 <div class="sp-rowwrap" data-sp-row>
-  <ul class="sp-reel-row" role="list" tabindex="0" aria-label={`${label}: ${posts.length} posts, scroll sideways for more`}>
+  <ul
+    class="sp-reel-row"
+    data-fit={fit}
+    role="list"
+    tabindex="0"
+    aria-label={fit ? `${label}: ${posts.length} posts` : `${label}: ${posts.length} posts, scroll sideways for more`}
+  >
     {
       posts.map((p) => (
         <li>

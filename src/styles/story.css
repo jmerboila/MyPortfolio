@@ -111,6 +111,25 @@
   gap: var(--space-s);
 }
 
+/* Three or four tall pieces (the Lexus posts and build frames, 2026-09-29)
+   sit side by side; stacked, they made the chapter several screens long.
+   Four go two by two on a phone. One or two keep the stack above. */
+.st-v--gallery:has(> figure:nth-child(3):last-child) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+}
+
+.st-v--gallery:has(> figure:nth-child(4):last-child) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .st-v--gallery:has(> figure:nth-child(4):last-child) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 .st-v--gallery img {
   border: 1px solid var(--border);
 }
@@ -283,10 +302,23 @@
 }
 
 .st-cap__avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
   inline-size: 28px;
   block-size: 28px;
   border-radius: 50%;
   background: #dbdbdb;
+}
+
+/* The JM monogram, as on the post frames (2026-09-29). */
+.st-cap__avatar:has(svg) {
+  background: #111111;
+  color: #ffffff;
+}
+
+.st-cap__avatar svg {
+  block-size: 62%;
 }
 
 .st-cap__text {

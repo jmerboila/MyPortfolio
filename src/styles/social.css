@@ -111,8 +111,20 @@
 }
 
 /* No artwork: a blank circle, the grey of Instagram's empty avatar. */
-.sp-avatar:not(:has(img)) {
+.sp-avatar:not(:has(img, svg)) {
   background: #dbdbdb;
+}
+
+/* The JM monogram (2026-09-29): white on near-black, like a profile photo,
+   in both site themes. */
+.sp-avatar:has(svg) {
+  background: #111111;
+  color: #ffffff;
+}
+
+.sp-avatar svg {
+  inline-size: auto;
+  block-size: 62%;
 }
 
 .sp-avatar img {
@@ -618,27 +630,6 @@ button.sp-rail__item:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
-.sp-reel__audio-art {
-  display: grid;
-  place-items: center;
-  inline-size: 28px;
-  block-size: 28px;
-  border: 2px solid #ffffff;
-  border-radius: 7px;
-  overflow: hidden;
-  background: #ffffff;
-}
-
-/* No artwork: the same blank grey as the avatar. */
-.sp-reel__audio-art:not(:has(img)) {
-  background: #dbdbdb;
-}
-
-.sp-reel__audio-art img {
-  inline-size: 85%;
-  block-size: 85%;
-  object-fit: contain;
-}
 
 .sp-vert__bottom {
   inset-inline: 12px 66px;
@@ -661,13 +652,6 @@ button.sp-rail__item:focus-visible {
   font-weight: 700;
 }
 
-.sp-reel__follow {
-  padding: 3px 10px;
-  border: 1px solid rgb(255 255 255 / 0.85);
-  border-radius: 8px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
 
 .sp-vert .sp-tag {
   color: inherit;
@@ -816,8 +800,14 @@ button.sp-rail__item:focus-visible {
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
+  /* No scroll bar (his call, 2026-09-29: it read as clutter). The next post
+     peeking in at the edge shows there is more, touch swipes, and mouse
+     users get the ‹ › buttons below. */
+  scrollbar-width: none;
+}
+
+.sp-reel-row::-webkit-scrollbar {
+  display: none;
 }
 
 .sp-reel-row > li {
@@ -825,10 +815,33 @@ button.sp-rail__item:focus-visible {
   scroll-snap-align: start;
 }
 
-/* ‹ › for mouse users only: touch devices swipe. Same see-through disc as
-   the carousel arrows and the play button. */
+/* ‹ › for mouse users only: touch devices swipe. A solid white disc, so it
+   reads apart from the see-through carousel arrows and play button. */
 .sp-rowwrap {
   position: relative;
+  container-type: inline-size;
+}
+
+/* Two or three posts side by side once the row has room for each at 240px
+   (15rem) or more: no scrolling, no arrows. Measured on the row itself, so
+   it holds beside a shelf's text column, on a project page, in any pane.
+   Below that width the swipe row above takes over. */
+@container (min-width: 31rem) {
+  .sp-reel-row[data-fit='2'] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, var(--sp-post-w)));
+    align-items: start;
+    overflow: visible;
+  }
+}
+
+@container (min-width: 47rem) {
+  .sp-reel-row[data-fit='3'] {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, var(--sp-post-w)));
+    align-items: start;
+    overflow: visible;
+  }
 }
 
 .sp-row__nav {
@@ -848,19 +861,22 @@ button.sp-rail__item:focus-visible {
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: rgb(0 0 0 / 0.55);
-    color: #ffffff;
+    /* White disc, black arrow (his call, 2026-09-30). The shadow keeps the
+       disc visible where it overlaps a white frame or a light Reel. */
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 1px 6px rgb(0 0 0 / 0.35);
     cursor: pointer;
   }
 
   .sp-row__nav:hover {
-    background: rgb(0 0 0 / 0.75);
+    background: #e8e8e8;
   }
 
   .sp-row__nav:focus-visible {
-    outline: 2px solid #ffffff;
+    outline: 2px solid #000000;
     outline-offset: 2px;
-    box-shadow: 0 0 0 5px #000000;
+    box-shadow: 0 0 0 5px #ffffff;
   }
 
   .sp-row__nav[hidden] {

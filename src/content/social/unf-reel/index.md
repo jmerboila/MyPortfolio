@@ -7,7 +7,7 @@ title: "UNF: Term 2 done, Term 3 ready"
 series: trends
 # TODO(jayson): drafted from the file name — replace with the real caption
 # and add `client:` if this was client work.
-caption: "Term 2: done. Term 3: ready.\n\nBack to building, one term closer to the finish line.\n\n#UNF #GradSchool #DigitalMedia"
+caption: "Term 2: done. Term 3: ready. Back to building, one term closer to the finish line.\n\n#UNF #GradSchool"
 order: 40
 ratio: "16x9"
 slides:

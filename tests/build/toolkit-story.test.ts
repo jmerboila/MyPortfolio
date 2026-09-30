@@ -39,7 +39,7 @@ test('no em dashes in the toolkit content files', () => {
   }
 });
 
-test('the toolkit shows as a row of nine uncropped Reels (the tenth is a draft)', () => {
+test('the toolkit shows as a row of ten uncropped Reels (the tenth posted 2026-09-29)', () => {
   /* Its own shelf: the Mustang shelf above is a row too since 2026-09-26. */
   const shelf =
     social
@@ -47,7 +47,7 @@ test('the toolkit shows as a row of nine uncropped Reels (the tenth is a draft)'
       .find((s) => /class="shelf__title"[^>]*>\s*Devsign8 Instagram Safe-Zone Toolkit\s*</.test(s)) ?? '';
   const row = shelf.slice(shelf.indexOf('class="sp-reel-row"'), shelf.indexOf('</ul>', shelf.indexOf('class="sp-reel-row"')));
   assert.ok(row.length > 0, 'no Reel row on the toolkit shelf');
-  assert.equal((row.match(/data-sp-video/g) ?? []).length, 9);
+  assert.equal((row.match(/data-sp-video/g) ?? []).length, 10);
   assert.match(html, /class="sp-reel-row"/);
 });
 

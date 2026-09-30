@@ -8,11 +8,17 @@
    already goes there) the cover is a mouse convenience only: out of the tab
    order and hidden from assistive tech, so it is not a second, unnamed stop.
    Styles: .cover in src/styles/shelves.css.
+
+   A live site (`coverSite`, 2026-09-30) is drawn as the home page draws it:
+   desktop in a browser frame with the phone over its corner, in the theme
+   opposite the page (SiteShowcase.astro). Decorative here, like the image.
    ========================================================================= */
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import { href } from '../../lib/url';
 import { projectPath } from '../../lib/work-path';
+import { SITE_SHOTS } from '../../config/site-shots';
+import SiteShowcase from '../SiteShowcase.astro';
 
 interface Props {
   entry: CollectionEntry<'work'>;
@@ -31,8 +37,18 @@ const widths = size === 'large' ? [640, 960, 1400] : [320, 640];
   aria-hidden={name ? undefined : 'true'}
   tabindex={name ? undefined : -1}
 >
-  <span class="cover__frame">
-    <Image src={entry.data.cover} alt="" widths={widths} sizes={sizes} loading="lazy" decoding="async" />
-  </span>
+  {
+    entry.data.coverSite ? (
+      <span class="cover__frame cover__frame--site">
+        <span class="cover__site">
+          <SiteShowcase shots={SITE_SHOTS[entry.data.coverSite]} size={size === 'large' ? 'full' : 'card'} decorative />
+        </span>
+      </span>
+    ) : (
+      <span class="cover__frame">
+        <Image src={entry.data.cover} alt="" widths={widths} sizes={sizes} loading="lazy" decoding="async" />
+      </span>
+    )
+  }
   {name && <span class="cover__name">{name}</span>}
 </a>

@@ -12,6 +12,9 @@
 import { Image, getImage } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { SOCIAL_ACCOUNTS, captionParts } from '../../config/social';
+import JMMark from '../JMMark.astro';
+import SiteShowcase from '../SiteShowcase.astro';
+import { SITE_SHOTS } from '../../config/site-shots';
 
 type Story = NonNullable<CollectionEntry<'work'>['data']['story']>;
 interface Props {
@@ -24,8 +27,10 @@ const artboard =
   v.kind === 'slicer' ? await getImage({ src: v.artboard, width: 2160, format: 'webp' }) : undefined;
 const maxReach = results ? Math.max(...results.pieces.map((p) => p.reach), 1) : 1;
 /* Rates keep two decimals (6.90%, 1.00x). A score out of something ("/100",
-   2026-09-28, the devsign8.com PageSpeed chart) is a whole number. */
-const fmt = (n: number, unit: string) => (unit.startsWith('/') ? `${n}${unit}` : `${n.toFixed(2)}${unit}`);
+   2026-09-28, the devsign8.com PageSpeed chart) is a whole number, and so is
+   a plain count with no unit (people reached, 2026-09-29, the Lexus chart). */
+const fmt = (n: number, unit: string) =>
+  unit.startsWith('/') || unit === '' ? `${n}${unit}` : `${n.toFixed(2)}${unit}`;
 ---
 
 {
@@ -46,6 +51,14 @@ const fmt = (n: number, unit: string) => (unit.startsWith('/') ? `${n}${unit}` :
           {it.note && <figcaption>{it.note}</figcaption>}
         </figure>
       ))}
+    </div>
+  )
+}
+
+{
+  v.kind === 'site' && (
+    <div class="st-v st-v--site">
+      <SiteShowcase shots={SITE_SHOTS[v.shots]} mixed={v.mixed} />
     </div>
   )
 }
@@ -142,7 +155,7 @@ const fmt = (n: number, unit: string) => (unit.startsWith('/') ? `${n}${unit}` :
       {v.items.map((c) => (
         <figure class="st-cap">
           <p class="st-cap__head">
-            <span class="st-cap__avatar" aria-hidden="true" />
+            <span class="st-cap__avatar" aria-hidden="true">{SOCIAL_ACCOUNTS.instagram.monogram && <JMMark />}</span>
             <strong>{who}</strong>
             <span>
               {c.time} · {c.label}

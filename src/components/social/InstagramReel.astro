@@ -3,7 +3,9 @@
    InstagramReel.astro — a Reel as the Reels viewer draws it.
    ----------------------------------------------------------------------------
    9:16, full-bleed video, the action rail on the right, account + caption +
-   audio line bottom-left. Always dark, whatever the site theme: the Reels
+   audio line bottom-left. Trimmed 2026-09-29 (his call: cleaner, same feel):
+   the rail keeps like, comment and share; the ⋯, the spinning audio square
+   and the Follow pill are gone; the JM monogram is the avatar. Always dark, whatever the site theme: the Reels
    viewer is dark in both of Instagram's modes, because it sits on video.
 
    Text over video sits on a scrim, not on the footage. Contrast of white text
@@ -14,6 +16,7 @@ import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import SocialIcon from './SocialIcon.astro';
 import SocialVideo from './SocialVideo.astro';
+import JMMark from '../JMMark.astro';
 import { SOCIAL_ACCOUNTS, captionParts, compactCount } from '../../config/social';
 
 type Data = Extract<CollectionEntry<'social'>['data'], { type: 'instagram-reel' }>;
@@ -58,19 +61,14 @@ const { stats } = data;
         <SocialIcon name="send" size={28} />
         {stats.shares !== undefined && <span class="sp-rail__n">{compactCount(stats.shares)}</span>}
       </span>
-      <span class="sp-rail__item" aria-hidden="true"><SocialIcon name="more" size={26} /></span>
-      <span class="sp-reel__audio-art" aria-hidden="true">
-        {account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
-      </span>
     </div>
 
     <div class="sp-vert__bottom">
       <p class="sp-vert__who">
         <span class="sp-avatar sp-avatar--sm">
-          {account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
+          {account.monogram ? <JMMark /> : account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
         </span>
         <span class="sp-vert__handle">{account.name}</span>
-        <span class="sp-reel__follow" aria-hidden="true">Follow</span>
       </p>
 
       {

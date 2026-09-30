@@ -210,8 +210,8 @@ test('03 Brand shows the two logos as stills linking to their project pages', ()
   assert.doesNotMatch(html, /href="\/MyPortfolio\/work\/logo\/digiskills-logo\/"/);
 });
 test('04 Build carries devsign8.com in both themes and links to the case study', () => {
-  assert.match(html, /class="v3-site v3-site--dark"/);
-  assert.match(html, /class="v3-site v3-site--light"/);
+  assert.match(html, /class="site-shot site-shot--dark"/);
+  assert.match(html, /class="site-shot site-shot--light"/);
   assert.match(html, /homepage in dark mode on a desktop screen/);
   assert.match(html, /homepage in light mode on a desktop screen/);
   assert.match(html, /href="\/MyPortfolio\/work\/web\/devsign8-website\/"/);

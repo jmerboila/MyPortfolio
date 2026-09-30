@@ -4,7 +4,8 @@
    ----------------------------------------------------------------------------
    Drawn the way the feed draws it: header, media at the post's own crop,
    action row with the page dots centred in it, likes, a two-line caption with
-   "more", date.
+   "more", date. The header's ⋯ menu was dropped 2026-09-29 (his call:
+   cleaner, same feel); the JM monogram is the avatar.
 
    The frame follows the site theme, because Instagram itself has a light and
    a dark mode and a white card on the night ground would look pasted in.
@@ -17,6 +18,7 @@ import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import SocialIcon from './SocialIcon.astro';
 import SocialVideo from './SocialVideo.astro';
+import JMMark from '../JMMark.astro';
 import { SOCIAL_ACCOUNTS, captionParts, compactCount, postDate } from '../../config/social';
 
 type Data = Extract<CollectionEntry<'social'>['data'], { type: 'instagram-post' }>;
@@ -36,7 +38,7 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
 <article class="sp-ig" aria-label={`Instagram post: ${data.title}`}>
   <header class="sp-ig__head">
     <span class="sp-avatar">
-      {account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
+      {account.monogram ? <JMMark /> : account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
     </span>
     <p class="sp-ig__who">
       {/* The piece's name where Instagram shows the account (his call,
@@ -51,7 +53,6 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
         )
       }
     </p>
-    <SocialIcon name="more" size={22} class="sp-ig__more" />
   </header>
 
   <div

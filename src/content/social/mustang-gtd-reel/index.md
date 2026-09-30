@@ -2,7 +2,7 @@
 type: instagram-reel
 title: "2026 Ford Mustang GTD Reel Reveal"
 piece: "Reel Reveal"
-caption: "Something street legal, but just barely, is coming out of the smoke.\n\nFull reveal in one hour.\n\n#FordMustang #MustangGTD #CarReveal #MotionDesign #StreetLegalButJustBarely"
+caption: "Something street legal, but just barely, is coming out of the smoke. A ten-second teaser, built in Photoshop and After Effects.\n\n#MustangGTD #StreetLegalButJustBarely"
 audio: "Original audio"
 work: 2026-ford-mustang-gtd
 tools: ["Photoshop", "After Effects"]

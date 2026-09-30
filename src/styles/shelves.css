@@ -120,6 +120,30 @@
   transition: scale var(--dur-base) var(--ease-out-quart);
 }
 
+/* A live site's card (coverSite, 2026-09-30): the desktop + phone showcase
+   sits centred in the 4:3 frame and grows as one piece on hover. */
+.cover__frame--site {
+  display: grid;
+  place-items: center;
+  padding: 7% 8%;
+}
+
+.cover__site {
+  display: block;
+  inline-size: 100%;
+  transition: scale var(--dur-base) var(--ease-out-quart);
+}
+
+.cover:hover .cover__frame--site img,
+.cover:focus-visible .cover__frame--site img {
+  scale: none;
+}
+
+.cover:hover .cover__site,
+.cover:focus-visible .cover__site {
+  scale: 1.03;
+}
+
 .cover__name {
   font-weight: 600;
 }

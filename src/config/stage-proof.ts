@@ -50,10 +50,7 @@
 import type { ImageMetadata } from 'astro';
 import jmIllustrator from '../assets/stages/jm-design-illustrator.webp';
 import d8Illustrator from '../assets/stages/devsign8-illustrator.webp';
-import siteDesktopDark from '../assets/stages/devsign8-site-desktop.webp';
-import siteMobileDark from '../assets/stages/devsign8-site-mobile.webp';
-import siteDesktopLight from '../assets/stages/devsign8-site-desktop-light.webp';
-import siteMobileLight from '../assets/stages/devsign8-site-mobile-light.webp';
+import { SITE_SHOTS, type SiteShots } from './site-shots';
 import toolkitFeed from '../content/social/devsign8-ig-toolkit-reel/5-cover.jpg';
 import toolkitReel from '../content/social/devsign8-ig-toolkit-reel/1-cover.jpg';
 import lexusPoster from '../content/social/lexus-poster-post/poster.png';
@@ -73,9 +70,9 @@ export type Proof =
   | {
       kind: 'site';
       /* Shown against the page's theme: the DARK site on a light page, the
-         LIGHT site on a dark page (his call), so the screenshots stand out. */
-      dark: { desktop: Pic; mobile: Pic };
-      light: { desktop: Pic; mobile: Pic };
+         LIGHT site on a dark page (his call), so the screenshots stand out.
+         Drawn by SiteShowcase.astro, shared with the Work cards (2026-09-30). */
+      shots: SiteShots;
       points: string[];
       /** The live site itself (external, UTM-tagged at render). */
       visit: { label: string; url: string };
@@ -122,20 +119,7 @@ export const STAGE_PROOF: Record<string, Proof> = {
 
   build: {
     kind: 'site',
-    dark: {
-      desktop: {
-        src: siteDesktopDark,
-        alt: 'The devsign8.com homepage in dark mode on a desktop screen: "Branding, websites, and SEO that help your business get found online." with a "Get a free audit" button.',
-      },
-      mobile: { src: siteMobileDark, alt: 'The same devsign8.com homepage in dark mode on a phone.' },
-    },
-    light: {
-      desktop: {
-        src: siteDesktopLight,
-        alt: 'The devsign8.com homepage in light mode on a desktop screen: "Branding, websites, and SEO that help your business get found online." with a "Get a free audit" button.',
-      },
-      mobile: { src: siteMobileLight, alt: 'The same devsign8.com homepage in light mode on a phone.' },
-    },
+    shots: SITE_SHOTS.devsign8,
     points: [
       'Fits every screen, from phone to desktop, in light and dark.',
       'Fast and accessible on mobile: 96 for speed, 100 for accessibility (built for AODA, WCAG 2.0 AA).',

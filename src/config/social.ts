@@ -36,15 +36,20 @@ export interface SocialAccount {
   url: string;
   /** Square-ish artwork shown in a circle. Leave out for a blank circle. */
   avatar?: ImageMetadata;
+  /** Draw the JM monogram (JMMark, vector) in the circle instead. */
+  monogram?: boolean;
 }
 
 export type AccountKey = 'instagram' | 'tiktok';
 
 export const SOCIAL_ACCOUNTS: Record<AccountKey, SocialAccount> = {
-  /* 2026-09-25, his call: the frames show "JM Design" with a blank avatar. */
+  /* 2026-09-25, his call: the frames show "JM Design". 2026-09-29, his call:
+     the JM monogram replaces the blank avatar (a blank circle reads as
+     unfinished to a client). */
   instagram: {
     platform: 'Instagram',
     name: 'JM Design',
+    monogram: true,
     handle: 'hello.devsign8',
     url: 'https://www.instagram.com/hello.devsign8/',
   },
@@ -153,6 +158,9 @@ export function groupShelves(
             title: project.data.title,
             label: project.data.category,
             idea: project.data.story?.lede ?? project.data.summary,
+            /* A self-initiated concept's "not affiliated" line (`client`),
+               as a series shelf shows its `note`. */
+            note: project.data.client,
             storyPath: project.data.story ? projectPath(project) : undefined,
             posts: [],
           }

@@ -12,6 +12,10 @@ tags:
   - "Analytics"
 cover: "../../assets/stages/devsign8-site-desktop.webp"
 coverAlt: "The devsign8.com homepage in dark mode on a desktop screen: \"Branding, websites, and SEO that help your business get found online.\" with a \"Get a free audit\" button."
+# The Work and Web Design cards draw the site as the home page does: desktop
+# + phone, in the theme opposite the page (his call 2026-09-30). `cover`
+# above stays for the share image.
+coverSite: devsign8
 role: "Founder: design, build, search and analytics"
 year: "2026"
 tools:
@@ -56,13 +60,14 @@ story:
         - "Plain HTML, CSS and JavaScript, no framework. The site stays fast, secure and cheap to host."
         - "It follows each visitor's device into light or dark mode, and every page works from a small phone up to a wide desktop."
         - "Accessibility is built in from the start. AODA asks Ontario sites for WCAG 2.0 AA, and PageSpeed Insights scores devsign8.com 100 for accessibility on mobile."
+      # Desktop + phone as on the home page's Build stage, the desktop in the
+      # theme opposite the page and the phone in the other one, so the chapter
+      # shows both light and dark (his call 2026-09-30). Shots in
+      # config/site-shots.ts.
       visual:
-        kind: gallery
-        items:
-          - src: "../../assets/stages/devsign8-site-desktop.webp"
-            alt: "The devsign8.com homepage in dark mode on a desktop screen."
-          - src: "../../assets/stages/devsign8-site-mobile-light.webp"
-            alt: "The devsign8.com homepage in light mode on a phone."
+        kind: site
+        shots: devsign8
+        mixed: true
     - stage: be-found
       heading: "Built to be found by people, Google and AI"
       body:

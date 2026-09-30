@@ -26,6 +26,10 @@
    ========================================================================= */
 import { defineCollection, reference } from 'astro:content';
 import { SERIES_IDS } from './config/social-series';
+
+/* Screenshot sets in config/site-shots.ts. Listed here, not imported, so this
+   file keeps no image imports; a test checks the two lists agree. */
+const SITE_SHOT_IDS = ['devsign8'] as const;
 import { glob } from 'astro/loaders';
 /* `z` from 'astro:content' is deprecated in Astro 7 and emits a hint on every
    single use — 39 of them here. The zod re-export moved to 'astro/zod'. */
@@ -115,6 +119,10 @@ const work = defineCollection({
         events: z.array(z.object({ time: z.string(), label: z.string() })).min(1),
       }),
       z.object({ kind: z.literal('results') }),
+      /* A live site, desktop + phone, via SiteShowcase (2026-09-30). */
+      /* `mixed`: the phone in the other theme to the desktop, so the pair
+         shows the site in both light and dark. */
+      z.object({ kind: z.literal('site'), shots: z.enum(SITE_SHOT_IDS), mixed: z.boolean().default(false) }),
       /* A small data table (e.g. formats and their safe areas). */
       z.object({
         kind: z.literal('table'),
@@ -158,6 +166,11 @@ const work = defineCollection({
       cover: image(),
       coverDark: image().optional(),
       coverAlt: z.string(),
+      /* A live site's card: draw it with SiteShowcase (desktop + phone, in
+         the theme opposite the page) from a set in config/site-shots.ts,
+         instead of the single `cover` image (his call, 2026-09-30). `cover`
+         stays for the share image and anywhere else that wants one file. */
+      coverSite: z.enum(SITE_SHOT_IDS).optional(),
       gallery: z
         .array(z.object({ src: image(), alt: z.string() }))
         .default([]),
