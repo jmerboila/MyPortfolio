@@ -27,7 +27,6 @@ Done). GitHub is its backup: push after every working session.
 
 ## Portfolio release
 
-- [ ] Push the social page update (branch `social-redesign`: Lexus story page and three posts, cleaner frames, short captions, rows that fit, Toolkit Reel 10) after the tutorial is live on Instagram (Thu Oct 1, 9 AM), with his OK; re-run the build tests and a live check
 - [ ] devsign8.com GA4: portfolio visits arrive as source `portfolio`, medium `referral`, campaign `jm_portfolio` (UTM tags on the Visit links); nothing to set up, just read it
 - [ ] Phase B: consent banner with Consent Mode v2 and a short privacy page (GA cookies load before any consent today)
 - [ ] Phase C: custom domain with 301 redirects from github.io; Bing Webmaster + IndexNow for the portfolio; share image; Core Web Vitals budget (the hero waits for fonts: measure the LCP)
@@ -62,6 +61,7 @@ Done). GitHub is its backup: push after every working session.
 
 ## Done
 
+- [x] 2026-09-30: LIVE (94da338, deploy verified). Social page redesign, Lexus story, short captions, Toolkit Reel 10 and the devsign8.com showcase pushed to main at his request, a day before the tutorial posts on Instagram
 - [x] 2026-09-30: devsign8.com screenshots re-taken from the live site (new "small businesses in Markham, across the GTA" copy), desktop and phone, light and dark. The home page's desktop-plus-phone layout is now one component (SiteShowcase.astro, shots in `src/config/site-shots.ts`) used on the home page, the Work and Web Design cards and the devsign8.com "Built" chapter, always in the theme opposite the page. Social row arrows are white discs with black arrows
 - [x] 2026-09-30: after OneDrive deleted 64 project files (Sep 29, 7:57 PM) and then rolled the folder back to about Sep 26 (11:15 PM, with a broken `.git`), the repo was cloned fresh from GitHub (facfc2f) to `C:\dev\MyPortfolio` and this session's work was rebuilt on branch `social-redesign`. Lost for good: local commit 0637fbe (it only recorded the launch-day progress now listed under Done)
 - [x] 2026-09-29: social page redesign. Two or three posts sit side by side when there is room (swipe row below that, no scroll bar anywhere); cleaner frames (no ⋯ menus, Follow pill or spinning record; JM monogram avatar); every caption shortened to the hook and one line with two hashtags (Lexus, Mustang, UNF, all ten Toolkit Reels); 2026 Lexus NX story page with six chapters; Toolkit Reel 10 live and the story says ten Reels in four weeks
