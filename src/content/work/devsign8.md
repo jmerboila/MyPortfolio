@@ -19,7 +19,7 @@ gallery:
 client: "Self-initiated"
 role: "Founder: name, wordmark and brand rules"
 year: "2026"
-problem: "My studio needed a mark that says what it does in one word. Devsign8 builds websites and designs brands, and most logos pick one side. This one had to hold both, and stay sharp everywhere from a favicon to a sign on a wall."
+problem: "My studio needed a mark that says what it does in one word. Devsign8 builds websites and designs brands, and most logos pick one side. This one had to hold both, and stay sharp everywhere from a favicon to print."
 approach: "The name already held the idea: Dev for development, sign for design, and an 8 that turns on its side into infinity. So I let the type tell it. Dev is a heavy sans, for code. sign8 is a high-contrast serif, for design. I typed the name, tried typefaces, then set the spacing in Illustrator on a construction grid, so every letter shares one cap height, x-height, baseline and descender."
 outcome: "The wordmark is the studio's identity wherever it appears: devsign8.com, the brand guide, the social kit and a library of 138 logo animations in dark and light. A short rule set keeps it consistent: black on light, white on dark, and clear space equal to the height of the D."
 constraints:
