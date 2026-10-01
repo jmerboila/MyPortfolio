@@ -4,16 +4,17 @@ from Jayson's real files only. Run from the repo root:
 Needs pypdf, pycairo and Pillow.
 
 Sources, all under C:/dev/Devsign8 (read only):
-  04-Reference/Fonts, Mockups, Logos/Logos/DigiSkills-Logo.psd and
-    DigiSkillsApp-Logo.psd: each embeds the June 24 2026 Illustrator vector
-    as a smart object (the master mark with back pages at 80%; the app icon).
-  .../Logos/DigiSkills.ai: the Sep 23 2026 flat one-colour build.
+  04-Reference/Fonts, Mockups, Logos/Logos/DigiSkills.ai: the final art
+    (Sep 23 2026): flat, no opacity, no overlap, with the mark and the app
+    icon side by side on one artboard. (DigiSkills-Logo.psd and
+    DigiSkillsApp-Logo.psd embed the June 24 2026 version, whose back pages
+    were at 80% opacity; the final dropped that, so they are not drawn.)
   !Clients/!Old Clients/DigiSkills/DigiSkills/uploads/pasted-*.png: the three
     drafts pasted into the colour study on June 6 2026.
 Every coordinate drawn as an annotation is read from the vector, never
 estimated. See the SOURCES note in src/content/work/digiskills-logo.md.
 """
-import math, os, re, shutil, sys, tempfile
+import math, os, shutil, sys, tempfile
 import cairo
 from pypdf import PdfReader
 from PIL import Image
@@ -29,16 +30,6 @@ DRAFTS = DEV + '/!Clients/!Old Clients/DigiSkills/DigiSkills/uploads/'
 WORK = tempfile.mkdtemp(prefix='digiskills-')
 
 
-def embedded_pdf(psd, out):
-    """A smart object keeps its original vector as a PDF stream inside the PSD."""
-    b = open(psd, 'rb').read()
-    s = b.find(b'%PDF-')
-    e = [m.end() for m in re.finditer(rb'%%EOF\r?\n?', b) if m.start() > s][-1]
-    open(out, 'wb').write(b[s:e])
-
-
-embedded_pdf(LOGOS + 'DigiSkills-Logo.psd', WORK + '/DigiSkills-Logo_embedded.pdf')
-embedded_pdf(LOGOS + 'DigiSkillsApp-Logo.psd', WORK + '/DigiSkillsApp-Logo_embedded.pdf')
 shutil.copy(LOGOS + 'DigiSkills.ai', WORK + '/DigiSkills.ai')
 os.makedirs(WORK + '/drafts')
 for i, f in enumerate(['pasted-1780757189629-0.png', 'pasted-1780760611547-0.png',
@@ -52,12 +43,10 @@ INK = (0x15 / 255, 0x16 / 255, 0x2B / 255)       # the study's "Ink" #15162B
 GUIDE = (0x6B / 255, 0x6F / 255, 0xB0 / 255)     # muted indigo for construction lines
 FONT = 'Segoe UI'
 
-LOGO = 'DigiSkills-Logo_embedded.pdf'           # 430.585 x 407.06 pt
-APP = 'DigiSkillsApp-Logo_embedded.pdf'         # 430.554 x 430.554 pt
-SEP = 'DigiSkills.ai'
-SEP_MARK = (772.7547, 248.2186, 1203.3394, 655.2781)  # the indigo mark on the Sep artboard
-LOGO_BOX = (0, 0, 430.585, 407.06)
-APP_BOX = (0, 0, 430.554, 430.554)
+LOGO = APP = SEP = 'DigiSkills.ai'
+# The two pieces of art on the final artboard, in PDF points:
+LOGO_BOX = SEP_MARK = (772.7547, 248.2186, 1203.3394, 655.2781)  # the mark, 430.585 x 407.06
+APP_BOX = (196.851, 234.7707, 627.405, 665.3247)                 # the app icon, 430.554 square
 
 
 def hexrgb(h):
