@@ -1,6 +1,8 @@
 ---
 title: "DigiSkills App Logo"
 summary: "A playful, friendly logo for a digital-safety app for kids."
+seoTitle: "DigiSkills App Logo Design"
+description: "Logo design for DigiSkills, a digital-safety app for kids: an open book with pixel squares rising from its pages, built on a construction grid."
 intro: "The DigiSkills logo is a playful, friendly design that appeals to children while conveying the app's focus on digital safety. The bright colors and simple shapes make it approachable and memorable."
 category: "Logo & Branding"
 cats:

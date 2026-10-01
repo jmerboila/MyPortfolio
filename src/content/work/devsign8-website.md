@@ -2,6 +2,8 @@
 title: "devsign8.com"
 shortTitle: "devsign8.com"
 summary: "The live website for Devsign8, my design and digital marketing studio. I built it, I get it found, and I measure it."
+seoTitle: "devsign8.com: Web Design and SEO"
+description: "How devsign8.com was built: a fast, accessible studio website in light and dark, set up to be found on Google and in AI tools, and measured monthly."
 category: "My studio's website"
 cats:
   - "web"

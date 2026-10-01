@@ -63,6 +63,52 @@ export const SOCIALS = [
   { label: 'Devsign8', url: 'https://www.devsign8.com' },
 ] as const;
 
+/* -- The entity graph's extra facts (2026-10-01 SEO/AEO/GEO pass) ---------
+   What the JSON-LD says about him beyond PERSON, kept apart so the visible
+   lists that read PERSON.knowsAbout (Services) do not change with it.
+
+   - alternateName: the short form his LinkedIn URL and resume use. Answer
+     engines match "Jayson Erboila" to this page only if the graph says so.
+   - DEVSIGN8 reuses the @id devsign8.com's own JSON-LD gives the studio
+     (#org). Pointing at the same @id is what lets a knowledge graph merge
+     the two sites' descriptions into one company, instead of guessing.
+   - sameAs holds profiles OF HIM only. devsign8.com is the studio, so it is
+     `worksFor`, not `sameAs`; its /about/ page (where devsign8.com describes
+     its founder) is. The studio's Instagram goes on the studio.
+   - knowsAbout adds the skills the case studies actually show (tools named
+     in their `tools` lists, the search work on devsign8.com). Nothing here
+     that a page does not back up. */
+export const ENTITY = {
+  alternateName: ['Jayson Erboila'],
+  knowsAbout: [
+    'Social Media Marketing',
+    'Instagram Marketing',
+    'Answer Engine Optimization',
+    'Generative Engine Optimization',
+    'Google Analytics 4',
+    'Google Tag Manager',
+    'Google Search Console',
+    'Content Strategy',
+    'Adobe Photoshop',
+    'Adobe Illustrator',
+    'Adobe InDesign',
+    'Adobe After Effects',
+    'Adobe Premiere Pro',
+  ],
+  sameAs: [
+    'https://www.linkedin.com/in/jayson-erboila/',
+    'https://www.behance.net/jaysonerboila',
+    'https://www.devsign8.com/about/',
+  ],
+} as const;
+
+export const DEVSIGN8 = {
+  id: 'https://www.devsign8.com/#org',
+  name: 'Devsign8',
+  url: 'https://www.devsign8.com/',
+  sameAs: ['https://www.instagram.com/hello.devsign8/'],
+} as const;
+
 /* -- SEO defaults -------------------------------------------------------- */
 export const SEO = {
   /* A vertical bar, not an em dash: his rule for everything readers see
@@ -76,6 +122,8 @@ export const SEO = {
     'Jayson Mercado Erboila, digital marketing specialist and designer in ' +
     'Toronto: SEO, social media, web design and analytics, with measured results.',
   defaultOgImage: '/images/og-preview.jpg',
+  defaultOgImageAlt:
+    'Jayson Mercado Erboila, digital marketing specialist and designer, Toronto, Canada.',
   locale: 'en_CA',
   lang: 'en-CA',
 } as const;

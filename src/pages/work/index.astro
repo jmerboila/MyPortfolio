@@ -39,6 +39,8 @@ const description = `Selected projects by ${PERSON.name}: ${across}.`;
    answer engine walks when asked what work exists. Each item points at the
    same URL /work/[slug] declares its CreativeWork @id against, so the two
    descriptions of the collection agree. */
+const crumbs = [{ label: 'Home', path: '/' }, { label: 'Work' }];
+
 const schema = [
   {
     '@type': 'CollectionPage',
@@ -61,9 +63,9 @@ const schema = [
 ];
 ---
 
-<V3Layout title="Work" description={description} path="/work/" schema={schema}>
+<V3Layout title="Work" description={description} path="/work/" schema={schema} breadcrumbs={crumbs}>
   <div class="work-page container">
-    <PageHead crumbs={[{ label: 'Home', path: '/' }, { label: 'Work' }]} title="Every" accent="project" lede={lede} />
+    <PageHead crumbs={crumbs} title="Every" accent="project" lede={lede} />
 
     <div class="shelves">
       {

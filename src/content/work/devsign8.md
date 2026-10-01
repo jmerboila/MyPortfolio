@@ -1,6 +1,8 @@
 ---
 title: "Devsign8"
 summary: "Infinite Creativity. Limitless Digital Solutions."
+seoTitle: "Devsign8 Logo and Wordmark Design"
+description: "The Devsign8 wordmark: painted and handwritten on paper, then set and kerned in Adobe Illustrator, with a logo reel animated in After Effects."
 intro: "Devsign8 was built on one idea: limitless creativity. From websites and branding to digital marketing, we help businesses transform ideas into impactful digital experiences that inspire, connect, and grow."
 category: "Logo & Identity"
 cats:

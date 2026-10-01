@@ -63,6 +63,8 @@ const videoObjects = await Promise.all(
     }),
 );
 
+const crumbs = [{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label: CATEGORY_LABELS.social }];
+
 const schema = [
   {
     '@type': 'CollectionPage',
@@ -76,10 +78,10 @@ const schema = [
 ];
 ---
 
-<V3Layout title={CATEGORY_LABELS.social} description={description} path="/work/social/" schema={schema}>
+<V3Layout title={CATEGORY_LABELS.social} description={description} path="/work/social/" schema={schema} breadcrumbs={crumbs}>
   <div class="v3-social container">
     <PageHead
-      crumbs={[{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label: CATEGORY_LABELS.social }]}
+      crumbs={crumbs}
       title={copy.title}
       accent={copy.accent}
       lede={copy.lede}

@@ -1,6 +1,8 @@
 ---
 title: "JM Design"
 summary: "The interlocking JM monogram is the heart of the identity."
+seoTitle: "JM Design Monogram Logo"
+description: "The JM Design monogram, a serif J and M interlocked: drawn, offset and cut in Adobe Illustrator, then set to music in After Effects."
 intro: "JM Design is the personal brand of Jayson Mercado Erboila: designer, developer and founder of the digital agency Devsign8."
 category: "Logo & Branding"
 cats:

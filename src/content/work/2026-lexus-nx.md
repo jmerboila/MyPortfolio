@@ -11,6 +11,8 @@
 title: "2026 Lexus NX"
 shortTitle: "2026 Lexus NX"
 summary: "One Lexus poster, three posts: the still, a Reel that builds it, and the InDesign tutorial."
+seoTitle: "2026 Lexus NX Instagram Poster Series"
+description: "A Lexus NX 350h poster designed in InDesign and animated in After Effects, posted to Instagram as the still, a Reel reveal and a step-by-step tutorial."
 intro: "A self-initiated poster series for the Lexus NX 350h: designed from a blank page in InDesign, animated in After Effects, and posted as the still, the Reveal and the build."
 category: "Poster series"
 cats:

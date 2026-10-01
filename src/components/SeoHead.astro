@@ -17,8 +17,16 @@
    - The thing Google DOES ask for is semantic HTML, fast pages and genuinely
      useful content. That is why no page depends on JavaScript to render text.
    ========================================================================= */
-import { PERSON, SOCIALS, SEO, ANALYTICS, absoluteUrl } from '../config/site';
+import { getImage } from 'astro:assets';
+import { PERSON, SEO, ANALYTICS, ENTITY, DEVSIGN8, SITE_ORIGIN, absoluteUrl } from '../config/site';
 import { asset } from '../lib/url';
+import portrait from '../assets/jayson-mesh-portrait.webp';
+
+export interface Crumb {
+  label: string;
+  /** Site-relative path. Omit on the last (current) crumb. */
+  path?: string;
+}
 
 export interface Props {
   /** Page title, before the site suffix. Omit on the homepage. */
@@ -26,8 +34,20 @@ export interface Props {
   description?: string;
   /** Site-relative path of this page, for the canonical URL. */
   path?: string;
-  /** Site-relative OG image path. Falls back to the default card. */
+  /** Site-relative OG image path, or an absolute URL (a page's own cover,
+   *  from getImage). Falls back to the default card. */
   ogImage?: string;
+  /** Alt text for the share image. */
+  ogImageAlt?: string;
+  /** Pixel size of the share image, when known. */
+  ogImageSize?: { width: number; height: number };
+  /** og:type: 'article' on project pages, 'profile' on the homepage. */
+  ogType?: 'website' | 'article' | 'profile';
+  /** schema.org type of this page's WebPage node. The homepage is the
+   *  ProfilePage of the Person: the type Google reads for creator profiles. */
+  pageType?: 'WebPage' | 'ProfilePage';
+  /** The visible breadcrumb trail, mirrored as a BreadcrumbList. */
+  breadcrumbs?: Crumb[];
   /** Set true on pages that should not be indexed (thank-you, previews). */
   noindex?: boolean;
   /** Extra JSON-LD objects to merge into the page's @graph. */
@@ -39,13 +59,24 @@ const {
   description = SEO.defaultDescription,
   path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/+$/, ''), '') || '/',
   ogImage = SEO.defaultOgImage,
+  ogImageAlt = SEO.defaultOgImageAlt,
+  ogImageSize = ogImage === SEO.defaultOgImage ? { width: 1200, height: 630 } : undefined,
+  ogType = 'website',
+  pageType = 'WebPage',
+  breadcrumbs = [],
   noindex = false,
   schema = [],
 } = Astro.props;
 
 const pageTitle = title ? SEO.titleTemplate(title) : SEO.defaultTitle;
 const canonical = absoluteUrl(path);
-const ogImageUrl = absoluteUrl(ogImage);
+const ogImageUrl = /^https?:\/\//.test(ogImage) ? ogImage : absoluteUrl(ogImage);
+
+/* His portrait for Person.image: the mesh render the homepage hero shows,
+   so the face an answer engine attaches to the name is the one on the site.
+   (It was the share card before, which is a banner, not him.) */
+const portraitJpg = await getImage({ src: portrait, width: 600, format: 'jpg' });
+const portraitUrl = new URL(portraitJpg.src, SITE_ORIGIN).href;
 
 /* ---------------------------------------------------------------------------
    The entity graph.
@@ -55,26 +86,51 @@ const ogImageUrl = absoluteUrl(ogImage);
    ------------------------------------------------------------------------ */
 const personId = `${absoluteUrl('/')}#person`;
 const siteId = `${absoluteUrl('/')}#website`;
+const pageId = `${canonical}#webpage`;
+const crumbsId = `${canonical}#breadcrumb`;
 
 const graph = [
   {
     '@type': 'Person',
     '@id': personId,
     name: PERSON.name,
+    alternateName: [...ENTITY.alternateName],
     givenName: PERSON.firstName,
+    familyName: PERSON.name.split(' ').at(-1),
     jobTitle: PERSON.jobTitle,
     description: SEO.defaultDescription,
     url: absoluteUrl('/'),
     email: `mailto:${PERSON.email}`,
-    image: ogImageUrl,
+    image: {
+      '@type': 'ImageObject',
+      url: portraitUrl,
+      width: portraitJpg.attributes.width,
+      height: portraitJpg.attributes.height,
+    },
     address: {
       '@type': 'PostalAddress',
       addressLocality: PERSON.location.city,
       addressRegion: PERSON.location.regionCode,
       addressCountry: PERSON.location.countryCode,
     },
-    knowsAbout: [...PERSON.knowsAbout],
-    sameAs: SOCIALS.map((s) => s.url),
+    hasOccupation: {
+      '@type': 'Occupation',
+      name: PERSON.jobTitle,
+      occupationLocation: { '@type': 'City', name: `${PERSON.location.city}, ${PERSON.location.region}` },
+    },
+    worksFor: { '@id': DEVSIGN8.id },
+    knowsAbout: [...new Set([...PERSON.knowsAbout, ...ENTITY.knowsAbout])],
+    sameAs: [...ENTITY.sameAs],
+  },
+  /* The studio, under the @id devsign8.com gives it, so both sites describe
+     one company with one founder. */
+  {
+    '@type': 'Organization',
+    '@id': DEVSIGN8.id,
+    name: DEVSIGN8.name,
+    url: DEVSIGN8.url,
+    founder: { '@id': personId },
+    sameAs: [...DEVSIGN8.sameAs],
   },
   {
     '@type': 'WebSite',
@@ -86,15 +142,34 @@ const graph = [
     publisher: { '@id': personId },
   },
   {
-    '@type': 'WebPage',
-    '@id': `${canonical}#webpage`,
+    '@type': pageType,
+    '@id': pageId,
     url: canonical,
     name: pageTitle,
     description,
     isPartOf: { '@id': siteId },
     about: { '@id': personId },
+    ...(pageType === 'ProfilePage' && { mainEntity: { '@id': personId } }),
+    primaryImageOfPage: { '@type': 'ImageObject', url: ogImageUrl },
+    ...(breadcrumbs.length > 1 && { breadcrumb: { '@id': crumbsId } }),
     inLanguage: SEO.lang,
   },
+  /* The visible trail, as Google's breadcrumb rich result reads it. The last
+     crumb is the page itself, so it takes the canonical. */
+  ...(breadcrumbs.length > 1
+    ? [
+        {
+          '@type': 'BreadcrumbList',
+          '@id': crumbsId,
+          itemListElement: breadcrumbs.map((c, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: c.label,
+            item: c.path ? absoluteUrl(c.path) : canonical,
+          })),
+        },
+      ]
+    : []),
   ...schema,
 ];
 
@@ -103,24 +178,31 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
 
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={canonical} />
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+{/* A noindex page gets no canonical: "index this URL" and "index nothing"
+    contradict each other. Indexable pages allow large image previews and
+    full snippets, which is what search and AI results quote from. */}
+{noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={canonical} />}
+{!noindex && <meta name="robots" content="max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
 <meta name="author" content={PERSON.name} />
 
 <meta name="google-site-verification" content={ANALYTICS.googleSiteVerification} />
 
 {/* Open Graph / Twitter */}
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta property="og:site_name" content={PERSON.name} />
 <meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={ogImageUrl} />
+<meta property="og:image:alt" content={ogImageAlt} />
+{ogImageSize && <meta property="og:image:width" content={String(ogImageSize.width)} />}
+{ogImageSize && <meta property="og:image:height" content={String(ogImageSize.height)} />}
 <meta property="og:locale" content={SEO.locale} />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={pageTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImageUrl} />
+<meta name="twitter:image:alt" content={ogImageAlt} />
 
 {/* Icons — carried over from v1, same files. */}
 <link rel="icon" type="image/svg+xml" href={asset('/favicon.svg')} />
@@ -130,5 +212,7 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
 <link rel="manifest" href={asset('/images/site.webmanifest')} />
 
 <link rel="sitemap" href={asset('/sitemap-index.xml')} />
+{/* The plain-text guide to the site for AI tools (src/pages/llms.txt.ts). */}
+<link rel="alternate" type="text/markdown" title="llms.txt" href={asset('/llms.txt')} />
 
 <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />

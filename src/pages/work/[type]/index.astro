@@ -41,6 +41,8 @@ const entries = (await getCollection('work', ({ data }) => !data.draft))
 const copy = TYPE_COPY[type] ?? { title: label, accent: 'work', lede: '' };
 const description = `${label} projects by ${PERSON.name}. ${copy.lede}`.trim();
 
+const crumbs = [{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label }];
+
 const schema = [
   {
     '@type': 'CollectionPage',
@@ -63,10 +65,10 @@ const schema = [
 ];
 ---
 
-<V3Layout title={label} description={description} path={path} schema={schema}>
+<V3Layout title={label} description={description} path={path} schema={schema} breadcrumbs={crumbs}>
   <div class="work-page container">
     <PageHead
-      crumbs={[{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label }]}
+      crumbs={crumbs}
       title={copy.title}
       accent={copy.accent}
       lede={copy.lede}

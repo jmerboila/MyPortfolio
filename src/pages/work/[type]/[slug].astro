@@ -13,7 +13,7 @@
    markup change.
    ========================================================================= */
 import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import V3Layout from '../../../layouts/V3Layout.astro';
 import Breadcrumbs from '../../../components/v3/Breadcrumbs.astro';
 import LaunchStory from '../../../components/story/LaunchStory.astro';
@@ -22,7 +22,7 @@ import PostRow from '../../../components/social/PostRow.astro';
 import { href } from '../../../lib/url';
 import { withUtm } from '../../../lib/utm';
 import Arrow from '../../../components/v3/Arrow.astro';
-import { absoluteUrl } from '../../../config/site';
+import { absoluteUrl, SITE_ORIGIN, SEO } from '../../../config/site';
 import { withMediaUrls } from '../../../lib/social-media';
 import { sortPosts } from '../../../config/social';
 import { CATEGORY_LABELS, type WorkCategory } from '../../../content.config';
@@ -76,34 +76,75 @@ const meta = [
   ['Tools', d.tools.length ? d.tools.join(', ') : ''],
 ].filter(([, v]) => v) as [string, string][];
 
+/* The search snippet: seoTitle/description when the entry has them, else
+   the card's title and summary (see content.config.ts). */
+const seoTitle = d.seoTitle ?? d.title;
+const description = d.description ?? d.summary;
+
+/* The share image is the project's own picture, so a link to a project
+   previews that project rather than the site-wide card: the story hero, else
+   the widest of the cover and gallery (logo covers are small card crops; the
+   gallery holds the full artwork). At most 1200 wide, as JPEG: the size and
+   format every platform's link preview accepts. */
+const [sharePic] = story?.hero
+  ? [story.hero]
+  : [{ src: d.cover, alt: d.coverAlt }, ...d.gallery].sort((a, b) => b.src.width - a.src.width);
+const shareSrc = sharePic.src;
+const shareAlt = sharePic.alt;
+const share = await getImage({ src: shareSrc, width: Math.min(1200, shareSrc.width), format: 'jpg' });
+const shareUrl = new URL(share.src, SITE_ORIGIN).href;
+const shareSize = { width: Number(share.attributes.width), height: Number(share.attributes.height) };
+
+const crumbs = [
+  { label: 'Home', path: '/' },
+  { label: 'Work', path: '/work/' },
+  { label: CATEGORY_LABELS[type], path: typePath(type) },
+  { label: d.shortTitle ?? d.title },
+];
+
 /* CreativeWork rather than Article: this is a piece of design work, not a
-   piece of writing, and answer engines resolve the distinction. */
+   piece of writing, and answer engines resolve the distinction. It points
+   at its page, its picture and its maker by @id, so it joins the graph
+   SeoHead emits rather than floating beside it. */
+const personRef = { '@id': `${absoluteUrl('/')}#person` };
 const schema = [
   {
     '@type': 'CreativeWork',
     '@id': `${absoluteUrl(path)}#work`,
     name: d.title,
-    description: d.summary,
-    creator: { '@id': `${absoluteUrl('/')}#person` },
+    headline: seoTitle,
+    description,
+    abstract: d.summary,
+    url: absoluteUrl(path),
+    mainEntityOfPage: { '@id': `${absoluteUrl(path)}#webpage` },
+    image: { '@type': 'ImageObject', url: shareUrl, ...shareSize, caption: shareAlt },
+    creator: personRef,
+    author: personRef,
+    inLanguage: SEO.lang,
+    isPartOf: { '@id': `${absoluteUrl(typePath(type))}#collection` },
     ...(d.year ? { dateCreated: d.year } : {}),
-    ...(d.tools.length ? { keywords: [...d.tags, ...d.tools].join(', ') } : {}),
+    keywords: [...new Set([...d.tags, ...d.tools])].join(', '),
     genre: d.category,
+    ...(d.externalUrl ? { sameAs: d.externalUrl } : {}),
   },
 ];
 ---
 
-<V3Layout title={d.title} description={d.summary} path={path} schema={schema}>
+<V3Layout
+  title={seoTitle}
+  description={description}
+  path={path}
+  schema={schema}
+  ogImage={shareUrl}
+  ogImageAlt={shareAlt}
+  ogImageSize={shareSize}
+  ogType="article"
+  breadcrumbs={crumbs}
+>
 
   <article class="project">
     <header class="project__head container">
-      <Breadcrumbs
-        items={[
-          { label: 'Home', path: '/' },
-          { label: 'Work', path: '/work/' },
-          { label: CATEGORY_LABELS[type], path: typePath(type) },
-          { label: d.shortTitle ?? d.title },
-        ]}
-      />
+      <Breadcrumbs items={crumbs} />
 
       <p class="project__cat">{d.category}</p>
       <h1 class="project__title">{d.title}</h1>

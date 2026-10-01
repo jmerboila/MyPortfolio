@@ -145,6 +145,16 @@ const work = defineCollection({
       /* The longer intro at the top of the project page. */
       intro: z.string().optional(),
 
+      /* -- Search snippet (2026-10-01) -------------------------------------
+         Both optional; the page falls back to `title` and `summary`. A card
+         line like "Infinite Creativity." is a fine summary and a poor search
+         result, so these say what the page is, in the words people search.
+         seoTitle is capped so that, with " | Jayson Mercado Erboila" added,
+         the title stays about 60 characters and Google shows it whole;
+         description is capped at 160 for the same reason. */
+      seoTitle: z.string().max(40).optional(),
+      description: z.string().min(70).max(160).optional(),
+
       /* -- Taxonomy ------------------------------------------------------ */
       /* The human label on the card, e.g. "Logo & Identity". */
       category: z.string(),

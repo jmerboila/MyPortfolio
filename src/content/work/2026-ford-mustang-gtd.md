@@ -2,6 +2,8 @@
 title: "2026 Ford Mustang GTD"
 shortTitle: "2026 Ford Mustang GTD"
 summary: "A two-post Instagram launch: a smoke Reel Reveal, then a Seamless Carousel."
+seoTitle: "2026 Ford Mustang GTD Instagram Launch"
+description: "A two-post Instagram launch for the 2026 Ford Mustang GTD: a smoke Reel reveal and a seamless carousel, with the plan, captions and measured results."
 intro: "A self-initiated launch campaign for the 2026 Ford Mustang GTD: a smoke Reel Reveal as the teaser, then a Seamless Carousel one hour later as the payoff."
 category: "Launch campaign"
 cats:
