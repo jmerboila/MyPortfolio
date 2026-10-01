@@ -9,8 +9,9 @@
    checklist in src/config/social.ts.
 
    Since 2026-09-25 it renders in the homepage's v3 shell (header, purple
-   palette, footer, scroll reveals) and ends on the same contact section, so
-   leaving the homepage for this page doesn't feel like leaving the site.
+   palette, footer, scroll reveals), so leaving the homepage for this page
+   doesn't feel like leaving the site. The contact section is the homepage's
+   alone (Jayson's call, 2026-10-01): every page ends on the footer.
 
    Drafts appear under `astro dev` with a "Draft · dev only" badge and are
    dropped from every build, so a sample can sit in the folder safely.
@@ -25,7 +26,6 @@ import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
 import V3Layout from '../../../layouts/V3Layout.astro';
 import PageHead from '../../../components/v3/PageHead.astro';
-import Contact from '../../../components/v3/Contact.astro';
 import SocialShelves from '../../../components/social/SocialShelves.astro';
 import { withMediaUrls } from '../../../lib/social-media';
 import { sortPosts } from '../../../config/social';
@@ -96,7 +96,6 @@ const schema = [
     }
   </div>
 
-  <Contact />
 </V3Layout>
 
 <style>

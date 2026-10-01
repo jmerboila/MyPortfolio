@@ -474,14 +474,18 @@ html.v3 {
   gap: var(--space-xl) clamp(var(--space-xl), 6vw, var(--space-2xl));
 }
 
-/* devsign8.com's column heads: small, bold, spaced capitals. */
+/* Column heads: spaced capitals in the full text colour, so each head is
+   the strongest thing in its column. They were 13px and dim while the links
+   under them took the body size, which read upside down (Jayson's report,
+   2026-10-01). Now the head leads and the links sit a step below it. */
 .v3-footer__head {
   margin: 0 0 var(--space-2xs);
-  font-size: 0.8125rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
   letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--text);
 }
 
 .v3-footer__nav ul {
@@ -495,7 +499,8 @@ html.v3 {
   display: inline-flex;
   align-items: center;
   min-block-size: var(--tap-min);
-  color: var(--text);
+  font-size: 0.9375rem;
+  color: var(--text-dim);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-out-quart);
 }

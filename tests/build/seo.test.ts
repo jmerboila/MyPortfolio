@@ -101,7 +101,8 @@ test('llms.txt describes him and lists every live project, and nothing hidden', 
   for (const p of PROJECTS) assert.ok(txt.includes(`${SITE}/${p}/`), p);
   assert.doesNotMatch(txt, /orange-magazine|work\/mobile\/digiskills\//i);
   assert.doesNotMatch(txt, /—/);
-  /* Brand rule (Devsign8 style guide, Voice): an agency, never a studio. */
-  assert.doesNotMatch(txt, /studio/i);
+  /* Jayson's call (2026-10-01): Devsign8 is a creative studio, never an agency.
+     This overrides the Devsign8 style guide's older Voice rule. */
+  assert.doesNotMatch(txt, /agency/i);
   assert.match(read('dist/index.html'), /<link rel="alternate" type="text\/markdown" title="llms.txt" href="\/MyPortfolio\/llms.txt">/);
 });
