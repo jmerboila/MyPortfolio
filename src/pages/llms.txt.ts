@@ -68,7 +68,7 @@ export const GET: APIRoute = async () => {
     `- Name: ${PERSON.name}`,
     `- Role: ${PERSON.tagline}`,
     `- Location: ${city}, ${region}, ${country}`,
-    `- Studio: [${DEVSIGN8.name}](${DEVSIGN8.url}), founder`,
+    `- Agency: [${DEVSIGN8.name}](${DEVSIGN8.url}), founder`,
     `- Skills: ${skills.join(', ')}`,
     `- Email: ${PERSON.email}`,
     `- Book a 30-minute discovery call: ${CONTACT_HREF}`,
