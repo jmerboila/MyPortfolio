@@ -106,3 +106,16 @@ test('llms.txt describes him and lists every live project, and nothing hidden', 
   assert.doesNotMatch(txt, /agency/i);
   assert.match(read('dist/index.html'), /<link rel="alternate" type="text\/markdown" title="llms.txt" href="\/MyPortfolio\/llms.txt">/);
 });
+
+/* DigiSkills (2026-10-01): the process is shown from Jayson's own vectors and
+   drafts, each image with a caption that states the decision, and none of the
+   colour study's recolours (overlapping squares) stand in for the final art. */
+test('the DigiSkills logo page shows the real process, captioned', () => {
+  const html = read('dist/work/logo/digiskills-logo/index.html');
+  for (const f of ['DigiSkills-Mark-Final', 'DigiSkills-Drafts', 'DigiSkills-Construction', 'DigiSkills-Colour', 'DigiSkills-Versatility']) {
+    assert.match(html, new RegExp(`/_astro/${f}\\.`), f);
+  }
+  assert.equal((html.match(/<figcaption[\s>]/g) ?? []).length, 5);
+  assert.doesNotMatch(html, /Indigo-Amber|App-Icon|Logo-Full|Logo-Preview/);
+  assert.match(html, /Pro bono, for an independent mobile app developer/);
+});

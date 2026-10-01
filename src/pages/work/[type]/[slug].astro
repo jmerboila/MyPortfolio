@@ -337,14 +337,17 @@ const schema = [
           <ul role="list">
             {d.gallery.map((g) => (
               <li>
-                <Image
-                  src={g.src}
-                  alt={g.alt}
-                  widths={[640, 1024, 1600]}
-                  sizes="(min-width: 78rem) 74rem, 92vw"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <figure class="project__figure">
+                  <Image
+                    src={g.src}
+                    alt={g.alt}
+                    widths={[640, 1024, 1600]}
+                    sizes="(min-width: 78rem) 74rem, 92vw"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  {g.caption && <figcaption>{g.caption}</figcaption>}
+                </figure>
               </li>
             ))}
           </ul>
@@ -565,7 +568,18 @@ const schema = [
     padding: 0;
     margin: 0;
     display: grid;
-    gap: var(--space-m);
+    gap: var(--space-l);
+  }
+
+  .project__figure {
+    margin: 0;
+  }
+
+  .project__figure figcaption {
+    max-inline-size: 60ch;
+    margin-block-start: var(--space-xs);
+    font-size: var(--step--1);
+    color: var(--text-dim);
   }
 
   .project__nav {

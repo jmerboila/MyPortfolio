@@ -181,8 +181,12 @@ const work = defineCollection({
          instead of the single `cover` image (his call, 2026-09-30). `cover`
          stays for the share image and anywhere else that wants one file. */
       coverSite: z.enum(SITE_SHOT_IDS).optional(),
+      /* caption (2026-10-01) is optional and visible: one line that states the
+         decision the image shows, not what it is ("The pixels step down
+         1 : 2/3 : 1/2 as they rise"), which is what makes process pictures
+         persuasive. alt still describes the picture for screen readers. */
       gallery: z
-        .array(z.object({ src: image(), alt: z.string() }))
+        .array(z.object({ src: image(), alt: z.string(), caption: z.string().optional() }))
         .default([]),
 
       /* -- Motion --------------------------------------------------------
