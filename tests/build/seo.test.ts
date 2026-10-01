@@ -101,5 +101,7 @@ test('llms.txt describes him and lists every live project, and nothing hidden', 
   for (const p of PROJECTS) assert.ok(txt.includes(`${SITE}/${p}/`), p);
   assert.doesNotMatch(txt, /orange-magazine|work\/mobile\/digiskills\//i);
   assert.doesNotMatch(txt, /—/);
+  /* Brand rule (Devsign8 style guide, Voice): an agency, never a studio. */
+  assert.doesNotMatch(txt, /studio/i);
   assert.match(read('dist/index.html'), /<link rel="alternate" type="text\/markdown" title="llms.txt" href="\/MyPortfolio\/llms.txt">/);
 });

@@ -69,12 +69,12 @@ export const SOCIALS = [
 
    - alternateName: the short form his LinkedIn URL and resume use. Answer
      engines match "Jayson Erboila" to this page only if the graph says so.
-   - DEVSIGN8 reuses the @id devsign8.com's own JSON-LD gives the studio
+   - DEVSIGN8 reuses the @id devsign8.com's own JSON-LD gives the agency
      (#org). Pointing at the same @id is what lets a knowledge graph merge
      the two sites' descriptions into one company, instead of guessing.
-   - sameAs holds profiles OF HIM only. devsign8.com is the studio, so it is
+   - sameAs holds profiles OF HIM only. devsign8.com is the agency, so it is
      `worksFor`, not `sameAs`; its /about/ page (where devsign8.com describes
-     its founder) is. The studio's Instagram goes on the studio.
+     its founder) is. The agency's Instagram goes on the agency.
    - knowsAbout adds the skills the case studies actually show (tools named
      in their `tools` lists, the search work on devsign8.com). Nothing here
      that a page does not back up. */

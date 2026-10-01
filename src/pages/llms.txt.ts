@@ -60,7 +60,7 @@ export const GET: APIRoute = async () => {
     '',
     `${PERSON.name} (also written ${ENTITY.alternateName.join(', ')}) is a ${PERSON.jobTitle.toLowerCase()} ` +
       `and designer based in ${city}, ${region}, ${country}, and the founder of ${DEVSIGN8.name} ` +
-      `(${DEVSIGN8.url}), a design and digital marketing studio. This site is the portfolio: ` +
+      `(${DEVSIGN8.url}), a brand and digital design agency. This site is the portfolio: ` +
       'logo design, web design and social media work, each project told from brief to measured result.',
     '',
     '## About',
@@ -86,7 +86,7 @@ export const GET: APIRoute = async () => {
     '## Profiles',
     '',
     ...ENTITY.sameAs.map((u) => `- ${u}`),
-    ...DEVSIGN8.sameAs.map((u) => `- ${u} (${DEVSIGN8.name} studio account)`),
+    ...DEVSIGN8.sameAs.map((u) => `- ${u} (${DEVSIGN8.name} agency account)`),
     '',
     '## Optional',
     '',
