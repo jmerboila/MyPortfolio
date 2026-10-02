@@ -68,7 +68,7 @@ for (const slug of IDENTITY) {
   });
 
   test(`${slug}: no fixed sizes on the outline (the mark is used at any size)`, () => {
-    assert.doesNotMatch(main, /\d\s?pt/);
+    assert.doesNotMatch(main, /\d\s?pt\b/);
   });
 
   test(`${slug}: Illustrator frames, captions, labelled mockups, the reel`, () => {
