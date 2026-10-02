@@ -47,7 +47,7 @@ export const GET: APIRoute = async () => {
   /* Measured results, each with its source, from the project stories. An
      answer engine quotes numbers it can attribute; it skips ones it cannot. */
   const results = entries.flatMap((e) => {
-    const r = e.data.story?.results;
+    const r = e.data.story?.results ?? e.data.campaign?.results;
     if (r) {
       const reach = r.pieces.map((p) => `${p.name}: reach ${p.reach}`).join('; ');
       return [`- ${e.data.title}: ${r.insight} (${reach}. Source: ${r.source}.)`];

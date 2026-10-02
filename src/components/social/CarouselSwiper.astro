@@ -1,0 +1,270 @@
+---
+/* ============================================================================
+   CarouselSwiper.astro: a seamless carousel as people meet it, in a phone
+   frame you can swipe, with the one artboard it was cut from below it
+   (Ford's hero, 2026-10-02).
+   ----------------------------------------------------------------------------
+   Every panel is a window onto the same artboard image (no separate
+   exports), so the seam lines up exactly as it did on Instagram. The track
+   is a native scroll-snap row: touch swipes, the buttons and the arrow keys
+   move it, and the window on the artboard strip follows the panel on screen
+   (scripts/carousel-swiper.ts). Without JavaScript the row still scrolls.
+   Light and dark (the design rule): the phone's bezel takes the opposite
+   tone to the page.
+   ========================================================================= */
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+
+interface Props {
+  artboard: ImageMetadata;
+  panels: number;
+  alt: string;
+  label: string;
+}
+const { artboard, panels, alt, label } = Astro.props;
+const img = await getImage({ src: artboard, width: Math.min(artboard.width, 2880), format: 'webp' });
+const strip = await getImage({ src: artboard, width: 1600, format: 'webp' });
+const panelW = Math.round(artboard.width / panels);
+---
+
+<figure class="cs" data-cs style={`--panels:${panels};--ratio:${panelW} / ${artboard.height}`}>
+  <div class="cs__phone">
+    <div
+      class="cs__track"
+      data-cs-track
+      tabindex="0"
+      role="group"
+      aria-roledescription="carousel"
+      aria-label={`${label}: ${panels} panels. Swipe, or use the arrow keys.`}
+    >
+      {
+        Array.from({ length: panels }, (_, i) => (
+          <div class="cs__panel" role="group" aria-roledescription="slide" aria-label={`Panel ${i + 1} of ${panels}`}>
+            <img
+              src={img.src}
+              alt={i === 0 ? alt : ''}
+              aria-hidden={i === 0 ? undefined : 'true'}
+              style={`inset-inline-start:${-i * 100}%;inline-size:${panels * 100}%`}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </div>
+        ))
+      }
+    </div>
+    <div class="cs__dots" aria-hidden="true">
+      {Array.from({ length: panels }, (_, i) => <span data-cs-dot class:list={[i === 0 && 'is-on']} />)}
+    </div>
+  </div>
+
+  <div class="cs__controls">
+    <button type="button" class="cs__btn" data-cs-prev aria-label="Previous panel" disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+    </button>
+    <span class="cs__count" data-cs-count aria-live="polite">1 / {panels}</span>
+    <button type="button" class="cs__btn" data-cs-next aria-label="Next panel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+    </button>
+  </div>
+
+  <div class="cs__strip">
+    <img src={strip.src} alt="" loading="lazy" decoding="async" />
+    <span class="cs__window" data-cs-window aria-hidden="true"></span>
+    {
+      Array.from({ length: panels }, (_, i) => (
+        <button type="button" class="cs__seg" data-cs-go={i} aria-label={`Show panel ${i + 1}`} />
+      ))
+    }
+  </div>
+  <figcaption>One {artboard.width} × {artboard.height} artboard, cut into {panels} panels of {panelW} × {artboard.height}: swipe it as it ran on Instagram.</figcaption>
+</figure>
+
+<script>
+  import { initCarouselSwipers } from '../../scripts/carousel-swiper';
+  initCarouselSwipers();
+</script>
+
+<style>
+  .cs {
+    --bezel: #0e0e0f;
+    margin: 0;
+    display: grid;
+    gap: var(--space-s);
+    justify-items: center;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .cs {
+      --bezel: #f3f1ec;
+    }
+  }
+
+  :global(:root[data-theme='dark']) .cs {
+    --bezel: #f3f1ec;
+  }
+
+  .cs__phone {
+    position: relative;
+    inline-size: min(100%, 22rem);
+    padding: 0.6rem;
+    border-radius: 1.6rem;
+    background: var(--bezel);
+    box-shadow: 0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.45);
+  }
+
+  .cs__track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    border-radius: 1.1rem;
+    outline-offset: 4px;
+  }
+
+  .cs__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cs__panel {
+    position: relative;
+    flex: 0 0 100%;
+    aspect-ratio: var(--ratio);
+    overflow: hidden;
+    scroll-snap-align: start;
+  }
+
+  .cs__panel img {
+    position: absolute;
+    inset-block: 0;
+    block-size: 100%;
+    max-inline-size: none;
+    display: block;
+  }
+
+  .cs__dots {
+    position: absolute;
+    inset-block-end: 1.1rem;
+    inset-inline: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    pointer-events: none;
+  }
+
+  .cs__dots span {
+    inline-size: 6px;
+    block-size: 6px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.45);
+  }
+
+  .cs__dots span.is-on {
+    background: #fff;
+  }
+
+  .cs__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+  }
+
+  .cs__btn {
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .cs__btn:hover:not(:disabled) {
+    border-color: var(--accent);
+  }
+
+  .cs__btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .cs__btn svg {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .cs__count {
+    min-inline-size: 3.5rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-dim);
+    font-size: var(--step--1);
+  }
+
+  .cs__strip {
+    position: relative;
+    inline-size: 100%;
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .cs__strip img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .cs__window {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: calc(100% / var(--panels));
+    border: 3px solid var(--accent);
+    border-radius: 4px;
+    box-shadow: 0 0 0 999px rgb(0 0 0 / 0.35);
+    transform: translateX(calc(var(--i, 0) * 100%));
+    transition: transform var(--dur-base, 0.3s) var(--ease-out-quart, ease);
+    pointer-events: none;
+  }
+
+  .cs__seg {
+    position: absolute;
+    inset-block: 0;
+    inline-size: calc(100% / var(--panels));
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .cs__seg:nth-of-type(1) { inset-inline-start: 0; }
+  .cs__seg:nth-of-type(2) { inset-inline-start: calc(100% / var(--panels)); }
+  .cs__seg:nth-of-type(3) { inset-inline-start: calc(200% / var(--panels)); }
+  .cs__seg:nth-of-type(4) { inset-inline-start: calc(300% / var(--panels)); }
+  .cs__seg:nth-of-type(5) { inset-inline-start: calc(400% / var(--panels)); }
+  .cs__seg:nth-of-type(6) { inset-inline-start: calc(500% / var(--panels)); }
+
+  .cs__seg:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -4px;
+  }
+
+  .cs figcaption {
+    font-size: var(--step--1);
+    color: var(--text-dim);
+    text-align: center;
+    max-inline-size: 48ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs__window {
+      transition: none;
+    }
+  }
+</style>

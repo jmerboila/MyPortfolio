@@ -51,21 +51,28 @@ brief: "Four Instagram panels that had to read as one unbroken frame."
 showcase: 1
 featured: false
 order: 70
-story:
-  lede: "A two-post Instagram launch: a smoke Reel Reveal, then a Seamless Carousel one hour later."
-  launched: 2026-08-25
-  channel: "Instagram"
+# Campaign case study (2026-10-02, spec 2026-10-02-campaign-case-design.md).
+# Launched 2026-08-25 (dates stay here, never on the page). Results:
+# Instagram Insights via Buffer, one month after posting. The carousel's
+# three earlier versions (gtd-draft-1..3) are not shown (Jayson, 2026-10-02:
+# only the final work). The home page's 12x Reels tile links #measure.
+campaign:
+  heading: "The launch"
+  idea: "A car I helped build was about to hit the street, so its reveal had to feel as fast as the car: a smoke Reel to reach people, then a seamless carousel to hold them."
+  type: "Self-initiated launch campaign"
+  deliverables: ["Reel Reveal", "Seamless Carousel", "Captions and timing"]
   disclaimer: "Self-initiated concept. Not affiliated with or endorsed by Ford Motor Company."
   hero:
-    src: "../../assets/projects/gtd-mockup.webp"
-    alt: "The Seamless Carousel as one continuous strip, with a phone in front showing it in an Instagram feed: the Ford oval and Street Legal, But Just Barely; the car head-on with its Nürburgring time, top speed and 815 HP; and the running horse in the smoke."
-  chapters:
-    - stage: discover
-      heading: "It started at Multimatic"
+    kind: carousel
+    artboard: "../../assets/projects/gtd-artboard.webp"
+    panels: 4
+    alt: "The full carousel artboard: the Ford oval with Street Legal, But Just Barely; the car head-on across the middle two panels, with its Nürburgring time, top speed and 815 HP; and the running horse outline in the smoke. Four panels cut from one image."
+  sections:
+    - heading: "The plan"
       body:
-        - "I worked at Multimatic, where the 2026 Ford Mustang GTD is built. When a car you helped build is about to hit the street, you want its reveal to feel as fast as the car."
-        - "Before designing anything I looked at what each Instagram format is actually good at. Carousels earn the most engagement from the people who see them. Reels reach the most people. Instagram ranks posts on watch time, sends and likes."
-        - "So the plan was not one post but two: a Reel to reach people, a carousel to hold them."
+        - "I worked at Multimatic, where the 2026 Ford Mustang GTD is built. Before designing anything I looked at what each Instagram format is actually good at."
+        - "Carousels earn the most engagement from the people who see them; Reels reach the most people. So the plan was two posts with two jobs: a Reel to reach people, a carousel to hold them."
+        - "The Reel Reveal goes out first and only says Coming Soon. One hour later the Seamless Carousel pays it off with the full car and the numbers."
       visual:
         kind: chart
         source: "Buffer, State of Social Media Engagement (52M+ posts)"
@@ -80,20 +87,7 @@ story:
             bars:
               - { label: "Reels", value: 1.36 }
               - { label: "Carousels", value: 1.00 }
-    - stage: plan
-      heading: "Teaser first, reveal an hour later"
-      body:
-        - "The Reel Reveal goes out first and only says Coming Soon. Its job is curiosity."
-        - "One hour later the Seamless Carousel pays it off with the full car and the numbers."
-        - "One hashtag, #StreetLegalButJustBarely, ties the two posts into one campaign."
-      visual:
-        kind: plan
-        gap: "+1 hour"
-        steps:
-          - { time: "8:00 AM", label: "Reel Reveal", src: "../../assets/projects/social-mustang-gtd-reel-poster.webp", alt: "The Reel Reveal cover: a pale car silhouette in white smoke." }
-          - { time: "9:00 AM", label: "Seamless Carousel", src: "../../assets/projects/social-mustang-gtd-1.webp", alt: "The carousel's first panel: the Ford oval above Street Legal, But Just Barely." }
-    - stage: build
-      heading: "The Reel Reveal: a silhouette and smoke"
+    - heading: "The Reel Reveal"
       body:
         - "I built the car's silhouette and the Ford logo in Photoshop, then brought them into After Effects and let smoke carry the reveal."
         - "Ten seconds, no sound needed: the car sharpens out of the haze, the frame flips to black, and it dissolves back into smoke."
@@ -102,49 +96,32 @@ story:
         items:
           - { src: "../../assets/projects/gtd-ws-photoshop.webp", alt: "Photoshop with the Reel file open: the car's dark silhouette on a 1080 by 1920 canvas, with the layer stack on the right.", note: "Photoshop: the silhouette, built from layered smart objects." }
           - { src: "../../assets/projects/gtd-ws-aftereffects.webp", alt: "After Effects with the Reel composition open: smoke footage over the car, and a timeline of four layers across ten seconds.", note: "After Effects: smoke over the silhouette, timed across ten seconds." }
-    - stage: build
-      heading: "The Seamless Carousel: one artboard, four swipes"
+      posts: ["mustang-gtd-reel"]
+    - heading: "The Seamless Carousel"
       body:
         - "The carousel started as one continuous 4320 by 1350 artboard in Photoshop, then was sliced into four 1080 by 1350 panels."
-        - "Because it is one image, the smoke and the horizon carry across every swipe. The numbers arrive as you go: the lap time and top speed, then 815 horsepower."
+        - "Because it is one image, the smoke and the horizon carry across every swipe, and the numbers arrive as you go: the lap time and top speed, then 815 horsepower."
         - "A plain carousel asks for a swipe. A seamless one makes stopping feel unfinished. It took three versions to get there."
       visual:
         kind: slicer
         panels: 4
         artboard: "../../assets/projects/gtd-artboard.webp"
-        alt: "The full carousel artboard: the Ford oval with Street Legal, But Just Barely; the car head-on across the middle two panels, with its Nürburgring time, top speed and 815 HP; and the running horse outline in the smoke. Four panels cut from one image."
-        drafts:
-          - { src: "../../assets/projects/gtd-draft-1.webp", alt: "First version of the artboard." }
-          - { src: "../../assets/projects/gtd-draft-2.webp", alt: "Second version, with body copy and legal lines." }
-          - { src: "../../assets/projects/gtd-draft-3.webp", alt: "Third version, with a silhouette panel." }
-    - stage: be-found
-      heading: "Two captions, two jobs"
+        alt: "The full carousel artboard, cut into four panels: the Ford oval with Street Legal, But Just Barely; the car head-on across the middle two panels with its Nürburgring time, top speed and 815 HP; and the running horse outline in the smoke."
+      posts: ["mustang-gtd-carousel"]
+    - heading: "Captions and timing"
       body:
-        - "The teaser caption is two words and one tag. It creates suspense and starts the campaign hashtag."
-        - "The reveal caption names the car and adds brand and model tags, so people searching for the car can find it."
+        - "The teaser caption is two words and one tag: it creates suspense and starts the campaign hashtag, #StreetLegalButJustBarely. The reveal caption names the car and adds brand and model tags, so people searching for the car can find it."
+        - "I posted on a Tuesday morning, one of the strongest days in both large posting studies. The hour between the posts gives the teaser time to travel before the payoff lands."
       visual:
         kind: captions
         items:
-          - { label: "Reel Reveal", time: "8:00 AM", text: "Coming Soon! #StreetLegalButJustBarely" }
-          - { label: "Seamless Carousel", time: "9:00 AM", text: "Ford 2026 Mustang GTD\n#Ford #2026 #Mustang #GTD #StreetLegalButJustBarely" }
-    - stage: show-up
-      heading: "Tuesday, 8:00 and 9:00 AM"
-      body:
-        - "I posted on a Tuesday morning. Tuesday is one of the strongest days in both of the large posting studies, behind Wednesday."
-        - "The hour between the posts gives the teaser time to travel before the payoff lands."
-        - "One honest note: those studies find Tuesday afternoons stronger than mornings, which is my next test."
-      visual:
-        kind: clock
-        day: "Tuesday (Toronto)"
-        from: "8:00 AM"
-        to: "9:00 AM"
-        events:
-          - { time: "8:00 AM", label: "Reel Reveal goes live" }
-          - { time: "9:00 AM", label: "Seamless Carousel goes live" }
-    - stage: measure
-      heading: "Results and what I learned"
+          - { label: "Reel Reveal", time: "Tuesday, 8:00 AM", text: "Coming Soon! #StreetLegalButJustBarely" }
+          - { label: "Seamless Carousel", time: "Tuesday, 9:00 AM", text: "Ford 2026 Mustang GTD\n#Ford #2026 #Mustang #GTD #StreetLegalButJustBarely" }
+    - heading: "Results and what I learned"
+      anchor: "measure"
       body:
         - "The account was two months old, so these are small numbers. What matters is what they say."
+        - "The Reel did the reaching: 26 times the carousel's reach. The carousel reached almost no one new but got a like from nearly everyone who saw it: the reach and depth split the research predicted."
       visual:
         kind: results
   results:

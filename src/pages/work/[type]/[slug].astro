@@ -19,6 +19,7 @@ import Breadcrumbs from '../../../components/v3/Breadcrumbs.astro';
 import LaunchStory from '../../../components/story/LaunchStory.astro';
 import LogoIdentity from '../../../components/logo/LogoIdentity.astro';
 import ToolkitCase from '../../../components/social/ToolkitCase.astro';
+import CampaignCase from '../../../components/social/CampaignCase.astro';
 import SocialPost from '../../../components/social/SocialPost.astro';
 import PostRow from '../../../components/social/PostRow.astro';
 import { href } from '../../../lib/url';
@@ -64,8 +65,10 @@ const story = d.story;
 const identity = d.identity;
 /* A product case study (2026-10-02, the Safe-Zone Toolkit) does the same. */
 const toolkit = d.toolkit;
-const customPage = Boolean(identity || toolkit);
-const posts = story || toolkit
+/* A campaign case study (2026-10-02, Ford then Lexus) as well. */
+const campaign = d.campaign;
+const customPage = Boolean(identity || toolkit || campaign);
+const posts = story || toolkit || campaign
   ? sortPosts(
       await getCollection('social', (p) => !p.data.draft && p.data.work?.id === entry.id),
     ).map(withMediaUrls)
@@ -381,6 +384,7 @@ const schema = [
 
     {identity && <LogoIdentity d={d} />}
     {toolkit && <ToolkitCase d={d} posts={posts} />}
+    {campaign && <CampaignCase d={d} posts={posts} />}
 
     <nav class="project__nav container" aria-label="More projects">
       <a class="project__nav-link" href={href(projectPath(prev))} rel="prev">

@@ -392,6 +392,57 @@ const work = defineCollection({
           }),
         })
         .optional(),
+
+      /* -- Campaign case study (2026-10-02: Ford, then Lexus) -------------
+         Rendered by CampaignCase instead of the story: 01 a hero section
+         (idea, glance, the not-affiliated line, and a carousel or the posts),
+         then numbered sections that reuse the story's visuals (StoryVisual)
+         and can show any of the project's posts (by social post id). */
+      campaign: z
+        .object({
+          heading: z.string(),
+          idea: z.string().max(200),
+          type: z.string(),
+          deliverables: z.array(z.string()).min(2).max(6),
+          disclaimer: z.string(),
+          hero: z.discriminatedUnion('kind', [
+            /* The Seamless Carousel in a phone frame, sliced from one artboard. */
+            z.object({ kind: z.literal('carousel'), artboard: image(), panels: z.number().int().min(2).max(10), alt: z.string() }),
+            /* The project's posts, playable. */
+            z.object({ kind: z.literal('posts') }),
+          ]),
+          sections: z
+            .array(
+              z.object({
+                heading: z.string(),
+                /* An anchor other pages link to, e.g. "measure". */
+                anchor: z.string().optional(),
+                body: z.array(z.string()).min(1).max(4),
+                visual: storyVisual.optional(),
+                posts: z.array(z.string()).optional(),
+              }),
+            )
+            .min(3)
+            .max(8),
+          results: z
+            .object({
+              source: z.string(),
+              pieces: z
+                .array(
+                  z.object({
+                    name: z.string(),
+                    reach: z.number().int().nonnegative(),
+                    stats: z.array(z.object({ label: z.string(), value: z.string() })),
+                  }),
+                )
+                .min(1),
+              insight: z.string(),
+              next: z.array(z.string()).default([]),
+            })
+            .optional(),
+          sources: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
+        })
+        .optional(),
     });
   },
 });
