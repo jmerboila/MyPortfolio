@@ -83,10 +83,14 @@ const n = (i: number) => String(i).padStart(2, '0');
     <ul class="lp-type" role="list">
       {p.typography.map((t) => (
         <li>
-          <figure class="lp-fig">
-            <Image src={t.src} alt={t.alt} widths={[600, 1000]} sizes="(min-width: 48rem) 36rem, 92vw" loading="lazy" />
-            <figcaption><strong>{t.name}</strong> <span class="lp-note">{t.role}</span></figcaption>
-          </figure>
+          {t.src ? (
+            <figure class="lp-fig">
+              <Image src={t.src} alt={t.alt ?? t.name} widths={[600, 1000]} sizes="(min-width: 48rem) 36rem, 92vw" loading="lazy" />
+              <figcaption><strong>{t.name}</strong> <span class="lp-note">{t.role}</span></figcaption>
+            </figure>
+          ) : (
+            <p class="lp-typenote"><strong>{t.name}</strong> <span class="lp-note">{t.role}</span></p>
+          )}
         </li>
       ))}
     </ul>
@@ -94,6 +98,12 @@ const n = (i: number) => String(i).padStart(2, '0');
 
   <section class="lp-sec container" aria-labelledby="lp-h-07">
     <h2 id="lp-h-07" class="lp-h"><span class="lp-num">{n(7)}</span> Colour</h2>
+    {p.colourImage && (
+      <figure class="lp-fig">
+        <Image src={p.colourImage.src} alt={p.colourImage.alt} widths={[800, 1200, 1600]} sizes={sizes} loading="lazy" />
+        <figcaption>{p.colourImage.caption}</figcaption>
+      </figure>
+    )}
     <ul class="lp-swatches" role="list">
       {p.colours.map((c) => (
         <li>
@@ -169,6 +179,8 @@ const n = (i: number) => String(i).padStart(2, '0');
   .lp-swatches { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); }
   .lp-swatch { display: block; block-size: 5rem; border-radius: var(--radius-m); border: 1px solid var(--border); margin-block-end: var(--space-xs); }
   .lp-swatches code { font-size: var(--step--1); color: var(--text-dim); margin-inline-start: 0.4em; }
+  .lp-typenote { margin: 0; max-inline-size: 60ch; font-size: var(--step-1); }
+  .lp-typenote .lp-note { color: var(--text-dim); font-size: var(--step-0); }
   .lp-rules { margin: 0; padding-inline-start: 1.2em; display: grid; gap: var(--space-2xs); max-inline-size: 65ch; }
   .lp-player.is-9x16 { max-inline-size: 24rem; aspect-ratio: 9 / 16; }
 </style>

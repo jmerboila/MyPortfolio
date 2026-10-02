@@ -312,7 +312,14 @@ const work = defineCollection({
             .min(3)
             .max(4),
           construction: z.array(pic.extend({ caption: z.string() })).min(1).max(2),
-          typography: z.array(pic.extend({ name: z.string(), role: z.string() })).min(1).max(3),
+          /* A specimen image is optional: a pure symbol (DigiSkills) has no
+             typeface, and an invented specimen would be a false claim. */
+          typography: z
+            .array(z.object({ src: image().optional(), alt: z.string().optional(), name: z.string(), role: z.string() }))
+            .min(1)
+            .max(3),
+          /* Optional picture above the swatches, e.g. a colour study. */
+          colourImage: pic.extend({ caption: z.string() }).optional(),
           colours: z
             .array(z.object({ name: z.string(), hex: z.string().regex(/^#[0-9A-F]{6}$/), use: z.string() }))
             .min(2)
