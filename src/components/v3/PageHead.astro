@@ -12,8 +12,9 @@ interface Props {
   crumbs: { label: string; path?: string }[];
   /** Heading text before the accent word. */
   title: string;
-  /** The one word set in the serif italic. */
-  accent: string;
+  /** The one word set in the serif italic. Optional: a project page's
+      heading is its name alone (2026-10-02, one header for every page). */
+  accent?: string;
   lede: string;
 }
 
@@ -22,6 +23,6 @@ const { crumbs, title, accent, lede } = Astro.props;
 
 <header class="v3-pagehead">
   <Breadcrumbs items={crumbs} />
-  <h1 class="v3-pagehead__title" data-split>{title} <em>{accent}</em></h1>
+  <h1 class="v3-pagehead__title" data-split>{title}{accent && <> <em>{accent}</em></>}</h1>
   <p class="v3-pagehead__lede" data-split>{lede}</p>
 </header>

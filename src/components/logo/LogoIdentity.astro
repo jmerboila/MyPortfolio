@@ -27,10 +27,10 @@ const third = '(min-width: 48rem) 24rem, 92vw';
 const n = (i: number) => String(i).padStart(2, '0');
 ---
 
-<div class="case">
-  <section class="case-sec container case-open" aria-labelledby="case-h-01">
+<div class="case container">
+  <section class="case-sec case-open" aria-labelledby="case-h-01">
+    <h2 id="case-h-01" class="case-h"><span class="case-num">{n(1)}</span> The mark</h2>
     <div class="case-open__text">
-      <h2 id="case-h-01" class="case-h"><span class="case-num">{n(1)}</span> The mark</h2>
       <p class="case-idea">{p.idea}</p>
       <dl class="li-meaning">
         {p.meaning.map((m) => (
@@ -53,12 +53,12 @@ const n = (i: number) => String(i).padStart(2, '0');
     </figure>
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-02">
+  <section class="case-sec" aria-labelledby="case-h-02">
     <h2 id="case-h-02" class="case-h"><span class="case-num">{n(2)}</span> The brief</h2>
     <p class="case-lede">{p.brief}</p>
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-03">
+  <section class="case-sec" aria-labelledby="case-h-03">
     <h2 id="case-h-03" class="case-h"><span class="case-num">{n(3)}</span> Construction</h2>
     {p.construction.map((x) => (
       <figure class="li-fig li-ai li-split">
@@ -71,7 +71,7 @@ const n = (i: number) => String(i).padStart(2, '0');
     ))}
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-04">
+  <section class="case-sec" aria-labelledby="case-h-04">
     <h2 id="case-h-04" class="case-h"><span class="case-num">{n(4)}</span> Typography</h2>
     {p.typography.length > 1 && (
       <ul class="li-grid li-grid--2" role="list">
@@ -102,7 +102,7 @@ const n = (i: number) => String(i).padStart(2, '0');
     {p.typeNote && <p class="case-lede">{p.typeNote}</p>}
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-05">
+  <section class="case-sec" aria-labelledby="case-h-05">
     <h2 id="case-h-05" class="case-h"><span class="case-num">{n(5)}</span> Colour</h2>
     <ul class="li-swatches" role="list">
       {p.colours.map((c) => (
@@ -115,7 +115,7 @@ const n = (i: number) => String(i).padStart(2, '0');
     </ul>
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-06">
+  <section class="case-sec" aria-labelledby="case-h-06">
     <h2 id="case-h-06" class="case-h"><span class="case-num">{n(6)}</span> Usage</h2>
     <figure class="li-fig li-ai li-split">
       <div class="li-ai__frame">
@@ -143,7 +143,7 @@ const n = (i: number) => String(i).padStart(2, '0');
     </ul>
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-07">
+  <section class="case-sec" aria-labelledby="case-h-07">
     <h2 id="case-h-07" class="case-h"><span class="case-num">{n(7)}</span> In use</h2>
     <ul class="li-grid li-grid--2" role="list">
       {p.inUse.map((x) => (
@@ -159,7 +159,7 @@ const n = (i: number) => String(i).padStart(2, '0');
   </section>
 
   {d.video && (
-    <section class="case-sec container" aria-labelledby="case-h-08">
+    <section class="case-sec" aria-labelledby="case-h-08">
       <h2 id="case-h-08" class="case-h"><span class="case-num">{n(8)}</span> The reel</h2>
       <div class="li-reel">
         <figure class="li-fig li-fig--video">

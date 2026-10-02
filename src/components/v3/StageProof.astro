@@ -8,13 +8,15 @@
    a deeper page. Data: src/config/stage-proof.ts. Five shapes:
 
      logos    two finished marks, light and dark (shown opposite the page,
-              2026-10-02), each linking to its logo page (03 Brand)
+              2026-10-02), each card a link to its logo page; one "all
+              logo work" link below (03 Brand)
      site     devsign8.com on desktop and phone, in the OPPOSITE theme to the
               page so it stands out: the dark site on a light page, the light
               site on a dark page (his call) (04 Build). Drawn by the shared
               SiteShowcase.astro since 2026-09-30
      found    SEO, AEO and GEO in one line each (05 Be found)
-     social   three posts, the research-backed posting slots (06 Show up)
+     social   a one-line hook and three posts (06 Show up; the posting
+              schedule was dropped 2026-10-02, his call)
      results  three headline numbers, each with its source, each a link
               (07 Measure)
 
@@ -46,7 +48,6 @@ const { proof } = Astro.props;
             </figure>
             <h4 class="v3-logo__title">{item.title}</h4>
             <p class="v3-logo__line">{item.line}</p>
-            <span class="v3-proof__cta">See the logo <Arrow /></span>
           </a>
         </li>
       ))}
@@ -96,15 +97,6 @@ const { proof } = Astro.props;
           </li>
         ))}
       </ul>
-      <dl class="v3-plan">
-        {proof.plan.map((row) => (
-          <div class="v3-plan__row">
-            <dt>{row.channel}</dt>
-            <dd>{row.slots}</dd>
-          </div>
-        ))}
-      </dl>
-      <p class="v3-proof__note">{proof.source}</p>
     </>
   )}
 
@@ -355,29 +347,6 @@ const { proof } = Astro.props;
     object-fit: contain;
   }
 
-  .v3-plan {
-    display: grid;
-    margin: var(--space-m) 0 0;
-    border-block-start: 1px solid var(--border);
-  }
-
-  .v3-plan__row {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-s);
-    padding-block: var(--space-2xs);
-    border-block-end: 1px solid var(--border);
-  }
-
-  .v3-plan dt {
-    font-weight: 600;
-  }
-
-  .v3-plan dd {
-    margin: 0;
-    color: var(--text-dim);
-    text-align: end;
-  }
 
   /* -- Results: three numbers ---------------------------------------------- */
   .v3-results {

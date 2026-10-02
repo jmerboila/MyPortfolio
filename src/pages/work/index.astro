@@ -31,7 +31,8 @@ const types = liveTypes(WORK_CATEGORIES, sorted);
 const labels = types.map((t) => CATEGORY_LABELS[t].toLowerCase());
 const across = labels.length > 1 ? `${labels.slice(0, -1).join(', ')} and ${labels.at(-1)}` : (labels[0] ?? '');
 
-const lede = `${sorted.length} projects across ${across}. Pick a type, or open any one.`;
+/* No project counts (2026-10-02, his call). */
+const lede = `${across.charAt(0).toUpperCase()}${across.slice(1)}. Pick a type, or open any one.`;
 const description = `Selected projects by ${PERSON.name}: ${across}.`;
 
 /* An ItemList of the projects in the order they appear. This is what lets a
@@ -76,7 +77,6 @@ const schema = [
             <Shelf
               index={i}
               id={`shelf-${t}`}
-              label={`${projects.length} ${projects.length === 1 ? 'project' : 'projects'}`}
               title={label}
               idea={TYPE_COPY[t]?.blurb}
               link={{ text: `See all ${label.toLowerCase()}`, path: typePath(t) }}

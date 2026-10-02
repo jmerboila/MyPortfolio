@@ -112,6 +112,12 @@
   transition: border-color var(--dur-fast) var(--ease-out-quart);
 }
 
+/* A themed cover (the logos' 16:10 mark panels) fills its 4:3 frame: the
+   mark sits well inside the panel, so the crop only trims the ground. */
+.cover__frame.cover__frame--themed img {
+  object-fit: cover;
+}
+
 .cover__frame img {
   display: block;
   inline-size: 100%;

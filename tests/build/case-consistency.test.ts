@@ -5,7 +5,10 @@ import { existsSync, readFileSync } from 'node:fs';
 /* One presentation for every case page (Jayson, 2026-10-02: information,
    data, page layout, font size and spacing consistent). The logo pages,
    the Safe-Zone Toolkit and the Ford and Lexus campaigns share one shell
-   (styles/case.css): section 01 is the text (idea, glance) beside the hero,
+   (styles/case.css), laid out as the Work pages' shelves since 2026-10-02:
+   the same PageHead, a hairline and the number and title on the left of
+   every section, the content on the right. Section 01 is the text (idea,
+   glance) beside the hero,
    sections are numbered 01, 02, ... without gaps, the shared sections carry
    the same names, and no page keeps its own copy of the shell. */
 const read = (p: string) => (existsSync(p) ? readFileSync(p, 'utf8') : '');
@@ -23,13 +26,22 @@ for (const [path, kind] of Object.entries(PAGES)) {
   const main = html.match(/<main[\s\S]*<\/main>/)?.[0] ?? '';
 
   test(`${path}: the shared shell, section 01 text beside the hero`, () => {
-    assert.match(main, /<div class="case"/);
-    const open = main.slice(main.indexOf('class="case-sec container case-open"'), main.indexOf('id="case-h-02"'));
+    /* One container around the sections, as .work-page wraps the shelves,
+       so every section's hairline spans exactly the text column. */
+    assert.match(main, /<div class="case container"/);
+    assert.doesNotMatch(main, /class="case-sec container/);
+    const open = main.slice(main.indexOf('class="case-sec case-open"'), main.indexOf('id="case-h-02"'));
     assert.ok(open.length > 0, 'no section 01');
     assert.match(open, /class="case-open__text"/);
     assert.match(open, /class="[^"]*case-open__hero/);
     assert.match(open, /class="case-idea"/);
     for (const dt of ['Project', 'Role', 'Deliverables', 'Tools']) assert.match(open, new RegExp(`<dt[^>]*>${dt}</dt>`), dt);
+  });
+
+  test(`${path}: opens with the Work pages' PageHead`, () => {
+    assert.match(html, /<header class="v3-pagehead"/);
+    assert.match(html, /<h1 class="v3-pagehead__title"/);
+    assert.match(html, /<p class="v3-pagehead__lede"/);
   });
 
   test(`${path}: sections numbered 01, 02, ... with no gaps`, () => {

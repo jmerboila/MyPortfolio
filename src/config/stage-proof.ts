@@ -89,10 +89,9 @@ export type Proof =
   | { kind: 'found'; intro: string; pillars: { tag: string; name: string; line: string }[]; note: string; link: Link }
   | {
       kind: 'social';
+      /** The one-line hook (2026-10-02: no posting schedule). */
       intro: string;
       tiles: Pic[];
-      plan: { channel: string; slots: string }[];
-      source: string;
       link: Link;
     }
   | {
@@ -163,7 +162,7 @@ export const STAGE_PROOF: Record<string, Proof> = {
 
   'show-up': {
     kind: 'social',
-    intro: 'Posts people stop for, planned in Buffer and timed by the data.',
+    intro: 'Made to stop the scroll. Measured to prove it did.',
     /* His order (2026-10-02): the Toolkit Reel, the Lexus poster, then the
        Ford Seamless Carousel, one from each social project. */
     tiles: [
@@ -180,12 +179,6 @@ export const STAGE_PROOF: Record<string, Proof> = {
         alt: "The 2026 Ford Mustang GTD Seamless Carousel's first panel: the Ford oval above Street Legal, But Just Barely, over drifting smoke.",
       },
     ],
-    plan: [
-      { channel: 'Instagram', slots: 'Wed 6 pm · Thu 9 am' },
-      { channel: 'LinkedIn', slots: 'Wed 4 pm' },
-      { channel: 'Facebook', slots: 'Thu 9 am' },
-    ],
-    source: "Slots from Buffer's study of 52 million posts. Then my own numbers decide what stays.",
     link: { label: 'See all my social media work', path: '/work/social/' },
   },
 

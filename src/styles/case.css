@@ -3,39 +3,77 @@
    call: information, data, layout, font sizes and spacing consistent).
    Used by LogoIdentity (logos), ToolkitCase and CampaignCase (social).
    ----------------------------------------------------------------------------
-   - .case            the page body: sections spaced by --space-section
-   - .case-sec        a numbered section: heading, then content
-   - .case-h/.case-num   "01  The mark": the number in the accent, small caps
-   - .case-open       section 01: the text (idea, glance) LEFT, the hero RIGHT
+   - .case            the page body: sections spaced as the shelves are
+   - .case-sec        a numbered section laid out as a shelf: the heading in
+                      the left column (sticky), everything else on the right
+   - .case-h/.case-num   the number above the title, as .shelf__label/title
+   - .case-open       section 01: the text and the hero side by side
    - .case-idea       the one-line idea, --step-2, 30ch
    - .case-glance     Project / Role / Deliverables / Tools between two rules
-   - .case-body       a section's text and visual; --split puts them side by
-                      side (text 1fr, visual 1.2fr) from 56rem
+   - .case-body       a section's text, then its visual
    - .case-lede       body copy, --step-1, 60ch, dim
    - .case-small      notes, sources and captions, --step--1, dim
    - .case-next, .case-sources   the closing lists
    ========================================================================= */
+/* Every section is a shelf, exactly as on the Work and type pages
+   (shelves.css, 2026-10-02: one page layout everywhere): a hairline, the
+   number and title on the left (sticky on wide screens), the content on the
+   right, the shelves' spacing between sections. */
 .case {
   display: grid;
-  gap: var(--space-section);
+  gap: var(--space-2xl);
 }
 
 .case-sec {
   display: grid;
-  gap: var(--space-m);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-l);
+  padding-block-start: var(--space-l);
+  border-block-start: 1px solid var(--border);
 }
 
+@media (min-width: 64rem) {
+  .case-sec {
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+    column-gap: var(--space-xl);
+    row-gap: 0;
+    align-items: start;
+  }
+
+  .case-sec > .case-h {
+    grid-column: 1;
+    grid-row: 1 / span 40;
+    align-self: start;
+    position: sticky;
+    inset-block-start: calc(var(--header-height, 4.5rem) + var(--space-m));
+  }
+
+  .case-sec > :not(.case-h) {
+    grid-column: 2;
+  }
+
+  .case-sec > :not(.case-h) + :not(.case-h) {
+    margin-block-start: var(--space-l);
+  }
+}
+
+/* The number above the title, set as the shelves set theirs (.shelf__label
+   and .shelf__title). */
 .case-h {
-  font-size: var(--step-3);
   display: flex;
-  gap: 0.6em;
-  align-items: baseline;
+  flex-direction: column;
+  gap: var(--space-2xs);
   margin: 0;
+  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .case-num {
-  font-size: var(--step--1);
-  letter-spacing: var(--tracking-caps);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: normal;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
@@ -45,15 +83,23 @@
   margin: 0 0 var(--space-xs);
 }
 
-.case-open {
-  gap: var(--space-l);
-  align-items: center;
-}
-
-@media (min-width: 56rem) {
+/* Section 01: the text and the hero side by side once the right column is
+   wide enough, the hero in a third column. */
+@media (min-width: 80rem) {
   .case-open {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: var(--space-xl);
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .case-open > .case-open__text {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .case-open > .case-open__hero {
+    grid-column: 3;
+    grid-row: 1;
+    margin-block-start: 0;
   }
 }
 
@@ -98,14 +144,6 @@
 .case-body {
   display: grid;
   gap: var(--space-l);
-}
-
-@media (min-width: 56rem) {
-  .case-body--split {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-    column-gap: var(--space-xl);
-    align-items: start;
-  }
 }
 
 .case-text {

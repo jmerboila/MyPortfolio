@@ -11,7 +11,9 @@ import '../../styles/shelves.css';
 interface Props {
   /** 0-based position; shown as 01, 02... */
   index: number;
-  label: string;
+  /** Shown after the number, e.g. a project's category. Optional: the
+      Work page shows the number alone (2026-10-02: no project counts). */
+  label?: string;
   title: string;
   idea?: string;
   /** Small print under the idea, e.g. a trademark disclaimer. */
@@ -32,7 +34,7 @@ import Arrow from './Arrow.astro';
 
 <section class="shelf" aria-labelledby={id}>
   <div class="shelf__info">
-    <p class="shelf__label">{String(index + 1).padStart(2, '0')} · {label}</p>
+    <p class="shelf__label">{String(index + 1).padStart(2, '0')}{label && ` · ${label}`}</p>
     <h2 id={id} class="shelf__title">{title}</h2>
     {idea && <p class="shelf__idea">{idea}</p>}
     {note && <p class="shelf__note">{note}</p>}

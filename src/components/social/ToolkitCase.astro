@@ -44,10 +44,10 @@ const captions = { kind: 'captions' as const, items: t.captions.items };
 const results = { kind: 'results' as const };
 ---
 
-<div class="case">
-  <section class="case-sec container case-open" aria-labelledby="case-h-01">
+<div class="case container">
+  <section class="case-sec case-open" aria-labelledby="case-h-01">
+    <h2 id="case-h-01" class="case-h"><span class="case-num">{n(1)}</span> The toolkit</h2>
     <div class="case-open__text">
-      <h2 id="case-h-01" class="case-h"><span class="case-num">{n(1)}</span> The toolkit</h2>
       <p class="case-idea">{t.idea}</p>
       <dl class="case-glance">
         <div><dt>Project</dt><dd>{t.type}</dd></div>
@@ -61,7 +61,7 @@ const results = { kind: 'results' as const };
     </div>
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-02">
+  <section class="case-sec" aria-labelledby="case-h-02">
     <h2 id="case-h-02" class="case-h"><span class="case-num">{n(2)}</span> The problem</h2>
     <div class="case-body case-body--split">
       <div class="case-text">{t.problem.body.map((p) => <p class="case-lede">{p}</p>)}</div>
@@ -86,7 +86,7 @@ const results = { kind: 'results' as const };
     </div>
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-03">
+  <section class="case-sec" aria-labelledby="case-h-03">
     <h2 id="case-h-03" class="case-h"><span class="case-num">{n(3)}</span> The research</h2>
     <div class="case-body case-body--split">
       <div class="case-text">
@@ -98,7 +98,7 @@ const results = { kind: 'results' as const };
     </div>
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-04">
+  <section class="case-sec" aria-labelledby="case-h-04">
     <h2 id="case-h-04" class="case-h"><span class="case-num">{n(4)}</span> The tool</h2>
     <div class="case-body case-body--split">
       <div class="case-text">{t.tool.body.map((p) => <p class="case-lede">{p}</p>)}</div>
@@ -106,7 +106,7 @@ const results = { kind: 'results' as const };
     </div>
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-05">
+  <section class="case-sec" aria-labelledby="case-h-05">
     <h2 id="case-h-05" class="case-h"><span class="case-num">{n(5)}</span> The series</h2>
     <div class="case-body">
       <div class="case-text"><p class="case-lede">{t.series.body}</p></div>
@@ -118,7 +118,7 @@ const results = { kind: 'results' as const };
     )}
   </section>
 
-  <section class="case-sec container" aria-labelledby="case-h-06">
+  <section class="case-sec" aria-labelledby="case-h-06">
     <h2 id="case-h-06" class="case-h"><span class="case-num">{n(6)}</span> Captions and timing</h2>
     <div class="case-body case-body--split">
       <div class="case-text">{t.captions.body.map((p) => <p class="case-lede">{p}</p>)}</div>
@@ -126,7 +126,7 @@ const results = { kind: 'results' as const };
     </div>
   </section>
 
-  <section class="case-sec container" id="measure" aria-labelledby="case-h-07">
+  <section class="case-sec" id="measure" aria-labelledby="case-h-07">
     <h2 id="case-h-07" class="case-h"><span class="case-num">{n(7)}</span> Results and what I learned</h2>
     <div class="case-body case-body--split">
       <div class="case-text">{t.results.body.map((p) => <p class="case-lede">{p}</p>)}</div>

@@ -220,9 +220,10 @@ test('05 names SEO, AEO and GEO and links to the search setup', () => {
   for (const t of ['Rank on Google', 'Be the answer', 'Get cited by AI']) assert.ok(html.includes(t), t);
   assert.match(html, /href="\/MyPortfolio\/work\/web\/devsign8-website\/#be-found"/);
 });
-test('06 shows posts and the posting slots, not the Mustang card, with one social link', () => {
-  assert.match(html, /class="v3-plan"/);
-  assert.match(html, /Buffer&#39;s study of 52 million posts|Buffer's study of 52 million posts/);
+test('06 shows a hook and the posts, no posting schedule, with one social link', () => {
+  /* 2026-10-02, his call: a catchy line instead of the schedule. */
+  assert.doesNotMatch(html, /class="v3-plan"/);
+  assert.match(html, /Made to stop the scroll\. Measured to prove it did\./);
   assert.equal((html.match(/See all my social media work/g) ?? []).length, 1);
   assert.doesNotMatch(html, /href="\/MyPortfolio\/work\/social\/2026-ford-mustang-gtd\/"/);
 });
@@ -247,7 +248,9 @@ test('the homepage shows no dates', () => {
 });
 test('every link arrow is the shared up-right arrow, no text arrows left', () => {
   assert.doesNotMatch(html, /aria-hidden="true">\s*→<\/span>/);
-  assert.ok((html.match(/class="v3-arrow"/g) ?? []).length >= 8);
+  /* Two fewer since 2026-10-02: 03 Brand's cards are links themselves, so
+     only "See all my logo work" carries an arrow there. */
+  assert.ok((html.match(/class="v3-arrow"/g) ?? []).length >= 6);
 });
 test('no discipline-plate markup remains', () => {
   assert.doesNotMatch(html, /data-plate\b/);
@@ -260,8 +263,9 @@ test('the stage rail markup is present and lists every stage', () => {
 });
 
 /* 2026-10-02, his call: 03 Brand shows each logo's mark panel in light and
-   dark (opposite the page, like the logo pages) and links to the logo page,
-   with no "Watch it" (the page is more than the reel); 06 Show up shows the
+   dark (opposite the page, like the logo pages), each card a link to its
+   logo page and one "See all my logo work" below, no "Watch it" or per-card
+   links (the page is more than the reel); 06 Show up shows the
    Toolkit Reel, the Lexus poster, then the Ford Seamless Carousel. */
 test('03 Brand: both marks in light and dark, each linking to its logo page', () => {
   const brand = html.slice(html.indexOf('v3-proof--logos'), html.indexOf('</ul>', html.indexOf('v3-proof--logos')));
@@ -269,7 +273,7 @@ test('03 Brand: both marks in light and dark, each linking to its logo page', ()
   assert.equal((brand.match(/theme-img--dark/g) ?? []).length, 2);
   assert.match(brand, /href="\/MyPortfolio\/work\/logo\/jm-design\/"/);
   assert.match(brand, /href="\/MyPortfolio\/work\/logo\/devsign8\/"/);
-  assert.doesNotMatch(brand, /Watch it/);
+  assert.doesNotMatch(brand, /Watch it|See the logo/);
 });
 
 test('06 Show up: the Toolkit Reel, the Lexus poster, then the Ford carousel', () => {

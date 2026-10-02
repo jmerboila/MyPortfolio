@@ -15,7 +15,7 @@
 import { getCollection, render } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import V3Layout from '../../../layouts/V3Layout.astro';
-import Breadcrumbs from '../../../components/v3/Breadcrumbs.astro';
+import PageHead from '../../../components/v3/PageHead.astro';
 import LaunchStory from '../../../components/story/LaunchStory.astro';
 import LogoIdentity from '../../../components/logo/LogoIdentity.astro';
 import ToolkitCase from '../../../components/social/ToolkitCase.astro';
@@ -163,16 +163,13 @@ const schema = [
 
   <article class="project">
     <header class="project__head container">
-      <Breadcrumbs items={crumbs} />
-
-      <p class="project__cat">{d.category}</p>
-      <h1 class="project__title">{d.title}</h1>
-      {!story && !customPage && d.intro && <p class="project__intro prose">{d.intro}</p>}
+      {/* The same header as the Work and type pages (2026-10-02, his call:
+          one page layout everywhere): breadcrumbs, the big title, one lede. */}
+      <PageHead crumbs={crumbs} title={d.title} lede={story ? story.lede : d.summary} />
 
       {
         story && (
           <>
-            <p class="project__intro prose">{story.lede}</p>
             <dl class="project__meta">
               {d.role && (
                 <div>
@@ -462,26 +459,20 @@ const schema = [
     inline-size: min(100%, var(--sp-post-w, 390px));
   }
 
+  /* The Work pages' spacing (.work-page + PageHead), so a project page opens
+     exactly where the Work and type pages do (2026-10-02). */
   .project {
-    padding-block: var(--space-2xl) var(--space-section);
+    padding-block: var(--space-m) var(--space-section);
     display: grid;
-    gap: var(--space-xl);
+    gap: var(--space-l);
   }
 
-
-  .project__cat {
-    font-size: var(--step--1);
-    letter-spacing: var(--tracking-caps);
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-block-end: var(--space-xs);
+  /* PageHead brings its own bottom margin on the Work pages; here the
+     article's gap already spaces the header from the first section. */
+  .project__head > :global(.v3-pagehead:last-child) {
+    margin-block-end: 0;
   }
 
-  /* Size, weight and tracking come from v3.css (shared with PageHead). */
-  .project__title {
-    max-inline-size: 20ch;
-    margin-block-end: var(--space-m);
-  }
 
   .project__intro {
     font-size: var(--step-1);

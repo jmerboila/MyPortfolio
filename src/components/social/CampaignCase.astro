@@ -26,10 +26,10 @@ const n = (i: number) => String(i).padStart(2, '0');
 const pick = (ids: string[]) => ids.map((id) => posts.find((p) => p.id === id || p.id.startsWith(`${id}/`))).filter((p) => p !== undefined);
 ---
 
-<div class="case">
-  <section class="case-sec container case-open" aria-labelledby="case-h-01">
+<div class="case container">
+  <section class="case-sec case-open" aria-labelledby="case-h-01">
+    <h2 id="case-h-01" class="case-h"><span class="case-num">{n(1)}</span> {c.heading}</h2>
     <div class="case-open__text">
-      <h2 id="case-h-01" class="case-h"><span class="case-num">{n(1)}</span> {c.heading}</h2>
       <p class="case-idea">{c.idea}</p>
       <dl class="case-glance">
         <div><dt>Project</dt><dd>{c.type}</dd></div>
@@ -50,7 +50,7 @@ const pick = (ids: string[]) => ids.map((id) => posts.find((p) => p.id === id ||
       const num = n(i + 2);
       const shown = s.posts ? pick(s.posts) : [];
       return (
-        <section class="case-sec container" id={s.anchor} aria-labelledby={`case-h-${num}`}>
+        <section class="case-sec" id={s.anchor} aria-labelledby={`case-h-${num}`}>
           <h2 id={`case-h-${num}`} class="case-h"><span class="case-num">{num}</span> {s.heading}</h2>
           <div class:list={['case-body', s.visual && 'case-body--split']}>
             <div class="case-text">{s.body.map((p) => <p class="case-lede">{p}</p>)}</div>
@@ -78,7 +78,7 @@ const pick = (ids: string[]) => ids.map((id) => posts.find((p) => p.id === id ||
 
   {
     c.sources.length > 0 && (
-      <section class="case-sec container case-sources" aria-label="Research sources">
+      <section class="case-sec case-sources" aria-label="Research sources">
         <h3 class="case-sub">Sources</h3>
         <ul>
           {c.sources.map((s) => (

@@ -4,15 +4,16 @@
    homepage's lifecycle stages, so the process the homepage promises shows on
    real work (his pick, 2026-09-25).
 
-   Wide screens: text left, the chapter's visual sticky on the right, in plain
-   CSS, so it holds while that chapter is read and leaves with it. Phones: the
-   visual sits above its text. The sticky visual lives in its own column, so
-   it never covers a focused element in the text.
+   Since 2026-10-02 (his call: one page layout everywhere) every chapter is a
+   shelf on the shared case shell (styles/case.css), like the Work pages and
+   every other project page: the stage number and name, then the heading, in
+   the left column; the text, then the visual, on the right.
    ========================================================================= */
 import type { CollectionEntry } from 'astro:content';
 import { STAGES } from '../../config/lifecycle';
 import StoryVisual from './StoryVisual.astro';
 import '../../styles/story.css';
+import '../../styles/case.css';
 
 type Story = NonNullable<CollectionEntry<'work'>['data']['story']>;
 interface Props {
@@ -26,7 +27,7 @@ const stage = (id: string) => {
 };
 ---
 
-<div class="st-story">
+<div class="case st-story">
   {
     story.chapters.map((c, i) => {
       const s = stage(c.stage);
@@ -34,36 +35,35 @@ const stage = (id: string) => {
          the homepage's stage links can land on it (/work/.../#measure). */
       const anchor = story.chapters.findIndex((x) => x.stage === c.stage) === i ? c.stage : undefined;
       return (
-        <section id={anchor} class="st-ch" aria-labelledby={`st-h-${i}`} data-st-chapter>
-          <div class="st-ch__visual">
-            <StoryVisual visual={c.visual} results={story.results} />
+        <section id={anchor} class="case-sec st-ch" aria-labelledby={`st-h-${i}`} data-st-chapter>
+          <h2 id={`st-h-${i}`} class="case-h">
+            <span class="case-num st-ch__stage">{s.n} · {s.label}</span> {c.heading}
+          </h2>
+          <div class="case-body">
+            <div class="case-text">
+              {c.body.map((p) => (
+                <p class="case-lede">{p}</p>
+              ))}
+            </div>
+            <div class="case-visual">
+              <StoryVisual visual={c.visual} results={story.results} />
+            </div>
           </div>
-          <div class="st-ch__text">
-            <p class="st-ch__stage">
-              <span>{s.n}</span> {s.label}
-            </p>
-            <h2 id={`st-h-${i}`} class="st-ch__h" data-split>
-              {c.heading}
-            </h2>
-            {c.body.map((p) => (
-              <p>{p}</p>
-            ))}
-            {c.visual.kind === 'results' && story.results && (
-              <>
-                <p class="st-ch__insight">{story.results.insight}</p>
-                {story.results.next.length > 0 && (
-                  <>
-                    <h3 class="st-ch__h3">What I'd test next</h3>
-                    <ul class="st-ch__next">
-                      {story.results.next.map((n) => (
-                        <li>{n}</li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </>
-            )}
-          </div>
+          {c.visual.kind === 'results' && story.results && (
+            <div class="case-text">
+              <p class="case-lede st-ch__insight">{story.results.insight}</p>
+              {story.results.next.length > 0 && (
+                <div class="case-next">
+                  <h3 class="case-sub">What I'd test next</h3>
+                  <ul>
+                    {story.results.next.map((n) => (
+                      <li>{n}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </section>
       );
     })
@@ -71,8 +71,8 @@ const stage = (id: string) => {
 
   {
     story.sources.length > 0 && (
-      <aside class="st-sources" aria-labelledby="st-sources-h">
-        <h2 id="st-sources-h" class="st-ch__h3">
+      <aside class="case-sec case-sources st-sources" aria-labelledby="st-sources-h">
+        <h2 id="st-sources-h" class="case-h">
           Sources
         </h2>
         <ol>

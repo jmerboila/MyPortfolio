@@ -11,8 +11,9 @@ tags:
   - "Logo Design"
   - "Branding"
   - "Monogram"
-cover: "../../assets/projects/logos/jm-design/01-opening.webp"
-coverAlt: "The JM monogram in gold on black."
+cover: "../../assets/projects/logos/jm-design/id-01-mark.webp"
+coverDark: "../../assets/projects/logos/jm-design/id-01-mark-dark.webp"
+coverAlt: "The JM monogram in black on cream."
 client: "Self-initiated"
 role: "Designer: monogram and personal brand"
 tools:

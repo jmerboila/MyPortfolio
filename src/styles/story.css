@@ -4,89 +4,10 @@
    Astro's scoped styles would not reach them.
    ========================================================================= */
 
-.st-story {
-  display: grid;
-  gap: var(--space-2xl);
-}
-
 /* -- Chapters ------------------------------------------------------------- */
-.st-ch {
-  display: grid;
-  gap: var(--space-l);
-}
-
-/* Written as `.st-ch__text > p.st-ch__stage` so it outranks the chapter
-   paragraph rule below (.st-ch__text > p). */
-.st-ch__text > p.st-ch__stage {
-  margin: 0 0 var(--space-2xs);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--accent);
-}
-
-.st-ch__stage span {
-  margin-inline-end: 0.35em;
-  font-variant-numeric: tabular-nums;
-}
-
-.st-ch__h {
-  margin: 0 0 var(--space-s);
-  font-size: clamp(1.75rem, 1rem + 2.4vw, 3rem);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.08;
-}
-
-.st-ch__h3 {
-  margin: var(--space-l) 0 var(--space-2xs);
-  font-size: var(--step-0);
-  font-weight: 600;
-}
-
-.st-ch__text > p {
-  margin: 0 0 var(--space-s);
-  max-inline-size: 40ch;
-  font-size: var(--step-1);
-  line-height: 1.55;
-  color: var(--text-dim);
-}
-
-.st-ch__text > p.st-ch__insight {
-  color: var(--text);
-}
-
-.st-ch__next {
-  margin: 0;
-  padding-inline-start: 1.2rem;
-  color: var(--text-dim);
-}
-
-.st-ch__next li + li {
-  margin-block-start: 0.35rem;
-}
-
-/* Wide screens: text left, the visual sticky on the right. Each chapter is
-   at least a screen tall so its visual has room to hold. */
-@media (min-width: 60rem) {
-  .st-ch {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 34rem);
-    grid-template-areas: 'text visual';
-    align-items: start;
-    gap: var(--space-2xl);
-    min-block-size: 100svh;
-  }
-
-  .st-ch__text {
-    grid-area: text;
-    padding-block: 18svh;
-  }
-
-  .st-ch__visual {
-    grid-area: visual;
-    position: sticky;
-    inset-block-start: calc(var(--header-height, 4.5rem) + var(--space-l));
-  }
-}
+/* Since 2026-10-02 a chapter is a shelf on the shared case shell
+   (styles/case.css, LaunchStory.astro): the layout, heading, text and
+   spacing rules live there. What stays here is the visuals. */
 
 /* -- Visuals: shared -------------------------------------------------------- */
 .st-v {
