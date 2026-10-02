@@ -3,7 +3,7 @@ Run from the repo root: python scripts/logo-presentation/build_all.py"""
 import os, subprocess, sys
 import imageio_ffmpeg
 HERE = os.path.dirname(os.path.abspath(__file__))
-for s in ('devsign8.py', 'jm_design.py', 'digiskills.py'):
+for s in ('devsign8_identity.py', 'jm_design_identity.py', 'digiskills_identity.py'):
     subprocess.run([sys.executable, os.path.join(HERE, s)], check=True)
 ff = imageio_ffmpeg.get_ffmpeg_exe()
 for name in ('devsign8-logo', 'jm-design-logo'):

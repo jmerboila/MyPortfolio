@@ -228,7 +228,7 @@ USER_FONTS = os.path.join(os.environ['LOCALAPPDATA'], 'Microsoft', 'Windows', 'F
 
 def font_mask(font_file, size, s, wght=None):
     """Ink mask of s set in an installed font (PIL), for type specimens.
-    wght sets a variable font's weight axis (Roboto Black = 900); every
+    wght sets a variable font's weight axis (900 = black); every
     other axis keeps its default."""
     from PIL import ImageDraw, ImageFont
     f = ImageFont.truetype(os.path.join(USER_FONTS, font_file), size)
@@ -245,29 +245,111 @@ def font_mask(font_file, size, s, wght=None):
 AI_CANVAS = (84, 108, 2256, 1356)   # the document canvas in a maximised 2576 x 1408 window
 
 
-def ai_shot(src, mode, slug, name, width=1600, pad=0.22):
+def ai_shot(src, mode, slug, name, width=1600, pad=0.22, aspect=None):
     """Crop a real Illustrator screenshot for the page and save it as WebP.
     mode 'artboard': the white artboard, whole (the clear-space view);
+    mode 'canvas': the whole document view (a close zoom);
     mode 'ink': the artwork's own bounds plus `pad` of its height around it,
-    kept inside the artboard (the anchors view and the close-up)."""
+    kept inside the artboard (the anchors view and the close-up).
+    aspect: a minimum width / height; a tall mark's crop is widened (inside
+    the artboard), then shortened, so it never displays as a tall image."""
     import numpy as np
     im = Image.open(src).convert('RGB').crop(AI_CANVAS)
     a = np.asarray(im).astype(int)
     white = (a.min(axis=2) >= 250)
     rows, cols = np.where(white.mean(axis=1) > 0.5)[0], np.where(white.mean(axis=0) > 0.5)[0]
     board = (cols[0], rows[0], cols[-1] + 1, rows[-1] + 1)
-    if mode == 'artboard':
+    if mode == 'canvas':                                     # a close zoom: the artboard fills the view
+        box = (0, 0, im.size[0], im.size[1])
+    elif mode == 'artboard':
         box = board
     else:
         sub = a[board[1]:board[3], board[0]:board[2]]
-        ink = sub.max(axis=2) < 90
+        r, g, b = sub[..., 0], sub[..., 1], sub[..., 2]
+        guide = (r < 150) & (g > 170) & (b > 200)           # Illustrator's cyan guides
+        ink = (sub.min(axis=2) < 200) & ~guide             # any colour of artwork
         ys, xs = np.where(ink)
         x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
         p = int((y1 - y0) * pad)
         box = (max(board[0], board[0] + x0 - p), max(board[1], board[1] + y0 - p),
                min(board[2], board[0] + x1 + p), min(board[3], board[1] + y1 + p))
+    if aspect:
+        x0, y0, x1, y1 = box
+        if (x1 - x0) / (y1 - y0) < aspect:
+            cx, need = (x0 + x1) / 2, (y1 - y0) * aspect
+            x0, x1 = max(board[0], cx - need / 2), min(board[2], cx + need / 2)
+            if (x1 - x0) / (y1 - y0) < aspect:              # still too tall: trim height, centred
+                cy, hh = (y0 + y1) / 2, (x1 - x0) / aspect
+                y0, y1 = cy - hh / 2, cy + hh / 2
+        box = tuple(int(round(v)) for v in (x0, y0, x1, y1))
     out = im.crop(box)
     out = out.resize((width, int(out.size[1] * width / out.size[0])), Image.LANCZOS)
     os.makedirs(OUT_ROOT + slug, exist_ok=True)
     out.save(f'{OUT_ROOT}{slug}/{name}.webp', 'WEBP', quality=90)
     print('wrote', slug, name, out.size)
+
+
+# -- Identity panels (LogoIdentity, 2026-10-02) ------------------------------
+HAIR = hexrgb('#D9D4F7')      # pale guide hairlines
+MUTED = hexrgb('#8A8790')
+
+
+def render_rgba(ai, page, box, width_px):
+    """RGBA render of a box (PDF points), transparent ground."""
+    pg = _page(ai, page); pw, ph = pg.get_size()
+    sc = width_px / (box[2] - box[0])
+    return pg.render(scale=sc, fill_color=(0, 0, 0, 0),
+                     crop=(box[0], box[1], pw - box[2], ph - box[3])).to_pil().convert('RGBA')
+
+
+def canvas(w, h, bg):
+    s = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
+    c = cairo.Context(s); c.set_source_rgb(*bg); c.paint()
+    return s, c
+
+
+def small_label(c, s, x, y, rgb=MUTED, size=22):
+    c.select_font_face(FONT, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    c.set_font_size(size); c.set_source_rgb(*rgb); c.move_to(x, y); c.show_text(s.upper())
+
+
+def centred_image(c, img, w, h, height=None, width=None):
+    """Paint an RGBA image centred in a w x h canvas, sized by height or width."""
+    if height: width = img.size[0] * height / img.size[1]
+    size = paint_image(c, img, (w - width) / 2, (h - img.size[1] * width / img.size[0]) / 2, width)
+    return size
+
+
+def mockup_panel(src, slug, name):
+    """A Photoshop mockup render at 1600 x 1200 (centre-cropped to 4:3),
+    tagged "Mockup" in the image itself."""
+    im = Image.open(src).convert('RGB')
+    w, h = im.size
+    if w / h > 4 / 3:
+        nw = int(h * 4 / 3); im = im.crop(((w - nw) // 2, 0, (w - nw) // 2 + nw, h))
+    elif w / h < 4 / 3:
+        nh = int(w * 3 / 4); im = im.crop((0, (h - nh) // 2, w, (h - nh) // 2 + nh))
+    im = im.resize((1600, 1200), Image.LANCZOS)
+    s, c = canvas(1600, 1200, PAPER)
+    paint_image(c, im, 0, 0, 1600)
+    tag(c, 'Mockup', 36, 1200 - 36 - 46, PAPER, INK, 22)
+    save(s, slug, name)
+
+
+def size_ladder(slug, name, art, sizes, ground, by='width', k=1.25, unit='px', minimum_label='minimum'):
+    """The mark at its real pixel sizes (scaled by k for screens), smallest
+    marked as the minimum. art: an RGBA image of the mark."""
+    s, c = canvas(1600, 640, ground)
+    dims = [(px * k * art.size[0] / art.size[1], px * k) if by == 'height' else (px * k, px * k * art.size[1] / art.size[0]) for px in sizes]
+    gap = 90
+    slots = [max(d[0], 250) for d in dims]                 # room for each label
+    x = (1600 - sum(slots) - gap * (len(dims) - 1)) / 2
+    base = 400
+    for (w, h), px, slot in zip(dims, sizes, slots):
+        paint_image(c, art, x, base - h, w)
+        c.set_source_rgb(*HAIR); c.set_line_width(2)
+        c.move_to(x, 450); c.line_to(x + max(w, 40), 450); c.stroke()
+        lab = f'{px} {unit}' + ('  ' + minimum_label if px == sizes[-1] else '')
+        small_label(c, lab, x, 510, VIOLET, 22)
+        x += slot + gap
+    save(s, slug, name)

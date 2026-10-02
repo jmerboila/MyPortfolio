@@ -70,20 +70,32 @@ const n = (i: number) => String(i).padStart(2, '0');
 
   <section class="li-sec container" aria-labelledby="li-h-04">
     <h2 id="li-h-04" class="li-h"><span class="li-num">{n(4)}</span> Typography</h2>
-    <ul class="li-grid li-grid--2" role="list">
-      {p.typography.map((t) => (
-        <li>
-          <figure class="li-fig li-card">
-            <Image src={t.src} alt={t.alt} widths={[600, 900, 1200]} sizes={half} loading="lazy" />
-            <figcaption>
-              <span class="li-kind">{t.kind}</span>
-              <strong class="li-part">{t.part}</strong>
-              <span class="li-note">{t.why}</span>
-            </figcaption>
-          </figure>
-        </li>
-      ))}
-    </ul>
+    {p.typography.length > 1 && (
+      <ul class="li-grid li-grid--2" role="list">
+        {p.typography.map((t) => (
+          <li>
+            <figure class="li-fig li-card">
+              <Image src={t.src} alt={t.alt} widths={[600, 900, 1200]} sizes={half} loading="lazy" />
+              <figcaption>
+                <span class="li-kind">{t.kind}</span>
+                <strong class="li-part">{t.part}</strong>
+                <span class="li-note">{t.why}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    )}
+    {p.typography.length === 1 && p.typography.map((t) => (
+      <figure class="li-fig li-card li-split">
+        <Image src={t.src} alt={t.alt} widths={[600, 900, 1200]} sizes={half} loading="lazy" />
+        <figcaption>
+          <span class="li-kind">{t.kind}</span>
+          <strong class="li-part">{t.part}</strong>
+          <span class="li-note">{t.why}</span>
+        </figcaption>
+      </figure>
+    ))}
     {p.typeNote && <p class="li-lede">{p.typeNote}</p>}
   </section>
 

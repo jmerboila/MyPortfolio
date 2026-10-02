@@ -295,46 +295,9 @@ const work = defineCollection({
         })
         .optional(),
 
-      /* -- Logo presentation (2026-10-01) ---------------------------------
-         An entry with `presentation` renders LogoPresentation (sections 01 to
-         10) instead of the classic case blocks and gallery. Every image is
-         generated from Jayson's .ai files by scripts/logo-presentation/. */
-      presentation: z
-        .object({
-          idea: z.string().max(140),
-          type: z.string(),
-          deliverables: z.array(z.string()).min(2).max(6),
-          opening: pic,
-          brief: z.string().max(600),
-          ideaVisual: pic.extend({ caption: z.string() }),
-          exploration: z
-            .array(pic.extend({ label: z.string(), verdict: z.enum(['Dropped', 'Kept', 'Final']), note: z.string() }))
-            .min(3)
-            .max(4),
-          construction: z.array(pic.extend({ caption: z.string() })).min(1).max(2),
-          /* A specimen image is optional: a pure symbol (DigiSkills) has no
-             typeface, and an invented specimen would be a false claim. */
-          typography: z
-            .array(z.object({ src: image().optional(), alt: z.string().optional(), name: z.string(), role: z.string() }))
-            .min(1)
-            .max(3),
-          /* Optional picture above the swatches, e.g. a colour study. */
-          colourImage: pic.extend({ caption: z.string() }).optional(),
-          colours: z
-            .array(z.object({ name: z.string(), hex: z.string().regex(/^#[0-9A-F]{6}$/), use: z.string() }))
-            .min(2)
-            .max(6),
-          versatility: pic.extend({ caption: z.string() }),
-          inUse: z
-            .array(pic.extend({ caption: z.string().startsWith('Mockup:') }))
-            .min(4)
-            .max(5),
-          rules: pic.extend({ caption: z.string(), items: z.array(z.string()).min(3).max(5) }),
-        })
-        .optional(),
-
-      /* -- Logo identity (2026-10-02, the Devsign8 pilot) ------------------
-         The second logo presentation, rendered by LogoIdentity: the final
+      /* -- Logo identity (2026-10-02) ---------------------------------------
+         The logo presentation, rendered by LogoIdentity instead of the
+         classic case blocks and gallery: the final
          mark and its meaning first, then the brief, construction from the
          real .ai file in Illustrator, type in general terms only (no font
          names: `kind` is a class, never a family), colour, usage, photo
@@ -349,6 +312,7 @@ const work = defineCollection({
           brief: z.string().max(600),
           /* `bar` labels the Illustrator window frame, e.g. "Devsign8.ai @ 134%". */
           construction: z.array(pic.extend({ caption: z.string(), bar: z.string() })).min(1).max(3),
+          /* A pure symbol (DigiSkills) has no type: then typeNote alone says so. */
           typography: z
             .array(
               z.object({
@@ -359,8 +323,8 @@ const work = defineCollection({
                 why: z.string(),
               }),
             )
-            .min(1)
-            .max(3),
+            .max(3)
+            .default([]),
           typeNote: z.string().optional(),
           colours: z
             .array(z.object({ name: z.string(), hex: z.string().regex(/^#[0-9A-F]{6}$/), use: z.string() }))

@@ -13,21 +13,28 @@
    sets a layer's fill opacity (and blend mode), e.g. to ink an emboss.
    For each edit: open the smart object, hide everything in it, optionally
    lay a solid fill, optionally place an image centred at width x the
-   smart object's width (or 'cover' to fill it), save it back, close it. */
+   smart object's width (or 'cover' to fill it; or `height` x its height,
+   for tall marks), save it back, close it. */
 app.displayDialogs = DialogModes.NO;
 app.preferences.rulerUnits = Units.PIXELS;
 
 function hex(h) { var c = new SolidColor(); c.rgb.hexValue = h.replace('#', ''); return c; }
 
 function findLayer(container, path) {
-  var parts = path.split('/'), c = container;
-  for (var i = 0; i < parts.length; i++) {
-    var found = null;
-    for (var j = 0; j < c.layers.length; j++) if (c.layers[j].name == parts[i]) { found = c.layers[j]; break; }
-    if (!found) throw new Error('layer not found: ' + path);
-    c = found;
+  // depth-first over every sibling with the name, since templates repeat
+  // group names (e.g. two "Design" sets, one per card)
+  function walk(c, parts) {
+    if (!parts.length) return c;
+    if (!c.layers) return null;
+    for (var j = 0; j < c.layers.length; j++) if (c.layers[j].name == parts[0]) {
+      var hit = walk(c.layers[j], parts.slice(1));
+      if (hit) return hit;
+    }
+    return null;
   }
-  return c;
+  var found = walk(container, path.split('/'));
+  if (!found) throw new Error('layer not found: ' + path);
+  return found;
 }
 
 function hideAll(container) { for (var i = 0; i < container.layers.length; i++) container.layers[i].visible = false; }
@@ -40,16 +47,19 @@ function placeFile(doc, file) {
   return doc.activeLayer;
 }
 
-function fitAndCentre(doc, layer, width, pos) {
+function fitAndCentre(doc, layer, width, pos, height) {
   var W = doc.width.as('px'), H = doc.height.as('px'), b = layer.bounds;
   var lw = b[2].as('px') - b[0].as('px'), lh = b[3].as('px') - b[1].as('px');
-  var s = width === 'cover' ? Math.max(W / lw, H / lh) : (W * width) / lw;
+  var s = width === 'cover' ? Math.max(W / lw, H / lh) : height ? (H * height) / lh : (W * width) / lw;
   if (width !== 'cover' && lh * s > H * 0.9) s = (H * 0.9) / lh;     // never taller than the space
-  layer.resize(s * 100, s * 100, AnchorPosition.MIDDLECENTER);
+  if (Math.abs(s - 1) > 1e-6) layer.resize(s * 100, s * 100, AnchorPosition.MIDDLECENTER);   // Photoshop rejects a 100% resize
   b = layer.bounds;
   if (pos === 'topleft') {                                           // letterhead: a margin of 9% of the width
     var m = W * 0.09;
     layer.translate(m - b[0].as('px'), m - b[1].as('px'));
+  } else if (pos === 'bottomleft') {                                 // a margin of 9% of the width
+    var m2 = W * 0.09;
+    layer.translate(m2 - b[0].as('px'), H - m2 - b[3].as('px'));
   } else {
     layer.translate(W / 2 - (b[0].as('px') + b[2].as('px')) / 2, H / 2 - (b[1].as('px') + b[3].as('px')) / 2);
   }
@@ -59,13 +69,15 @@ function editSmartObject(main, edit) {
   main.activeLayer = findLayer(main, edit.layer);
   executeAction(stringIDToTypeID('placedLayerEditContents'), new ActionDescriptor(), DialogModes.NO);
   var so = app.activeDocument;
+  // never edit (or save) the downloaded PSD itself: stop if the smart object did not open
+  if (so === main || so.fullName.fsName == main.fullName.fsName) throw new Error('smart object did not open: ' + edit.layer);
   hideAll(so);
   if (edit.fill) {
     var bg = so.artLayers.add(); bg.name = 'JM fill';
     so.selection.selectAll(); so.selection.fill(hex(edit.fill)); so.selection.deselect();
     bg.move(so, ElementPlacement.PLACEATEND);
   }
-  if (edit.place) { var l = placeFile(so, edit.place); fitAndCentre(so, l, edit.width || 0.6, edit.pos); }
+  if (edit.place) { var l = placeFile(so, edit.place); fitAndCentre(so, l, edit.width || 0.6, edit.pos, edit.height); }
   so.save(); so.close(SaveOptions.DONOTSAVECHANGES);
   app.activeDocument = main;
 }
@@ -82,7 +94,9 @@ try {
   }
   var o = new JPEGSaveOptions(); o.quality = 11; o.embedColorProfile = true;
   main.saveAs(new File(JOB.out), o, true, Extension.LOWERCASE);
+} catch (err) {
+  var failed = 'FAILED ' + JOB.out + ': ' + err.message + ' (line ' + err.line + ')';
 } finally {
-  main.close(SaveOptions.DONOTSAVECHANGES);
+  while (app.documents.length) app.documents[0].close(SaveOptions.DONOTSAVECHANGES);   // the PSD and any smart object left open
 }
-'exported ' + JOB.out;
+failed || ('exported ' + JOB.out);

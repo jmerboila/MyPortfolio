@@ -17,7 +17,6 @@ import { Image, getImage } from 'astro:assets';
 import V3Layout from '../../../layouts/V3Layout.astro';
 import Breadcrumbs from '../../../components/v3/Breadcrumbs.astro';
 import LaunchStory from '../../../components/story/LaunchStory.astro';
-import LogoPresentation from '../../../components/logo/LogoPresentation.astro';
 import LogoIdentity from '../../../components/logo/LogoIdentity.astro';
 import SocialPost from '../../../components/social/SocialPost.astro';
 import PostRow from '../../../components/social/PostRow.astro';
@@ -60,11 +59,9 @@ const { Content } = await render(entry);
 /* A launch story (2026-09-25) replaces the classic body: the story, then the
    project's real social posts, playable. */
 const story = d.story;
-/* A logo presentation (2026-10-01) replaces the classic case blocks and gallery. */
-const presentation = d.presentation;
-/* The second logo presentation (2026-10-02, the Devsign8 pilot) does the same. */
+/* A logo presentation (2026-10-02) replaces the classic case blocks and gallery. */
 const identity = d.identity;
-const logoPage = Boolean(presentation || identity);
+const logoPage = Boolean(identity);
 const posts = story
   ? sortPosts(
       await getCollection('social', (p) => !p.data.draft && p.data.work?.id === entry.id),
@@ -95,8 +92,6 @@ const description = d.description ?? d.summary;
    format every platform's link preview accepts. */
 const [sharePic] = identity
   ? [identity.mark]
-  : presentation
-  ? [presentation.opening]
   : story?.hero
   ? [story.hero]
   : [{ src: d.cover, alt: d.coverAlt }, ...d.gallery].sort((a, b) => b.src.width - a.src.width);
@@ -136,13 +131,6 @@ const schema = [
     ...(d.year ? { dateCreated: d.year } : {}),
     keywords: [...new Set([...d.tags, ...d.tools])].join(', '),
     genre: d.category,
-    ...(presentation && {
-      hasPart: [presentation.ideaVisual, ...presentation.construction, presentation.versatility, ...presentation.inUse].map((x) => ({
-        '@type': 'ImageObject',
-        caption: x.caption,
-        description: x.alt,
-      })),
-    }),
     ...(identity && {
       hasPart: [...identity.construction, identity.usage.clearSpace, identity.usage.sizes, ...identity.inUse].map((x) => ({
         '@type': 'ImageObject',
@@ -388,7 +376,6 @@ const schema = [
       )
     }
 
-    {presentation && <LogoPresentation d={d} />}
     {identity && <LogoIdentity d={d} />}
 
     <nav class="project__nav container" aria-label="More projects">
