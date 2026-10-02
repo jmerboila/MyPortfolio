@@ -155,12 +155,12 @@ class Mapper:
         return (self.ox + (x - self.box[0]) * self.s, self.oy + (self.box[3] - y) * self.s)
 
 
-def illustrator_view(ctx, ai, page, box, rect, glyph_box=None):
+def illustrator_view(ctx, ai, page, box, rect, glyph_box=None, pad=60):
     """Illustrator's outline view: pasteboard, artboard, thin black path
     outlines, anchor squares in the layer colour, handles as lines + dots."""
     x, y, w, h = rect
     ctx.set_source_rgb(*AI_PASTEBOARD); ctx.rectangle(x, y, w, h); ctx.fill()
-    m = Mapper(box, (x + 60, y + 60, w - 120, h - 120))
+    m = Mapper(box, (x + pad, y + pad, w - 2 * pad, h - 2 * pad))
     a0 = m.pt(box[0], box[3]); a1 = m.pt(box[2], box[1])
     ctx.set_source_rgb(*AI_ARTBOARD); ctx.rectangle(a0[0], a0[1], a1[0] - a0[0], a1[1] - a0[1]); ctx.fill()
     om = mask(ai, page, box, int(a1[0] - a0[0]))
