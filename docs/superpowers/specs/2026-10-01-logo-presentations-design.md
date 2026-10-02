@@ -1,6 +1,6 @@
 # Logo presentations: design spec
 
-Date: 2026-10-01. Branch: `case-studies/logos`. Status: awaiting Jayson's review.
+Date: 2026-10-01. Branch: `case-studies/logos`. Status: approved by Jayson 2026-10-01; gates 1 to 3 cleared.
 
 ## Goal
 
@@ -63,25 +63,34 @@ repeated in its caption or the HTML around it. Each image has alt text.
 
 ### Devsign8 (own studio)
 - Sources: `Devsign8.ai` (artboard 1: four steps to the wordmark, steps 1
-  to 3 live type, step 4 outlined; artboard 2: rejected directions),
-  `LogoDesign1.ai` (the name and monogram exploration: Elev8, DS8, D8,
-  `<D>`), the Brand Style Guide and Logo Suite (rules, palette, D8
-  monogram), the Logo Animations README (138 files).
-- Exploration (curated, 4): Dev + blackletter sign (Canterbury); Dev +
-  serif sign (Orange Avenue); adding the 8; the final with set spacing.
-  The Elev8 name and the D8 monogram appear only if Jayson confirms why.
+  to 3 live type, step 4 outlined; artboard 2: rejected directions), the
+  Brand Style Guide (rules, palette), the Logo Animations README (138
+  files). `LogoDesign1.ai` is NOT used: Elev8 is a different name, and the
+  DS8 / D8 / `<D>` marks are favicon ideas Jayson does not like (his call,
+  2026-10-01). No D8 anywhere in the presentation.
+- Exploration (curated, 4), with Jayson's reasons (2026-10-01):
+  1. Dev + blackletter sign (Canterbury): dropped; it looked like a
+     different brand, not formal, not elegant.
+  2. Dev + Orange Avenue sign: kept; simple, clean and elegant, with
+     extravagant curves and decorative tails as the accent.
+  3. Adding the 8: infinity was always the idea: never stop learning and
+     discovering, on a loop.
+  4. The final, with the spacing set.
 - Construction: the outlined final with cap height, x-height, baseline and
   descender measured from the glyph paths; letter gaps measured between
   glyph bounds; the 8 marked as the infinity turn.
 - Typography: Roboto (Dev, code), Orange Avenue (sign8, design).
-- In use (mockups): business card (wordmark front, D8 back), website
+- In use (mockups): business card (wordmark, front and back), website
   header, social avatar, studio sign plate.
 - Rules: from the style guide (clear space = D cap height; 120 px / 32 mm
-  minimum; D8 below that; black on light, white on dark).
+  minimum; black on light, white on dark). The style guide's "use the D8
+  monogram below minimum" rule is left out.
 
 ### JM Design (personal mark)
 - Sources: `JM Design.ai` (artboard 1: the five build steps; artboard 2:
   the four rejects), the JM reel brief (the reasons, in Jayson's words).
+  Jayson confirmed (2026-10-01) the brief's reading of the build: it is how
+  the reel was made and how the mark was made.
 - Exploration (4): Bask Old Face JM ("close, but something missing"),
   fused ligature ("the J got lost"), script Jme ("felt separated"; the
   Birds of Paradise font is not embedded and is personal-use only, so it
@@ -134,11 +143,10 @@ dark.
 
 ## Launch gates (before merging to main and pushing)
 
-1. Orange Avenue desktop licence bought.
-2. Jayson confirms the kept/dropped one-liners for Devsign8 (the files show
-   what changed, not why) and whether Elev8 and D8 appear.
-3. Jayson confirms the JM build reading (the brief asked for it).
-4. Jayson approves the pages from screenshots.
+1. ~~Orange Avenue desktop licence~~: bought (Jayson, 2026-10-01).
+2. ~~Devsign8 kept/dropped reasons; Elev8 and D8~~: answered above.
+3. ~~JM build reading~~: confirmed.
+4. Jayson approves the finished pages from screenshots.
 
 ## Out of scope
 
