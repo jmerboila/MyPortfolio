@@ -9,6 +9,8 @@
                 { layer: 'Mockup/Embossed/Logo emb', fill: null,
                   place: 'C:/.../devsign8-black.png', width: 0.62 } ]
      };
+   Optional JOB.fill: [{ layer: 'Mockup/Embossed/Logo emb', value: 100 }]
+   sets a layer's fill opacity (and blend mode), e.g. to ink an emboss.
    For each edit: open the smart object, hide everything in it, optionally
    lay a solid fill, optionally place an image centred at width x the
    smart object's width (or 'cover' to fill it), save it back, close it. */
@@ -72,6 +74,12 @@ var main = app.open(new File(JOB.psd));
 try {
   for (var h = 0; h < (JOB.hide || []).length; h++) findLayer(main, JOB.hide[h]).visible = false;
   for (var e = 0; e < JOB.edits.length; e++) editSmartObject(main, JOB.edits[e]);
+  // optional: show a layer's own fill, e.g. ink inside an emboss style
+  for (var f = 0; f < (JOB.fill || []).length; f++) {
+    var fl = findLayer(main, JOB.fill[f].layer);
+    fl.fillOpacity = JOB.fill[f].value;
+    if (JOB.fill[f].blend) fl.blendMode = BlendMode[JOB.fill[f].blend];
+  }
   var o = new JPEGSaveOptions(); o.quality = 11; o.embedColorProfile = true;
   main.saveAs(new File(JOB.out), o, true, Extension.LOWERCASE);
 } finally {

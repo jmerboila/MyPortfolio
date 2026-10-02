@@ -15,7 +15,8 @@ $jobs = [ordered]@{
 { psd: '${md}Embossed business card/MD1188_Embossed_Business_Card_Mockup/Business_Card_Mockup_2.psd',
   out: '${out}devsign8-card.jpg', hide: ['Delete this layer'],
   edits: [ { layer: 'Mockup/Design/BC 1', fill: '$paper' },
-           { layer: 'Mockup/Embossed/Logo emb', place: '$black', width: 0.78 } ] }
+           { layer: 'Mockup/Embossed/Logo emb', place: '$black', width: 0.52 } ],
+  fill: [ { layer: 'Mockup/Embossed/Logo emb', value: 100, blend: 'NORMAL' } ] }
 "@
   stationery = @"
 { psd: '${md}Minimal branding stationery/MD1064_Stationery_Mockup/Stationery_Mockup_2.psd',

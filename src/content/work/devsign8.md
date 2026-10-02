@@ -80,8 +80,8 @@ identity:
   usage:
     clearSpace:
       src: "../../assets/projects/logos/devsign8/id-06-clearspace.webp"
-      alt: "Screenshot from Adobe Illustrator: the wordmark inside a pale violet clear-space zone with dashed edges, the D repeated at two corners as the unit, and labels for clear space x = height of the D (105.4 pt), cap height 105.4 pt, x-height 78.3 pt, baseline, descender 48.8 pt and master 552.1 x 155.7 pt."
-      caption: "Clear space is x, the height of the D (105.4 pt at master size), on every side; nothing enters the violet zone. The master is 552.1 x 155.7 pt."
+      alt: "Screenshot from Adobe Illustrator: the wordmark inside a pale violet clear-space zone with dashed edges and cyan guides, a grey square marked x on each side as the unit, and labels for clear space x = height of the D (105.4 pt), cap height 105.4 pt, x-height 78.3 pt, baseline, descender 48.8 pt and master 552.1 x 155.7 pt."
+      caption: "Clear space is x, the height of the D (105.4 pt at master size), on every side: the grey squares mark it. Nothing enters the violet zone. The master is 552.1 x 155.7 pt."
       bar: "Devsign8.ai @ 134%"
     versions:
       - src: "../../assets/projects/logos/devsign8/id-06-on-paper.webp"
@@ -108,21 +108,17 @@ identity:
       caption: "Mockup: dimensional letters on the meeting-room wall."
       wide: true
     - src: "../../assets/projects/logos/devsign8/id-07-card.webp"
-      alt: "Mockup: a cream business card with the wordmark blind-embossed, lit from the side, on a warm beige ground."
-      caption: "Mockup: a blind-embossed business card."
+      alt: "Mockup: a cream business card on a warm beige ground, the wordmark printed in black and embossed."
+      caption: "Mockup: a business card, the wordmark printed in black and embossed."
     - src: "../../assets/projects/logos/devsign8/id-07-glass.webp"
       alt: "Mockup: a frosted glass sign plate on four steel standoffs with the black wordmark, on a pale wall."
       caption: "Mockup: a frosted glass sign plate."
     - src: "../../assets/projects/logos/devsign8/id-07-laptop.webp"
       alt: "Mockup: a laptop showing the devsign8.com home page, dark, with the wordmark in the header and the headline Branding, websites, and SEO that help your business get found online."
       caption: "Mockup: devsign8.com, with the wordmark in the site header."
-      wide: true
     - src: "../../assets/projects/logos/devsign8/id-07-stationery.webp"
       alt: "Mockup: a stationery set from above: a letterhead, a DL card and a white business card with the black wordmark; a black business card, two black envelopes and a black mug with the white wordmark."
       caption: "Mockup: letterhead, cards, envelopes and a mug."
-    - src: "../../assets/projects/logos/devsign8/id-07-tote.webp"
-      alt: "Mockup: a natural canvas tote bag with the black wordmark printed across the top."
-      caption: "Mockup: a canvas tote bag."
   inUseNote: "Photo mockups made from free Mockups-Design.com templates, with the final wordmark placed in Photoshop. The laptop shows the live devsign8.com."
   reel: "The reel shows the mark coming to life: Dev painted and sign written in animated ink, then the lettering set, kerned and outlined in Illustrator before the final wordmark lands."
 # 2026-09-28: the logo reel (Devsign8 Signed 9x16 v3), linked from the

@@ -138,5 +138,5 @@ def mockup(src, name):
 
 for src, name in (('devsign8-wall.jpg', 'id-07-wall'), ('devsign8-card.jpg', 'id-07-card'),
                   ('devsign8-glass.jpg', 'id-07-glass'), ('devsign8-laptop.jpg', 'id-07-laptop'),
-                  ('devsign8-stationery.jpg', 'id-07-stationery'), ('devsign8-tote.jpg', 'id-07-tote')):
+                  ('devsign8-stationery.jpg', 'id-07-stationery')):
     mockup(src, name)

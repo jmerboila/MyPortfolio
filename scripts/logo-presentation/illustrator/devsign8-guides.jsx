@@ -7,8 +7,8 @@
    Keeps only the final wordmark (artboard 1, the bottom row), then adds:
    - real Illustrator guides at cap height, x-height, baseline and
      descender, and at the wordmark's left and right edges;
-   - the clear-space zone: x = the height of the D on every side, with the
-     D itself repeated as the unit of measure;
+   - the clear-space zone: x = the height of the D on every side, marked
+     by a grey x by x square on each side;
    - small labels on their own layer.
    Measurements are read from the artwork, not typed in. */
 
@@ -49,7 +49,7 @@ doc.artboards[0].artboardRect = [Z[0] - M, Z[1] + M, Z[2] + M * 2.4, Z[3] - M];
 var AB = doc.artboards[0].artboardRect;
 
 // 3. Safe zone layer: a tinted frame between the zone and the wordmark,
-//    dashed outlines, and the D repeated at two corners as the measure.
+//    dashed outlines, and a grey x by x square on each side as the measure.
 var safe = doc.layers.add(); safe.name = 'Clear space'; safe.move(art, ElementPlacement.PLACEAFTER);
 var frame = safe.compoundPathItems.add();
 var outer = frame.pathItems.rectangle(Z[1], Z[0], Z[2] - Z[0], Z[1] - Z[3]);
@@ -63,16 +63,23 @@ function dashed(r, col) {
   return p;
 }
 dashed(Z, VIOLET); dashed(W, VIOLET);
-function unitD(x, y) {                      // a copy of the D, scaled to fit an X by X square
-  var d = D.duplicate(safe, ElementPlacement.PLACEATEND);
-  var db = d.geometricBounds, s = X / (db[1] - db[3]) * 100;
-  d.resize(s, s);
-  db = d.geometricBounds;
-  d.translate(x + (X - (db[2] - db[0])) / 2 - db[0], y - db[1]);
-  for (var n = 0; n < d.pathItems.length; n++) { d.pathItems[n].fillColor = VIOLET; }
-  d.opacity = 32;
+var GREY = rgb(200, 200, 205), GREY_INK = rgb(98, 98, 106);
+var unitFont = null;
+for (var uf = 0; uf < app.textFonts.length; uf++) {
+  var un = app.textFonts[uf].name;
+  if (un.indexOf('InterTight') == 0 && un.indexOf('Medium') > 0 && un.indexOf('Italic') < 0) { unitFont = app.textFonts[uf]; break; }
 }
-unitD(Z[0], Z[1]); unitD(W[2], W[3]);
+function unit(x, y) {                       // a grey X by X square, top-left at (x, y), marked x
+  var r = safe.pathItems.rectangle(y, x, X, X);
+  r.filled = true; r.fillColor = GREY; r.stroked = false;
+  var t = safe.textFrames.pointText([x + X / 2, y - X / 2 - 6]);
+  t.contents = 'x';
+  var a = t.textRange.characterAttributes; a.size = 18; a.fillColor = GREY_INK; if (unitFont) a.textFont = unitFont;
+  t.textRange.paragraphAttributes.justification = Justification.CENTER;
+}
+// one square on each side, touching the wordmark: left of the D and right of
+// the 8 (cap height to baseline), above the D and below the 8
+unit(Z[0], cap); unit(W[2], cap); unit(W[0], Z[1]); unit(W[2] - X, W[3]);
 
 // 4. Guides: Illustrator turns a path into a real guide with .guides = true
 var gl = doc.layers.add(); gl.name = 'Guides';
