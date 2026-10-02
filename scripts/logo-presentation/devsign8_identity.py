@@ -109,18 +109,12 @@ for wpx, lab in ((480, '480 px'), (240, '240 px'), (120, '120 px  minimum')):
 save(s, SLUG, 'id-06-sizes')
 
 
-# 03 Construction and 06 clear space: the real Illustrator window, cropped
-def shot(src, box, name, width=1600):
-    im = Image.open(os.path.join(SRC, src)).convert('RGB').crop(box)
-    im = im.resize((width, int(im.size[1] * width / im.size[0])), Image.LANCZOS)
-    os.makedirs(OUT_ROOT + SLUG, exist_ok=True)
-    im.save(f'{OUT_ROOT}{SLUG}/{name}.webp', 'WEBP', quality=90)
-    print('wrote', SLUG, name, im.size)
-
-
-shot('shot-anchors.png', (300, 470, 1790, 1010), 'id-03-anchors')
-shot('shot-tail.png', (750, 108, 2256, 1130), 'id-03-tail')
-shot('shot-preview.png', (84, 172, 2256, 1300), 'id-06-clearspace')   # below the tab strip
+# 03 Construction and 06 clear space: the real Illustrator window
+# (illustrator/shoot.ps1), cropped to the artboard or to the artwork
+SHOTS = os.path.join(SRC, SLUG)
+ai_shot(os.path.join(SHOTS, 'shot-anchors.png'), 'ink', SLUG, 'id-03-anchors')
+ai_shot(os.path.join(SHOTS, 'shot-detail.png'), 'ink', SLUG, 'id-03-tail', pad=0.04)
+ai_shot(os.path.join(SHOTS, 'shot-clearspace.png'), 'artboard', SLUG, 'id-06-clearspace')
 
 
 # 07 In use: the Photoshop renders at 4:3, tagged "Mockup" in the image

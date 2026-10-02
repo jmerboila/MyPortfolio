@@ -239,3 +239,35 @@ def font_mask(font_file, size, s, wght=None):
     im = Image.new('L', (r - l + 4, b - t + 4), 0)
     ImageDraw.Draw(im).text((2 - l, 2 - t), s, font=f, fill=255)
     return im
+
+
+# -- Illustrator window screenshots (illustrator/shoot.ps1) -----------------
+AI_CANVAS = (84, 108, 2256, 1356)   # the document canvas in a maximised 2576 x 1408 window
+
+
+def ai_shot(src, mode, slug, name, width=1600, pad=0.22):
+    """Crop a real Illustrator screenshot for the page and save it as WebP.
+    mode 'artboard': the white artboard, whole (the clear-space view);
+    mode 'ink': the artwork's own bounds plus `pad` of its height around it,
+    kept inside the artboard (the anchors view and the close-up)."""
+    import numpy as np
+    im = Image.open(src).convert('RGB').crop(AI_CANVAS)
+    a = np.asarray(im).astype(int)
+    white = (a.min(axis=2) >= 250)
+    rows, cols = np.where(white.mean(axis=1) > 0.5)[0], np.where(white.mean(axis=0) > 0.5)[0]
+    board = (cols[0], rows[0], cols[-1] + 1, rows[-1] + 1)
+    if mode == 'artboard':
+        box = board
+    else:
+        sub = a[board[1]:board[3], board[0]:board[2]]
+        ink = sub.max(axis=2) < 90
+        ys, xs = np.where(ink)
+        x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
+        p = int((y1 - y0) * pad)
+        box = (max(board[0], board[0] + x0 - p), max(board[1], board[1] + y0 - p),
+               min(board[2], board[0] + x1 + p), min(board[3], board[1] + y1 + p))
+    out = im.crop(box)
+    out = out.resize((width, int(out.size[1] * width / out.size[0])), Image.LANCZOS)
+    os.makedirs(OUT_ROOT + slug, exist_ok=True)
+    out.save(f'{OUT_ROOT}{slug}/{name}.webp', 'WEBP', quality=90)
+    print('wrote', slug, name, out.size)

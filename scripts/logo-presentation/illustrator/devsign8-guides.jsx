@@ -1,8 +1,6 @@
 /* devsign8-guides.jsx: build the Devsign8 construction document in
    Illustrator, on a COPY of Devsign8.ai (never the original).
-   Run through Illustrator's scripting interface, e.g. from PowerShell:
-     (New-Object -ComObject Illustrator.Application).DoJavaScriptFile("<this file>")
-   with the copy's path in WORK below.
+   Run by shoot.ps1, which copies the .ai, sets WORK and takes the shots.
 
    Keeps only the final wordmark (artboard 1, the bottom row), then adds:
    - real Illustrator guides at cap height, x-height, baseline and
@@ -12,7 +10,7 @@
    - small labels on their own layer.
    Measurements are read from the artwork, not typed in. */
 
-var WORK = "C:/Users/jmerb/AppData/Local/Temp/claude/C--Users-jmerb-OneDrive-Desktop-MyPortfolio/50381e99-fe25-4490-9632-3dc55cd66755/scratchpad/ai-work/Devsign8/Devsign8.ai";
+// WORK (the copy's path) is set by shoot.ps1, which prepends it.
 
 function rgb(r, g, b) { var c = new RGBColor(); c.red = r; c.green = g; c.blue = b; return c; }
 var VIOLET = rgb(90, 63, 224), CYAN = rgb(38, 198, 242), INK = rgb(14, 14, 15), MAGENTA = rgb(227, 36, 155);
@@ -32,6 +30,7 @@ if (doc.artboards.length > 1) doc.artboards.remove(1);
 keep.sort(function (a, c) { return a.geometricBounds[0] - c.geometricBounds[0]; });
 if (keep.length != 8) throw new Error('expected 8 glyphs, found ' + keep.length);
 var D = keep[0], v = keep[2], g = keep[5];
+keep[6].name = 'Detail focus';            // shoot.ps1 zooms here: the g's tail, the n and the 8
 
 var art = doc.layers[0]; art.name = 'Wordmark';
 var grp = art.groupItems.add(); grp.name = 'Devsign8 wordmark';
@@ -63,7 +62,7 @@ function dashed(r, col) {
   return p;
 }
 dashed(Z, VIOLET); dashed(W, VIOLET);
-var GREY = rgb(200, 200, 205), GREY_INK = rgb(98, 98, 106);
+var GREY = rgb(200, 200, 205);
 var unitFont = null;
 for (var uf = 0; uf < app.textFonts.length; uf++) {
   var un = app.textFonts[uf].name;
@@ -74,7 +73,7 @@ function unit(x, y) {                       // a grey X by X square, top-left at
   r.filled = true; r.fillColor = GREY; r.stroked = false;
   var t = safe.textFrames.pointText([x + X / 2, y - X / 2 - 6]);
   t.contents = 'x';
-  var a = t.textRange.characterAttributes; a.size = 18; a.fillColor = GREY_INK; if (unitFont) a.textFont = unitFont;
+  var a = t.textRange.characterAttributes; a.size = 18; a.fillColor = INK; if (unitFont) a.textFont = unitFont;
   t.textRange.paragraphAttributes.justification = Justification.CENTER;
 }
 // one square on each side, touching the wordmark: left of the D and right of
@@ -87,7 +86,7 @@ function hGuide(y) { var p = gl.pathItems.add(); p.setEntirePath([[AB[0] - 400, 
 function vGuide(x) { var p = gl.pathItems.add(); p.setEntirePath([[x, AB[1] + 400], [x, AB[3] - 400]]); p.guides = true; }
 hGuide(cap); hGuide(xh); hGuide(base); hGuide(desc); vGuide(W[0]); vGuide(W[2]);
 
-// 5. Labels, in the right-hand margin, on their own layer
+// 5. Labels, in black, in the right-hand margin, on their own layer
 var notes = doc.layers.add(); notes.name = 'Notes';
 var font = null;
 for (var f = 0; f < app.textFonts.length; f++) {
@@ -100,12 +99,13 @@ function label(s, y, col) {
   var a = t.textRange.characterAttributes; a.size = 10; a.fillColor = col; if (font) a.textFont = font;
 }
 function pt(n) { return (Math.round(n * 10) / 10) + ' pt'; }
-label('Cap height  ' + pt(X), cap, CYAN);
-label('x-height  ' + pt(xh - base), xh, CYAN);
-label('Baseline', base, CYAN);
-label('Descender  ' + pt(base - desc), desc, CYAN);
-label('Clear space  x = height of the D  (' + pt(X) + ')', Z[1] - 12, VIOLET);
-label('Master  ' + pt(W[2] - W[0]) + ' x ' + pt(W[1] - W[3]), Z[3] + 6, MAGENTA);
+// No sizes: the wordmark is used at any size, so the labels name the lines
+// and the proportion only, in black.
+label('Cap height', cap, INK);
+label('x-height', xh, INK);
+label('Baseline', base, INK);
+label('Descender', desc, INK);
+label('Clear space  x = height of the D', Z[1] - 12, INK);
 
 doc.save();
 'ok ' + [pt(X), pt(xh - base), pt(base - desc), pt(W[2] - W[0]), pt(W[1] - W[3]), font ? font.name : 'no Inter Tight'].join(' | ');

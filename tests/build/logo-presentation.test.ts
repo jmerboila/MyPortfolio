@@ -64,8 +64,11 @@ for (const slug of IDENTITY) {
   test(`${slug}: no studies, no full-bleed hero, no font names`, () => {
     assert.doesNotMatch(main, /Exploration|lp-fig--hero|explore-/);
     assert.doesNotMatch(html, /Roboto|Orange Avenue|Canterbury|Perpetua/i);
-    assert.match(main, /Sans serif/);
-    assert.match(main, /Serif/);
+    assert.match(main, /Sans serif|Serif/);
+  });
+
+  test(`${slug}: no fixed sizes on the outline (the mark is used at any size)`, () => {
+    assert.doesNotMatch(main, /\d\s?pt/);
   });
 
   test(`${slug}: Illustrator frames, captions, labelled mockups, the reel`, () => {

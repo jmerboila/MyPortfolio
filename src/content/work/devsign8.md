@@ -21,9 +21,9 @@ tools:
   - "After Effects"
 # Logo identity, the Devsign8 pilot (2026-10-02). Sources:
 # - Devsign8.ai (C:\dev\Devsign8\04-Reference\Fonts, Mockups, Logos\Logos),
-#   artboard 1, the final outlined wordmark. Measurements are read from its
-#   paths (scripts/logo-presentation/test_lp.py): master 552.13 x 155.66 pt,
-#   cap height 105.42, x-height 78.34, descender 48.79; the g has 28 anchors.
+#   artboard 1, the final outlined wordmark (checked by test_lp.py; the g has
+#   28 anchors). No sizes are shown (Jayson, 2026-10-02): the wordmark is used
+#   at any size, so the page names the guides and the proportion only.
 # - Construction and clear-space screenshots: Illustrator itself, on a copy
 #   of the .ai (scripts/logo-presentation/illustrator/).
 # - Mockups: free Mockups-Design.com templates (licence allows portfolio use,
@@ -55,7 +55,7 @@ identity:
   construction:
     - src: "../../assets/projects/logos/devsign8/id-03-anchors.webp"
       alt: "Screenshot from Adobe Illustrator: the final wordmark selected with the Direct Selection tool, every anchor point showing, on cyan guides at the cap height, x-height, baseline and descender, with vertical guides at its left and right edges."
-      caption: "The final wordmark in Illustrator, every anchor point selected. Four guides carry all eight letters: a 105.4 pt cap height, a 78.3 pt x-height, the baseline and a 48.8 pt descender."
+      caption: "The final wordmark in Illustrator, every anchor point selected. Four guides carry all eight letters, the sans and the serif alike: the cap height, the x-height, the baseline and the descender."
       bar: "Devsign8.ai @ 134%"
     - src: "../../assets/projects/logos/devsign8/id-03-tail.webp"
       alt: "Screenshot from Adobe Illustrator at 400%: the g, n and 8 with their anchor points, the g's accent and long, curling tail falling below the baseline to the descender guide."
@@ -80,8 +80,8 @@ identity:
   usage:
     clearSpace:
       src: "../../assets/projects/logos/devsign8/id-06-clearspace.webp"
-      alt: "Screenshot from Adobe Illustrator: the wordmark inside a pale violet clear-space zone with dashed edges and cyan guides, a grey square marked x on each side as the unit, and labels for clear space x = height of the D (105.4 pt), cap height 105.4 pt, x-height 78.3 pt, baseline, descender 48.8 pt and master 552.1 x 155.7 pt."
-      caption: "Clear space is x, the height of the D (105.4 pt at master size), on every side: the grey squares mark it. Nothing enters the violet zone. The master is 552.1 x 155.7 pt."
+      alt: "Screenshot from Adobe Illustrator: the wordmark inside a pale violet clear-space zone with dashed edges and cyan guides, a grey square marked x on each side as the unit, and black labels: clear space x = height of the D, cap height, x-height, baseline and descender."
+      caption: "Clear space is x, the height of the D, on every side, at whatever size the wordmark is used. The grey squares mark it; nothing enters the violet zone."
       bar: "Devsign8.ai @ 134%"
     versions:
       - src: "../../assets/projects/logos/devsign8/id-06-on-paper.webp"
