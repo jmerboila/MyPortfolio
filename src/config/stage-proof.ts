@@ -52,12 +52,14 @@
      not claimed.
    ========================================================================= */
 import type { ImageMetadata } from 'astro';
-import jmIllustrator from '../assets/stages/jm-design-illustrator.webp';
-import d8Illustrator from '../assets/stages/devsign8-illustrator.webp';
+import jmMark from '../assets/projects/logos/jm-design/id-01-mark.webp';
+import jmMarkDark from '../assets/projects/logos/jm-design/id-01-mark-dark.webp';
+import d8Mark from '../assets/projects/logos/devsign8/id-01-mark.webp';
+import d8MarkDark from '../assets/projects/logos/devsign8/id-01-mark-dark.webp';
 import { SITE_SHOTS, type SiteShots } from './site-shots';
-import toolkitFeed from '../content/social/devsign8-ig-toolkit-reel/5-cover.jpg';
 import toolkitReel from '../content/social/devsign8-ig-toolkit-reel/1-cover.jpg';
 import lexusPoster from '../content/social/lexus-poster-post/poster.png';
+import fordCarousel from '../assets/projects/social-mustang-gtd-1.webp';
 
 export interface Link {
   label: string;
@@ -70,7 +72,9 @@ export interface Pic {
 }
 
 export type Proof =
-  | { kind: 'logos'; items: (Pic & { title: string; line: string; path: string })[]; link: Link }
+  /* Each logo's mark panel in light and dark (the design rule, 2026-10-02):
+     ThemeImage shows the one opposite the page, as on the logo pages. */
+  | { kind: 'logos'; items: { light: Pic; dark: Pic; title: string; line: string; path: string }[]; link: Link }
   | {
       kind: 'site';
       /* Shown against the page's theme: the DARK site on a light page, the
@@ -104,17 +108,17 @@ export const STAGE_PROOF: Record<string, Proof> = {
     kind: 'logos',
     items: [
       {
-        src: jmIllustrator,
-        alt: 'The finished JM monogram in Adobe Illustrator: a tall serif J cut through a serif M, black on the white artboard.',
+        light: { src: jmMark, alt: 'The JM monogram in black on cream: a tall serif J threaded through an M.' },
+        dark: { src: jmMarkDark, alt: 'The JM monogram in cream on black: a tall serif J threaded through an M.' },
         title: 'JM Design',
-        line: 'My monogram, finished in Illustrator. Watch it come together.',
+        line: 'Two letters, one mark: the J leads, and the M works with it.',
         path: '/work/logo/jm-design/',
       },
       {
-        src: d8Illustrator,
-        alt: 'The finished Devsign8 wordmark selected in Adobe Illustrator: Dev in a heavy sans, sign in a light serif, then the 8.',
+        light: { src: d8Mark, alt: 'The Devsign8 wordmark in black on warm paper: Dev in a heavy sans serif, sign8 in a high-contrast serif.' },
+        dark: { src: d8MarkDark, alt: 'The Devsign8 wordmark in warm white on ink: Dev in a heavy sans serif, sign8 in a high-contrast serif.' },
         title: 'Devsign8',
-        line: 'The studio wordmark, set and kerned. Watch it come to life.',
+        line: 'Dev for code, sign for design, and an 8 that turns on its side into infinity.',
         path: '/work/logo/devsign8/',
       },
     ],
@@ -160,18 +164,20 @@ export const STAGE_PROOF: Record<string, Proof> = {
   'show-up': {
     kind: 'social',
     intro: 'Posts people stop for, planned in Buffer and timed by the data.',
+    /* His order (2026-10-02): the Toolkit Reel, the Lexus poster, then the
+       Ford Seamless Carousel, one from each social project. */
     tiles: [
       {
         src: toolkitReel,
         alt: 'A Devsign8 spec card for the Instagram Reel: 1080 by 1920, keep 270px clear at the top, 672px at the bottom and 65px at the sides.',
       },
       {
-        src: toolkitFeed,
-        alt: 'A Devsign8 spec card for the 4:5 feed post: 1080 by 1350, 120px inset, and the profile grid crop marked.',
-      },
-      {
         src: lexusPoster,
         alt: 'Lexus NX 350h poster: a white NX in side profile across a deep red band, with 240 HP and 200 KM/H below.',
+      },
+      {
+        src: fordCarousel,
+        alt: "The 2026 Ford Mustang GTD Seamless Carousel's first panel: the Ford oval above Street Legal, But Just Barely, over drifting smoke.",
       },
     ],
     plan: [

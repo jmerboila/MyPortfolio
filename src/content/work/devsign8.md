@@ -134,7 +134,7 @@ identity:
   inUseNote: "Photo mockups made from free Mockups-Design.com templates, with the final wordmark placed in Photoshop. The laptop shows the live devsign8.com."
   reel: "The reel shows the mark coming to life: Dev painted and sign written in animated ink, then the lettering set, kerned and outlined in Illustrator before the final wordmark lands."
 # 2026-09-28: the logo reel (Devsign8 Signed 9x16 v3), linked from the
-# homepage's 03 Brand still ("Watch it come to life").
+# homepage's 03 Brand card (its mark, linked to this page).
 video:
   src: "/media/brand/devsign8-logo.mp4"
   poster: "/media/brand/devsign8-logo-poster.webp"

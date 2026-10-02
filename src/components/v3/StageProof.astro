@@ -7,8 +7,8 @@
    people want to see more. One visual idea, one or two lines, one link into
    a deeper page. Data: src/config/stage-proof.ts. Five shapes:
 
-     logos    two finished logos as Illustrator stills, each linking to its
-              project page, where the full motion reel plays (03 Brand)
+     logos    two finished marks, light and dark (shown opposite the page,
+              2026-10-02), each linking to its logo page (03 Brand)
      site     devsign8.com on desktop and phone, in the OPPOSITE theme to the
               page so it stands out: the dark site on a light page, the light
               site on a dark page (his call) (04 Build). Drawn by the shared
@@ -26,6 +26,7 @@ import { href } from '../../lib/url';
 import { withUtm } from '../../lib/utm';
 import Arrow from './Arrow.astro';
 import SiteShowcase from '../SiteShowcase.astro';
+import ThemeImage from '../ThemeImage.astro';
 
 interface Props {
   proof: Proof;
@@ -41,11 +42,11 @@ const { proof } = Astro.props;
         <li class="v3-logo" data-stage-card>
           <a href={href(item.path)}>
             <figure class="v3-logo__frame">
-              <Image src={item.src} alt={item.alt} widths={[360, 540, 720]} sizes="(min-width: 64rem) 17rem, 45vw" loading="lazy" decoding="async" />
+              <ThemeImage light={item.light} dark={item.dark} widths={[360, 540, 720]} sizes="(min-width: 64rem) 17rem, 45vw" />
             </figure>
             <h4 class="v3-logo__title">{item.title}</h4>
             <p class="v3-logo__line">{item.line}</p>
-            <span class="v3-proof__cta">Watch it <Arrow /></span>
+            <span class="v3-proof__cta">See the logo <Arrow /></span>
           </a>
         </li>
       ))}
@@ -225,8 +226,9 @@ const { proof } = Astro.props;
     text-decoration: none;
   }
 
+  /* The logo pages' mark panels are 16:10 (2026-10-02). */
   .v3-logo__frame {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 16 / 10;
     border-radius: var(--radius-l);
     transition: border-color var(--dur-fast) var(--ease-out-quart);
   }

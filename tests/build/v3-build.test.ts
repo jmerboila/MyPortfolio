@@ -200,9 +200,9 @@ test('every stage headline is present', () => {
   for (const h of headlines) assert.ok(html.includes(h), h);
 });
 /* 2026-09-28: each stage is a short summary with a link inside (StageProof.astro). */
-test('03 Brand shows the two logos as stills linking to their project pages', () => {
-  assert.match(html, /The finished JM monogram in Adobe Illustrator/);
-  assert.match(html, /The finished Devsign8 wordmark selected in Adobe Illustrator/);
+test('03 Brand shows the two marks linking to their project pages', () => {
+  assert.match(html, /The JM monogram in black on cream/);
+  assert.match(html, /The Devsign8 wordmark in black on warm paper/);
   assert.match(html, /href="\/MyPortfolio\/work\/logo\/jm-design\/"/);
   assert.match(html, /href="\/MyPortfolio\/work\/logo\/devsign8\/"/);
   assert.match(html, /href="\/MyPortfolio\/work\/logo\/"/);
@@ -257,4 +257,26 @@ test('the stage rail markup is present and lists every stage', () => {
   for (const id of ['discover', 'plan', 'brand', 'build', 'be-found', 'show-up', 'measure']) {
     assert.match(html, new RegExp(`data-rail-link="${id}"`));
   }
+});
+
+/* 2026-10-02, his call: 03 Brand shows each logo's mark panel in light and
+   dark (opposite the page, like the logo pages) and links to the logo page,
+   with no "Watch it" (the page is more than the reel); 06 Show up shows the
+   Toolkit Reel, the Lexus poster, then the Ford Seamless Carousel. */
+test('03 Brand: both marks in light and dark, each linking to its logo page', () => {
+  const brand = html.slice(html.indexOf('v3-proof--logos'), html.indexOf('</ul>', html.indexOf('v3-proof--logos')));
+  assert.equal((brand.match(/theme-img--light/g) ?? []).length, 2);
+  assert.equal((brand.match(/theme-img--dark/g) ?? []).length, 2);
+  assert.match(brand, /href="\/MyPortfolio\/work\/logo\/jm-design\/"/);
+  assert.match(brand, /href="\/MyPortfolio\/work\/logo\/devsign8\/"/);
+  assert.doesNotMatch(brand, /Watch it/);
+});
+
+test('06 Show up: the Toolkit Reel, the Lexus poster, then the Ford carousel', () => {
+  const social = html.slice(html.indexOf('v3-proof--social'), html.indexOf('</ul>', html.indexOf('v3-proof--social')));
+  const alts = [...social.matchAll(/<img[^>]*alt="([^"]*)"/g)].map((m) => m[1]);
+  assert.equal(alts.length, 3);
+  assert.match(alts[0], /spec card for the Instagram Reel/);
+  assert.match(alts[1], /Lexus NX 350h poster/);
+  assert.match(alts[2], /Ford Mustang GTD Seamless Carousel/);
 });
