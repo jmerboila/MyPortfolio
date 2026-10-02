@@ -353,7 +353,7 @@ const work = defineCollection({
          Rendered by ToolkitCase instead of the story: 01 the interactive
          SafeZoneViewer (config/ig-safe-zones.ts), 02 the problem, 03 the
          research, 04 the tool, 05 the series (the project's posts), 06
-         publishing, 07 what I learned (id="measure": the home page links
+         captions and timing, 07 results (id="measure": the home page links
          there). Every number in `results` carries its source. */
       toolkit: z
         .object({
@@ -378,17 +378,26 @@ const work = defineCollection({
             shots: z.array(pic.extend({ caption: z.string() })).min(1).max(3),
           }),
           series: z.object({ body: z.string() }),
-          publishing: z.object({
-            body: z.array(z.string()).min(1).max(3),
-            caption: z.object({ label: z.string(), time: z.string(), text: z.string() }),
-            schedule: z.array(z.object({ day: z.string(), label: z.string() })).min(3),
+          /* Shaped like the campaign pages' sections (2026-10-02: one
+             presentation for every social case), so StoryVisual draws them. */
+          captions: z.object({
+            body: z.array(z.string()).min(1).max(4),
+            items: z.array(z.object({ label: z.string(), time: z.string(), text: z.string() })).min(1),
           }),
           results: z.object({
-            line: z.string(),
-            figures: z.array(z.object({ value: z.string(), label: z.string() })).min(2).max(4),
+            body: z.array(z.string()).min(1).max(4),
             source: z.string(),
+            pieces: z
+              .array(
+                z.object({
+                  name: z.string(),
+                  reach: z.number().int().nonnegative(),
+                  stats: z.array(z.object({ label: z.string(), value: z.string() })),
+                }),
+              )
+              .min(1),
             insight: z.string(),
-            next: z.array(z.string()).min(1).max(5),
+            next: z.array(z.string()).default([]),
           }),
         })
         .optional(),

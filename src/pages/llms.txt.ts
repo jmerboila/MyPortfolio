@@ -47,16 +47,11 @@ export const GET: APIRoute = async () => {
   /* Measured results, each with its source, from the project stories. An
      answer engine quotes numbers it can attribute; it skips ones it cannot. */
   const results = entries.flatMap((e) => {
-    const r = e.data.story?.results ?? e.data.campaign?.results;
-    if (r) {
-      const reach = r.pieces.map((p) => `${p.name}: reach ${p.reach}`).join('; ');
-      return [`- ${e.data.title}: ${r.insight} (${reach}. Source: ${r.source}.)`];
-    }
-    /* A product case study (2026-10-02) keeps its figures in `toolkit`. */
-    const t = e.data.toolkit?.results;
-    if (!t) return [];
-    const figures = t.figures.map((f) => `${f.value} ${f.label}`).join('; ');
-    return [`- ${e.data.title}: ${t.insight} (${figures}. Source: ${t.source}.)`];
+    /* Stories, campaign and toolkit case studies share one results shape. */
+    const r = e.data.story?.results ?? e.data.campaign?.results ?? e.data.toolkit?.results;
+    if (!r) return [];
+    const reach = r.pieces.map((p) => `${p.name}: reach ${p.reach}`).join('; ');
+    return [`- ${e.data.title}: ${r.insight} (${reach}. Source: ${r.source}.)`];
   });
 
   const body = [

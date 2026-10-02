@@ -47,7 +47,7 @@ test('the campaign case study: sections 01 to 06 in order, no story chapters', (
   let at = 0;
   SECTIONS.forEach((name, i) => {
     const n = String(i + 1).padStart(2, '0');
-    const m = main.slice(at).match(new RegExp(`<span class="cc-num"[^>]*>${n}</span>\\s*${name}`));
+    const m = main.slice(at).match(new RegExp(`<span class="case-num"[^>]*>${n}</span>\\s*${name}`));
     assert.ok(m, `missing "${n} ${name}"`);
     at += (m.index ?? 0) + 1;
   });
@@ -59,7 +59,7 @@ test('the disclaimer and the results source are on the page', () => {
 });
 
 test('the hero is the swipeable carousel: four panels and the artboard window', () => {
-  const hero = main.slice(main.indexOf('id="cc-h-01"'), main.indexOf('id="cc-h-02"'));
+  const hero = main.slice(main.indexOf('id="case-h-01"'), main.indexOf('id="case-h-02"'));
   assert.match(hero, /data-cs-track/);
   assert.equal((hero.match(/class="cs__panel"/g) ?? []).length, 4);
   assert.match(hero, /data-cs-window/);
@@ -69,8 +69,8 @@ test('the hero is the swipeable carousel: four panels and the artboard window', 
 test('the slicer without drafts, both posts in their sections, results at #measure', () => {
   assert.match(main, /data-st-slicer/);
   assert.doesNotMatch(main, /st-slicer__drafts|gtd-draft/);
-  const reel = main.slice(main.indexOf('id="cc-h-03"'), main.indexOf('id="cc-h-04"'));
-  const carousel = main.slice(main.indexOf('id="cc-h-04"'), main.indexOf('id="cc-h-05"'));
+  const reel = main.slice(main.indexOf('id="case-h-03"'), main.indexOf('id="case-h-04"'));
+  const carousel = main.slice(main.indexOf('id="case-h-04"'), main.indexOf('id="case-h-05"'));
   assert.match(reel, /data-sp-video/);
   assert.match(carousel, /Seamless Carousel/);
   const measure = main.slice(main.indexOf('id="measure"'));

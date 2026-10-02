@@ -11,7 +11,7 @@ const html = read(PAGE);
 const social = read('dist/work/social/index.html');
 
 const main = html.match(/<main[\s\S]*<\/main>/)?.[0] ?? '';
-const SECTIONS = ['The toolkit', 'The problem', 'The research', 'The tool', 'The series', 'Publishing', 'What I learned'];
+const SECTIONS = ['The toolkit', 'The problem', 'The research', 'The tool', 'The series', 'Captions and timing', 'Results and what I learned'];
 
 test('the toolkit is a product case study: sections 01 to 07 in order', () => {
   assert.ok(existsSync(PAGE), `${PAGE} missing`);
@@ -20,7 +20,7 @@ test('the toolkit is a product case study: sections 01 to 07 in order', () => {
   let at = 0;
   SECTIONS.forEach((name, i) => {
     const n = String(i + 1).padStart(2, '0');
-    const m = html.slice(at).match(new RegExp(`<span class="tk-num"[^>]*>${n}</span>\\s*${name}`));
+    const m = html.slice(at).match(new RegExp(`<span class="case-num"[^>]*>${n}</span>\\s*${name}`));
     assert.ok(m, `missing "${n} ${name}"`);
     at += (m.index ?? 0) + 1;
   });
@@ -37,7 +37,7 @@ test('the viewer offers twelve formats and shows the Reel without JavaScript', (
 });
 
 test('the formats table carries the script\'s safe areas', () => {
-  const table = main.slice(main.indexOf('<table class="tk-table"'), main.indexOf('</table>') + 8);
+  const table = main.slice(main.indexOf('<table class="st-table"'), main.indexOf('</table>') + 8);
   for (const cell of ['885 × 978', '950 × 1266', '840 × 1110', '720 × 720', '764 × 764']) {
     assert.ok(table.includes(cell), cell);
   }
@@ -46,10 +46,11 @@ test('the formats table carries the script\'s safe areas', () => {
 test('the hook in light and dark, the ten Reels, and the measured results', () => {
   assert.match(main, /tk-hook__video--light[^>]*reel-hook-light\.mp4|reel-hook-light\.mp4[^>]*tk-hook__video--light/);
   assert.match(main, /reel-hook-dark\.mp4/);
-  const series = main.slice(main.indexOf('id="tk-h-05"'), main.indexOf('id="tk-h-06"'));
+  const series = main.slice(main.indexOf('id="case-h-05"'), main.indexOf('id="case-h-06"'));
   assert.equal((series.match(/data-sp-video/g) ?? []).length, 10);
   const measure = main.slice(main.indexOf('id="measure"'));
-  for (const v of ['326', '374', '84', '6']) assert.match(measure, new RegExp(`<strong[^>]*>${v}</strong>`), v);
+  for (const v of ['326', '84', '6']) assert.match(measure, new RegExp(`<strong[^>]*>${v}</strong>`), v);
+  assert.match(measure, /374/);
   assert.ok(measure.includes('Instagram Insights via Buffer'));
 });
 

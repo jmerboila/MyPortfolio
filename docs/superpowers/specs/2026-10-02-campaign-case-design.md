@@ -1,9 +1,17 @@
 # Ford and Lexus: campaign case studies (design)
 
 Approved by Jayson, 2026-10-02: build both, Ford first; drop Ford's carousel
-drafts (only the final work, as on the logo pages); describe the Lexus poster
-type in general terms, never by font name. Follows the Safe-Zone Toolkit
-redesign (`2026-10-02-toolkit-case-design.md`).
+drafts (only the final work, as on the logo pages). The Lexus tutorial names
+its fonts (Jayson, 2026-10-02: it teaches them; the no-names rule is for the
+logos only). Follows the Safe-Zone Toolkit redesign
+(`2026-10-02-toolkit-case-design.md`).
+
+Consistency (Jayson, 2026-10-02): every case page, logos included, shares
+one shell, `src/styles/case.css` (section 01 text beside the hero, the same
+type scale and spacing), the social pages share section names ("Captions
+and timing", "Results and what I learned") and draw tables, galleries,
+captions and results with StoryVisual. Home page tiles quote the figure on
+the page they link to. `tests/build/case-consistency.test.ts` checks it.
 
 ## Shared layout: CampaignCase
 
@@ -38,7 +46,7 @@ A `campaign` block on the work entry replaces `story` for the page:
 |---|---|---|
 | 01 | The poster | The three posts (still, Reveal, tutorial) as the hero. |
 | 02 | The idea | One design, three posts; the Ford lesson chart (Reel 104 vs carousel 4). |
-| 03 | The layout | The ten InDesign steps (type named in general terms). |
+| 03 | The layout | The ten InDesign steps, fonts named as the tutorial teaches them. |
 | 04 | The motion | The four After Effects frames in order; sound design. |
 | 05 | Captions and timing | Three captions; two evenings and a morning. |
 

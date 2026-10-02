@@ -21,7 +21,7 @@ for (const slug of IDENTITY) {
     let at = 0;
     (REEL.has(slug) ? SECTIONS : SECTIONS.slice(0, -1)).forEach((name, i) => {
       const n = String(i + 1).padStart(2, '0');
-      const re = new RegExp(`<span class="li-num"[^>]*>${n}</span>\\s*${name}`);
+      const re = new RegExp(`<span class="case-num"[^>]*>${n}</span>\\s*${name}`);
       const m = html.slice(at).match(re);
       assert.ok(m, `${slug} missing "${n} ${name}" after position ${at}`);
       at += (m.index ?? 0) + 1;

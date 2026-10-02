@@ -19,11 +19,11 @@ test('the Lexus case study: sections 01 to 05 in order, no story chapters, no re
   let at = 0;
   ['The poster', 'The idea', 'The layout', 'The motion', 'Captions and timing'].forEach((name, i) => {
     const n = String(i + 1).padStart(2, '0');
-    const m = html.slice(at).match(new RegExp(`<span class="cc-num"[^>]*>${n}</span>\\s*${name}`));
+    const m = html.slice(at).match(new RegExp(`<span class="case-num"[^>]*>${n}</span>\\s*${name}`));
     assert.ok(m, `missing "${n} ${name}"`);
     at += (m.index ?? 0) + 1;
   });
-  assert.doesNotMatch(html, /class="cc-num"[^>]*>06</);
+  assert.doesNotMatch(html, /class="case-num"[^>]*>06</);
   assert.ok(html.includes('Self-initiated concept. Not affiliated with or endorsed by Lexus or Toyota.'));
 });
 

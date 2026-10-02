@@ -68,31 +68,36 @@ toolkit:
         caption: "The highlight cover template: only the centre circle survives."
   series:
     body: "Every Reel works the same way: it opens on a problem you can picture, then a spec card answers it with the exact numbers. Ten formats, ten Reels, alternating dark and light so they read as one series."
-  publishing:
+  captions:
     body:
       - "Each caption repeats the hook, explains the problem in plain numbers, then makes one ask: comment TOOLKIT for the Photoshop script, or get it at devsign8.com. Three hashtag sets rotated, for designers, for Instagram tips and for branding."
-      - "I posted on weekday evenings around 6:00 PM Toronto time, one or two a week, with a three-Reel push on day 8."
-    caption:
-      label: "Reel cover"
-      time: "Wednesday, 6:00 PM"
-      text: "A Reel cover can't be edited after upload. Get it right once.\n\nIt has to work twice: full-screen at 9:16, and again as a 3:4 tile on your profile, where the top and bottom 240px are cropped away.\n\nComment TOOLKIT for the script that builds the cover canvas with the grid crop already marked. Also at www.devsign8.com"
-    schedule:
-      - { day: "Day 1", label: "Share button" }
-      - { day: "Day 5", label: "Square grid crop" }
-      - { day: "Day 8", label: "Reel cover, Story, 4:5" }
-      - { day: "Day 15", label: "Profile photo" }
-      - { day: "Day 20", label: "Feed 3:4" }
-      - { day: "Day 21", label: "Carousel slide" }
-      - { day: "Day 22", label: "Highlight cover" }
-      - { day: "Day 27", label: "9:16 master" }
+      - "Ten Reels in four weeks, on weekday evenings around 6:00 PM Toronto time: one or two a week, with a three-Reel push on day 8. The tenth, Build one 9:16 master, closed the series on day 27."
+    items:
+      - { label: "Reel cover", time: "Wednesday, 6:00 PM", text: "A Reel cover can't be edited after upload. Get it right once.
+
+It has to work twice: full-screen at 9:16, and again as a 3:4 tile on your profile, where the top and bottom 240px are cropped away.
+
+Comment TOOLKIT for the script that builds the cover canvas with the grid crop already marked. Also at www.devsign8.com" }
   results:
-    line: "The first nine Reels, from an account with almost no followers yet."
-    figures:
-      - { value: "326", label: "people reached by nine Reels" }
-      - { value: "374", label: "views" }
-      - { value: "84", label: "reached by the best hook: your 4:5 post loses 34 px" }
-      - { value: "6", label: "reached by the weakest: the highlight cover" }
+    body:
+      - "The first nine Reels, from an account with almost no followers yet, so these are small numbers. What matters is what they say."
+      - "Hooks that named a loss people could picture did best: the 4:5 grid crop, the Story bottom and the Reel cover you can't edit. The best reached 14 times more people than the weakest. Nobody commented TOOLKIT: I'm still early, without the followers a comment ask needs."
     source: "Instagram Insights via Buffer"
+    pieces:
+      - name: "The whole series (9 Reels)"
+        reach: 326
+        stats:
+          - { label: "Views", value: "374" }
+          - { label: "Likes", value: "2" }
+          - { label: "Comments", value: "0" }
+      - name: "Best: your 4:5 post loses 34px"
+        reach: 84
+        stats:
+          - { label: "Views", value: "94" }
+      - name: "Lowest: the highlight cover"
+        reach: 6
+        stats:
+          - { label: "Views", value: "11" }
     insight: "Hooks that named a loss people could picture did best: the 4:5 grid crop, the Story bottom and the Reel cover you can't edit, about 14 times the reach of the weakest. Nobody commented TOOLKIT: I'm still early, without the followers a comment ask needs."
     next:
       - "Keep the loss-first hooks and drop the abstract ones."

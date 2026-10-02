@@ -1,20 +1,24 @@
 ---
 /* ============================================================================
-   ToolkitCase.astro: the Safe-Zone Toolkit as a product case study
-   (spec 2026-10-02-toolkit-case-design.md), replacing its launch story.
+   ToolkitCase.astro: the Safe-Zone Toolkit as a case study (spec
+   2026-10-02-toolkit-case-design.md), replacing its launch story.
    01 the interactive viewer, 02 the problem, 03 the research, 04 the tool,
-   05 the series (the ten posted Reels), 06 publishing, 07 what I learned.
+   05 the series (the ten posted Reels), 06 captions and timing, 07 results.
    07 keeps id="measure": the home page's "14x" tile links there.
+   One presentation for every case page (2026-10-02): the shell is
+   styles/case.css, and the table, gallery, captions and results are drawn by
+   the same StoryVisual as the Ford and Lexus pages.
    Light and dark (the design rule): the viewer and the hook video show the
-   version opposite the page; the Photoshop screenshots and the Reels are
-   real captures and stay as they are.
+   version opposite the page; screenshots and Reels are real captures.
    ========================================================================= */
 import type { CollectionEntry } from 'astro:content';
-import { Image } from 'astro:assets';
 import { href } from '../../lib/url';
 import { SAFE_ZONES, keepClear, safeArea } from '../../config/ig-safe-zones';
 import SafeZoneViewer from './SafeZoneViewer.astro';
 import PostRow from './PostRow.astro';
+import StoryVisual from '../story/StoryVisual.astro';
+import '../../styles/story.css';
+import '../../styles/case.css';
 
 type Work = CollectionEntry<'work'>['data'];
 interface Props {
@@ -24,162 +28,124 @@ interface Props {
 const { d, posts } = Astro.props;
 const t = d.toolkit!;
 const n = (i: number) => String(i).padStart(2, '0');
-const half = '(min-width: 48rem) 36rem, 92vw';
+
+const table = {
+  kind: 'table' as const,
+  caption: 'Instagram formats and their safe areas (px)',
+  columns: ['Format', 'Canvas', 'Keep clear (top, right, bottom, left)', 'Safe area'],
+  rows: SAFE_ZONES.map((f) => {
+    const s = safeArea(f);
+    return [f.name, `${f.w} × ${f.h}`, keepClear(f), `${s.w} × ${s.h}`];
+  }),
+  source: t.research.source,
+};
+const gallery = { kind: 'gallery' as const, items: t.tool.shots.map((s) => ({ src: s.src, alt: s.alt, note: s.caption })) };
+const captions = { kind: 'captions' as const, items: t.captions.items };
+const results = { kind: 'results' as const };
 ---
 
-<div class="tk">
-  <section class="tk-sec container" aria-labelledby="tk-h-01">
-    <div class="tk-open">
-      <h2 id="tk-h-01" class="tk-h"><span class="tk-num">{n(1)}</span> The toolkit</h2>
-      <p class="tk-idea">{t.idea}</p>
-      <dl class="tk-glance">
+<div class="case">
+  <section class="case-sec container case-open" aria-labelledby="case-h-01">
+    <div class="case-open__text">
+      <h2 id="case-h-01" class="case-h"><span class="case-num">{n(1)}</span> The toolkit</h2>
+      <p class="case-idea">{t.idea}</p>
+      <dl class="case-glance">
         <div><dt>Project</dt><dd>{t.type}</dd></div>
         {d.role && <div><dt>Role</dt><dd>{d.role}</dd></div>}
         <div><dt>Deliverables</dt><dd>{t.deliverables.join(', ')}</dd></div>
         {d.tools.length > 0 && <div><dt>Tools</dt><dd>{d.tools.join(', ')}</dd></div>}
       </dl>
     </div>
-    <SafeZoneViewer />
-  </section>
-
-  <section class="tk-sec container tk-split" aria-labelledby="tk-h-02">
-    <div class="tk-text">
-      <h2 id="tk-h-02" class="tk-h"><span class="tk-num">{n(2)}</span> The problem</h2>
-      {t.problem.body.map((p) => <p class="tk-lede">{p}</p>)}
+    <div class="case-open__hero">
+      <SafeZoneViewer />
     </div>
-    <figure class="tk-hook">
-      {
-        (['light', 'dark'] as const).map((theme) => (
-          <video
-            class:list={['tk-hook__video', `tk-hook__video--${theme}`]}
-            src={href(t.problem[theme].src)}
-            poster={href(t.problem[theme].poster)}
-            controls
-            muted
-            loop
-            playsinline
-            preload="none"
-            aria-label={t.problem.alt}
-          />
-        ))
-      }
-      <figcaption>The problem in one line. It became the first Reel's hook.</figcaption>
-    </figure>
   </section>
 
-  <section class="tk-sec container" aria-labelledby="tk-h-03">
-    <h2 id="tk-h-03" class="tk-h"><span class="tk-num">{n(3)}</span> The research</h2>
-    <div class="tk-split tk-split--top">
-      <div class="tk-text">
-        {t.research.body.map((p) => <p class="tk-lede">{p}</p>)}
+  <section class="case-sec container" aria-labelledby="case-h-02">
+    <h2 id="case-h-02" class="case-h"><span class="case-num">{n(2)}</span> The problem</h2>
+    <div class="case-body case-body--split">
+      <div class="case-text">{t.problem.body.map((p) => <p class="case-lede">{p}</p>)}</div>
+      <figure class="tk-hook">
+        {
+          (['light', 'dark'] as const).map((theme) => (
+            <video
+              class:list={['tk-hook__video', `tk-hook__video--${theme}`]}
+              src={href(t.problem[theme].src)}
+              poster={href(t.problem[theme].poster)}
+              controls
+              muted
+              loop
+              playsinline
+              preload="none"
+              aria-label={t.problem.alt}
+            />
+          ))
+        }
+        <figcaption>The problem in one line. It became the first Reel's hook.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="case-sec container" aria-labelledby="case-h-03">
+    <h2 id="case-h-03" class="case-h"><span class="case-num">{n(3)}</span> The research</h2>
+    <div class="case-body case-body--split">
+      <div class="case-text">
+        {t.research.body.map((p) => <p class="case-lede">{p}</p>)}
         <p class="tk-callout">{t.research.callout}</p>
+        <p class="case-small">{t.research.disclaimer}</p>
       </div>
-      <figure class="tk-table-wrap">
-        <table class="tk-table">
-          <caption>Instagram formats and their safe areas (px)</caption>
-          <thead>
-            <tr><th scope="col">Format</th><th scope="col">Canvas</th><th scope="col">Keep clear (top, right, bottom, left)</th><th scope="col">Safe area</th></tr>
-          </thead>
-          <tbody>
-            {SAFE_ZONES.map((f) => {
-              const s = safeArea(f);
-              return (
-                <tr>
-                  <th scope="row">{f.name}</th>
-                  <td>{f.w} × {f.h}</td>
-                  <td>{keepClear(f)}</td>
-                  <td>{s.w} × {s.h}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <figcaption>{t.research.source} {t.research.disclaimer}</figcaption>
-      </figure>
+      <div class="case-visual"><StoryVisual visual={table} /></div>
     </div>
   </section>
 
-  <section class="tk-sec container" aria-labelledby="tk-h-04">
-    <h2 id="tk-h-04" class="tk-h"><span class="tk-num">{n(4)}</span> The tool</h2>
-    <div class="tk-text tk-text--wide">{t.tool.body.map((p) => <p class="tk-lede">{p}</p>)}</div>
-    <ul class="tk-shots" role="list">
-      {t.tool.shots.map((s) => (
-        <li>
-          <figure class="tk-fig">
-            <Image src={s.src} alt={s.alt} widths={[600, 1000, 1400]} sizes={half} loading="lazy" />
-            <figcaption>{s.caption}</figcaption>
-          </figure>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-  <section class="tk-sec container" aria-labelledby="tk-h-05" data-sp-feed>
-    <h2 id="tk-h-05" class="tk-h"><span class="tk-num">{n(5)}</span> The series</h2>
-    <p class="tk-lede tk-text--wide">{t.series.body}</p>
-    {posts.length > 0 && <PostRow posts={posts} label={d.title} />}
-  </section>
-
-  <section class="tk-sec container" aria-labelledby="tk-h-06">
-    <h2 id="tk-h-06" class="tk-h"><span class="tk-num">{n(6)}</span> Publishing</h2>
-    <div class="tk-split tk-split--top">
-      <div class="tk-text">
-        {t.publishing.body.map((p) => <p class="tk-lede">{p}</p>)}
-        <ol class="tk-schedule" role="list">
-          {t.publishing.schedule.map((e) => (
-            <li><strong>{e.day}</strong> {e.label}</li>
-          ))}
-        </ol>
-      </div>
-      <figure class="tk-caption-card">
-        <p class="tk-caption-card__meta">{t.publishing.caption.label} · {t.publishing.caption.time}</p>
-        {t.publishing.caption.text.split('\n\n').map((p) => <p>{p}</p>)}
-        <figcaption>One of the ten captions, as posted (hashtags left off).</figcaption>
-      </figure>
+  <section class="case-sec container" aria-labelledby="case-h-04">
+    <h2 id="case-h-04" class="case-h"><span class="case-num">{n(4)}</span> The tool</h2>
+    <div class="case-body case-body--split">
+      <div class="case-text">{t.tool.body.map((p) => <p class="case-lede">{p}</p>)}</div>
+      <div class="case-visual"><StoryVisual visual={gallery} /></div>
     </div>
   </section>
 
-  <section class="tk-sec container" id="measure" aria-labelledby="tk-h-07">
-    <h2 id="tk-h-07" class="tk-h"><span class="tk-num">{n(7)}</span> What I learned</h2>
-    <p class="tk-lede">{t.results.line}</p>
-    <ul class="tk-figures" role="list">
-      {t.results.figures.map((f) => (
-        <li><strong>{f.value}</strong> <span>{f.label}</span></li>
-      ))}
-    </ul>
-    <p class="tk-source">Source: {t.results.source}</p>
-    <div class="tk-split tk-split--top">
-      <p class="tk-lede tk-insight">{t.results.insight}</p>
-      <div>
-        <h3 class="tk-sub">What I'd test next</h3>
-        <ul class="tk-next">{t.results.next.map((x) => <li>{x}</li>)}</ul>
-      </div>
+  <section class="case-sec container" aria-labelledby="case-h-05">
+    <h2 id="case-h-05" class="case-h"><span class="case-num">{n(5)}</span> The series</h2>
+    <div class="case-body">
+      <div class="case-text"><p class="case-lede">{t.series.body}</p></div>
     </div>
+    {posts.length > 0 && (
+      <div class="case-posts" data-sp-feed>
+        <PostRow posts={posts} label={d.title} />
+      </div>
+    )}
+  </section>
+
+  <section class="case-sec container" aria-labelledby="case-h-06">
+    <h2 id="case-h-06" class="case-h"><span class="case-num">{n(6)}</span> Captions and timing</h2>
+    <div class="case-body case-body--split">
+      <div class="case-text">{t.captions.body.map((p) => <p class="case-lede">{p}</p>)}</div>
+      <div class="case-visual"><StoryVisual visual={captions} /></div>
+    </div>
+  </section>
+
+  <section class="case-sec container" id="measure" aria-labelledby="case-h-07">
+    <h2 id="case-h-07" class="case-h"><span class="case-num">{n(7)}</span> Results and what I learned</h2>
+    <div class="case-body case-body--split">
+      <div class="case-text">{t.results.body.map((p) => <p class="case-lede">{p}</p>)}</div>
+      <div class="case-visual"><StoryVisual visual={results} results={t.results} /></div>
+    </div>
+    {t.results.next.length > 0 && (
+      <div class="case-next">
+        <h3 class="case-sub">What I'd test next</h3>
+        <ul>{t.results.next.map((x) => <li>{x}</li>)}</ul>
+      </div>
+    )}
   </section>
 </div>
 
+<script>
+  import '../../scripts/story-motion';
+</script>
+
 <style>
-  .tk { display: grid; gap: var(--space-section); }
-  .tk-sec { display: grid; gap: var(--space-m); }
-  .tk-h { font-size: var(--step-3); display: flex; gap: 0.6em; align-items: baseline; margin: 0; }
-  .tk-num { font-size: var(--step--1); letter-spacing: var(--tracking-caps); color: var(--accent); font-variant-numeric: tabular-nums; }
-  .tk-sub { font-size: var(--step-0); margin: 0 0 var(--space-xs); }
-  .tk-lede { font-size: var(--step-1); color: var(--text-dim); margin: 0; max-inline-size: 60ch; }
-  .tk-text { display: grid; gap: var(--space-s); align-content: start; }
-  .tk-text--wide { max-inline-size: 60ch; }
-
-  .tk-open { display: grid; gap: var(--space-m); }
-  .tk-idea { font-size: var(--step-2); max-inline-size: 34ch; margin: 0; line-height: var(--leading-snug); }
-  .tk-glance { display: flex; flex-wrap: wrap; gap: var(--space-m) var(--space-xl); margin: 0; padding-block: var(--space-m); border-block: 1px solid var(--border); }
-  .tk-glance dt { font-size: var(--step--1); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--text-dim); }
-  .tk-glance dd { margin: 0; font-weight: 600; }
-
-  .tk-split { display: grid; gap: var(--space-l); align-items: center; }
-  .tk-split--top { align-items: start; }
-  @media (min-width: 56rem) {
-    .tk-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--space-xl); }
-  }
-
   /* 02: the hook Reel, phone-sized, the version opposite the page. */
   .tk-hook { margin: 0; justify-self: center; inline-size: min(100%, 18rem); display: grid; gap: var(--space-xs); }
   .tk-hook__video { display: block; inline-size: 100%; aspect-ratio: 9 / 16; border-radius: var(--radius-l); border: 1px solid var(--border); background: var(--bg-2); }
@@ -190,33 +156,8 @@ const half = '(min-width: 48rem) 36rem, 92vw';
   }
   :global(:root[data-theme='dark']) .tk-hook__video--light { display: block; }
   :global(:root[data-theme='dark']) .tk-hook__video--dark { display: none; }
-  .tk-hook figcaption, .tk-fig figcaption, .tk-table-wrap figcaption, .tk-caption-card figcaption, .tk-source {
-    font-size: var(--step--1); color: var(--text-dim); margin: 0;
-  }
+  .tk-hook figcaption { font-size: var(--step--1); color: var(--text-dim); margin: 0; }
 
-  .tk-callout { margin: var(--space-xs) 0 0; padding: var(--space-s) var(--space-m); border-inline-start: 3px solid var(--accent); background: var(--bg-2); border-radius: 0 var(--radius-m) var(--radius-m) 0; }
-
-  .tk-table-wrap { margin: 0; display: grid; gap: var(--space-xs); overflow-x: auto; }
-  .tk-table { border-collapse: collapse; inline-size: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
-  .tk-table caption { text-align: start; font-weight: 600; padding-block-end: var(--space-xs); }
-  .tk-table th, .tk-table td { text-align: start; padding: 0.45em 0.75em 0.45em 0; border-block-end: 1px solid var(--border); white-space: nowrap; }
-  .tk-table thead th { color: var(--text-dim); font-weight: 500; white-space: normal; }
-
-  .tk-shots { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-l); }
-  @media (min-width: 48rem) { .tk-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .tk-fig { margin: 0; display: grid; gap: var(--space-xs); }
-  .tk-fig :global(img) { display: block; inline-size: 100%; block-size: auto; border-radius: var(--radius-l); border: 1px solid var(--border); }
-
-  .tk-schedule { list-style: none; margin: var(--space-xs) 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: var(--space-xs) var(--space-m); font-size: var(--step--1); color: var(--text-dim); }
-  .tk-schedule strong { display: block; color: var(--text); }
-  .tk-caption-card { margin: 0; display: grid; gap: var(--space-s); padding: var(--space-m); border: 1px solid var(--border); border-radius: var(--radius-l); background: var(--bg-2); }
-  .tk-caption-card p { margin: 0; }
-  .tk-caption-card__meta { font-size: var(--step--1); color: var(--text-dim); }
-
-  .tk-figures { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); }
-  .tk-figures li { display: grid; gap: 0.2em; padding-block-start: var(--space-s); border-block-start: 1px solid var(--border); }
-  .tk-figures strong { font-size: var(--step-4); line-height: 1; font-variant-numeric: tabular-nums; }
-  .tk-figures span { color: var(--text-dim); font-size: var(--step--1); }
-  .tk-insight { color: var(--text); }
-  .tk-next { margin: 0; padding-inline-start: 1.2em; display: grid; gap: var(--space-2xs); color: var(--text-dim); }
+  /* 03: the insight most guides miss. */
+  .tk-callout { margin: var(--space-xs) 0 0; padding: var(--space-s) var(--space-m); border-inline-start: 3px solid var(--accent); background: var(--bg-2); border-radius: 0 var(--radius-m) var(--radius-m) 0; max-inline-size: 60ch; }
 </style>

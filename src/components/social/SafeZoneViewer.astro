@@ -146,10 +146,11 @@ const firstLabel = label(first);
     --szv-guide: rgb(21 20 28 / 0.45);
   }
 
-  @media (min-width: 56rem) {
-    .szv {
-      grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
-    }
+  /* Laid out by its own width (2026-10-02: it is the hero of section 01,
+     beside the text, like every case page's hero): the formats on top, then
+     the canvas, with the facts beside it once there is room. */
+  .szv {
+    container-type: inline-size;
   }
 
   .szv__picker {
@@ -206,9 +207,9 @@ const firstLabel = label(first);
     justify-items: center;
   }
 
-  @media (min-width: 56rem) {
+  @container (min-width: 32rem) {
     .szv__stage {
-      grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+      grid-template-columns: minmax(0, 1fr) minmax(11rem, 14rem);
       align-items: center;
     }
   }
@@ -216,7 +217,7 @@ const firstLabel = label(first);
   .szv__svg {
     display: block;
     inline-size: 100%;
-    block-size: min(36rem, 70svh);
+    block-size: min(30rem, 65svh);
     font-family: var(--font-ui);
   }
 
