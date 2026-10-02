@@ -54,20 +54,18 @@ text(c, 'Two disciplines, one word, and a loop that never stops', W / 2, 200, 44
 save(s, SLUG, '03-idea')
 
 # 04 Exploration: the four rows of artboard 1, same scale
-labels = ['Canterbury sign', 'Orange Avenue sign', 'Add the 8', 'Spacing set']
 scale = 1100 / (FINAL[2] - FINAL[0])
 for i, box in enumerate(STEPS, 1):
     s, c = panel(PAPER)
     m = mask(AI, 0, box, int((box[2] - box[0]) * scale))
     centred(c, m, INK)
-    text(c, f'Step {i}: {labels[i - 1]}', 80, 120, 36, INK, 'semibold')
     save(s, SLUG, f'04-explore-{i}')
 
 # 05 Construction: Illustrator outline view with guides and measurements
 s, c = panel(AI_PASTEBOARD)
 # The artboard takes the left of the panel; the guide labels sit on the
 # pasteboard to its right, the way Illustrator shows guide names off the art.
-m = illustrator_view(c, AI, 0, (350, 30, 955, 255), (0, 80, 1240, 1040), glyph_box=FINAL)
+m = illustrator_view(c, AI, 0, (358, 36, 948, 250), (0, 80, 1250, 1040), glyph_box=FINAL)
 base, cap, xh, desc = 116.25, 221.67, 194.59, 67.46
 for y, lab in [(cap, f'Cap height  {cap - base:.1f} pt'), (xh, f'x-height  {xh - base:.1f} pt'),
                (base, 'Baseline'), (desc, f'Descender  {base - desc:.1f} pt')]:
