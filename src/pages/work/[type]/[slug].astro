@@ -17,6 +17,7 @@ import { Image, getImage } from 'astro:assets';
 import V3Layout from '../../../layouts/V3Layout.astro';
 import Breadcrumbs from '../../../components/v3/Breadcrumbs.astro';
 import LaunchStory from '../../../components/story/LaunchStory.astro';
+import LogoPresentation from '../../../components/logo/LogoPresentation.astro';
 import SocialPost from '../../../components/social/SocialPost.astro';
 import PostRow from '../../../components/social/PostRow.astro';
 import { href } from '../../../lib/url';
@@ -58,6 +59,8 @@ const { Content } = await render(entry);
 /* A launch story (2026-09-25) replaces the classic body: the story, then the
    project's real social posts, playable. */
 const story = d.story;
+/* A logo presentation (2026-10-01) replaces the classic case blocks and gallery. */
+const presentation = d.presentation;
 const posts = story
   ? sortPosts(
       await getCollection('social', (p) => !p.data.draft && p.data.work?.id === entry.id),
@@ -86,7 +89,9 @@ const description = d.description ?? d.summary;
    the widest of the cover and gallery (logo covers are small card crops; the
    gallery holds the full artwork). At most 1200 wide, as JPEG: the size and
    format every platform's link preview accepts. */
-const [sharePic] = story?.hero
+const [sharePic] = presentation
+  ? [presentation.opening]
+  : story?.hero
   ? [story.hero]
   : [{ src: d.cover, alt: d.coverAlt }, ...d.gallery].sort((a, b) => b.src.width - a.src.width);
 const shareSrc = sharePic.src;
@@ -125,6 +130,13 @@ const schema = [
     ...(d.year ? { dateCreated: d.year } : {}),
     keywords: [...new Set([...d.tags, ...d.tools])].join(', '),
     genre: d.category,
+    ...(presentation && {
+      hasPart: [presentation.ideaVisual, ...presentation.construction, presentation.versatility, ...presentation.inUse].map((x) => ({
+        '@type': 'ImageObject',
+        caption: x.caption,
+        description: x.alt,
+      })),
+    }),
     ...(d.externalUrl ? { sameAs: d.externalUrl } : {}),
   },
 ];
@@ -148,7 +160,7 @@ const schema = [
 
       <p class="project__cat">{d.category}</p>
       <h1 class="project__title">{d.title}</h1>
-      {!story && d.intro && <p class="project__intro prose">{d.intro}</p>}
+      {!story && !presentation && d.intro && <p class="project__intro prose">{d.intro}</p>}
 
       {
         story && (
@@ -185,7 +197,7 @@ const schema = [
       }
 
       {
-        !story && meta.length > 0 && (
+        !story && !presentation && meta.length > 0 && (
           <dl class="project__meta">
             {meta.map(([k, v]) => (
               <div>
@@ -239,7 +251,7 @@ const schema = [
     }
 
     {
-      !story && (
+      !story && !presentation && (
         <div class="project__cover container">
           <Image
             src={d.cover}
@@ -254,7 +266,7 @@ const schema = [
     }
 
     {
-      !story && hasCaseStudy && (
+      !story && !presentation && hasCaseStudy && (
         <section class="project__case container" aria-labelledby="case-heading">
           <h2 id="case-heading" class="visually-hidden">
             Case study
@@ -294,7 +306,7 @@ const schema = [
     }
 
     {
-      !story && d.video && (
+      !story && !presentation && d.video && (
         <section class="project__video container" aria-labelledby="video-heading">
           <h2 id="video-heading" class="project__sub">
             Motion
@@ -329,7 +341,7 @@ const schema = [
     }
 
     {
-      !story && d.gallery.length > 0 && (
+      !story && !presentation && d.gallery.length > 0 && (
         <section class="project__gallery container" aria-labelledby="gallery-heading">
           <h2 id="gallery-heading" class="project__sub">
             Gallery
@@ -356,12 +368,14 @@ const schema = [
     }
 
     {
-      !story && (
+      !story && !presentation && (
         <div class="project__body container prose">
           <Content />
         </div>
       )
     }
+
+    {presentation && <LogoPresentation d={d} />}
 
     <nav class="project__nav container" aria-label="More projects">
       <a class="project__nav-link" href={href(projectPath(prev))} rel="prev">
