@@ -66,7 +66,7 @@ repeated in its caption or the HTML around it. Each image has alt text.
   to 3 live type, step 4 outlined; artboard 2: rejected directions), the
   Brand Style Guide (rules, palette), the Logo Animations README (138
   files). `LogoDesign1.ai` is NOT used: Elev8 is a different name, and the
-  DS8 / D8 / `<D>` marks are favicon ideas Jayson does not like (his call,
+  DS8 / D8 / `<D>` marks are favicon ideas Jayson does not like (Jayson's call,
   2026-10-01). No D8 anywhere in the presentation.
 - Exploration (curated, 4), with Jayson's reasons (2026-10-01):
   1. Dev + blackletter sign (Canterbury): dropped; it looked like a
