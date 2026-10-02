@@ -1,0 +1,300 @@
+---
+/* ============================================================================
+   SafeZoneViewer.astro: pick an Instagram format, see where the interface
+   covers it (the Safe-Zone Toolkit, 2026-10-02).
+   ----------------------------------------------------------------------------
+   Every format is drawn here as an SVG at its true size from
+   config/ig-safe-zones.ts: the danger zones tinted violet, the safe area
+   outlined, grid crops and centre lines dashed, and the circle Instagram
+   shows for a highlight cover or profile photo. All twelve are in the markup
+   and the Reel shows by default, so it works without JavaScript;
+   scripts/safe-zone-viewer.ts switches formats (click or arrow keys).
+   Light and dark (the design rule): the canvas draws dark on the light site
+   and light on the dark site.
+   ========================================================================= */
+import { DEFAULT_FORMAT, SAFE_ZONES, keepClear, safeArea, type SafeZoneFormat } from '../../config/ig-safe-zones';
+
+const groups = ['9:16', 'Feed', 'Carousel', 'Profile'] as const;
+const fs = (f: SafeZoneFormat) => Math.round(Math.min(f.w, f.h) * 0.05);
+const label = (f: SafeZoneFormat) => {
+  const s = safeArea(f);
+  return { safe: `${s.w} × ${s.h}`, canvas: `${f.w} × ${f.h}`, clear: keepClear(f) };
+};
+const first = SAFE_ZONES.find((f) => f.id === DEFAULT_FORMAT)!;
+const firstLabel = label(first);
+---
+
+<div class="szv" data-szv>
+  <div class="szv__picker" role="radiogroup" aria-label="Instagram format">
+    {
+      groups.map((g) => (
+        <div class="szv__group">
+          <p class="szv__group-name" aria-hidden="true">{g}</p>
+          {SAFE_ZONES.filter((f) => f.group === g).map((f) => {
+            const l = label(f);
+            return (
+              <button
+                type="button"
+                role="radio"
+                class="szv__option"
+                aria-checked={f.id === DEFAULT_FORMAT ? 'true' : 'false'}
+                tabindex={f.id === DEFAULT_FORMAT ? 0 : -1}
+                data-szv-id={f.id}
+                data-name={f.name}
+                data-canvas={l.canvas}
+                data-safe={l.safe}
+                data-clear={l.clear}
+                data-note={f.note}
+              >
+                {f.name}
+              </button>
+            );
+          })}
+        </div>
+      ))
+    }
+  </div>
+
+  <figure class="szv__stage">
+    {
+      SAFE_ZONES.map((f) => {
+        const s = safeArea(f);
+        const size = fs(f);
+        const x1 = f.m.l, y1 = f.m.t, x2 = f.w - f.m.r, y2 = f.h - f.m.b;
+        const bands = [
+          { show: f.m.t >= size * 1.8, x: f.w / 2, y: f.m.t / 2, v: f.m.t, rot: 0 },
+          { show: f.m.b >= size * 1.8, x: f.w / 2, y: f.h - f.m.b / 2, v: f.m.b, rot: 0 },
+          { show: f.m.l >= size * 1.8, x: f.m.l / 2, y: f.h / 2, v: f.m.l, rot: -90 },
+          { show: f.m.r >= size * 1.8, x: f.w - f.m.r / 2, y: f.h / 2, v: f.m.r, rot: -90 },
+        ];
+        return (
+          <svg
+            class="szv__svg"
+            data-szv-format={f.id}
+            viewBox={`0 0 ${f.w} ${f.h}`}
+            role="img"
+            aria-label={`${f.name}: a ${f.w} by ${f.h} canvas; keep ${f.m.t} px clear at the top, ${f.m.r} at the right, ${f.m.b} at the bottom and ${f.m.l} at the left, leaving a ${s.w} by ${s.h} safe area.`}
+            data-szv-hidden={f.id !== DEFAULT_FORMAT ? '' : undefined}
+          >
+            <rect class="szv__canvas" width={f.w} height={f.h} rx={Math.round(f.w * 0.035)} />
+            <path
+              class="szv__zone"
+              fill-rule="evenodd"
+              d={`M0 0H${f.w}V${f.h}H0Z M${x1} ${y1}V${y2}H${x2}V${y1}Z`}
+            />
+            {(f.guidesH ?? []).map((y) => <line class="szv__guide" x1="0" x2={f.w} y1={y} y2={y} />)}
+            {(f.guidesV ?? []).map((x) => <line class="szv__guide" y1="0" y2={f.h} x1={x} x2={x} />)}
+            {f.circle && <circle class="szv__circle" cx={f.circle.cx} cy={f.circle.cy} r={f.circle.r} />}
+            <rect class="szv__safe" x={x1} y={y1} width={s.w} height={s.h} />
+            {bands.filter((b) => b.show).map((b) => (
+              <text class="szv__band" x={b.x} y={b.y} font-size={size} transform={b.rot ? `rotate(${b.rot} ${b.x} ${b.y})` : undefined}>
+                {b.v}
+              </text>
+            ))}
+            <text class="szv__size" x={x1 + s.w / 2} y={y1 + s.h / 2} font-size={Math.round(size * 1.3)}>
+              {s.w} × {s.h}
+            </text>
+          </svg>
+        );
+      })
+    }
+    <figcaption class="szv__caption" data-szv-caption aria-live="polite">
+      <strong class="szv__name" data-szv-name>{first.name}</strong>
+      <dl class="szv__facts">
+        <div><dt>Canvas</dt><dd data-szv-canvas>{firstLabel.canvas}</dd></div>
+        <div><dt>Safe area</dt><dd data-szv-safe>{firstLabel.safe}</dd></div>
+        <div><dt>Keep clear (top, right, bottom, left)</dt><dd data-szv-clear>{firstLabel.clear}</dd></div>
+      </dl>
+      <p class="szv__note" data-szv-note>{first.note}</p>
+    </figcaption>
+  </figure>
+</div>
+
+<script>
+  import { initSafeZoneViewer } from '../../scripts/safe-zone-viewer';
+  initSafeZoneViewer();
+</script>
+
+<style>
+  /* Light site (the default): a dark canvas. */
+  .szv {
+    --szv-canvas: #15141c;
+    --szv-ink: #f7f5f1;
+    --szv-zone: rgb(90 63 224 / 0.6);
+    --szv-safe: #c9b8ff;
+    --szv-guide: rgb(247 245 241 / 0.55);
+    display: grid;
+    gap: var(--space-l);
+    align-items: start;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .szv {
+      --szv-canvas: #f7f5f1;
+      --szv-ink: #15141c;
+      --szv-zone: rgb(90 63 224 / 0.3);
+      --szv-safe: #5a3fe0;
+      --szv-guide: rgb(21 20 28 / 0.45);
+    }
+  }
+
+  :global(:root[data-theme='dark']) .szv {
+    --szv-canvas: #f7f5f1;
+    --szv-ink: #15141c;
+    --szv-zone: rgb(90 63 224 / 0.3);
+    --szv-safe: #5a3fe0;
+    --szv-guide: rgb(21 20 28 / 0.45);
+  }
+
+  @media (min-width: 56rem) {
+    .szv {
+      grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
+    }
+  }
+
+  .szv__picker {
+    display: grid;
+    gap: var(--space-s);
+  }
+
+  .szv__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+  }
+
+  .szv__group-name {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .szv__option {
+    font: inherit;
+    font-size: var(--step--1);
+    padding: 0.4em 0.8em;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    min-block-size: 2.25rem;
+  }
+
+  .szv__option:hover {
+    border-color: var(--accent);
+  }
+
+  .szv__option[aria-checked='true'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+  }
+
+  .szv__option:focus-visible {
+    outline: var(--ring-width, 2px) solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .szv__stage {
+    margin: 0;
+    display: grid;
+    gap: var(--space-m);
+    justify-items: center;
+  }
+
+  @media (min-width: 56rem) {
+    .szv__stage {
+      grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+      align-items: center;
+    }
+  }
+
+  .szv__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: min(36rem, 70svh);
+    font-family: var(--font-ui);
+  }
+
+  .szv__svg[data-szv-hidden] {
+    display: none;
+  }
+
+  .szv__canvas {
+    fill: var(--szv-canvas);
+  }
+
+  .szv__zone {
+    fill: var(--szv-zone);
+  }
+
+  .szv__safe {
+    fill: none;
+    stroke: var(--szv-safe);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .szv__guide,
+  .szv__circle {
+    fill: none;
+    stroke: var(--szv-guide);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 5;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .szv__band,
+  .szv__size {
+    fill: var(--szv-ink);
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .szv__band {
+    opacity: 0.85;
+  }
+
+  .szv__caption {
+    justify-self: stretch;
+    display: grid;
+    gap: var(--space-s);
+    font-size: var(--step--1);
+    color: var(--text-dim);
+  }
+
+  .szv__name {
+    font-size: var(--step-1);
+    color: var(--text);
+  }
+
+  .szv__facts {
+    margin: 0;
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .szv__facts div {
+    display: grid;
+    gap: 0.1em;
+    padding-block-start: var(--space-xs);
+    border-block-start: 1px solid var(--border);
+  }
+
+  .szv__facts dd {
+    margin: 0;
+    color: var(--text);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .szv__note {
+    margin: 0;
+  }
+</style>

@@ -157,11 +157,12 @@ export function groupShelves(
             key,
             title: project.data.title,
             label: project.data.category,
-            idea: project.data.story?.lede ?? project.data.summary,
+            idea: project.data.story?.lede ?? project.data.toolkit?.idea ?? project.data.summary,
             /* A self-initiated concept's "not affiliated" line (`client`),
                as a series shelf shows its `note`. */
             note: project.data.client,
-            storyPath: project.data.story ? projectPath(project) : undefined,
+            /* A story or a product case study (2026-10-02) both get the link. */
+            storyPath: project.data.story || project.data.toolkit ? projectPath(project) : undefined,
             posts: [],
           }
         : series

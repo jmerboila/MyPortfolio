@@ -348,6 +348,50 @@ const work = defineCollection({
           reel: z.string().optional(),
         })
         .optional(),
+
+      /* -- Product case study (2026-10-02, the Safe-Zone Toolkit) ----------
+         Rendered by ToolkitCase instead of the story: 01 the interactive
+         SafeZoneViewer (config/ig-safe-zones.ts), 02 the problem, 03 the
+         research, 04 the tool, 05 the series (the project's posts), 06
+         publishing, 07 what I learned (id="measure": the home page links
+         there). Every number in `results` carries its source. */
+      toolkit: z
+        .object({
+          idea: z.string().max(160),
+          type: z.string(),
+          deliverables: z.array(z.string()).min(2).max(6),
+          problem: z.object({
+            body: z.array(z.string()).min(1).max(3),
+            /* The hook Reel in both themes, under public/ (no audio). */
+            light: z.object({ src: z.string().startsWith('/'), poster: z.string().startsWith('/') }),
+            dark: z.object({ src: z.string().startsWith('/'), poster: z.string().startsWith('/') }),
+            alt: z.string(),
+          }),
+          research: z.object({
+            body: z.array(z.string()).min(1).max(3),
+            callout: z.string(),
+            source: z.string(),
+            disclaimer: z.string(),
+          }),
+          tool: z.object({
+            body: z.array(z.string()).min(1).max(3),
+            shots: z.array(pic.extend({ caption: z.string() })).min(1).max(3),
+          }),
+          series: z.object({ body: z.string() }),
+          publishing: z.object({
+            body: z.array(z.string()).min(1).max(3),
+            caption: z.object({ label: z.string(), time: z.string(), text: z.string() }),
+            schedule: z.array(z.object({ day: z.string(), label: z.string() })).min(3),
+          }),
+          results: z.object({
+            line: z.string(),
+            figures: z.array(z.object({ value: z.string(), label: z.string() })).min(2).max(4),
+            source: z.string(),
+            insight: z.string(),
+            next: z.array(z.string()).min(1).max(5),
+          }),
+        })
+        .optional(),
     });
   },
 });
