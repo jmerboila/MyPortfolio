@@ -19,85 +19,112 @@ year: "2026"
 tools:
   - "Illustrator"
   - "After Effects"
-presentation:
+# Logo identity, the Devsign8 pilot (2026-10-02). Sources:
+# - Devsign8.ai (C:\dev\Devsign8\04-Reference\Fonts, Mockups, Logos\Logos),
+#   artboard 1, the final outlined wordmark. Measurements are read from its
+#   paths (scripts/logo-presentation/test_lp.py): master 552.13 x 155.66 pt,
+#   cap height 105.42, x-height 78.34, descender 48.79; the g has 28 anchors.
+# - Construction and clear-space screenshots: Illustrator itself, on a copy
+#   of the .ai (scripts/logo-presentation/illustrator/).
+# - Mockups: free Mockups-Design.com templates (licence allows portfolio use,
+#   no attribution needed, PSDs never redistributed), filled in Photoshop by
+#   scripts/logo-presentation/photoshop/. The laptop screen is a real
+#   screenshot of devsign8.com.
+# - Jayson, 2026-10-01/02: what the 8 means; why the serif. The fonts are
+#   described in general terms only, never named.
+# - Brand Kit and Style Guide: palette, 120 px and 32 mm minimums, clear
+#   space equal to the D's height. Devsign8 is a creative studio, not an agency.
+identity:
   idea: "Dev for code, sign for design, and an 8 that turns on its side into infinity."
   type: "Own studio"
-  deliverables: ["Wordmark", "Construction and spacing", "Usage rules", "Logo animation"]
-  opening:
-    src: "../../assets/projects/logos/devsign8/01-opening.webp"
-    alt: "The Devsign8 wordmark in cream on near-black: Dev in a heavy sans, sign8 in a high-contrast serif."
+  deliverables: ["Wordmark", "Construction and clear space", "Usage rules", "Logo reel"]
+  mark:
+    src: "../../assets/projects/logos/devsign8/id-01-mark.webp"
+    alt: "The final Devsign8 wordmark in black on warm paper: Dev in a heavy sans serif, sign8 in a high-contrast serif."
+  meaning:
+    - part: "Dev"
+      means: "Development, the code."
+      note: "The websites and systems the studio builds, set heavy and upright."
+    - part: "sign"
+      means: "Design, the craft."
+      note: "Brand and visual design, set in an elegant serif."
+    - part: "8"
+      means: "Infinity, on its side."
+      note: "Infinity was always on my mind for this mark: I will never stop learning and discovering, on a loop."
   brief: "My studio builds websites and designs brands, and its name had to say both in one word. The mark had to read as one word, not two disciplines, work in black on light and white on dark with no colour needed, and stay sharp from a 120 px header to print."
-  ideaVisual:
-    src: "../../assets/projects/logos/devsign8/03-idea.webp"
-    alt: "The wordmark with three violet underlines: Dev labelled Development, the code; sign labelled Design, the craft; 8 labelled Infinity, the 8 turned, above an infinity sign."
-    caption: "The name already held the idea. Dev is the code, sign is the design, and the 8 turned on its side is infinity: I will never stop learning and discovering, on a loop."
-  exploration:
-    - src: "../../assets/projects/logos/devsign8/04-explore-1.webp"
-      alt: "Step 1: Dev in a heavy sans beside sign in a blackletter face."
-      label: "Step 1: a blackletter sign"
-      verdict: "Dropped"
-      note: "It looked like a different brand: not formal, not elegant."
-    - src: "../../assets/projects/logos/devsign8/04-explore-2.webp"
-      alt: "Step 2: Dev in a heavy sans beside sign in a high-contrast serif with a long, curling g."
-      label: "Step 2: Orange Avenue for sign"
-      verdict: "Kept"
-      note: "Simple, clean and elegant, with extravagant curves and decorative tails as the accent."
-    - src: "../../assets/projects/logos/devsign8/04-explore-3.webp"
-      alt: "Step 3: Devsign8, with the 8 added after sign."
-      label: "Step 3: the 8"
-      verdict: "Kept"
-      note: "Infinity was always the idea: never stop learning and discovering, on a loop."
-    - src: "../../assets/projects/logos/devsign8/04-explore-4.webp"
-      alt: "Step 4: the final Devsign8 wordmark, with the letters set tight."
-      label: "Step 4: spacing set"
-      verdict: "Final"
-      note: "Set tight in Illustrator, so the sans and the serif lock into one word."
   construction:
-    - src: "../../assets/projects/logos/devsign8/05-construction.webp"
-      alt: "The wordmark in Illustrator's outline view on a white artboard, with blue anchor points and handles, cyan guides labelled cap height 105.4 pt, x-height 78.3 pt, baseline and descender 48.8 pt, and a magenta measure of the 552.1 by 155.7 pt master."
-      caption: "Every letter, the 8 included, sits on four shared guides: a 105.4 pt cap height, a 78.3 pt x-height, the baseline and a 48.8 pt descender. The master is 552.1 x 155.7 pt, the size the brand guide specifies."
-    - src: "../../assets/projects/logos/devsign8/05-construction-tail.webp"
-      alt: "A close-up of the g in outline view: its loop and long tail drawn with 28 anchor points and their handles."
-      caption: "The g's tail, the decorative accent that made Orange Avenue the choice, drawn with 28 anchor points."
+    - src: "../../assets/projects/logos/devsign8/id-03-anchors.webp"
+      alt: "Screenshot from Adobe Illustrator: the final wordmark selected with the Direct Selection tool, every anchor point showing, on cyan guides at the cap height, x-height, baseline and descender, with vertical guides at its left and right edges."
+      caption: "The final wordmark in Illustrator, every anchor point selected. Four guides carry all eight letters: a 105.4 pt cap height, a 78.3 pt x-height, the baseline and a 48.8 pt descender."
+      bar: "Devsign8.ai @ 134%"
+    - src: "../../assets/projects/logos/devsign8/id-03-tail.webp"
+      alt: "Screenshot from Adobe Illustrator at 400%: the g, n and 8 with their anchor points, the g's accent and long, curling tail falling below the baseline to the descender guide."
+      caption: "At 400%: the g's loop and long tail, the decorative accent that made this serif the choice, drawn with 28 anchor points."
+      bar: "Devsign8.ai @ 400%"
   typography:
-    - src: "../../assets/projects/logos/devsign8/06-type-dev.webp"
-      alt: "Specimen: Dev set large in Roboto Black, with the alphabet and numerals below."
-      name: "Roboto Black"
-      role: "Dev: solid and technical, the code side of the studio."
-    - src: "../../assets/projects/logos/devsign8/06-type-sign8.webp"
-      alt: "Specimen: sign8 set large in Orange Avenue, with the alphabet and numerals below."
-      name: "Orange Avenue"
-      role: "sign8: elegant curves and decorative tails, the design side."
+    - src: "../../assets/projects/logos/devsign8/id-04-type-sans.webp"
+      alt: "Dev, cut from the wordmark, on faint guides: heavy, upright letters with no serifs."
+      kind: "Sans serif"
+      part: "Dev"
+      why: "A heavy sans serif: solid, upright and technical. It carries the code side of the studio and gives the word its weight."
+    - src: "../../assets/projects/logos/devsign8/id-04-type-serif.webp"
+      alt: "sign8, cut from the wordmark, on the same guides: high-contrast letters with fine serifs, an accent over the g and a long, curling tail."
+      kind: "Serif"
+      part: "sign8"
+      why: "A high-contrast serif: simple, clean and elegant, with extravagant curves and decorative tails as the accent. It carries the design side."
+  typeNote: "Two type families, one word: Dev and sign8 sit on the same cap height and baseline, and the letters are set tight, so the sans and the serif lock together instead of reading as two names."
   colours:
     - { name: "Ink", hex: "#0E0E0F", use: "The wordmark on light grounds, and the dark ground." }
     - { name: "Paper", hex: "#F7F5F1", use: "The light ground, and the wordmark on dark." }
     - { name: "Violet", hex: "#5A3FE0", use: "The studio's accent colour; the wordmark goes white on it." }
-  versatility:
-    src: "../../assets/projects/logos/devsign8/08-versatility.webp"
-    alt: "The wordmark in black on cream, cream on near-black and white on violet, then at 480, 240 and 120 pixels wide."
-    caption: "One colour at a time, on any of the three grounds, and still clear at 120 px."
-  inUse:
-    - src: "../../assets/projects/logos/devsign8/09-card.webp"
-      alt: "Mockup: two business cards, cream with the black wordmark and black with the cream wordmark."
-      caption: "Mockup: business cards, front and back."
-    - src: "../../assets/projects/logos/devsign8/09-header.webp"
-      alt: "Mockup: a browser window showing a dark website header with the wordmark top left, navigation and a violet button."
-      caption: "Mockup: the website header."
-    - src: "../../assets/projects/logos/devsign8/09-avatar.webp"
-      alt: "Mockup: a round dark social avatar with the cream wordmark, above the handle hello.devsign8."
-      caption: "Mockup: the social avatar."
-    - src: "../../assets/projects/logos/devsign8/09-sign.webp"
-      alt: "Mockup: a clear sign plate held by four standoffs, with the black wordmark."
-      caption: "Mockup: a studio sign plate."
-  rules:
-    src: "../../assets/projects/logos/devsign8/10-rules.webp"
-    alt: "The wordmark inside a violet clear-space zone as deep as the D is tall on every side, with the D repeated at two corners as the measure."
-    caption: "Clear space and minimum size."
-    items:
+  usage:
+    clearSpace:
+      src: "../../assets/projects/logos/devsign8/id-06-clearspace.webp"
+      alt: "Screenshot from Adobe Illustrator: the wordmark inside a pale violet clear-space zone with dashed edges, the D repeated at two corners as the unit, and labels for clear space x = height of the D (105.4 pt), cap height 105.4 pt, x-height 78.3 pt, baseline, descender 48.8 pt and master 552.1 x 155.7 pt."
+      caption: "Clear space is x, the height of the D (105.4 pt at master size), on every side; nothing enters the violet zone. The master is 552.1 x 155.7 pt."
+      bar: "Devsign8.ai @ 134%"
+    versions:
+      - src: "../../assets/projects/logos/devsign8/id-06-on-paper.webp"
+        alt: "The wordmark in ink on paper."
+        label: "Ink on paper"
+      - src: "../../assets/projects/logos/devsign8/id-06-on-ink.webp"
+        alt: "The wordmark in paper on ink."
+        label: "Paper on ink"
+      - src: "../../assets/projects/logos/devsign8/id-06-on-violet.webp"
+        alt: "The wordmark in white on violet."
+        label: "White on violet"
+    sizes:
+      src: "../../assets/projects/logos/devsign8/id-06-sizes.webp"
+      alt: "The wordmark at 480, 240 and 120 pixels wide, each with a measure line and label; 120 px is marked as the minimum."
+      caption: "Never smaller than 120 px wide on screen, or 32 mm in print."
+    rules:
       - "Keep clear space equal to the height of the D on every side."
-      - "Never set it smaller than 120 px wide on screen or 32 mm in print."
-      - "Black on light, white on dark; never recolour, stretch or add effects."
+      - "One colour at a time: ink on light, paper or white on dark and on violet."
+      - "Never recolour, stretch, outline or add effects."
       - "Use the official file; never retype the wordmark."
+  inUse:
+    - src: "../../assets/projects/logos/devsign8/id-07-wall.webp"
+      alt: "Mockup: the wordmark as white dimensional letters on a charcoal meeting-room wall, above a wooden table and black office chairs."
+      caption: "Mockup: dimensional letters on the meeting-room wall."
+      wide: true
+    - src: "../../assets/projects/logos/devsign8/id-07-card.webp"
+      alt: "Mockup: a cream business card with the wordmark blind-embossed, lit from the side, on a warm beige ground."
+      caption: "Mockup: a blind-embossed business card."
+    - src: "../../assets/projects/logos/devsign8/id-07-glass.webp"
+      alt: "Mockup: a frosted glass sign plate on four steel standoffs with the black wordmark, on a pale wall."
+      caption: "Mockup: a frosted glass sign plate."
+    - src: "../../assets/projects/logos/devsign8/id-07-laptop.webp"
+      alt: "Mockup: a laptop showing the devsign8.com home page, dark, with the wordmark in the header and the headline Branding, websites, and SEO that help your business get found online."
+      caption: "Mockup: devsign8.com, with the wordmark in the site header."
+      wide: true
+    - src: "../../assets/projects/logos/devsign8/id-07-stationery.webp"
+      alt: "Mockup: a stationery set from above: a letterhead, a DL card and a white business card with the black wordmark; a black business card, two black envelopes and a black mug with the white wordmark."
+      caption: "Mockup: letterhead, cards, envelopes and a mug."
+    - src: "../../assets/projects/logos/devsign8/id-07-tote.webp"
+      alt: "Mockup: a natural canvas tote bag with the black wordmark printed across the top."
+      caption: "Mockup: a canvas tote bag."
+  inUseNote: "Photo mockups made from free Mockups-Design.com templates, with the final wordmark placed in Photoshop. The laptop shows the live devsign8.com."
+  reel: "The reel shows the mark coming to life: Dev painted and sign written in animated ink, then the lettering set, kerned and outlined in Illustrator before the final wordmark lands."
 # 2026-09-28: the logo reel (Devsign8 Signed 9x16 v3), linked from the
 # homepage's 03 Brand still ("Watch it come to life").
 video:
@@ -112,18 +139,3 @@ video:
 featured: true
 order: 10
 ---
-<!-- SOURCES for the presentation (2026-10-01):
-     - C:\dev\Devsign8\04-Reference\Fonts, Mockups, Logos\Logos\Devsign8.ai,
-       artboard 1: the four steps (Roboto + Canterbury; Roboto + Orange
-       Avenue; + the 8; the final, outlined). Measurements are read from the
-       final's paths by scripts/logo-presentation/lp.py and checked by
-       test_lp.py: master 552.13 x 155.66 pt, cap height 105.42, x-height
-       78.34, descender 48.79; the g has 28 anchor points.
-     - Jayson, 2026-10-01: why Canterbury was dropped, why Orange Avenue,
-       what the 8 means; the Orange Avenue licence is bought; Elev8 and the
-       DS8 / D8 marks are not shown.
-     - Brand Kit and Style Guide (C:\dev\Devsign8\01-Current): palette, 120 px
-       and 32 mm minimums, clear space equal to the D's height. Devsign8 is a
-       creative studio (Jayson's call, 2026-10-01), not an agency.
-     - Panels: scripts/logo-presentation/devsign8.py. The reel's brush and pen
-       are simulated (ink_engine.py), so the caption says animated ink. -->

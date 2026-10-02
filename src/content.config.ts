@@ -332,6 +332,54 @@ const work = defineCollection({
           rules: pic.extend({ caption: z.string(), items: z.array(z.string()).min(3).max(5) }),
         })
         .optional(),
+
+      /* -- Logo identity (2026-10-02, the Devsign8 pilot) ------------------
+         The second logo presentation, rendered by LogoIdentity: the final
+         mark and its meaning first, then the brief, construction from the
+         real .ai file in Illustrator, type in general terms only (no font
+         names: `kind` is a class, never a family), colour, usage, photo
+         mockups and the logo reel (`video`). No exploration studies. */
+      identity: z
+        .object({
+          idea: z.string().max(140),
+          type: z.string(),
+          deliverables: z.array(z.string()).min(2).max(6),
+          mark: pic,
+          meaning: z.array(z.object({ part: z.string(), means: z.string(), note: z.string() })).min(2).max(4),
+          brief: z.string().max(600),
+          /* `bar` labels the Illustrator window frame, e.g. "Devsign8.ai @ 134%". */
+          construction: z.array(pic.extend({ caption: z.string(), bar: z.string() })).min(1).max(3),
+          typography: z
+            .array(
+              z.object({
+                src: image(),
+                alt: z.string(),
+                kind: z.enum(['Sans serif', 'Serif', 'Script', 'Display', 'Monospace']),
+                part: z.string(),
+                why: z.string(),
+              }),
+            )
+            .min(1)
+            .max(3),
+          typeNote: z.string().optional(),
+          colours: z
+            .array(z.object({ name: z.string(), hex: z.string().regex(/^#[0-9A-F]{6}$/), use: z.string() }))
+            .min(2)
+            .max(6),
+          usage: z.object({
+            clearSpace: pic.extend({ caption: z.string(), bar: z.string() }),
+            versions: z.array(pic.extend({ label: z.string() })).min(2).max(4),
+            sizes: pic.extend({ caption: z.string() }),
+            rules: z.array(z.string()).min(3).max(6),
+          }),
+          inUse: z
+            .array(pic.extend({ caption: z.string().startsWith('Mockup:'), wide: z.boolean().default(false) }))
+            .min(4)
+            .max(8),
+          inUseNote: z.string().optional(),
+          reel: z.string().optional(),
+        })
+        .optional(),
     });
   },
 });

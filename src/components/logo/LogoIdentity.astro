@@ -1,0 +1,219 @@
+---
+/* ============================================================================
+   LogoIdentity.astro: the second logo presentation (2026-10-02, piloted on
+   Devsign8). The final mark leads, at a quiet size, with what each part
+   means; then the brief, construction in Illustrator itself, the type in
+   general terms (sans serif, serif: never a font name), colour, usage,
+   photo mockups and the logo reel. No exploration studies, no full-bleed
+   logo. Text stays HTML; every fact drawn in an image is repeated in its
+   caption.
+   ========================================================================= */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { href } from '../../lib/url';
+
+type Work = CollectionEntry<'work'>['data'];
+interface Props {
+  d: Work;
+}
+const { d } = Astro.props;
+const p = d.identity!;
+const wide = '(min-width: 78rem) 74rem, 92vw';
+const half = '(min-width: 48rem) 36rem, 92vw';
+const third = '(min-width: 48rem) 24rem, 92vw';
+const n = (i: number) => String(i).padStart(2, '0');
+---
+
+<div class="li">
+  <section class="li-sec container li-mark" aria-labelledby="li-h-01">
+    <figure class="li-fig li-mark__fig">
+      <Image src={p.mark.src} alt={p.mark.alt} widths={[600, 900, 1200]} sizes={half} loading="eager" fetchpriority="high" />
+      <figcaption class="visually-hidden">{p.mark.alt}</figcaption>
+    </figure>
+    <div class="li-mark__text">
+      <h2 id="li-h-01" class="li-h"><span class="li-num">{n(1)}</span> The mark</h2>
+      <p class="li-idea">{p.idea}</p>
+      <dl class="li-meaning">
+        {p.meaning.map((m) => (
+          <div>
+            <dt>{m.part}</dt>
+            <dd><strong>{m.means}</strong> {m.note}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+    <dl class="li-glance">
+      <div><dt>Project</dt><dd>{p.type}</dd></div>
+      {d.role && <div><dt>Role</dt><dd>{d.role}</dd></div>}
+      <div><dt>Deliverables</dt><dd>{p.deliverables.join(', ')}</dd></div>
+      {d.tools.length > 0 && <div><dt>Tools</dt><dd>{d.tools.join(', ')}</dd></div>}
+    </dl>
+  </section>
+
+  <section class="li-sec container" aria-labelledby="li-h-02">
+    <h2 id="li-h-02" class="li-h"><span class="li-num">{n(2)}</span> The brief</h2>
+    <p class="li-lede">{p.brief}</p>
+  </section>
+
+  <section class="li-sec container" aria-labelledby="li-h-03">
+    <h2 id="li-h-03" class="li-h"><span class="li-num">{n(3)}</span> Construction</h2>
+    {p.construction.map((x) => (
+      <figure class="li-fig li-ai li-split">
+        <div class="li-ai__frame">
+          <p class="li-ai__bar" aria-hidden="true"><span>Adobe Illustrator</span> {x.bar}</p>
+          <Image src={x.src} alt={x.alt} widths={[800, 1200, 1600]} sizes={wide} loading="lazy" />
+        </div>
+        <figcaption>{x.caption}</figcaption>
+      </figure>
+    ))}
+  </section>
+
+  <section class="li-sec container" aria-labelledby="li-h-04">
+    <h2 id="li-h-04" class="li-h"><span class="li-num">{n(4)}</span> Typography</h2>
+    <ul class="li-grid li-grid--2" role="list">
+      {p.typography.map((t) => (
+        <li>
+          <figure class="li-fig li-card">
+            <Image src={t.src} alt={t.alt} widths={[600, 900, 1200]} sizes={half} loading="lazy" />
+            <figcaption>
+              <span class="li-kind">{t.kind}</span>
+              <strong class="li-part">{t.part}</strong>
+              <span class="li-note">{t.why}</span>
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+    {p.typeNote && <p class="li-lede">{p.typeNote}</p>}
+  </section>
+
+  <section class="li-sec container" aria-labelledby="li-h-05">
+    <h2 id="li-h-05" class="li-h"><span class="li-num">{n(5)}</span> Colour</h2>
+    <ul class="li-swatches" role="list">
+      {p.colours.map((c) => (
+        <li>
+          <span class="li-swatch" style={`background:${c.hex}`} aria-hidden="true"></span>
+          <strong>{c.name}</strong> <code>{c.hex}</code>
+          <span class="li-note">{c.use}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="li-sec container" aria-labelledby="li-h-06">
+    <h2 id="li-h-06" class="li-h"><span class="li-num">{n(6)}</span> Usage</h2>
+    <figure class="li-fig li-ai li-split">
+      <div class="li-ai__frame">
+        <p class="li-ai__bar" aria-hidden="true"><span>Adobe Illustrator</span> {p.usage.clearSpace.bar}</p>
+        <Image src={p.usage.clearSpace.src} alt={p.usage.clearSpace.alt} widths={[800, 1200, 1600]} sizes={wide} loading="lazy" />
+      </div>
+      <figcaption>{p.usage.clearSpace.caption}</figcaption>
+    </figure>
+    <ul class="li-grid li-grid--3" role="list">
+      {p.usage.versions.map((v) => (
+        <li>
+          <figure class="li-fig">
+            <Image src={v.src} alt={v.alt} widths={[400, 800]} sizes={third} loading="lazy" />
+            <figcaption>{v.label}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+    <figure class="li-fig li-split">
+      <Image src={p.usage.sizes.src} alt={p.usage.sizes.alt} widths={[800, 1200, 1600]} sizes={wide} loading="lazy" />
+      <figcaption>{p.usage.sizes.caption}</figcaption>
+    </figure>
+    <ul class="li-rules">
+      {p.usage.rules.map((r) => <li>{r}</li>)}
+    </ul>
+  </section>
+
+  <section class="li-sec container" aria-labelledby="li-h-07">
+    <h2 id="li-h-07" class="li-h"><span class="li-num">{n(7)}</span> In use</h2>
+    <ul class="li-grid li-grid--2" role="list">
+      {p.inUse.map((x) => (
+        <li class={x.wide ? 'is-wide' : undefined}>
+          <figure class="li-fig li-fig--inuse">
+            <Image src={x.src} alt={x.alt} widths={[600, 1000, 1600]} sizes={x.wide ? wide : half} loading="lazy" />
+            <figcaption>{x.caption}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+    {p.inUseNote && <p class="li-small">{p.inUseNote}</p>}
+  </section>
+
+  {d.video && (
+    <section class="li-sec container" aria-labelledby="li-h-08">
+      <h2 id="li-h-08" class="li-h"><span class="li-num">{n(8)}</span> The reel</h2>
+      <div class="li-reel">
+        <figure class="li-fig li-fig--video">
+          <video class={`li-player is-${d.video.ratio}`} src={href(d.video.src)} poster={href(d.video.poster)} controls muted loop playsinline preload="none" aria-label={d.video.alt}></video>
+          <figcaption>{d.video.caption}</figcaption>
+        </figure>
+        {p.reel && <p class="li-lede">{p.reel}</p>}
+      </div>
+    </section>
+  )}
+</div>
+
+<style>
+  .li { display: grid; gap: var(--space-section); }
+  .li-sec { display: grid; gap: var(--space-m); }
+  .li-h { font-size: var(--step-3); display: flex; gap: 0.6em; align-items: baseline; margin: 0; }
+  .li-num { font-size: var(--step--1); letter-spacing: var(--tracking-caps); color: var(--accent); font-variant-numeric: tabular-nums; }
+  .li-lede { font-size: var(--step-1); max-inline-size: 60ch; color: var(--text-dim); margin: 0; }
+  .li-small { font-size: var(--step--1); color: var(--text-dim); margin: 0; max-inline-size: 65ch; }
+  .li-note { display: block; margin-block-start: 0.2em; }
+
+  /* 01: the mark beside its meaning, never full-bleed */
+  .li-mark { grid-template-columns: 1fr; gap: var(--space-l); align-items: center; }
+  @media (min-width: 56rem) { .li-mark { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); column-gap: var(--space-xl); } }
+  .li-mark__text { display: grid; gap: var(--space-m); }
+  .li-idea { font-size: var(--step-2); max-inline-size: 26ch; margin: 0; line-height: var(--leading-snug); }
+  .li-meaning { margin: 0; display: grid; gap: var(--space-s); }
+  .li-meaning > div { display: grid; grid-template-columns: 4.5rem 1fr; gap: var(--space-s); padding-block-start: var(--space-s); border-block-start: 1px solid var(--border); }
+  .li-meaning dt { font-weight: 700; font-size: var(--step-1); color: var(--accent); line-height: 1.2; }
+  .li-meaning dd { margin: 0; color: var(--text-dim); }
+  .li-meaning dd strong { color: var(--text); display: block; }
+  .li-glance { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--space-m) var(--space-xl); margin: 0; padding-block-start: var(--space-m); border-block-start: 1px solid var(--border); }
+  .li-glance dt { font-size: var(--step--1); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--text-dim); }
+  .li-glance dd { margin: 0; font-weight: 600; }
+
+  .li-fig { margin: 0; }
+  .li-fig :global(img), .li-player { inline-size: 100%; block-size: auto; border-radius: var(--radius-l); border: 1px solid var(--border); display: block; }
+  .li-fig figcaption { margin-block-start: var(--space-xs); font-size: var(--step--1); color: var(--text-dim); max-inline-size: 65ch; }
+  .li-fig figcaption strong { color: var(--text); }
+
+  /* Illustrator screenshots sit in a quiet window frame, labelled */
+  .li-ai__frame { background: #2b2b2b; border-radius: var(--radius-l); padding: 0 0.5rem 0.5rem; border: 1px solid #3a3a3a; box-shadow: 0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.45); }
+  .li-ai__bar { margin: 0; padding: 0.55rem 0.4rem; font-size: 0.75rem; letter-spacing: 0.02em; color: #b8b8b8; font-variant-numeric: tabular-nums; }
+  .li-ai__bar span { color: #ff9a00; font-weight: 700; margin-inline-end: 0.6em; }
+  .li-ai .li-ai__frame :global(img) { border-radius: calc(var(--radius-l) - 0.5rem); border: 0; }
+
+  /* Wide pictures of the mark sit at about 60% with the caption beside them,
+     so the wordmark never reads as a full-width image. */
+  @media (min-width: 56rem) {
+    .li-split { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); column-gap: var(--space-xl); align-items: end; }
+    .li-split figcaption { margin: 0; font-size: var(--step-0); padding-block-end: var(--space-s); border-block-end: 1px solid var(--border); }
+  }
+
+  .li-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-l); }
+  @media (min-width: 48rem) {
+    .li-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .li-grid .is-wide { grid-column: 1 / -1; }
+  }
+  .li-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-s); }
+  .li-card figcaption { display: grid; gap: 0.15em; }
+  .li-kind { font-size: 0.8em; letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--accent); }
+  .li-part { font-size: var(--step-1); }
+
+  .li-swatches { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); }
+  .li-swatch { display: block; block-size: 5rem; border-radius: var(--radius-m); border: 1px solid var(--border); margin-block-end: var(--space-xs); }
+  .li-swatches code { font-size: var(--step--1); color: var(--text-dim); margin-inline-start: 0.4em; }
+  .li-rules { margin: 0; padding-inline-start: 1.2em; display: grid; gap: var(--space-2xs); max-inline-size: 65ch; }
+
+  .li-reel { display: grid; gap: var(--space-l); align-items: center; }
+  @media (min-width: 48rem) { .li-reel { grid-template-columns: minmax(0, 22rem) minmax(0, 1fr); column-gap: var(--space-xl); } }
+  .li-player.is-9x16 { max-inline-size: 22rem; aspect-ratio: 9 / 16; }
+</style>
