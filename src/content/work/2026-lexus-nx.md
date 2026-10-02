@@ -9,8 +9,9 @@
 #     Thu 2026-10-01 9 AM (Toronto); shown only as relative days
 # Results come as a sixth section once Buffer has a week of numbers (about
 # 2026-10-08; docs/TODO.md). Campaign case study since 2026-10-02 (spec
-# 2026-10-02-campaign-case-design.md); the poster type is described in
-# general terms, never by font name (Jayson, 2026-10-02).
+# 2026-10-02-campaign-case-design.md). The fonts are named here (Jayson,
+# 2026-10-02): it is a tutorial, so the type it teaches is part of the work;
+# the no-font-names rule is for his logos only.
 title: "2026 Lexus NX"
 shortTitle: "2026 Lexus NX"
 summary: "One Lexus poster, three posts: the still, a Reel that builds it, and the InDesign tutorial."
@@ -62,7 +63,7 @@ campaign:
     - heading: "The layout"
       body:
         - "The layout is built on hierarchy. A deep red band splits the page, the car crosses it, and the name and two numbers carry the message. Everything else stays quiet."
-        - "Ghosted front and rear views sit behind the car at 20% with a gradient feather, and a soft Multiply shadow grounds it. A geometric sans serif sets the name and a condensed display face the numbers."
+        - "Ghosted front and rear views sit behind the car at 20% with a gradient feather, and a soft Multiply shadow grounds it. Montserrat sets the name and Bebas Neue the numbers."
       visual:
         kind: table
         caption: "The build, step by step"
@@ -75,8 +76,8 @@ campaign:
           - ["5. Ghost views", "Front and rear views at 20%, gradient feather"]
           - ["6. Soft shadow", "Multiply 55%, feather 22"]
           - ["7. Emblem and wordmark", "The Lexus emblem over LEXUS"]
-          - ["8. NX 350h", "A geometric sans serif, medium weight, tracking 520"]
-          - ["9. Specs", "Sans serif labels, condensed display numbers: 240 HP, 200 KM/H"]
+          - ["8. NX 350h", "Montserrat Medium, tracking 520"]
+          - ["9. Specs", "Montserrat labels, Bebas Neue numbers: 240 HP, 200 KM/H"]
           - ["10. Body copy", "12.5 / 21, centred"]
         source: "Settings from the InDesign file, shown step by step in the tutorial Reel."
     - heading: "The motion"

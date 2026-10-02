@@ -1,6 +1,7 @@
-/* font-names.ts: the fonts in Jayson's marks and posters are never named on
-   the site (2026-10-02), not even in this public repo. This holds SHA-256
-   hashes of the lowercased names (the logo, specimen, UI and poster faces);
+/* font-names.ts: the fonts in Jayson's logos are never named on the site
+   (2026-10-02), not even in this public repo. This holds SHA-256 hashes of
+   the lowercased names (the logo, specimen and DigiSkills UI faces). The
+   Lexus tutorial names its poster fonts on purpose: it teaches them.
    `leakedFontNames` checks every run of one to three words in a page
    against them and returns any run that matches. */
 import { createHash } from 'node:crypto';
@@ -14,8 +15,6 @@ const FONT_HASHES = new Set([
   '4bde11d8a4acc1e16e8bfa11f4797dcc66b0342c356a61c12f09c91e067aa978',
   'dfc67fb614aa32b63b026e5ba34ddeee632731e1c84e1aa6e81a193fdc9799e4',
   'df15882c4140b09f1eb39ae39aa80d10bc3136a7f8347354821a7a4c52b1454a',
-  '3eeceb71042dec77ae77ec287f60791f14bf16f26a602ae5537e899621f9821a',
-  'f23eba166ab323f5f390910cc70d7e13488aedcd323b019384131e5d5211a594',
 ]);
 
 const sha = (s: string) => createHash('sha256').update(s).digest('hex');

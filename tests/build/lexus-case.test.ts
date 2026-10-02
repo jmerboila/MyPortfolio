@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { leakedFontNames } from './font-names.ts';
 
 /* The 2026 Lexus NX project (2026-09-29; a campaign case study since
    2026-10-02, spec 2026-10-02-campaign-case-design.md): its three posts
@@ -28,11 +27,10 @@ test('the Lexus case study: sections 01 to 05 in order, no story chapters, no re
   assert.ok(html.includes('Self-initiated concept. Not affiliated with or endorsed by Lexus or Toyota.'));
 });
 
-test('the poster type is described in general terms, never by font name', () => {
-  assert.deepEqual(leakedFontNames(html), []);
-  for (const f of [`src/content/work/${SLUG}.md`, 'src/content/social/lexus-tutorial-reel/index.md']) {
-    assert.deepEqual(leakedFontNames(read(f)), [], f);
-  }
+test('the tutorial names the fonts it teaches (the no-names rule is for logos)', () => {
+  const table = html.slice(html.indexOf('<table class="st-table"'), html.indexOf('</table>') + 8);
+  assert.ok(table.includes('Montserrat Medium, tracking 520'));
+  assert.ok(table.includes('Bebas Neue'));
 });
 
 test('the reach chart shows whole people, not decimals', () => {

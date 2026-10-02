@@ -55,7 +55,7 @@ order: 70
 # Launched 2026-08-25 (dates stay here, never on the page). Results:
 # Instagram Insights via Buffer, one month after posting. The carousel's
 # three earlier versions (gtd-draft-1..3) are not shown (Jayson, 2026-10-02:
-# only the final work). The home page's 12x Reels tile links #measure.
+# only the final work). The home page's 26x format tile links #measure.
 campaign:
   heading: "The launch"
   idea: "A car I helped build was about to hit the street, so its reveal had to feel as fast as the car: a smoke Reel to reach people, then a seamless carousel to hold them."

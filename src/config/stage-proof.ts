@@ -32,9 +32,13 @@
      of 2026-09-29 (first data 2026-06-22): 13 clicks, 57 impressions,
      CTR 22.8%, average position 8.7. Queries mostly anonymised, so part of
      the CTR may be brand searches; small sample, shown as a rate only.
-   - Buffer (org "My Organization"), list_posts pulled 2026-09-28: Instagram
-     Reels averaged 43 accounts reached per post (13 posts), image posts 3.5
-     (2 posts) = 12x. Hook test, same Toolkit series, both Reels: "Your 4:5
+   - Format (2026-10-02, so the tile matches the page it links to): the
+     Ford launch's own results, Reel 104 reached vs carousel 4 = 26x
+     (Instagram Insights via Buffer, one month after posting). It replaced
+     an account-wide figure the Ford page never showed: Reels averaged 43
+     reached per post (13 posts), image posts 3.5 (2 posts) = 12x (Buffer
+     list_posts, 2026-09-28).
+   - Hook test, same Toolkit series, both Reels: "Your 4:5
      post loses 34px per side on the grid" reached 84; "Only the centre
      circle of your highlight cover survives" reached 6 = 14x.
    - Posting slots: Buffer's 2026 studies (52M posts; 9.6M Instagram,
@@ -192,15 +196,15 @@ export const STAGE_PROOF: Record<string, Proof> = {
       {
         value: '14×',
         label: 'A stronger hook',
-        line: 'Opening with a real problem reached 14 times more people than a vague topic.',
-        source: 'Buffer, Instagram Reels',
+        line: 'A hook that named a loss people could picture reached 14 times more people than the weakest.',
+        source: 'Instagram Insights via Buffer',
         path: '/work/social/devsign8-ig-safe-zone-toolkit/#measure',
       },
       {
-        value: '12×',
+        value: '26×',
         label: 'The right format',
-        line: 'Reels reached 12 times more people per post than image posts.',
-        source: 'Buffer, Instagram',
+        line: 'My launch Reel reached 26 times more people than the carousel posted with it.',
+        source: 'Instagram Insights via Buffer',
         path: '/work/social/2026-ford-mustang-gtd/#measure',
       },
     ],
