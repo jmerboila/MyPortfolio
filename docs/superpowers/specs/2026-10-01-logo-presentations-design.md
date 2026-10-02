@@ -17,7 +17,7 @@ files. None of the old images is reused.
 | Where | The portfolio's `/work/logo/<slug>/` pages, not a separate deck |
 | Process shown | A curated path: 3 to 4 explorations per logo, one line each on why it was kept or dropped |
 | Applications | Clean flat mockups built from the real vectors, each labelled "Mockup" |
-| Typefaces | Named, like a studio would. The Orange Avenue desktop licence is bought before this goes live |
+| Typefaces | Described in general terms, never named (Jayson, 2026-10-02). The the high-contrast serif desktop licence is bought before this goes live |
 | Layout | Option A: one dedicated presentation layout for logo projects |
 | Studio | Devsign8 is a creative studio, never an agency |
 
@@ -69,9 +69,9 @@ repeated in its caption or the HTML around it. Each image has alt text.
   DS8 / D8 / `<D>` marks are favicon ideas Jayson does not like (Jayson's call,
   2026-10-01). No D8 anywhere in the presentation.
 - Exploration (curated, 4), with Jayson's reasons (2026-10-01):
-  1. Dev + blackletter sign (Canterbury): dropped; it looked like a
+  1. Dev + blackletter sign (a blackletter face): dropped; it looked like a
      different brand, not formal, not elegant.
-  2. Dev + Orange Avenue sign: kept; simple, clean and elegant, with
+  2. Dev + the high-contrast serif sign: kept; simple, clean and elegant, with
      extravagant curves and decorative tails as the accent.
   3. Adding the 8: infinity was always the idea: never stop learning and
      discovering, on a loop.
@@ -79,7 +79,7 @@ repeated in its caption or the HTML around it. Each image has alt text.
 - Construction: the outlined final with cap height, x-height, baseline and
   descender measured from the glyph paths; letter gaps measured between
   glyph bounds; the 8 marked as the infinity turn.
-- Typography: Roboto (Dev, code), Orange Avenue (sign8, design).
+- Typography: the heavy sans serif (Dev, code), the high-contrast serif (sign8, design).
 - In use (mockups): business card (wordmark, front and back), website
   header, social avatar, studio sign plate.
 - Rules: from the style guide (clear space = D cap height; 120 px / 32 mm
@@ -91,12 +91,12 @@ repeated in its caption or the HTML around it. Each image has alt text.
   the four rejects), the JM reel brief (the reasons, in Jayson's words).
   Jayson confirmed (2026-10-01) the brief's reading of the build: it is how
   the reel was made and how the mark was made.
-- Exploration (4): Bask Old Face JM ("close, but something missing"),
+- Exploration (4): a classic old-style serif JM ("close, but something missing"),
   fused ligature ("the J got lost"), script Jme ("felt separated"; the
-  Birds of Paradise font is not embedded and is personal-use only, so it
+  a script face font is not embedded and is personal-use only, so it
   is left out of the image and described in the note only), heavy JME
   ("too bold").
-- Construction: Perpetua Titling MT Light at its set size, the J raised
+- Construction: a light titling serif at its set size, the J raised
   and dropped below the baseline, the 5 pt offset, the Shape Builder cut,
   with measurements from the paths.
 - In use (mockups): favicon in a browser tab, site header, social avatar,
@@ -143,7 +143,7 @@ dark.
 
 ## Launch gates (before merging to main and pushing)
 
-1. ~~Orange Avenue desktop licence~~: bought (Jayson, 2026-10-01).
+1. ~~the high-contrast serif desktop licence~~: bought (Jayson, 2026-10-01).
 2. ~~Devsign8 kept/dropped reasons; Elev8 and D8~~: answered above.
 3. ~~JM build reading~~: confirmed.
 4. Jayson approves the finished pages from screenshots.

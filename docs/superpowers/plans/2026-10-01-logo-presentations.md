@@ -17,7 +17,7 @@
 - No em dashes (U+2014) anywhere in content files, captions, alt text or panel labels.
 - Devsign8 is a "creative studio" / "studio", never "agency".
 - No Elev8, DS8, D8 or `<D>` anywhere (Jayson's call). The style guide's "D8 below minimum" rule is left out.
-- Birds of Paradise (personal-use, not embedded) is never drawn; the Jme reject is described in words only.
+- a script face (personal-use, not embedded) is never drawn; the Jme reject is described in words only.
 - No visible dates on pages (timeless portfolio rule).
 - Panels are 1600 x 1200 px WebP, labels 32 px or larger in Inter Tight (installed system font).
 - Every In use image carries a visible "Mockup" tag, and its caption starts with "Mockup:".
@@ -29,7 +29,7 @@
 - Devsign8.ai artboard 1, final wordmark (row 4): glyph bounds D `[376.41,116.25,461.38,221.67]`, e `[462.70,114.80,537.67,196.04]`, v `[530.31,116.25,607.20,194.59]`, s `[602.72,113.88,666.92,192.76]`, i `[660.67,116.25,699.72,222.13]`, g `[695.91,67.46,783.85,203.00]`, n `[772.41,116.25,868.48,193.06]`, 8 `[857.91,114.80,928.54,223.12]`. Width 552.13, height 155.66 (style guide master: 552 x 156). Baseline 116.25; cap height 105.42 (D); x-height 78.34 (v); descender 48.79 (g). e/v outlines overlap by 7.36.
 - Devsign8.ai artboard 1 rows (crop boxes): step 1 `[420,675,845,800]`, step 2 `[415,486,900,635]`, step 3 `[400,295,900,460]`, step 4 final `[366,57,939,233]`.
 - JM Design.ai artboard 1: B1 text `[131,536,425,743]`; B2 `[500.7,497.4,767.1,754.4]`; B3 J offset `[830.39,492.44,946.41,759.37]` vs J `[837.12,497.44,941.42,754.37]` and M offset `[850.07,547.70,1021.45,709.41]` vs M `[855.07,561.64,1016.45,704.41]` (offset 5.0 pt); B4 `[1082.4,492.4,1261.7,749.4]`; B5 final `[609.22,116.51,789.16,373.44]` with M `[626.56,180.17,789.16,324.02]`: J drops 63.66 below the M's baseline and rises 49.42 above its top.
-- JM Design.ai artboard 2 rejects: A1 Bask Old Face "JM" `[263.6,611.0,581.5,805.7]`; A2 fused ligature `[136.6,343.2,271.6,469.7]`; A3 "Jme" (Birds of Paradise, never drawn) `[456.9,341.4,756.4,453.1]`; A4 heavy JME `[922.3,327.9,1263.4,485.0]`.
+- JM Design.ai artboard 2 rejects: A1 a classic old-style serif "JM" `[263.6,611.0,581.5,805.7]`; A2 fused ligature `[136.6,343.2,271.6,469.7]`; A3 "Jme" (a script face, never drawn) `[456.9,341.4,756.4,453.1]`; A4 heavy JME `[922.3,327.9,1263.4,485.0]`.
 - DigiSkills.ai (final, flat): mark box `[772.7547,248.2186,1203.3394,655.2781]`, app icon box `[196.851,234.7707,627.405,665.3247]`; pixels 65.35 / 43.567 / 32.675 pt (1 : 2/3 : 1/2); largest centred on the spine (215.54 vs 215.29, mark-local).
 
 ---
@@ -794,7 +794,7 @@ text(c, 'Two disciplines, one word, and a loop that never stops', W / 2, 230, 40
 save(s, SLUG, '03-idea')
 
 # 04 Exploration: the four rows of artboard 1, same scale
-labels = ['Canterbury sign', 'Orange Avenue sign', 'Add the 8', 'Spacing set']
+labels = ['a blackletter face sign', 'the high-contrast serif sign', 'Add the 8', 'Spacing set']
 scale = 1100 / (FINAL[2] - FINAL[0])
 for i, box in enumerate(STEPS, 1):
     s, c = panel(PAPER)
@@ -935,7 +935,7 @@ presentation:
       note: "It looked like a different brand: not formal, not elegant."
     - src: "../../assets/projects/logos/devsign8/04-explore-2.webp"
       alt: "Dev in a heavy sans beside sign in a high-contrast serif with a long, curling g."
-      label: "Step 2: Orange Avenue for sign"
+      label: "Step 2: the high-contrast serif for sign"
       verdict: "Kept"
       note: "Simple, clean and elegant, with extravagant curves and decorative tails as the accent."
     - src: "../../assets/projects/logos/devsign8/04-explore-3.webp"
@@ -954,15 +954,15 @@ presentation:
       caption: "Every letter, the 8 included, sits on four shared guides: a 105.4 pt cap height, a 78.3 pt x-height, the baseline and a 48.8 pt descender. The master is 552.1 x 155.7 pt."
     - src: "../../assets/projects/logos/devsign8/05-construction-tail.webp"
       alt: "A close-up of the g's tail in outline view, showing its anchor points and bezier handles."
-      caption: "The g's tail, the decorative accent that made Orange Avenue the choice, in close-up with its anchor points and handles."
+      caption: "The g's tail, the decorative accent that made the high-contrast serif the choice, in close-up with its anchor points and handles."
   typography:
     - src: "../../assets/projects/logos/devsign8/06-type-dev.webp"
       alt: "Dev, set in a heavy sans."
-      name: "Roboto Black"
+      name: "a heavy sans serif"
       role: "Dev: solid and technical, the code side of the studio."
     - src: "../../assets/projects/logos/devsign8/06-type-sign8.webp"
       alt: "sign8, set in a high-contrast serif with curling tails."
-      name: "Orange Avenue"
+      name: "the high-contrast serif"
       role: "sign8: elegant curves and decorative tails, the design side."
   colours:
     - { name: "Ink", hex: "#0E0E0F", use: "The wordmark on light grounds, and the dark ground." }
@@ -1087,7 +1087,7 @@ for i, box in enumerate(B, 1):
     x += w + 20
 save(s, SLUG, '05-build')
 
-# 06 Typography: the B1 typed JM, Perpetua Titling MT Light, from the file
+# 06 Typography: the B1 typed JM, a light titling serif, from the file
 s, c = panel(CREAM); centred(c, mask(AI, 0, B[0], 800), BLACK, 600); save(s, SLUG, '06-type')
 
 # 08 Versatility: black on cream, cream on black, gold on black; 180/64/32/16 px
@@ -1139,7 +1139,7 @@ save(s, SLUG, '10-rules')
 ```
 
 - [ ] **Step 2: Run it**: `python scripts/logo-presentation/jm_design.py` → 15 `wrote jm-design ...` lines.
-- [ ] **Step 3: Look at every panel**; confirm the rejects are A4 heavy JME, A2 ligature, A1 Bask Old Face JM; that no Jme appears; that GOLD reads as gold (print it; expect a value near `(0.8, 0.65, 0.35)`), else hard-code the gold from the cover by eye-dropper and note it.
+- [ ] **Step 3: Look at every panel**; confirm the rejects are A4 heavy JME, A2 ligature, A1 a classic old-style serif JM; that no Jme appears; that GOLD reads as gold (print it; expect a value near `(0.8, 0.65, 0.35)`), else hard-code the gold from the cover by eye-dropper and note it.
 - [ ] **Step 4: Commit**: `git add scripts/logo-presentation/jm_design.py src/assets/projects/logos/jm-design && git commit -m "JM Design presentation panels from JM Design.ai"`
 
 ---
@@ -1183,15 +1183,15 @@ presentation:
       verdict: "Dropped"
       note: "The J got lost. A script Jme was tried too and felt separated."
     - src: "../../assets/projects/logos/jm-design/04-explore-3.webp"
-      alt: "JM set plainly in Bask Old Face."
-      label: "JM in Bask Old Face"
+      alt: "JM set plainly in a classic old-style serif."
+      label: "JM in a classic old-style serif"
       verdict: "Dropped"
       note: "Close, but something was missing: the J needed to lead."
     - src: "../../assets/projects/logos/jm-design/04-explore-4.webp"
       alt: "The final monogram: a tall J threaded through the M."
       label: "The final"
       verdict: "Final"
-      note: "Perpetua Titling MT Light, the J taller and dropped below the baseline, cut where the M's diagonal crosses it."
+      note: "a light titling serif, the J taller and dropped below the baseline, cut where the M's diagonal crosses it."
   construction:
     - src: "../../assets/projects/logos/jm-design/05-construction.webp"
       alt: "The monogram in Illustrator's outline view with anchor points, cyan guides at the M's baseline and cap height, and magenta measurements of the J's drop and rise."
@@ -1201,8 +1201,8 @@ presentation:
       caption: "The build in five steps: type, scale the J, offset every letter by 5 pt, cut the J with Shape Builder where the M's thick diagonal crosses it, then clean up."
   typography:
     - src: "../../assets/projects/logos/jm-design/06-type.webp"
-      alt: "JM typed in Perpetua Titling MT Light, before any changes."
-      name: "Perpetua Titling MT Light"
+      alt: "JM typed in a light titling serif, before any changes."
+      name: "a light titling serif"
       role: "A light titling serif: calm, classic, and thin enough for the cut to read."
   colours:
     - { name: "Black", hex: "#0B0B0B", use: "The mark on light grounds, and the dark ground." }

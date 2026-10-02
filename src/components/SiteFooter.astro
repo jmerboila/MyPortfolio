@@ -9,7 +9,7 @@
 import { PERSON, SOCIALS, RIGHTS_NOTICE } from '../config/site';
 import { asset } from '../lib/url';
 
-const year = new Date().getFullYear();
+/* No year in the credit: no visible dates anywhere (Jayson, 2026-09-28). */
 ---
 
 <footer class="site-footer">
@@ -52,7 +52,7 @@ const year = new Date().getFullYear();
     </nav>
 
     <div class="site-footer__legal">
-      <p>&copy; {year} {PERSON.name}. All rights reserved.</p>
+      <p>&copy; {PERSON.name}. All rights reserved.</p>
       <p class="site-footer__rights">{RIGHTS_NOTICE}</p>
     </div>
   </div>

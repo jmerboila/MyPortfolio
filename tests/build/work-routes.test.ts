@@ -74,7 +74,9 @@ test('the footer: mark and tagline left, Explore and Connect right, credit line 
   ]);
   assert.match(footer, /Connect/);
   assert.doesNotMatch(footer, /All rights reserved/);
-  assert.match(footer, /(?:©|&copy;) \d{4} JM Design\. Designed and built by Jayson Mercado Erboila\./);
+  // no year: no visible dates anywhere (2026-10-02)
+  assert.match(footer, /(?:©|&copy;) JM Design\. Designed and built by Jayson Mercado Erboila\./);
+  assert.doesNotMatch(footer, /(?:©|&copy;)\s*\d{4}/);
 });
 
 /* One layout under Work (2026-09-26): the Social page's heading and shelves. */

@@ -27,7 +27,7 @@ import JMMark from '../JMMark.astro';
 
 const work = await getCollection('work', ({ data }) => !data.draft);
 const types = liveTypes(WORK_CATEGORIES, work);
-const year = new Date().getFullYear();
+/* No year in the credit: no visible dates anywhere (Jayson, 2026-09-28). */
 ---
 
 <footer class="v3-footer container">
@@ -70,5 +70,5 @@ const year = new Date().getFullYear();
     </div>
   </div>
 
-  <p class="v3-footer__credit">&copy; {year} JM Design. Designed and built by {PERSON.name}.</p>
+  <p class="v3-footer__credit">&copy; JM Design. Designed and built by {PERSON.name}.</p>
 </footer>
