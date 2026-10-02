@@ -221,3 +221,21 @@ def save(surface, slug, name):
     Image.open(tmp).convert('RGB').save(f'{OUT_ROOT}{slug}/{name}.webp', 'WEBP', quality=92)
     os.remove(tmp)
     print('wrote', slug, name)
+
+
+USER_FONTS = os.path.join(os.environ['LOCALAPPDATA'], 'Microsoft', 'Windows', 'Fonts')
+
+
+def font_mask(font_file, size, s, wght=None):
+    """Ink mask of s set in an installed font (PIL), for type specimens.
+    wght sets a variable font's weight axis (Roboto Black = 900); every
+    other axis keeps its default."""
+    from PIL import ImageDraw, ImageFont
+    f = ImageFont.truetype(os.path.join(USER_FONTS, font_file), size)
+    if wght is not None:
+        axes = f.get_variation_axes()
+        f.set_variation_by_axes([wght if a['name'] in (b'Weight', 'Weight') else a['default'] for a in axes])
+    l, t, r, b = f.getbbox(s)
+    im = Image.new('L', (r - l + 4, b - t + 4), 0)
+    ImageDraw.Draw(im).text((2 - l, 2 - t), s, font=f, fill=255)
+    return im
