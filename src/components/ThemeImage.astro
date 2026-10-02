@@ -1,0 +1,71 @@
+---
+/* ============================================================================
+   ThemeImage.astro: one picture in two themes (the design rule, 2026-10-02:
+   every project visual with a ground has a light and a dark version).
+   ----------------------------------------------------------------------------
+   Both versions are in the markup and CSS shows the one OPPOSITE the page,
+   as SiteShowcase does for devsign8.com: the dark version on a light page,
+   the light version on a dark page, following the device setting and the
+   site's theme toggle. The hidden one is display:none with a lazy image, so
+   it is never downloaded.
+   ========================================================================= */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Version {
+  src: ImageMetadata;
+  alt: string;
+}
+interface Props {
+  light: Version;
+  dark: Version;
+  widths: number[];
+  sizes: string;
+  /** Above the fold: ask for it early (both stay lazy so the hidden one never loads). */
+  priority?: boolean;
+}
+const { light, dark, widths, sizes, priority = false } = Astro.props;
+---
+
+{
+  ([['light', light], ['dark', dark]] as const).map(([theme, v]) => (
+    <Image
+      class:list={['theme-img', `theme-img--${theme}`]}
+      src={v.src}
+      alt={v.alt}
+      widths={widths}
+      sizes={sizes}
+      loading="lazy"
+      decoding="async"
+      fetchpriority={priority ? 'high' : undefined}
+    />
+  ))
+}
+
+<style>
+  /* Global: Astro's scope attribute does not reach the <img> that <Image>
+     renders; the class names are unique to this component. The selectors
+     carry :root and img.theme-img so they outrank a host's own
+     "figure img { display: block }" (LogoIdentity's .li-fig img). */
+  /* Light page (the default): the dark version. */
+  :global(:root img.theme-img.theme-img--light) {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light']) img.theme-img.theme-img--light) {
+      display: block;
+    }
+    :global(:root:not([data-theme='light']) img.theme-img.theme-img--dark) {
+      display: none;
+    }
+  }
+
+  :global(:root[data-theme='dark'] img.theme-img.theme-img--light) {
+    display: block;
+  }
+
+  :global(:root[data-theme='dark'] img.theme-img.theme-img--dark) {
+    display: none;
+  }
+</style>

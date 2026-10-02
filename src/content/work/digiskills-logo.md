@@ -42,6 +42,9 @@ identity:
   mark:
     src: "../../assets/projects/logos/digiskills-logo/id-01-mark.webp"
     alt: "The final DigiSkills mark on a pale ground: an indigo open book with three amber pixel squares rising from its spine."
+    dark:
+      src: "../../assets/projects/logos/digiskills-logo/id-01-mark-dark.webp"
+      alt: "The final DigiSkills mark reversed on indigo: a white open book with three amber pixel squares rising from its spine."
   meaning:
     - part: "Book"
       means: "Knowledge."
@@ -84,6 +87,9 @@ identity:
     sizes:
       src: "../../assets/projects/logos/digiskills-logo/id-06-sizes.webp"
       alt: "The app icon at 96, 48 and 24 pixels, each labelled; 24 px is marked as the minimum."
+      dark:
+        src: "../../assets/projects/logos/digiskills-logo/id-06-sizes-dark.webp"
+        alt: "The app icon on deep navy at 96, 48 and 24 pixels, each labelled; 24 px is marked as the minimum."
       caption: "Never smaller than 24 px: the book and its three pixels still show."
     rules:
       - "Keep clear space equal to the largest pixel on every side."

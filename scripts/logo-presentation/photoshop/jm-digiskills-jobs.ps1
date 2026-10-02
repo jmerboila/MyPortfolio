@@ -7,8 +7,8 @@
 param([string[]]$Only)
 $ps  = New-Object -ComObject Photoshop.Application
 $md  = "C:/dev/Devsign8/04-Reference/Fonts, Mockups, Logos/Mockups/Mockups-Design/"
-$ex  = "C:/Users/jmerb/AppData/Local/Temp/claude/C--Users-jmerb-OneDrive-Desktop-MyPortfolio/50381e99-fe25-4490-9632-3dc55cd66755/scratchpad/ai-work/export/"
-$out = "C:/Users/jmerb/AppData/Local/Temp/claude/C--Users-jmerb-OneDrive-Desktop-MyPortfolio/50381e99-fe25-4490-9632-3dc55cd66755/scratchpad/ai-work/mockups/"
+$ex  = "C:/dev/Devsign8/04-Reference/Fonts, Mockups, Logos/Mockups/Portfolio renders/export/"
+$out = "C:/dev/Devsign8/04-Reference/Fonts, Mockups, Logos/Mockups/Portfolio renders/mockups/"
 $card = "${md}Embossed business card/MD1188_Embossed_Business_Card_Mockup/Business_Card_Mockup_2.psd"
 $cards = "${md}Embossed business card/MD1188_Embossed_Business_Card_Mockup/Business_Card_Mockup_3.psd"
 $stat = "${md}Minimal branding stationery/MD1064_Stationery_Mockup/Stationery_Mockup_2.psd"

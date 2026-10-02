@@ -41,6 +41,9 @@ identity:
   mark:
     src: "../../assets/projects/logos/devsign8/id-01-mark.webp"
     alt: "The final Devsign8 wordmark in black on warm paper: Dev in a heavy sans serif, sign8 in a high-contrast serif."
+    dark:
+      src: "../../assets/projects/logos/devsign8/id-01-mark-dark.webp"
+      alt: "The final Devsign8 wordmark in warm white on ink: Dev in a heavy sans serif, sign8 in a high-contrast serif."
   meaning:
     - part: "Dev"
       means: "Development, the code."
@@ -64,11 +67,17 @@ identity:
   typography:
     - src: "../../assets/projects/logos/devsign8/id-04-type-sans.webp"
       alt: "Dev, cut from the wordmark, on faint guides: heavy, upright letters with no serifs."
+      dark:
+        src: "../../assets/projects/logos/devsign8/id-04-type-sans-dark.webp"
+        alt: "Dev, cut from the wordmark, in warm white on ink on faint guides: heavy, upright letters with no serifs."
       kind: "Sans serif"
       part: "Dev"
       why: "A heavy sans serif: solid, upright and technical. It carries the code side of the studio and gives the word its weight."
     - src: "../../assets/projects/logos/devsign8/id-04-type-serif.webp"
       alt: "sign8, cut from the wordmark, on the same guides: high-contrast letters with fine serifs, an accent over the g and a long, curling tail."
+      dark:
+        src: "../../assets/projects/logos/devsign8/id-04-type-serif-dark.webp"
+        alt: "sign8, cut from the wordmark, in warm white on ink on the same guides: high-contrast letters with fine serifs, an accent over the g and a long, curling tail."
       kind: "Serif"
       part: "sign8"
       why: "A high-contrast serif: simple, clean and elegant, with extravagant curves and decorative tails as the accent. It carries the design side."
@@ -96,6 +105,9 @@ identity:
     sizes:
       src: "../../assets/projects/logos/devsign8/id-06-sizes.webp"
       alt: "The wordmark at 480, 240 and 120 pixels wide, each with a measure line and label; 120 px is marked as the minimum."
+      dark:
+        src: "../../assets/projects/logos/devsign8/id-06-sizes-dark.webp"
+        alt: "The wordmark in warm white on ink at 480, 240 and 120 pixels wide, each with a measure line and label; 120 px is marked as the minimum."
       caption: "Never smaller than 120 px wide on screen, or 32 mm in print."
     rules:
       - "Keep clear space equal to the height of the D on every side."

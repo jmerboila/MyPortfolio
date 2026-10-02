@@ -36,6 +36,9 @@ identity:
   mark:
     src: "../../assets/projects/logos/jm-design/id-01-mark.webp"
     alt: "The final JM monogram in black on cream: a tall serif J threaded through an M."
+    dark:
+      src: "../../assets/projects/logos/jm-design/id-01-mark-dark.webp"
+      alt: "The final JM monogram in cream on black: a tall serif J threaded through an M."
   meaning:
     - part: "J"
       means: "The lead."
@@ -59,6 +62,9 @@ identity:
   typography:
     - src: "../../assets/projects/logos/jm-design/id-04-type-serif.webp"
       alt: "The monogram on four faint guides: high-contrast capitals with fine serifs."
+      dark:
+        src: "../../assets/projects/logos/jm-design/id-04-type-serif-dark.webp"
+        alt: "The monogram in cream on black on four faint guides: high-contrast capitals with fine serifs."
       kind: "Serif"
       part: "J and M"
       why: "A light titling serif: capitals only, calm and classic, with strokes thin enough for the cut to read. The J is set taller and dropped below the baseline, so it leads."
@@ -85,6 +91,9 @@ identity:
     sizes:
       src: "../../assets/projects/logos/jm-design/id-06-sizes.webp"
       alt: "The monogram at 128, 64, 32 and 16 pixels tall, each labelled; 16 px is marked as the minimum."
+      dark:
+        src: "../../assets/projects/logos/jm-design/id-06-sizes-dark.webp"
+        alt: "The monogram in cream on black at 128, 64, 32 and 16 pixels tall, each labelled; 16 px is marked as the minimum."
       caption: "Never smaller than 16 px tall, the favicon size."
     rules:
       - "Keep clear space equal to half the height of the M on every side."

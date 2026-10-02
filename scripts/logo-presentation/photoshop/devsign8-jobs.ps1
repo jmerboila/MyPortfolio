@@ -5,8 +5,8 @@
 param([string[]]$Only)
 $ps  = New-Object -ComObject Photoshop.Application
 $md  = "C:/dev/Devsign8/04-Reference/Fonts, Mockups, Logos/Mockups/Mockups-Design/"
-$ex  = "C:/Users/jmerb/AppData/Local/Temp/claude/C--Users-jmerb-OneDrive-Desktop-MyPortfolio/50381e99-fe25-4490-9632-3dc55cd66755/scratchpad/ai-work/export/"
-$out = "C:/Users/jmerb/AppData/Local/Temp/claude/C--Users-jmerb-OneDrive-Desktop-MyPortfolio/50381e99-fe25-4490-9632-3dc55cd66755/scratchpad/ai-work/mockups/"
+$ex  = "C:/dev/Devsign8/04-Reference/Fonts, Mockups, Logos/Mockups/Portfolio renders/export/"
+$out = "C:/dev/Devsign8/04-Reference/Fonts, Mockups, Logos/Mockups/Portfolio renders/mockups/"
 $ink = '#0E0E0F'; $paper = '#F7F5F1'
 $black = "${ex}devsign8-black.png"; $white = "${ex}devsign8-white.png"
 

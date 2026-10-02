@@ -57,6 +57,18 @@ for (const slug of IDENTITY) {
     assert.match(main, /sans serif|serif/i);
   });
 
+  /* The design rule (2026-10-02): every panel with a ground ships in light
+     and dark, and ThemeImage shows the one opposite the page. The mark, each
+     type card and the size ladder; DigiSkills has no type cards. */
+  test(`${slug}: light and dark versions of every panel with a ground`, () => {
+    const light = (main.match(/class="[^"]*theme-img--light/g) ?? []).length;
+    const dark = (main.match(/class="[^"]*theme-img--dark/g) ?? []).length;
+    const expected = { devsign8: 4, 'jm-design': 3, 'digiskills-logo': 2 }[slug];
+    assert.equal(light, expected, `${slug} light versions`);
+    assert.equal(dark, expected, `${slug} dark versions`);
+    for (const img of main.match(/<img[^>]*theme-img--(?:light|dark)[^>]*>/g) ?? []) assert.match(img, /loading="lazy"/);
+  });
+
   test(`${slug}: no fixed sizes on the outline (the mark is used at any size)`, () => {
     assert.doesNotMatch(main, /\d\s?pt\b/);
   });

@@ -13,7 +13,7 @@ param(
   [double]$Zoom = 4
 )
 $logos = 'C:\dev\Devsign8\04-Reference\Fonts, Mockups, Logos\Logos'
-$work  = Join-Path $env:TEMP "claude\C--Users-jmerb-OneDrive-Desktop-MyPortfolio\50381e99-fe25-4490-9632-3dc55cd66755\scratchpad\ai-work\$Slug"
+$work  = Join-Path 'C:\dev\Devsign8\04-Reference\Fonts, Mockups, Logos\Mockups\Portfolio renders' $Slug
 New-Item -ItemType Directory -Force $work | Out-Null
 $copy = Join-Path $work $Ai
 Copy-Item (Join-Path $logos $Ai) $copy -Force

@@ -307,7 +307,10 @@ const work = defineCollection({
           idea: z.string().max(140),
           type: z.string(),
           deliverables: z.array(z.string()).min(2).max(6),
-          mark: pic,
+          /* Light and dark (the design rule, 2026-10-02): every panel with a
+             ground has both, and ThemeImage shows the one opposite the page.
+             The version tiles and the real screenshots and mockups do not. */
+          mark: pic.extend({ dark: pic }),
           meaning: z.array(z.object({ part: z.string(), means: z.string(), note: z.string() })).min(2).max(4),
           brief: z.string().max(600),
           /* `bar` labels the Illustrator window frame, e.g. "Devsign8.ai @ 134%". */
@@ -318,6 +321,7 @@ const work = defineCollection({
               z.object({
                 src: image(),
                 alt: z.string(),
+                dark: pic,
                 kind: z.enum(['Sans serif', 'Serif', 'Script', 'Display', 'Monospace']),
                 part: z.string(),
                 why: z.string(),
@@ -333,7 +337,7 @@ const work = defineCollection({
           usage: z.object({
             clearSpace: pic.extend({ caption: z.string(), bar: z.string() }),
             versions: z.array(pic.extend({ label: z.string() })).min(2).max(4),
-            sizes: pic.extend({ caption: z.string() }),
+            sizes: pic.extend({ caption: z.string(), dark: pic }),
             rules: z.array(z.string()).min(3).max(6),
           }),
           inUse: z

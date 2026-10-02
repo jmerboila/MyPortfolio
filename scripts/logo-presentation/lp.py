@@ -11,6 +11,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.normpath(os.path.join(HERE, '..', '..')).replace('\\', '/')
 LOGOS = 'C:/dev/Devsign8/04-Reference/Fonts, Mockups, Logos/Logos/'
 OUT_ROOT = REPO + '/src/assets/projects/logos/'
+# Illustrator shots, exported marks and Photoshop mockup renders: outside the
+# repo, beside the mockup templates (the PSDs are never copied into the repo).
+RENDERS = os.environ.get('LP_RENDERS', 'C:/dev/Devsign8/04-Reference/Fonts, Mockups, Logos/Mockups/Portfolio renders/')
 W, H = 1600, 1200
 FONT = 'Inter Tight'
 
@@ -318,7 +321,8 @@ def mockup_panel(src, slug, name):
     save(s, slug, name)
 
 
-def size_ladder(slug, name, art, sizes, ground, by='width', k=1.25, unit='px', minimum_label='minimum'):
+def size_ladder(slug, name, art, sizes, ground, by='width', k=1.25, unit='px', minimum_label='minimum',
+                hair=HAIR, label=VIOLET):
     """The mark at its real pixel sizes (scaled by k for screens), smallest
     marked as the minimum. art: an RGBA image of the mark."""
     s, c = canvas(1600, 640, ground)
@@ -329,9 +333,9 @@ def size_ladder(slug, name, art, sizes, ground, by='width', k=1.25, unit='px', m
     base = 400
     for (w, h), px, slot in zip(dims, sizes, slots):
         paint_image(c, art, x, base - h, w)
-        c.set_source_rgb(*HAIR); c.set_line_width(2)
+        c.set_source_rgb(*hair); c.set_line_width(2)
         c.move_to(x, 450); c.line_to(x + max(w, 40), 450); c.stroke()
         lab = f'{px} {unit}' + ('  ' + minimum_label if px == sizes[-1] else '')
-        small_label(c, lab, x, 510, VIOLET, 22)
+        small_label(c, lab, x, 510, label, 22)
         x += slot + gap
     save(s, slug, name)
