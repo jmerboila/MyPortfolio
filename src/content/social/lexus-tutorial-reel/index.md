@@ -19,7 +19,7 @@ video:
   src: "./video.mp4"
   poster: "./cover.jpg"
   durationISO: "PT1M2S"
-  alt: "About a minute of InDesign screen recording, with music and click sounds. It opens on the finished Lexus NX 350h poster under the title \"How I built this poster in InDesign\", then labels each step as it is done: 1. New document: 1080 × 1350 px. 2. A band splits the page. 3. Pen tool base + Eyedropper. 4. The car crosses the band. 5. Ghost views: 20% + gradient feather. 6. Soft shadow: Multiply 55%, feather 22. 7. Emblem + wordmark. 8. NX 350h: Montserrat Medium, tracking 520. 9. Specs: Montserrat + Bebas Neue. 10. Body copy: 12.5 / 21, centred. It ends on the finished layout: the white car across a deep red band, LEXUS and NX 350h above, 240 HP and 200 KM/H below."
+  alt: "About a minute of InDesign screen recording, with music and click sounds. It opens on the finished Lexus NX 350h poster under the title \"How I built this poster in InDesign\", then labels each step as it is done: 1. New document: 1080 × 1350 px. 2. A band splits the page. 3. Pen tool base + Eyedropper. 4. The car crosses the band. 5. Ghost views: 20% + gradient feather. 6. Soft shadow: Multiply 55%, feather 22. 7. Emblem + wordmark. 8. NX 350h: a geometric sans serif, medium, tracking 520. 9. Specs: sans serif labels, condensed display numbers. 10. Body copy: 12.5 / 21, centred. It ends on the finished layout: the white car across a deep red band, LEXUS and NX 350h above, 240 HP and 200 KM/H below."
 ---
 
 <!-- Notes, not rendered. The process post: the still shows the result, the
