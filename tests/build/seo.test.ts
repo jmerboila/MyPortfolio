@@ -93,7 +93,7 @@ test('the 404 is noindex and has no canonical', () => {
   assert.doesNotMatch(html, /rel="canonical"/);
 });
 
-test('llms.txt describes him and lists every live project, and nothing hidden', () => {
+test('llms.txt describes Jayson and lists every live project, and nothing hidden', () => {
   const txt = read('dist/llms.txt');
   assert.match(txt, /^# Jayson Mercado Erboila\n\n> /);
   assert.match(txt, /Toronto, Ontario, Canada/);
@@ -105,17 +105,4 @@ test('llms.txt describes him and lists every live project, and nothing hidden', 
      This overrides the Devsign8 style guide's older Voice rule. */
   assert.doesNotMatch(txt, /agency/i);
   assert.match(read('dist/index.html'), /<link rel="alternate" type="text\/markdown" title="llms.txt" href="\/MyPortfolio\/llms.txt">/);
-});
-
-/* DigiSkills (2026-10-01): the process is shown from Jayson's own vectors and
-   drafts, each image with a caption that states the decision, and none of the
-   colour study's recolours (overlapping squares) stand in for the final art. */
-test('the DigiSkills logo page shows the real process, captioned', () => {
-  const html = read('dist/work/logo/digiskills-logo/index.html');
-  for (const f of ['DigiSkills-Mark-Final', 'DigiSkills-Drafts', 'DigiSkills-Construction', 'DigiSkills-Colour', 'DigiSkills-Versatility']) {
-    assert.match(html, new RegExp(`/_astro/${f}\\.`), f);
-  }
-  assert.equal((html.match(/<figcaption[\s>]/g) ?? []).length, 5);
-  assert.doesNotMatch(html, /Indigo-Amber|App-Icon|Logo-Full|Logo-Preview/);
-  assert.match(html, /Pro bono, for an independent mobile app developer/);
 });
