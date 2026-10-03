@@ -25,3 +25,16 @@ pnpm-debug.log*
 
 # Brainstorming visual companion (mockups)
 .superpowers/
+
+# Local only, never uploaded (Jayson, 2026-10-02): GitHub gets only what the
+# site needs to build (src/, public/, the Astro and npm config, the deploy
+# workflow). Claude handover and notes, docs, editor settings, the logo
+# pipeline scripts and the build tests stay on this machine.
+CLAUDE.md
+AGENTS.md
+README.md
+docs/
+.claude/
+.vscode/
+scripts/
+tests/
