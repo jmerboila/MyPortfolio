@@ -26,8 +26,13 @@
      2026-09-29 1:49 am): Accessibility 100; Performance 99 on a fresh run (LCP 1.7 s).
      One run in between read 69 with 1.4 s blocking time that neither a
      local 4x-CPU trace nor the other runs reproduced: treated as noise.
-     The page keeps 96 for speed (conservative) and shows 100 for
+     The page kept 96 for speed (conservative) and showed 100 for
      accessibility.
+   - Re-run 2026-10-02 10:39 pm EDT (Lighthouse 13.5.0): mobile 97 / 100 /
+     100 / 100 (LCP 2.0 s, TBT 110 ms, CLS 0.005); desktop 100 / 100 / 100 /
+     100 (LCP 0.5 s, TBT 70 ms, CLS 0.009). Stage 04 shows 97 mobile and 100
+     desktop for speed, 100 for accessibility, matching the devsign8.com
+     page's Measure chart.
    - Google Search Console, devsign8.com domain property, last 16 months as
      of 2026-09-29 (first data 2026-06-22): 13 clicks, 57 impressions,
      CTR 22.8%, average position 8.7. Queries mostly anonymised, so part of
@@ -129,7 +134,7 @@ export const STAGE_PROOF: Record<string, Proof> = {
     shots: SITE_SHOTS.devsign8,
     points: [
       'Fits every screen, from phone to desktop, in light and dark.',
-      'Fast and accessible on mobile: 96 for speed, 100 for accessibility (built for AODA, WCAG 2.0 AA).',
+      'Fast and accessible: 97 for speed on mobile, 100 on desktop, 100 for accessibility (built for AODA, WCAG 2.0 AA).',
       'Tracking live from day one.',
     ],
     visit: { label: 'Visit devsign8.com', url: 'https://www.devsign8.com/' },

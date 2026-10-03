@@ -40,8 +40,16 @@ order: 5
 #   LCP 1.5 s, CLS 0.005. Re-run 2026-09-29 after his site update:
 #   Performance 90 (LCP 2.9 s, render-blocking Google Fonts). Fixed the same
 #   night with Cloudflare Fonts; re-run twice: 96 and 97, LCP 2.0 s. The
-#   chart uses 96 (the lower run). The 90 -> 96 fix is told in the Measure
+#   chart used 96 (the lower run). The 90 -> 96 fix is told in the Measure
 #   chapter as the measure-then-improve example.
+# - PageSpeed Insights re-run 2026-10-02 10:39 pm EDT (Lighthouse 13.5.0,
+#   pagespeed.web.dev; the keyless API was over its daily quota):
+#   mobile (Moto G Power, slow 4G) Performance 97, Accessibility 100, Best
+#   Practices 100, SEO 100; FCP 2.0 s, LCP 2.0 s, TBT 110 ms, CLS 0.005,
+#   Speed Index 2.2 s. Desktop 100 / 100 / 100 / 100; FCP 0.5 s, LCP 0.5 s,
+#   TBT 70 ms, CLS 0.009, Speed Index 0.9 s. Agentic Browsing 3/3 on both
+#   (a new Lighthouse category, not shown yet). Real-user (field) data: No
+#   Data yet. The chart shows this run, mobile and desktop.
 # - Search Console 2026-09-29 (16 months): 13 clicks / 57 impressions,
 #   CTR 22.8%, average position 8.7.
 # - Microsoft Clarity is NOT installed (not in the page, not in GTM), so it
@@ -54,14 +62,14 @@ story:
   launched: 2026-07-24
   channel: "www.devsign8.com"
   channelLabel: "Live at"
-  disclaimer: "Scores are PageSpeed Insights lab results on mobile. Real-visitor data joins them as traffic grows."
+  disclaimer: "Scores are PageSpeed Insights lab results on mobile and desktop. Real-visitor data joins them as traffic grows."
   chapters:
     - stage: build
       heading: "Built for every screen, in light and dark"
       body:
         - "Plain HTML, CSS and JavaScript, no framework. The site stays fast, secure and cheap to host."
         - "It follows each visitor's device into light or dark mode, and every page works from a small phone up to a wide desktop."
-        - "Accessibility is built in from the start. AODA asks Ontario sites for WCAG 2.0 AA, and PageSpeed Insights scores devsign8.com 100 for accessibility on mobile."
+        - "Accessibility is built in from the start. AODA asks Ontario sites for WCAG 2.0 AA, and PageSpeed Insights scores devsign8.com 100 for accessibility on mobile and desktop."
       # Desktop + phone as on the home page's Build stage, the desktop in the
       # theme opposite the page and the phone in the other one, so the chapter
       # shows both light and dark (his call 2026-09-30). Shots in
@@ -88,7 +96,7 @@ story:
       body:
         - "Tracking runs through one Google Tag Manager container: GA4 for visits and every Book a call click. Search Console and Bing Webmaster Tools cover search."
         - "Of the people who see devsign8.com in Google results, 23% click through, and it ranks on page one on average. It is a small sample so far, so it is the trend I watch, not a trophy."
-        - "Each month I read which searches bring people in and which pages keep them, then change one thing and check it the next month. One read found a font file holding up the first paint. Serving the fonts from the site's own domain took mobile speed from 90 to 96."
+        - "Each month I read which searches bring people in and which pages keep them, then change one thing and check it the next month. One read found a font file holding up the first paint. Serving the fonts from the site's own domain took mobile speed from 90 to 96; the latest run scores 97 on mobile and 100 on desktop."
       visual:
         kind: chart
         groups:
@@ -96,17 +104,30 @@ story:
             unit: "/100"
             bars:
               - label: "Performance"
-                value: 96
+                value: 97
               - label: "Accessibility"
                 value: 100
               - label: "Best practices"
                 value: 100
               - label: "SEO"
                 value: 100
-        source: "PageSpeed Insights, www.devsign8.com, mobile"
+          - metric: "PageSpeed Insights, desktop"
+            unit: "/100"
+            bars:
+              - label: "Performance"
+                value: 100
+              - label: "Accessibility"
+                value: 100
+              - label: "Best practices"
+                value: 100
+              - label: "SEO"
+                value: 100
+        source: "PageSpeed Insights, www.devsign8.com, mobile and desktop"
   sources:
     - label: "PageSpeed Insights, www.devsign8.com (mobile)"
       url: "https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fwww.devsign8.com%2F&form_factor=mobile"
+    - label: "PageSpeed Insights, www.devsign8.com (desktop)"
+      url: "https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fwww.devsign8.com%2F&form_factor=desktop"
     - label: "AODA: Integrated Accessibility Standards (websites and WCAG 2.0)"
       url: "https://www.ontario.ca/laws/regulation/110191"
 ---
