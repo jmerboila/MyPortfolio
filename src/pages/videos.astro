@@ -1,0 +1,258 @@
+---
+/* ============================================================================
+   /videos: an UNLISTED reel to send with job applications (2026-10-16, his
+   call). Nothing links here, it is noindex, and astro.config keeps it out of
+   the sitemap. It is not private: anyone with the link can watch, and this
+   file is public on GitHub.
+
+   No robots.txt Disallow on purpose: a crawler that is not allowed to fetch
+   the page never sees its noindex, and the Disallow line would print the path
+   in a public file.
+
+   Videos are self-hosted web copies in public/media/works/ (H.264, under
+   30 MB, metadata stripped; masters in C:\dev\TheWorks), so each one has its
+   own direct link that plays on a phone. GitHub caps files at 100 MB: a
+   longer video goes on YouTube as Unlisted and uses `youtube` instead.
+   Grouped by kind (his categories, 2026-10-22); the order here is the order
+   on the page. No em dashes, no dates in the copy.
+   ========================================================================= */
+import V3Layout from '../layouts/V3Layout.astro';
+import PageHead from '../components/v3/PageHead.astro';
+import Shelf from '../components/v3/Shelf.astro';
+import { asset } from '../lib/url';
+
+interface Video {
+  title: string;
+  /** One line: what it is and what he did on it. */
+  idea: string;
+  /** Tools, shown as the shelf note. */
+  tools?: string;
+  /** A file under public/, e.g. '/media/works/x.mp4'; its poster is the same name as .jpg. */
+  src?: string;
+  /** Or the YouTube id: the part after "v=" or "youtu.be/". */
+  youtube?: string;
+  /** Frame shape; 16 / 9 when left out. */
+  ratio?: '9 / 16' | '4 / 5' | '16 / 9';
+}
+
+interface Group {
+  id: string;
+  title: string;
+  lede: string;
+  videos: Video[];
+}
+
+const GROUPS: Group[] = [
+  {
+    id: 'campaign',
+    title: 'Campaign Reels: Get Found in 5',
+    lede: 'An organic campaign for DevSign Hacks: five fixes that help a small business get found, shown on a fictional brunch spot.',
+    videos: [
+      { title: 'The hook Reel', ratio: '9 / 16', src: '/media/works/get-found-in-5-reel.mp4',
+        idea: 'Hook: "This brunch spot was invisible on Google." Viewers watched 17 s of 30 s on average (Instagram Insights).',
+        tools: 'Illustrator, After Effects. Captions written by me.' },
+      { title: 'All five fixes', ratio: '9 / 16', src: '/media/works/get-found-in-5-five-fixes.mp4',
+        idea: 'All five fixes, before and after, every cut on the beat.',
+        tools: 'Illustrator, After Effects' },
+      { title: 'Reviews in one tap', ratio: '9 / 16', src: '/media/works/get-found-in-5-reviews.mp4',
+        idea: 'The Facebook Reel: three steps to more Google reviews with a QR code.',
+        tools: 'Illustrator, After Effects' },
+    ],
+  },
+  {
+    id: 'trends',
+    title: 'Trend Reels: my own take',
+    lede: 'Trending Reel formats, filmed and cut my way on a DJI Osmo Pocket and an iPhone.',
+    videos: [
+      { title: 'Milne Dam Conservation Park', ratio: '9 / 16', src: '/media/works/milne-dam.mp4',
+        idea: 'A walk through Milne Dam Conservation Park in Markham, cut into a 90-second vertical story with chapter titles.',
+        tools: 'DJI Osmo Pocket, Premiere Pro' },
+      { title: 'Applewood Farm', ratio: '9 / 16', src: '/media/works/applewood-farm.mp4',
+        idea: 'Apple picking at Applewood Farm in Whitchurch-Stouffville, cut as a 37-second Reel with on-screen text.' },
+      { title: 'Applewood Farm: short cut', ratio: '9 / 16', src: '/media/works/applewood-farm-short.mp4',
+        idea: 'The same day in 14 seconds, hook first: "Your sign to go apple picking this weekend."' },
+      { title: 'Blue Mountain', ratio: '16 / 9', src: '/media/works/blue-mountain.mp4',
+        idea: 'My own footage of Blue Mountain village, colour graded.',
+        tools: 'DJI Osmo Pocket, Premiere Pro' },
+    ],
+  },
+  {
+    id: 'tutorials',
+    title: 'How-to and tutorial videos',
+    lede: 'Short lessons that show a tool or a build, step by step.',
+    videos: [
+      { title: 'DevSign Hacks: Buffer in six steps', ratio: '9 / 16', src: '/media/works/buffer-tutorial.mp4',
+        idea: 'Buffer from download to the posting queue, with real screen recordings and burned-in captions. The voiceover is an AI clone of my own voice, labelled as AI on Instagram.',
+        tools: 'Screen recordings, HyperFrames, Premiere Pro' },
+      { title: 'Lexus NX 350h: how I built the poster', ratio: '9 / 16', src: '/media/works/lexus-nx-indesign-tutorial.mp4',
+        idea: 'How I built the poster in InDesign, in ten steps.',
+        tools: 'InDesign' },
+    ],
+  },
+  {
+    id: 'posters',
+    title: 'Animated posters and reveals',
+    lede: 'Self-initiated car launch concepts: a still design, then the motion that brings it in.',
+    videos: [
+      { title: 'Lexus NX 350h: same poster, built live', ratio: '9 / 16', src: '/media/works/lexus-nx-reveal.mp4',
+        idea: '"Same poster. Now watch it build itself." The poster assembles piece by piece, with sound timed to the car.',
+        tools: 'InDesign, After Effects' },
+      { title: '2026 Ford Mustang GTD: smoke reveal', ratio: '9 / 16', src: '/projects/social-mustang-gtd-reel.mp4',
+        idea: 'The car sharpens out of the haze and dissolves back into smoke. It reached 104 people (Instagram Insights).',
+        tools: 'Photoshop, After Effects' },
+    ],
+  },
+  {
+    id: 'logos',
+    title: 'Logo animation',
+    lede: 'Marks I designed, brought to life.',
+    videos: [
+      { title: 'Devsign8 logo reveal', ratio: '9 / 16', src: '/media/brand/devsign8-logo.mp4',
+        idea: 'The animated wordmark of my own creative studio.',
+        tools: 'Illustrator, After Effects' },
+      { title: 'JM Design logo reveal', ratio: '9 / 16', src: '/media/brand/jm-design-logo.mp4',
+        idea: 'My monogram, animated.',
+        tools: 'Illustrator, After Effects' },
+    ],
+  },
+  {
+    id: 'concepts',
+    title: 'Concept work: UNF',
+    lede: 'Unofficial concept pieces in UNF\'s brand. Not official UNF content.',
+    videos: [
+      { title: 'Term 2 done, Term 3 ready', ratio: '16 / 9', src: '/media/works/unf-reel.mp4',
+        idea: 'An eight-second drive from night to day that ends on the UNF sign.' },
+      // Music: "Glow", a free-to-use track (Jayson, 2026-10-22).
+      { title: 'Follow the Flow: carousel in motion', ratio: '4 / 5', src: '/media/works/unf-follow-the-flow.mp4',
+        idea: 'A five-slide animated carousel that swipes itself: from a 1905 power station built on alternating current to today\'s light show, ending on "Innovation flows here."',
+        tools: 'Illustrator, After Effects' },
+    ],
+  },
+];
+
+const crumbs = [{ label: 'Home', path: '/' }, { label: 'Videos' }];
+---
+
+<V3Layout
+  title="Videos"
+  description="Video work by Jayson Mercado Erboila: Reels, short videos and motion design."
+  path="/videos/"
+  noindex
+>
+  <div class="videos-page container">
+    <PageHead crumbs={crumbs} title="Video" accent="work" lede="Reels, short videos and motion design, filmed on a DJI Osmo Pocket and an iPhone, edited in Premiere Pro and After Effects." />
+
+    <nav class="videos-page__jump" aria-label="Video categories">
+      <ul>
+        {GROUPS.map((g) => <li><a href={`#${g.id}`}>{g.title}</a></li>)}
+      </ul>
+    </nav>
+
+    {
+      GROUPS.map((g) => (
+        <section class="videos-page__group" aria-labelledby={g.id}>
+          <h2 id={g.id} class="videos-page__group-title">{g.title}</h2>
+          <p class="videos-page__group-lede">{g.lede}</p>
+          <div class="shelves">
+            {g.videos.map((v, i) => (
+              <Shelf
+                index={i}
+                level={3}
+                id={`${g.id}-${i + 1}`}
+                title={v.title}
+                idea={v.idea}
+                note={v.tools}
+                link={v.src ? { text: 'Open the video on its own', path: v.src, context: `: ${v.title}` } : undefined}
+              >
+                <div class="videos-page__frame" style={`--ratio: ${v.ratio ?? '16 / 9'}`}>
+                  {v.src ? (
+                    <video
+                      src={asset(v.src)}
+                      poster={asset(v.src.replace(/\.mp4$/, '.jpg'))}
+                      controls
+                      playsinline
+                      preload="none"
+                      aria-label={`Video: ${v.title}`}
+                    />
+                  ) : (
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${v.youtube}?rel=0`}
+                      title={`Video: ${v.title}`}
+                      loading="lazy"
+                      allow="encrypted-media; picture-in-picture; fullscreen"
+                      allowfullscreen
+                      referrerpolicy="strict-origin-when-cross-origin"
+                    />
+                  )}
+                </div>
+              </Shelf>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</V3Layout>
+
+<style>
+  .videos-page__jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin: 0 0 var(--space-xl);
+    padding: 0;
+    list-style: none;
+  }
+
+  .videos-page__jump a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap-min);
+    padding-inline: var(--space-s);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .videos-page__jump a:hover {
+    color: var(--accent);
+    border-color: currentColor;
+  }
+
+  .videos-page__group {
+    margin-block-end: var(--space-2xl);
+  }
+
+  .videos-page__group-title {
+    margin: 0 0 var(--space-2xs);
+    scroll-margin-block-start: calc(var(--header-height, 4.5rem) + var(--space-m));
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.25rem + 3vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+  }
+
+  .videos-page__group-lede {
+    margin: 0 0 var(--space-l);
+    max-inline-size: 40rem;
+    color: var(--text-dim);
+  }
+
+  /* Tall frames stay a phone's size; wide ones take the column. */
+  .videos-page__frame {
+    aspect-ratio: var(--ratio);
+    inline-size: 100%;
+    max-inline-size: calc(36rem * (var(--ratio)));
+  }
+
+  .videos-page__frame iframe,
+  .videos-page__frame video {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+    background: #000;
+  }
+</style>
