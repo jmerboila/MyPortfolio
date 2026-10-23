@@ -20,8 +20,10 @@ interface Props {
   panels: number;
   alt: string;
   label: string;
+  /** Replaces the default caption, e.g. for a concept that never ran (/UNF/). */
+  caption?: string;
 }
-const { artboard, panels, alt, label } = Astro.props;
+const { artboard, panels, alt, label, caption } = Astro.props;
 const img = await getImage({ src: artboard, width: Math.min(artboard.width, 2880), format: 'webp' });
 const strip = await getImage({ src: artboard, width: 1600, format: 'webp' });
 const panelW = Math.round(artboard.width / panels);
@@ -76,7 +78,7 @@ const panelW = Math.round(artboard.width / panels);
       ))
     }
   </div>
-  <figcaption>One {artboard.width} × {artboard.height} artboard, cut into {panels} panels of {panelW} × {artboard.height}: swipe it as it ran on Instagram.</figcaption>
+  <figcaption>{caption ?? `One ${artboard.width} × ${artboard.height} artboard, cut into ${panels} panels of ${panelW} × ${artboard.height}: swipe it as it ran on Instagram.`}</figcaption>
 </figure>
 
 <script>

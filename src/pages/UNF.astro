@@ -1,0 +1,95 @@
+---
+/* ============================================================================
+   /UNF: an UNLISTED page for the UNF Student Social Media Marketing Intern
+   application, laid out like /videos/. Nothing links here, it is noindex, and
+   astro.config keeps it out of the sitemap. It is not private: anyone with the
+   link can see it, and this file is public on GitHub.
+
+   Every piece is concept / spec work in UNF's brand, never official UNF
+   content, and says so. Sources: C:\dev\UNF (carousel/export-v3 stitched into
+   one artboard for CarouselSwiper; poster/UNF-Poster-Grad-VR.png;
+   poster/motion/*_music.mp4 remuxed with faststart, metadata stripped). The
+   animated carousel reuses the /videos/ web copy. No em dashes, no dates.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import V3Layout from '../layouts/V3Layout.astro';
+import PageHead from '../components/v3/PageHead.astro';
+import Shelf from '../components/v3/Shelf.astro';
+import CarouselSwiper from '../components/social/CarouselSwiper.astro';
+import { asset } from '../lib/url';
+import artboard from '../assets/projects/unf-carousel-artboard.webp';
+import poster from '../assets/projects/unf-grad-poster.webp';
+
+const CONCEPT = 'Concept / spec work, not official UNF content.';
+const PHOTO = 'Photo: University of Niagara Falls Canada.';
+
+const crumbs = [{ label: 'Home', path: '/' }, { label: 'UNF' }];
+---
+
+<V3Layout
+  title="UNF concept work"
+  description="Concept social and signage work by Jayson Mercado Erboila in the University of Niagara Falls Canada brand. Not official UNF content."
+  path="/UNF/"
+  noindex
+>
+  <div class="unf-page container">
+    <PageHead crumbs={crumbs} title="UNF" accent="concepts" lede={`A carousel and a graduate poster in UNF's "Innovation flows here" brand, each as a still and in motion. ${CONCEPT}`} />
+
+    <div class="shelves">
+      <Shelf index={0} id="unf-carousel" title="Follow the Flow: carousel"
+        idea={'A five-slide Instagram carousel built as one seamless artboard: the Flow Lines run across every seam, from a 1905 power station built on alternating current to today\'s light show, ending on "Innovation flows here."'}
+        note={`Illustrator, Photoshop. ${CONCEPT}`}>
+        <CarouselSwiper artboard={artboard} panels={5} label="Follow the Flow"
+          caption="One 5400 × 1350 artboard, cut into 5 panels of 1080 × 1350: swipe it as it would run on Instagram."
+          alt="Five UNF carousel slides on one artboard, joined by white flowing lines: This building changed the world; built in 1905 on alternating current; 101 years of turning the Falls into power; today the water flows in light; and the UNF campus with Innovation flows here, it always has, and an Explore programs button." />
+      </Shelf>
+
+      <Shelf index={1} id="unf-carousel-motion" title="Follow the Flow: carousel in motion"
+        idea="The same five slides animated and set to one music bed, then cut as a carousel that swipes itself on the beat."
+        note={`Illustrator, After Effects. ${CONCEPT}`}
+        link={{ text: 'Open the video on its own', path: '/media/works/unf-follow-the-flow.mp4', context: ': Follow the Flow' }}>
+        <div class="unf-page__frame" style="--ratio: 4 / 5">
+          <video src={asset('/media/works/unf-follow-the-flow.mp4')} poster={asset('/media/works/unf-follow-the-flow.jpg')}
+            controls playsinline preload="none" aria-label="Video: Follow the Flow, carousel in motion" />
+        </div>
+      </Shelf>
+
+      <Shelf index={2} id="unf-poster" title="Step inside your master's: graduate poster"
+        idea="A 9:16 campus screen poster for the MA in Digital Media and Global Communications, built around UNF's VR Lab. Magenta Flow Lines mark graduate content."
+        note={`Illustrator, Photoshop. ${PHOTO} ${CONCEPT}`}>
+        <div class="unf-page__frame" style="--ratio: 9 / 16">
+          <Image src={poster} widths={[540, 1080]} sizes="(min-width: 64rem) 20rem, 100vw" loading="lazy"
+            alt="UNF graduate poster: a student in a VR headset over a navy to blue glow with magenta flowing lines. Headline: Step inside your master's. MA in Digital Media and Global Communications, 18 months, intakes January, April, July and September, unfc.ca." />
+        </div>
+      </Shelf>
+
+      <Shelf index={3} id="unf-poster-motion" title="Step inside your master's: animated poster"
+        idea="The poster in motion as a 15-second seamless loop for campus screens. A silent cut runs on signage; this one carries music for social."
+        note={`After Effects. ${PHOTO} ${CONCEPT}`}
+        link={{ text: 'Open the video on its own', path: '/media/works/unf-grad-poster-motion.mp4', context: ': animated graduate poster' }}>
+        <div class="unf-page__frame" style="--ratio: 9 / 16">
+          <video src={asset('/media/works/unf-grad-poster-motion.mp4')} poster={asset('/media/works/unf-grad-poster-motion.jpg')}
+            controls playsinline loop preload="none" aria-label="Video: animated graduate poster" />
+        </div>
+      </Shelf>
+    </div>
+  </div>
+</V3Layout>
+
+<style>
+  /* Same frames as /videos/: tall ones stay a phone's size. */
+  .unf-page__frame {
+    aspect-ratio: var(--ratio);
+    inline-size: 100%;
+    max-inline-size: calc(36rem * (var(--ratio)));
+  }
+
+  .unf-page__frame video,
+  .unf-page__frame :global(img) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+    background: #000;
+  }
+</style>
