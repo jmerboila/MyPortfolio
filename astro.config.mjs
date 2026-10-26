@@ -55,8 +55,8 @@ export default defineConfig({
     sitemap({
       /* Case studies and the homepage are the pages worth surfacing. The
          filter keeps utility routes and redirect pages out of the index. */
-      /* /videos/ and /UNF/ are unlisted: sent with applications, never surfaced. */
-      filter: (page) => !page.includes('/404') && !page.includes('/videos/') && !page.includes('/UNF/') && !REDIRECT_URLS.has(page),
+      /* /videos/, /UNF/ and /caswells/ are unlisted: sent with applications, never surfaced. */
+      filter: (page) => !page.includes('/404') && !page.includes('/videos/') && !page.includes('/UNF/') && !page.includes('/caswells/') && !REDIRECT_URLS.has(page),
     }),
   ],
 

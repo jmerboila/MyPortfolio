@@ -1,0 +1,193 @@
+---
+/* ============================================================================
+   /caswells: an UNLISTED page for the Caswell's Fine Menswear application
+   (Social Media Content Creator & Marketing Specialist), laid out like /UNF/.
+   Nothing links here, it is noindex, and astro.config keeps it out of the
+   sitemap. Anyone with the link can see it, and this file is public on GitHub.
+
+   An outside audit of caswellsclothing.com from public pages only (homepage,
+   New Arrivals, the Au Noir Blazer Hemsworth product page, search, the empty
+   cart). Cart with items and checkout were not tested. Sources: PageSpeed
+   Insights run 2026-10-26 00:34 (report jl33coou6v, linked on the page);
+   page checks in the browser the same day. Method: the stage checklist in
+   C:\dev\Tutorial Funnel Design\reports\Ecommerce website funnel design.md.
+   Full notes: C:\dev\JobHunt 2026\applications\caswells_fine_menswear_social_media_content_creator\website-audit.md
+   No em dashes, no visible dates (the PageSpeed link carries the run date).
+   ========================================================================= */
+import V3Layout from '../layouts/V3Layout.astro';
+import PageHead from '../components/v3/PageHead.astro';
+import Shelf from '../components/v3/Shelf.astro';
+
+const PSI = 'https://pagespeed.web.dev/analysis/https-www-caswellsclothing-com/jl33coou6v';
+const OUTSIDE = 'An outside review from public pages. Not affiliated with Caswell\'s Fine Menswear.';
+
+const stages = [
+  { name: 'Tracking', status: 'Good', tone: 'good',
+    found: 'Google Analytics 4 runs through Shopify\'s Google & YouTube app and records every step, including shipping and payment. Google Tag Manager is installed. There is no tool for watching real visits, such as heatmaps or session recordings.',
+    next: 'Add Microsoft Clarity (free) and watch visits where people start checkout but do not buy.' },
+  { name: 'Ads, social and AI search', status: 'Needs fixing', tone: 'fix',
+    found: 'Google Ads, Meta, Snapchat and LinkedIn tracking are installed, so paid visitors land here. On 5 of 6 product pages I sampled, the product information for search engines (JSON-LD) breaks because a line break in the product description is not escaped.',
+    next: 'Escape the description in the theme\'s product data (the Liquid json filter), then check a product in Google\'s Rich Results Test. Build a simple landing page for each social campaign that repeats what the video showed.' },
+  { name: 'Homepage', status: 'Needs fixing', tone: 'fix',
+    found: 'The headline is clear: "Canada\'s Destination for Premium Menswear Since 1959!" On a phone, the first screen is the store address, the shipping message, the logo and search, then a grey box while the video loads. Two full-HD videos start downloading on phones, and one of them is hidden.',
+    next: 'On phones, use one light image with one headline and one button, and stop the hidden video from loading. Put the address and shipping message on one line.' },
+  { name: 'Menu and search', status: 'Mostly good', tone: 'mixed',
+    found: 'Search is easy to find and handles typos ("blazr" finds blazers). Searching "returns" shows swim trunks instead of the return policy. Product categories are inside the "Shop Now" drop-down rather than in the main menu.',
+    next: 'Put Suits & Blazers, Shirts, Pants, Jeans, Outerwear and Shoes in the main phone menu, with "View All" and "Best Sellers". Send searches for "returns", "shipping" and "exchange" to the policy pages.' },
+  { name: 'Collection pages', status: 'Mixed', tone: 'mixed',
+    found: 'Good filters for size, type, brand, price and offers, plus a "Load more" button. Some sort options show system names such as "Manual", "Title ascending" and "Created descending". Product cards have no star ratings or colour choices. New Arrivals holds 582 products.',
+    next: 'Rename the sort options ("Newest", "Price: low to high") and hide the rest, add a colour filter, and keep New Arrivals to recent items.' },
+  { name: 'Product page', status: 'Needs fixing', tone: 'fix',
+    found: 'Size buttons, free shipping over $125 next to the button, express checkout and pay-over-time options are all there. The blazer page has no size guide, although a size chart app is installed. There is no returns or delivery line near the button, and there are store reviews but no product reviews. The description has a small typo ("Au Noiran").',
+    next: 'Add a size guide link next to the sizes, add one line under the button with the returns window and delivery time, and start collecting product reviews. Short try-on videos on best sellers are worth testing.' },
+  { name: 'Cart and checkout', status: 'Not checked', tone: 'none',
+    found: 'The empty cart page has express checkout buttons and recently viewed products. Shopify\'s checkout already offers guest checkout and address lookup.',
+    next: 'Check that the cart shows how far the shopper is from free shipping, and that checkout shows a delivery date.' },
+  { name: 'Payments', status: 'Good', tone: 'good',
+    found: 'Shopify\'s express checkout and pay-over-time messages appear on product and cart pages.',
+    next: 'Confirm Apple Pay, Google Pay, Shop Pay and PayPal all show on phones.' },
+  { name: 'Email and repeat customers', status: 'Partly visible', tone: 'mixed',
+    found: 'Klaviyo is installed, tracks add-to-cart and has a "Sales, Promotions, Events" sign-up. A returns link is in the footer.',
+    next: 'Make sure the abandoned-cart, welcome and browse emails are running, and ask for a review once the order arrives.' },
+  { name: 'Trust', status: 'Good', tone: 'good',
+    found: 'Google rating, return, shipping and privacy pages, and the store address are on every page.',
+    next: 'Keep "Only 1 left!" tied to real stock and every sale price to a real former price.' },
+];
+
+const crumbs = [{ label: 'Home', path: '/' }, { label: 'Caswell\'s audit' }];
+---
+
+<V3Layout
+  title="Caswell's website audit"
+  description="An outside review of caswellsclothing.com by Jayson Mercado Erboila: Google PageSpeed results, a step-by-step shopping path check and five quick wins."
+  path="/caswells/"
+  noindex
+>
+  <div class="audit container">
+    <PageHead crumbs={crumbs} title="Caswell's" accent="audit"
+      lede={`A review of caswellsclothing.com from a shopper's side: speed, product pages and the path from first visit to checkout. By Jayson Mercado Erboila, Digital Marketing Specialist, Devsign8 Studios. ${OUTSIDE}`} />
+
+    <div class="shelves">
+      <Shelf index={0} id="audit-summary" title="Summary"
+        idea="What already works, and the three changes that would make the biggest difference."
+        note="Pages checked: homepage, New Arrivals, one product page, search and the cart page, on a computer and a phone-sized screen. Checkout was not tested.">
+        <div class="audit__body">
+          <p>The site already does a lot right. The 4.8 Google rating shows on every page, free shipping over $125 is stated next to the Add to Cart button, sizes are buttons, express checkout is there, the collection page uses a "Load more" button, search copes with typos, and Google Analytics 4 tracks every step of the purchase.</p>
+          <ol>
+            <li><strong>Speed.</strong> Google PageSpeed gives the site 36 on mobile and 18 on desktop. On phones, the homepage downloads two full-HD videos, one of which is never shown. About 35 outside services load on a product page.</li>
+            <li><strong>Product data for Google and AI search.</strong> On 5 of the 6 product pages I sampled, the hidden product information that search engines read (price, stock, brand) has an error and cannot be read.</li>
+            <li><strong>Product page details.</strong> The blazer page has no size guide, no returns or delivery line near the button, and no reviews of the product itself.</li>
+          </ol>
+        </div>
+      </Shelf>
+
+      <Shelf index={1} id="audit-pagespeed" title="Google PageSpeed results"
+        idea="Lab scores from one run, and what real visitors experienced over the last 28 days."
+        note="Source: Google PageSpeed Insights. Lab scores move a little between runs.">
+        <div class="audit__body">
+          <div class="audit__scroll"><table>
+            <thead><tr><th></th><th>Performance</th><th>Accessibility</th><th>Best practices</th><th>SEO</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Mobile</th><td>36</td><td>81</td><td>73</td><td>85</td></tr>
+              <tr><th scope="row">Desktop</th><td>18</td><td>81</td><td>73</td><td>85</td></tr>
+            </tbody>
+          </table></div>
+          <div class="audit__scroll"><table>
+            <thead><tr><th>Measure</th><th>Mobile</th><th>Desktop</th></tr></thead>
+            <tbody>
+              <tr><td>First content appears</td><td>5.5 s</td><td>0.9 s</td></tr>
+              <tr><td>Main content appears (LCP)</td><td>41.6 s</td><td>3.7 s</td></tr>
+              <tr><td>Time the page is blocked</td><td>840 ms</td><td>1,270 ms</td></tr>
+              <tr><td>Layout movement (CLS)</td><td>0.002</td><td>0.699</td></tr>
+              <tr><td>Speed Index</td><td>15.0 s</td><td>3.7 s</td></tr>
+            </tbody>
+          </table></div>
+          <p><strong>Real visitors</strong> (Google's Chrome data, last 28 days): phone visitors <span class="audit__status audit__status--good">pass</span> Google's Core Web Vitals. Desktop visitors <span class="audit__status audit__status--fix">do not pass</span>: the main content takes 2.6 seconds to appear, just over Google's 2.5 second limit.</p>
+          <p>PageSpeed's largest suggested savings:</p>
+          <ul>
+            <li>Smaller, modern image files: about 750 KB on mobile and 1.5 MB on desktop.</li>
+            <li>Files that block the page from showing: about 0.7 seconds on mobile.</li>
+            <li>Longer browser caching: about 580 KB.</li>
+            <li>Old JavaScript code: about 113 KB.</li>
+            <li>JavaScript work: 4.0 seconds on mobile and 4.8 seconds on desktop.</li>
+            <li>On desktop, something on the page moves after it loads (layout shift of 0.699).</li>
+          </ul>
+          <p><a href={PSI} target="_blank" rel="noopener">See the full PageSpeed report</a></p>
+        </div>
+      </Shelf>
+
+      <Shelf index={2} id="audit-steps" title="Step by step"
+        idea="A shopper's path from first visit to purchase, checked against published ecommerce research."
+        note="Research: Baymard Institute usability studies, Google web.dev case studies, Littledata Shopify benchmarks.">
+        <div class="audit__body audit__stages">
+          {stages.map((s) => (
+            <div class="audit__stage">
+              <h3>{s.name} <span class={`audit__status audit__status--${s.tone}`}>· {s.status}</span></h3>
+              <p>{s.found}</p>
+              <p><em>Suggestion:</em> {s.next}</p>
+            </div>
+          ))}
+        </div>
+      </Shelf>
+
+      <Shelf index={3} id="audit-weight" title="Why the pages are heavy"
+        idea="Where the download size and the slow loading come from.">
+        <div class="audit__body">
+          <ul>
+            <li><strong>Homepage video:</strong> two full-HD files that start downloading straight away, including one hidden on phones.</li>
+            <li><strong>Outside services:</strong> about 35 load on a product page, including Google Tag Manager, Google Ads, Meta, Snapchat, LinkedIn, Klaviyo, Boost search, a size chart app, a review widget and several ad pixels. One Boost file loads from a test (staging) server on the live site.</li>
+            <li><strong>Images:</strong> 0.75 to 1.5 MB could be saved with right-sized, modern image files.</li>
+          </ul>
+        </div>
+      </Shelf>
+
+      <Shelf index={4} id="audit-wins" title="Five quick wins"
+        idea="Changes that need no testing budget.">
+        <div class="audit__body">
+          <ol>
+            <li>Fix the product data for search engines in one theme file.</li>
+            <li>A lighter phone homepage: one image, one headline, one button.</li>
+            <li>A size guide and a returns line next to Add to Cart.</li>
+            <li>Clear sort names and categories in the phone menu.</li>
+            <li>Remove unused tracking and the staging file, then run PageSpeed again.</li>
+          </ol>
+        </div>
+      </Shelf>
+    </div>
+  </div>
+</V3Layout>
+
+<style>
+  .audit__body {
+    max-inline-size: var(--measure, 68ch);
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+  .audit__body p,
+  .audit__body ul,
+  .audit__body ol { margin: 0 0 0.9em; }
+  .audit__body li { margin-bottom: 0.4em; }
+  .audit__scroll { overflow-x: auto; margin-bottom: 1.2em; }
+  .audit__body table {
+    border-collapse: collapse;
+    inline-size: 100%;
+    min-inline-size: 22rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .audit__body th,
+  .audit__body td {
+    padding: 0.5em 0.7em;
+    text-align: start;
+    border-bottom: 1px solid var(--border);
+  }
+  .audit__body thead th { color: var(--text-dim); font-weight: 600; }
+  .audit__stage { padding-block: 0.9em; border-bottom: 1px solid var(--border); }
+  .audit__stage:last-child { border-bottom: 0; }
+  .audit__stage h3 { font-size: 1.1rem; margin: 0 0 0.4em; }
+  .audit__stage p { margin-bottom: 0.4em; }
+  .audit__status { font-weight: 700; }
+  .audit__status--good { color: light-dark(#166534, #86efac); }
+  .audit__status--fix { color: light-dark(#b91c1c, #fca5a5); }
+  .audit__status--mixed { color: light-dark(#92400e, #fcd34d); }
+  .audit__status--none { color: var(--text-dim); }
+</style>
