@@ -122,6 +122,8 @@ identity:
   reel: "The reel shows the build: the J and the M drawn, offset and cut where they cross in Illustrator, then the finished mark flashing over black-and-white architecture before it settles, small and still, on black."
 # 2026-09-28: the logo reel (JM Design Music Reel v4, Jayson's locked final),
 # linked from the homepage's 03 Brand card (its mark, linked to this page).
+# 2026-10-26: music back on (Jayson's call), 1080x1920 upscaled from the
+# 540x960 export; the full-size render's source photos are lost.
 video:
   src: "/media/brand/jm-design-logo.mp4"
   poster: "/media/brand/jm-design-logo-poster.webp"
