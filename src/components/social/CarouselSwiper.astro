@@ -11,9 +11,20 @@
    (scripts/carousel-swiper.ts). Without JavaScript the row still scrolls.
    Light and dark (the design rule): the phone's bezel takes the opposite
    tone to the page.
+
+   frame="instagram" (2026-10-26, his call; pilot on /UNF/, Ford keeps the
+   phone until he approves): the panels sit in an Instagram feed post instead,
+   drawn with InstagramPost's sp- classes from social.css. JM avatar and the
+   piece's name in the header, "1/5" and arrows on the image (hidden at the
+   ends, as in the app), the action row with the blue page dots. No likes or
+   caption: there is no real post to quote. Like InstagramPost, the frame
+   follows the site theme.
    ========================================================================= */
 import type { ImageMetadata } from 'astro';
 import { getImage } from 'astro:assets';
+import SocialIcon from './SocialIcon.astro';
+import JMMark from '../JMMark.astro';
+import '../../styles/social.css';
 
 interface Props {
   artboard: ImageMetadata;
@@ -22,15 +33,33 @@ interface Props {
   label: string;
   /** Replaces the default caption, e.g. for a concept that never ran (/UNF/). */
   caption?: string;
+  /** 'phone' (default) or an Instagram feed post. */
+  frame?: 'phone' | 'instagram';
 }
-const { artboard, panels, alt, label, caption } = Astro.props;
+const { artboard, panels, alt, label, caption, frame = 'phone' } = Astro.props;
+const ig = frame === 'instagram';
 const img = await getImage({ src: artboard, width: Math.min(artboard.width, 2880), format: 'webp' });
 const strip = await getImage({ src: artboard, width: 1600, format: 'webp' });
 const panelW = Math.round(artboard.width / panels);
 ---
 
-<figure class="cs" data-cs style={`--panels:${panels};--ratio:${panelW} / ${artboard.height}`}>
-  <div class="cs__phone">
+<figure
+  class:list={['cs', ig && 'cs--ig']}
+  data-cs
+  data-cs-ig={ig ? '' : undefined}
+  data-sp-feed={ig ? '' : undefined}
+  style={`--panels:${panels};--ratio:${panelW} / ${artboard.height}`}
+>
+  <div class:list={['cs__post', ig && 'sp-ig']} role={ig ? 'article' : undefined} aria-label={ig ? `Instagram carousel: ${label}` : undefined}>
+  {
+    ig && (
+      <header class="sp-ig__head">
+        <span class="sp-avatar"><JMMark /></span>
+        <p class="sp-ig__who"><span class="sp-ig__handle">{label}</span></p>
+      </header>
+    )
+  }
+  <div class={ig ? 'cs__media' : 'cs__phone'}>
     <div
       class="cs__track"
       data-cs-track
@@ -54,20 +83,52 @@ const panelW = Math.round(artboard.width / panels);
         ))
       }
     </div>
-    <div class="cs__dots" aria-hidden="true">
-      {Array.from({ length: panels }, (_, i) => <span data-cs-dot class:list={[i === 0 && 'is-on']} />)}
-    </div>
+    {
+      ig ? (
+        <>
+          <span class="sp-carousel__count" data-cs-count aria-live="polite">1/{panels}</span>
+          <button type="button" class="sp-carousel__nav sp-carousel__nav--prev" data-cs-prev aria-label="Previous panel" disabled>
+            <SocialIcon name="chevron-left" size={16} />
+          </button>
+          <button type="button" class="sp-carousel__nav sp-carousel__nav--next" data-cs-next aria-label="Next panel">
+            <SocialIcon name="chevron-right" size={16} />
+          </button>
+        </>
+      ) : (
+        <div class="cs__dots" aria-hidden="true">
+          {Array.from({ length: panels }, (_, i) => <span data-cs-dot class:list={[i === 0 && 'is-on']} />)}
+        </div>
+      )
+    }
+  </div>
+  {
+    ig && (
+      <div class="sp-ig__actions" aria-hidden="true">
+        <span class="sp-act"><SocialIcon name="heart" /></span>
+        <span class="sp-act"><SocialIcon name="comment" /></span>
+        <span class="sp-act"><SocialIcon name="send" /></span>
+        <span class="sp-dots">
+          {Array.from({ length: panels }, (_, i) => <span class:list={['sp-dot', i === 0 && 'is-on']} data-cs-dot />)}
+        </span>
+        <span class="sp-act sp-act--save"><SocialIcon name="bookmark" /></span>
+      </div>
+    )
+  }
   </div>
 
-  <div class="cs__controls">
-    <button type="button" class="cs__btn" data-cs-prev aria-label="Previous panel" disabled>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
-    </button>
-    <span class="cs__count" data-cs-count aria-live="polite">1 / {panels}</span>
-    <button type="button" class="cs__btn" data-cs-next aria-label="Next panel">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
-    </button>
-  </div>
+  {
+    !ig && (
+      <div class="cs__controls">
+        <button type="button" class="cs__btn" data-cs-prev aria-label="Previous panel" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+        </button>
+        <span class="cs__count" data-cs-count aria-live="polite">1 / {panels}</span>
+        <button type="button" class="cs__btn" data-cs-next aria-label="Next panel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </div>
+    )
+  }
 
   <div class="cs__strip">
     <img src={strip.src} alt="" loading="lazy" decoding="async" />
@@ -103,6 +164,38 @@ const panelW = Math.round(artboard.width / panels);
 
   :global(:root[data-theme='dark']) .cs {
     --bezel: #f3f1ec;
+  }
+
+  /* The phone frame needs no wrapper; the Instagram post does. */
+  .cs__post:not(.sp-ig) {
+    display: contents;
+  }
+
+  .cs--ig .cs__post {
+    inline-size: min(100%, var(--sp-post-w));
+  }
+
+  .cs__media {
+    position: relative;
+  }
+
+  .cs--ig .cs__track {
+    border-radius: 0;
+  }
+
+  .cs--ig .cs__track:focus-visible {
+    outline: 3px solid var(--ig-blue);
+    outline-offset: -3px;
+  }
+
+  /* As in the app: no back arrow on the first panel, no next on the last. */
+  .cs--ig .sp-carousel__nav:disabled {
+    display: none;
+  }
+
+  .cs--ig .sp-dot.is-on {
+    background: var(--ig-blue);
+    opacity: 1;
   }
 
   .cs__phone {

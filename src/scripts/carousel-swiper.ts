@@ -29,7 +29,8 @@ export function initCarouselSwipers(): void {
       root.dataset.csDrawn = '1';
       win?.style.setProperty('--i', String(i));
       dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
-      if (count) count.textContent = `${i + 1} / ${panels}`;
+      /* Instagram writes the counter without spaces. */
+      if (count) count.textContent = root.hasAttribute('data-cs-ig') ? `${i + 1}/${panels}` : `${i + 1} / ${panels}`;
       if (prev) prev.disabled = i === 0;
       if (next) next.disabled = i === panels - 1;
     };
