@@ -1,0 +1,66 @@
+---
+/* ============================================================================
+   ViewerVideo: an inline <video> plus its expand button, which opens
+   VideoViewer (put that once on the same page). Its parent frame needs
+   `position: relative` for the button. The viewer steps through every
+   ViewerVideo on the page in page order. 2026-10-26, his call: /videos and
+   /UNF.
+   ========================================================================= */
+import { asset } from '../../lib/url';
+
+interface Props {
+  /** A file under public/, e.g. '/media/works/x.mp4'. */
+  src: string;
+  /** Poster under public/; defaults to the same name as .jpg. */
+  poster?: string;
+  /** Shown in the viewer; the aria-label is "Video: <title>". */
+  title: string;
+  loop?: boolean;
+}
+
+const { src, poster = src.replace(/\.mp4$/, '.jpg'), title, loop = false } = Astro.props;
+---
+
+<video
+  src={asset(src)}
+  poster={asset(poster)}
+  controls
+  controlslist="nodownload nofullscreen"
+  disablepictureinpicture
+  playsinline
+  loop={loop}
+  preload="none"
+  aria-label={`Video: ${title}`}
+  data-viewer-item
+  data-title={title}
+></video>
+<button type="button" class="viewer-expand" data-viewer-open aria-label={`Play full screen: ${title}`}>
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</button>
+
+<style>
+  .viewer-expand {
+    position: absolute;
+    inset-block-start: var(--space-2xs);
+    inset-inline-end: var(--space-2xs);
+    display: grid;
+    place-items: center;
+    inline-size: var(--tap-min);
+    block-size: var(--tap-min);
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.55);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .viewer-expand:hover {
+    background: rgb(0 0 0 / 0.8);
+  }
+
+  .viewer-expand:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+</style>
