@@ -20,7 +20,9 @@
    screen, with previous and next in page order. Download deterrents for every
    video are in scripts/video.ts.
    Grouped by kind (his categories, 2026-10-22); the order here is the order
-   on the page. No em dashes, no dates in the copy.
+   on the page. 2026-10-26 (his call): logos first (JM Design, then
+   Devsign8), then trends, posters, UNF, tutorials, campaigns last.
+   No em dashes, no dates in the copy.
    ========================================================================= */
 import V3Layout from '../layouts/V3Layout.astro';
 import PageHead from '../components/v3/PageHead.astro';
@@ -51,18 +53,15 @@ interface Group {
 
 const GROUPS: Group[] = [
   {
-    id: 'campaign',
-    title: 'Campaign Reels: Get Found in 5',
-    lede: 'An organic campaign for DevSign Hacks: five fixes that help a small business get found, shown on a fictional brunch spot.',
+    id: 'logos',
+    title: 'Logo animation',
+    lede: 'Marks I designed, brought to life.',
     videos: [
-      { title: 'The hook Reel', ratio: '9 / 16', src: '/media/works/get-found-in-5-reel.mp4',
-        idea: 'Hook: "This brunch spot was invisible on Google." Viewers watched 17 s of 30 s on average (Instagram Insights).',
-        tools: 'Illustrator, After Effects. Captions written by me.' },
-      { title: 'All five fixes', ratio: '9 / 16', src: '/media/works/get-found-in-5-five-fixes.mp4',
-        idea: 'All five fixes, before and after, every cut on the beat.',
+      { title: 'JM Design logo reveal', ratio: '9 / 16', src: '/media/brand/jm-design-logo.mp4',
+        idea: 'My monogram, animated.',
         tools: 'Illustrator, After Effects' },
-      { title: 'Reviews in one tap', ratio: '9 / 16', src: '/media/works/get-found-in-5-reviews.mp4',
-        idea: 'The Facebook Reel: three steps to more Google reviews with a QR code.',
+      { title: 'Devsign8 logo reveal', ratio: '9 / 16', src: '/media/brand/devsign8-logo.mp4',
+        idea: 'The animated wordmark of my own creative studio.',
         tools: 'Illustrator, After Effects' },
     ],
   },
@@ -84,19 +83,6 @@ const GROUPS: Group[] = [
     ],
   },
   {
-    id: 'tutorials',
-    title: 'How-to and tutorial videos',
-    lede: 'Short lessons that show a tool or a build, step by step.',
-    videos: [
-      { title: 'DevSign Hacks: Buffer in six steps', ratio: '9 / 16', src: '/media/works/buffer-tutorial.mp4',
-        idea: 'Buffer from download to the posting queue, with real screen recordings and burned-in captions. The voiceover is an AI clone of my own voice, labelled as AI on Instagram.',
-        tools: 'Screen recordings, HyperFrames, Premiere Pro' },
-      { title: 'Lexus NX 350h: how I built the poster', ratio: '9 / 16', src: '/media/works/lexus-nx-indesign-tutorial.mp4',
-        idea: 'How I built the poster in InDesign, in ten steps.',
-        tools: 'InDesign' },
-    ],
-  },
-  {
     id: 'posters',
     title: 'Animated posters and reveals',
     lede: 'Self-initiated car launch concepts: a still design, then the motion that brings it in.',
@@ -110,19 +96,6 @@ const GROUPS: Group[] = [
     ],
   },
   {
-    id: 'logos',
-    title: 'Logo animation',
-    lede: 'Marks I designed, brought to life.',
-    videos: [
-      { title: 'Devsign8 logo reveal', ratio: '9 / 16', src: '/media/brand/devsign8-logo.mp4',
-        idea: 'The animated wordmark of my own creative studio.',
-        tools: 'Illustrator, After Effects' },
-      { title: 'JM Design logo reveal', ratio: '9 / 16', src: '/media/brand/jm-design-logo.mp4',
-        idea: 'My monogram, animated.',
-        tools: 'Illustrator, After Effects' },
-    ],
-  },
-  {
     id: 'concepts',
     title: 'Concept work: UNF',
     lede: 'Unofficial concept pieces in UNF\'s brand. Not official UNF content.',
@@ -132,6 +105,35 @@ const GROUPS: Group[] = [
       // Music: "Glow", a free-to-use track (Jayson, 2026-10-22).
       { title: 'Follow the Flow: carousel in motion', ratio: '4 / 5', src: '/media/works/unf-follow-the-flow.mp4',
         idea: 'A five-slide animated carousel that swipes itself: from a 1905 power station built on alternating current to today\'s light show, ending on "Innovation flows here."',
+        tools: 'Illustrator, After Effects' },
+    ],
+  },
+  {
+    id: 'tutorials',
+    title: 'How-to and tutorial videos',
+    lede: 'Short lessons that show a tool or a build, step by step.',
+    videos: [
+      { title: 'DevSign Hacks: Buffer in six steps', ratio: '9 / 16', src: '/media/works/buffer-tutorial.mp4',
+        idea: 'Buffer from download to the posting queue, with real screen recordings and burned-in captions. The voiceover is an AI clone of my own voice, labelled as AI on Instagram.',
+        tools: 'Screen recordings, HyperFrames, Premiere Pro' },
+      { title: 'Lexus NX 350h: how I built the poster', ratio: '9 / 16', src: '/media/works/lexus-nx-indesign-tutorial.mp4',
+        idea: 'How I built the poster in InDesign, in ten steps.',
+        tools: 'InDesign' },
+    ],
+  },
+  {
+    id: 'campaign',
+    title: 'Campaign Reels: Get Found in 5',
+    lede: 'An organic campaign for DevSign Hacks: five fixes that help a small business get found, shown on a fictional brunch spot.',
+    videos: [
+      { title: 'The hook Reel', ratio: '9 / 16', src: '/media/works/get-found-in-5-reel.mp4',
+        idea: 'Hook: "This brunch spot was invisible on Google." Viewers watched 17 s of 30 s on average (Instagram Insights).',
+        tools: 'Illustrator, After Effects. Captions written by me.' },
+      { title: 'All five fixes', ratio: '9 / 16', src: '/media/works/get-found-in-5-five-fixes.mp4',
+        idea: 'All five fixes, before and after, every cut on the beat.',
+        tools: 'Illustrator, After Effects' },
+      { title: 'Reviews in one tap', ratio: '9 / 16', src: '/media/works/get-found-in-5-reviews.mp4',
+        idea: 'The Facebook Reel: three steps to more Google reviews with a QR code.',
         tools: 'Illustrator, After Effects' },
     ],
   },
