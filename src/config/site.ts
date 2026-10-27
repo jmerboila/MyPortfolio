@@ -93,7 +93,7 @@ export const ENTITY = {
     'Adobe Illustrator',
     'Adobe InDesign',
     'Adobe After Effects',
-    'Adobe Premiere Pro',
+    'Adobe Premiere',
   ],
   sameAs: [
     'https://www.linkedin.com/in/jayson-erboila/',

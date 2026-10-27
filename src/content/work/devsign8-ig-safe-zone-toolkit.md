@@ -18,7 +18,7 @@ role: "Research, design, content and posting"
 year: "2026"
 tools:
   - "Photoshop"
-  - "Premiere Pro"
+  - "Premiere"
   - "After Effects"
 featured: false
 order: 72
@@ -57,7 +57,7 @@ toolkit:
     disclaimer: "Meta changes these specs without notice, so check Ads Manager before a high-stakes campaign."
   tool:
     body:
-      - "I built the gridlines in Photoshop first, so my carousels and posts stayed inside the safe zones, then marked the same zones in Premiere Pro and After Effects for video."
+      - "I built the gridlines in Photoshop first, so my carousels and posts stayed inside the safe zones, then marked the same zones in Premiere and After Effects for video."
       - "Then I turned it into a Photoshop script: pick a format, and it builds the canvas at the exact size, places every guide, and tints the danger zones violet so you can see them."
     shots:
       - src: "../../assets/projects/toolkit-ps-reel.webp"
