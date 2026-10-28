@@ -204,10 +204,9 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
 <meta name="twitter:image" content={ogImageUrl} />
 <meta name="twitter:image:alt" content={ogImageAlt} />
 
-{/* Icons — carried over from v1, same files. */}
+{/* Icons. The ICO is a sized fallback so Chrome picks the adaptive SVG (black J light, white J dark). */}
+<link rel="icon" href={asset('/favicon.ico')} sizes="32x32" />
 <link rel="icon" type="image/svg+xml" href={asset('/favicon.svg')} />
-<link rel="icon" type="image/png" sizes="96x96" href={asset('/images/favicon-96x96.png')} />
-<link rel="shortcut icon" href={asset('/favicon.ico')} />
 <link rel="apple-touch-icon" sizes="180x180" href={asset('/images/apple-touch-icon.png')} />
 <link rel="manifest" href={asset('/images/site.webmanifest')} />
 
