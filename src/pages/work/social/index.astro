@@ -42,8 +42,8 @@ const projects = await getCollection('work', ({ data }) => !data.draft);
 
 const name = copy.name ?? CATEGORY_LABELS.social;
 const description =
-  `Social media work by ${PERSON.name}: viral trend Reels, Instagram campaigns, ` +
-  'a content series and how-to tutorials, with the story of how each was made.';
+  `Social media work by ${PERSON.name} for Instagram, TikTok and Facebook: ` +
+  'viral trends, campaigns, a content series and how-to tutorials.';
 
 const videoObjects = await Promise.all(
   entries

@@ -46,7 +46,7 @@ export const TYPE_COPY: Partial<Record<WorkCategory, TypeCopy>> = {
     name: 'Social Media: Viral Trends, Campaigns, Series & Tutorials',
     title: 'Made for the',
     accent: 'feed',
-    lede: 'Viral trends, campaigns, a content series and tutorials for Instagram, one project at a time. Tap any video to play it, and open a story to see how it was made.',
-    blurb: 'Viral trend experiments, launch campaigns, a content series and how-to tutorials for Instagram, each showing how it was planned and made.',
+    lede: 'Viral trends, campaigns, a content series and tutorials for Instagram, TikTok and Facebook, one project at a time. Tap any video to play it, and open a story to see how it was made.',
+    blurb: 'Viral trend experiments, launch campaigns, a content series and how-to tutorials for Instagram, TikTok and Facebook, each showing how it was planned and made.',
   },
 };
