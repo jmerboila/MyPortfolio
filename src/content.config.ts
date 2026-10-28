@@ -119,6 +119,16 @@ const work = defineCollection({
         events: z.array(z.object({ time: z.string(), label: z.string() })).min(1),
       }),
       z.object({ kind: z.literal('results') }),
+      /* A video under public/ in a fixed frame, opening VideoViewer
+         (2026-10-27: the UNF concepts, which never ran as posts). */
+      z.object({
+        kind: z.literal('video'),
+        src: z.string().regex(/^\//),
+        title: z.string(),
+        ratio: z.string(),
+        loop: z.boolean().default(false),
+        note: z.string().optional(),
+      }),
       /* A live site, desktop + phone, via SiteShowcase (2026-09-30). */
       /* `mixed`: the phone in the other theme to the desktop, so the pair
          shows the site in both light and dark. */
@@ -416,7 +426,7 @@ const work = defineCollection({
           disclaimer: z.string(),
           hero: z.discriminatedUnion('kind', [
             /* The Seamless Carousel in a phone frame, sliced from one artboard. */
-            z.object({ kind: z.literal('carousel'), artboard: image(), panels: z.number().int().min(2).max(10), alt: z.string() }),
+            z.object({ kind: z.literal('carousel'), artboard: image(), panels: z.number().int().min(2).max(10), alt: z.string(), caption: z.string().optional() }),
             /* The project's posts, playable. */
             z.object({ kind: z.literal('posts') }),
           ]),

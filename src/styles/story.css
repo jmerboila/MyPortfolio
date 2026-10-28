@@ -14,6 +14,31 @@
   margin: 0;
 }
 
+/* A tall image stays a phone's size too, like the video frames below. */
+.st-v.st-v--image img {
+  display: block;
+  inline-size: auto;
+  max-inline-size: 100%;
+  block-size: auto;
+  max-block-size: 36rem;
+}
+
+/* A video visual: tall frames stay a phone's size, as on /videos/. */
+.st-video {
+  position: relative;
+  aspect-ratio: var(--ratio);
+  inline-size: 100%;
+  max-inline-size: calc(36rem * (var(--ratio)));
+}
+
+.st-video video {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+  background: #000;
+}
+
 .st-v figcaption,
 .st-cap__head span {
   font-size: 0.8125rem;

@@ -13,6 +13,7 @@ import { Image, getImage } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { SOCIAL_ACCOUNTS, captionParts } from '../../config/social';
 import JMMark from '../JMMark.astro';
+import ViewerVideo from '../v3/ViewerVideo.astro';
 import SiteShowcase from '../SiteShowcase.astro';
 import { SITE_SHOTS } from '../../config/site-shots';
 
@@ -37,6 +38,17 @@ const fmt = (n: number, unit: string) =>
   v.kind === 'image' && (
     <figure class="st-v st-v--image">
       <Image src={v.src} alt={v.alt} widths={[640, 1080]} sizes="(min-width: 60rem) 34rem, 92vw" />
+      {v.note && <figcaption>{v.note}</figcaption>}
+    </figure>
+  )
+}
+
+{
+  v.kind === 'video' && (
+    <figure class="st-v st-v--video">
+      <div class="st-video" style={`--ratio: ${v.ratio}`}>
+        <ViewerVideo src={v.src} title={v.title} loop={v.loop} />
+      </div>
       {v.note && <figcaption>{v.note}</figcaption>}
     </figure>
   )
