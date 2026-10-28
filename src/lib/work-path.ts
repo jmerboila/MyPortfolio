@@ -16,6 +16,10 @@ export interface WorkLike {
 /** A project's type: the first of its `cats`. */
 export const workType = (e: WorkLike): string => e.data.cats[0] ?? '';
 
+/** Whether a project shows under a type: any of its `cats` (2026-10-27, his
+ *  call: UNF is both Social Media and Print Media). Its page stays under the first. */
+export const inType = (e: WorkLike, type: string): boolean => e.data.cats.includes(type);
+
 /** Site-relative path of a type's page, e.g. /work/logo/. */
 export const typePath = (type: string): string => `/work/${type}/`;
 
@@ -26,5 +30,5 @@ export const projectPath = (e: WorkLike): string => `${typePath(workType(e))}${e
  *  Drives the type pages and the footer menu, so a type appears on its own
  *  once its first project lands. */
 export function liveTypes<T extends string>(order: readonly T[], entries: WorkLike[]): T[] {
-  return order.filter((t) => entries.some((e) => workType(e) === t));
+  return order.filter((t) => entries.some((e) => inType(e, t)));
 }

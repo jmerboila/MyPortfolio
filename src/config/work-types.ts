@@ -30,6 +30,12 @@ export const TYPE_COPY: Partial<Record<WorkCategory, TypeCopy>> = {
     lede: 'Website design, one project at a time. Open any one for the full artwork.',
     blurb: 'Websites for studios and small businesses.',
   },
+  print: {
+    title: 'Posters that',
+    accent: 'stop',
+    lede: 'Posters, one project at a time, each as a still and in motion. Open any one for the full artwork.',
+    blurb: 'Posters for car launches and campus screens, still and animated.',
+  },
   social: {
     title: 'Made for the',
     accent: 'feed',

@@ -20,7 +20,7 @@ description: "A Lexus NX 350h poster designed in InDesign and animated in After 
 intro: "A self-initiated poster series for the Lexus NX 350h: designed from a blank page in InDesign, animated in After Effects, and posted as the still, the Reveal and the build."
 category: "Poster series"
 cats:
-  - "social"
+  - "print"
 tags:
   - "Instagram"
   - "Poster design"

@@ -17,7 +17,7 @@ import WorkCover from '../../../components/v3/WorkCover.astro';
 import { TYPE_COPY } from '../../../config/work-types';
 import { absoluteUrl, PERSON } from '../../../config/site';
 import { CATEGORY_LABELS, WORK_CATEGORIES, type WorkCategory } from '../../../content.config';
-import { liveTypes, projectPath, typePath, workType } from '../../../lib/work-path';
+import { inType, liveTypes, projectPath, typePath } from '../../../lib/work-path';
 
 export async function getStaticPaths() {
   const entries = await getCollection('work', ({ data }) => !data.draft);
@@ -31,7 +31,7 @@ const label = CATEGORY_LABELS[type];
 const path = typePath(type);
 
 const entries = (await getCollection('work', ({ data }) => !data.draft))
-  .filter((e) => workType(e) === type)
+  .filter((e) => inType(e, type))
   .sort((a, b) =>
     a.data.order !== b.data.order
       ? a.data.order - b.data.order
@@ -85,7 +85,7 @@ const schema = [
             idea={entry.data.summary}
             link={{ text: 'See the project', path: projectPath(entry), context: `: ${entry.data.title}` }}
           >
-            <WorkCover entry={entry} size="large" />
+            <WorkCover entry={entry} size="large" type={type} />
           </Shelf>
         ))
       }

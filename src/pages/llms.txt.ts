@@ -20,7 +20,7 @@ import { getCollection } from 'astro:content';
 import { PERSON, SEO, ENTITY, DEVSIGN8, RIGHTS_NOTICE, absoluteUrl } from '../config/site';
 import { STAGES, CONTACT_HREF } from '../config/lifecycle';
 import { CATEGORY_LABELS, WORK_CATEGORIES } from '../content.config';
-import { liveTypes, projectPath, typePath, workType } from '../lib/work-path';
+import { inType, liveTypes, projectPath, typePath } from '../lib/work-path';
 
 export const GET: APIRoute = async () => {
   const entries = (await getCollection('work', ({ data }) => !data.draft)).sort((a, b) =>
@@ -36,7 +36,7 @@ export const GET: APIRoute = async () => {
     '',
     `- [All ${CATEGORY_LABELS[t].toLowerCase()} work](${absoluteUrl(typePath(t))})`,
     ...entries
-      .filter((e) => workType(e) === t)
+      .filter((e) => inType(e, t))
       .map((e) => {
         const d = e.data;
         const tools = d.tools.length ? ` Tools: ${d.tools.join(', ')}.` : '';

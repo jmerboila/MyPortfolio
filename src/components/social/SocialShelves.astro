@@ -20,18 +20,38 @@ interface Props {
   projects: CollectionEntry<'work'>[];
 }
 const { entries, projects } = Astro.props;
-const shelves = groupShelves(entries, projects);
+/* Only Social Media projects: a project moved to another type (Lexus went to
+   Print Media, 2026-10-27) takes its posts with it. */
+const social = projects.filter((p) => p.data.cats.includes('social'));
+const socialIds = new Set(social.map((p) => p.id));
+const shown = entries.filter((e) => !e.data.work || socialIds.has(e.data.work.id));
+const shelves = groupShelves(shown, social);
 /* A Social project with no posts (the UNF concepts, 2026-10-27: they never
    ran) still gets a shelf, with its cover in place of the posts. */
-const posted = new Set(entries.map((e) => e.data.work?.id));
-const unposted = projects
-  .filter((p) => p.data.cats.includes('social') && !posted.has(p.id))
-  .sort((a, b) => a.data.order - b.data.order);
+const posted = new Set(shown.map((e) => e.data.work?.id));
+const unposted = social.filter((p) => !posted.has(p.id));
+type Band = { key: string; title: string; label?: string; idea?: string; note?: string; storyPath?: string; posts: CollectionEntry<'social'>[]; cover?: CollectionEntry<'work'> };
+/* His order (2026-10-27). Anything not listed follows, in post order. */
+const ORDER = ['series:trends', 'work:unf', 'work:2026-ford-mustang-gtd', 'series:getfound', 'series:tutorials', 'work:devsign8-ig-safe-zone-toolkit'];
+const rank = (k: string) => (ORDER.includes(k) ? ORDER.indexOf(k) : ORDER.length);
+const bands: Band[] = [
+  ...shelves,
+  ...unposted.map((p) => ({
+    key: `work:${p.id}`,
+    title: p.data.title,
+    label: p.data.category,
+    idea: p.data.campaign?.idea ?? p.data.summary,
+    note: p.data.client,
+    storyPath: projectPath(p),
+    posts: [],
+    cover: p,
+  })),
+].sort((a, b) => rank(a.key) - rank(b.key));
 ---
 
 <div class="shelves sp-feed" data-sp-feed>
   {
-    shelves.map((s, i) => (
+    bands.map((s, i) => (
       <Shelf
         index={i}
         id={`sp-shelf-${i}`}
@@ -44,7 +64,9 @@ const unposted = projects
         {/* More than one piece: one swipeable row, each uncropped and side
             by side, instead of wrapping into stacked rows (his call for the
             Mustang, 2026-09-26, matching the Toolkit). */}
-        {s.posts.length > 1 ? (
+        {s.cover ? (
+          <WorkCover entry={s.cover} size="large" />
+        ) : s.posts.length > 1 ? (
           <PostRow posts={s.posts} label={s.title} />
         ) : (
           <ul class="sp-shelf__pieces" role="list">
@@ -55,21 +77,6 @@ const unposted = projects
             ))}
           </ul>
         )}
-      </Shelf>
-    ))
-  }
-  {
-    unposted.map((p, i) => (
-      <Shelf
-        index={shelves.length + i}
-        id={`sp-shelf-${shelves.length + i}`}
-        label={p.data.category}
-        title={p.data.title}
-        idea={p.data.campaign?.idea ?? p.data.summary}
-        note={p.data.client}
-        link={{ text: 'Read the story', path: projectPath(p), context: `: ${p.data.title}` }}
-      >
-        <WorkCover entry={p} size="large" />
       </Shelf>
     ))
   }

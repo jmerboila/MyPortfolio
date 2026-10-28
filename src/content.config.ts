@@ -54,6 +54,7 @@ export const WORK_CATEGORIES = [
   'web',
   'mobile',
   'social',
+  'print',
   'marketing',
 ] as const;
 
@@ -65,6 +66,7 @@ export const CATEGORY_LABELS: Record<WorkCategory, string> = {
   web: 'Web Design',
   mobile: 'Mobile',
   social: 'Social Media',
+  print: 'Print Media',
   marketing: 'Digital Marketing',
 };
 
@@ -186,6 +188,9 @@ const work = defineCollection({
       cover: image(),
       coverDark: image().optional(),
       coverAlt: z.string(),
+      /* A different cover on another type's shelves, e.g. UNF's poster under
+         Print Media while its carousel stays the Social cover (2026-10-27). */
+      typeCovers: z.record(z.string(), z.object({ src: image(), alt: z.string() })).default({}),
       /* A live site's card: draw it with SiteShowcase (desktop + phone, in
          the theme opposite the page) from a set in config/site-shots.ts,
          instead of the single `cover` image (his call, 2026-09-30). `cover`

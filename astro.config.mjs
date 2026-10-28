@@ -24,6 +24,8 @@ const REDIRECTS = {
   '/work/orange-magazine-logo': `${BASE_PATH}/work/`,
   /* The unlisted /UNF/ page became a case page (2026-10-27); the old link went out with an application. */
   '/UNF': `${BASE_PATH}/work/social/unf/`,
+  /* Lexus moved from Social Media to Print Media (2026-10-27). */
+  '/work/social/2026-lexus-nx': `${BASE_PATH}/work/print/2026-lexus-nx/`,
   /* The unlisted /videos/ reel was spread across Work (2026-10-27); its old link went out with applications. */
   '/videos': `${BASE_PATH}/work/`,
 };

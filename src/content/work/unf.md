@@ -20,12 +20,17 @@ intro: "Spec work in UNF's new brand: a five-slide seamless carousel and a gradu
 category: "Concept campaign"
 cats:
   - "social"
+  - "print"
 tags:
   - "Instagram"
   - "Carousel"
   - "Digital signage"
   - "Motion design"
 cover: "../../assets/projects/social-unf-cover.webp"
+typeCovers:
+  print:
+    src: "../../assets/projects/unf-grad-poster.webp"
+    alt: "UNF graduate poster: a student in a VR headset under the headline Step inside your master's."
 coverAlt: "Carousel slide one: a child in silhouette inside the Niagara Power Station light show, white Flow Lines sweeping past, under the headline This building changed the world."
 role: "Research, design and animation"
 client: "Concept / spec work, not official UNF content."

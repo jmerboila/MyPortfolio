@@ -27,9 +27,12 @@ interface Props {
   entry: CollectionEntry<'work'>;
   name?: string;
   size: 'small' | 'large';
+  /** The shelf's type, for a per-type cover (`typeCovers`). */
+  type?: string;
 }
 
-const { entry, name, size } = Astro.props;
+const { entry, name, size, type } = Astro.props;
+const typeCover = type ? entry.data.typeCovers[type] : undefined;
 const sizes = size === 'large' ? '(min-width: 64rem) 44rem, 92vw' : '(min-width: 64rem) 17rem, (min-width: 40rem) 45vw, 92vw';
 const widths = size === 'large' ? [640, 960, 1400] : [320, 640];
 ---
@@ -41,7 +44,11 @@ const widths = size === 'large' ? [640, 960, 1400] : [320, 640];
   tabindex={name ? undefined : -1}
 >
   {
-    entry.data.coverSite ? (
+    typeCover ? (
+      <span class="cover__frame">
+        <Image src={typeCover.src} alt="" widths={widths} sizes={sizes} loading="lazy" decoding="async" />
+      </span>
+    ) : entry.data.coverSite ? (
       <span class="cover__frame cover__frame--site">
         <span class="cover__site">
           <SiteShowcase shots={SITE_SHOTS[entry.data.coverSite]} size={size === 'large' ? 'full' : 'card'} decorative />

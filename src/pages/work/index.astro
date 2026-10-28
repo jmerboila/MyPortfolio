@@ -18,7 +18,7 @@ import WorkCover from '../../components/v3/WorkCover.astro';
 import { TYPE_COPY } from '../../config/work-types';
 import { CATEGORY_LABELS, WORK_CATEGORIES } from '../../content.config';
 import { absoluteUrl, PERSON } from '../../config/site';
-import { liveTypes, projectPath, typePath, workType } from '../../lib/work-path';
+import { inType, liveTypes, projectPath, typePath } from '../../lib/work-path';
 
 const entries = await getCollection('work', ({ data }) => !data.draft);
 const sorted = entries.sort((a, b) =>
@@ -71,7 +71,7 @@ const schema = [
     <div class="shelves">
       {
         types.map((t, i) => {
-          const projects = sorted.filter((e) => workType(e) === t);
+          const projects = sorted.filter((e) => inType(e, t));
           const label = CATEGORY_LABELS[t];
           return (
             <Shelf
@@ -84,7 +84,7 @@ const schema = [
               <ul class="covers" role="list">
                 {projects.map((e) => (
                   <li>
-                    <WorkCover entry={e} name={e.data.shortTitle ?? e.data.title} size="small" />
+                    <WorkCover entry={e} name={e.data.shortTitle ?? e.data.title} size="small" type={t} />
                   </li>
                 ))}
               </ul>
