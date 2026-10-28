@@ -68,6 +68,8 @@ toolkit:
         caption: "The highlight cover template: only the centre circle survives."
   series:
     body: "Every Reel works the same way: it opens on a problem you can picture, then a spec card answers it with the exact numbers. Ten formats, ten Reels, alternating dark and light so they read as one series."
+    # His call (2026-10-28): keep the Reels as posted and say what changed.
+    note: "Revision note: these Reels show my first spec, 65 px at the sides. Rechecking it against Meta's figures after the series ran, I widened the right margin to 130 px for the action rail and set an organic Story's bottom at 384 px. The table above and the Photoshop script use the corrected numbers."
   captions:
     body:
       - "Each caption repeats the hook, explains the problem in plain numbers, then makes one ask: comment TOOLKIT for the Photoshop script, or get it at devsign8.com. Three hashtag sets rotated, for designers, for Instagram tips and for branding."

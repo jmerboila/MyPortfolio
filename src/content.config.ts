@@ -392,7 +392,8 @@ const work = defineCollection({
             body: z.array(z.string()).min(1).max(3),
             shots: z.array(pic.extend({ caption: z.string() })).min(1).max(3),
           }),
-          series: z.object({ body: z.string() }),
+          /* `note`: small print under the Reels, e.g. a spec revision. */
+          series: z.object({ body: z.string(), note: z.string().optional() }),
           /* Shaped like the campaign pages' sections (2026-10-02: one
              presentation for every social case), so StoryVisual draws them. */
           captions: z.object({

@@ -115,6 +115,7 @@ const captions = { kind: 'captions' as const, items: t.captions.items };
         <PostRow posts={posts} label={d.title} />
       </div>
     )}
+    {t.series.note && <p class="case-small">{t.series.note}</p>}
   </section>
 
   <section class="case-sec" aria-labelledby="case-h-06">
