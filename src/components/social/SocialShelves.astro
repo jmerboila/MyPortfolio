@@ -11,6 +11,8 @@ import SocialPost from './SocialPost.astro';
 import PostRow from './PostRow.astro';
 import { groupShelves } from '../../config/social';
 import Shelf from '../v3/Shelf.astro';
+import WorkCover from '../v3/WorkCover.astro';
+import { projectPath } from '../../lib/work-path';
 import '../../styles/social.css';
 
 interface Props {
@@ -19,6 +21,12 @@ interface Props {
 }
 const { entries, projects } = Astro.props;
 const shelves = groupShelves(entries, projects);
+/* A Social project with no posts (the UNF concepts, 2026-10-27: they never
+   ran) still gets a shelf, with its cover in place of the posts. */
+const posted = new Set(entries.map((e) => e.data.work?.id));
+const unposted = projects
+  .filter((p) => p.data.cats.includes('social') && !posted.has(p.id))
+  .sort((a, b) => a.data.order - b.data.order);
 ---
 
 <div class="shelves sp-feed" data-sp-feed>
@@ -47,6 +55,21 @@ const shelves = groupShelves(entries, projects);
             ))}
           </ul>
         )}
+      </Shelf>
+    ))
+  }
+  {
+    unposted.map((p, i) => (
+      <Shelf
+        index={shelves.length + i}
+        id={`sp-shelf-${shelves.length + i}`}
+        label={p.data.category}
+        title={p.data.title}
+        idea={p.data.campaign?.idea ?? p.data.summary}
+        note={p.data.client}
+        link={{ text: 'Read the story', path: projectPath(p), context: `: ${p.data.title}` }}
+      >
+        <WorkCover entry={p} size="large" />
       </Shelf>
     ))
   }

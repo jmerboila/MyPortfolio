@@ -28,6 +28,19 @@ export const SOCIAL_SERIES = {
     label: 'Experiments',
     idea: 'Where I try the formats and trends taking off on Instagram, to learn what makes people stop scrolling.',
   },
+  /* From the unlisted /videos/ page (2026-10-27, his call). The Facebook-only
+     Reel (Reviews in one tap) is left out: there is no Facebook frame. */
+  getfound: {
+    title: 'Get Found in 5',
+    label: 'Campaign',
+    idea: 'An organic campaign for DevSign Hacks: five fixes that help a small business get found, shown on a fictional brunch spot.',
+    note: 'Maple Tree House is a fictional restaurant. Shown muted here: the music is licensed for Instagram only.',
+  },
+  tutorials: {
+    title: 'How-to videos',
+    label: 'Tutorials',
+    idea: 'Short lessons that show a tool step by step, with real screen recordings.',
+  },
 } satisfies Record<string, SeriesCopy>;
 
 export type SeriesId = keyof typeof SOCIAL_SERIES;

@@ -24,6 +24,8 @@ const REDIRECTS = {
   '/work/orange-magazine-logo': `${BASE_PATH}/work/`,
   /* The unlisted /UNF/ page became a case page (2026-10-27); the old link went out with an application. */
   '/UNF': `${BASE_PATH}/work/social/unf/`,
+  /* The unlisted /videos/ reel was spread across Work (2026-10-27); its old link went out with applications. */
+  '/videos': `${BASE_PATH}/work/`,
 };
 
 /* The sitemap sees full URLs; a redirect source never belongs in it. */
@@ -57,8 +59,8 @@ export default defineConfig({
     sitemap({
       /* Case studies and the homepage are the pages worth surfacing. The
          filter keeps utility routes and redirect pages out of the index. */
-      /* /videos/ and /caswells/ are unlisted: sent with applications, never surfaced. */
-      filter: (page) => !page.includes('/404') && !page.includes('/videos/') && !page.includes('/caswells/') && !REDIRECT_URLS.has(page),
+      /* /caswells/ is unlisted: sent with an application, never surfaced. */
+      filter: (page) => !page.includes('/404') && !page.includes('/caswells/') && !REDIRECT_URLS.has(page),
     }),
   ],
 
