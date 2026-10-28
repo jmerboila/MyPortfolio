@@ -48,18 +48,9 @@ campaign:
     - heading: "The idea"
       body:
         - "I made this series to show two skills in one project: designing a poster from a blank page in InDesign, and animating it in After Effects. It is the first of an NX line, with more variants to follow."
-        - "My 2026 Ford Mustang GTD launch had already shown me what each format is for. The Reel reached 26 times more people than the carousel, while the carousel held the few who saw it."
+        - "My 2026 Ford Mustang GTD launch had already shown me what each format is for: a Reel to reach new people, a carousel to hold them."
         - "So this time one design gets three posts: a still for detail, a Reel for reach, and the build itself, because showing the process is what earns trust."
         - "Three posts a day apart, and never more than one Reel a day, so each gets its own moment in the feed."
-      visual:
-        kind: chart
-        source: "Instagram Insights via Buffer: my 2026 Ford Mustang GTD launch, one month after posting"
-        groups:
-          - metric: "People reached"
-            unit: ""
-            bars:
-              - { label: "Reel", value: 104 }
-              - { label: "Carousel", value: 4 }
     - heading: "The layout"
       body:
         - "The layout is built on hierarchy. A deep red band splits the page, the car crosses it, and the name and two numbers carry the message. Everything else stays quiet."

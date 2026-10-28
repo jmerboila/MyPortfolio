@@ -947,3 +947,164 @@ button.sp-rail__item:focus-visible {
     border: 1px solid CanvasText;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Stage and filmstrip: the trend shelf (TrendShowcase.astro, 2026-10-28).
+   Always dark, like a screening room, whatever the site theme. Wide
+   layouts: a fixed 16:9 screen, so nothing jumps when the film changes; a
+   9:16 Reel sits centred over a blurred glow of its own poster. Phones: the
+   screen takes the film's own shape (--r), capped to the viewport.
+   --------------------------------------------------------------------------- */
+.sp-stage {
+  --stage-pad: clamp(0.75rem, 0.25rem + 2vw, 1.5rem);
+  display: grid;
+  gap: var(--space-s);
+  padding: var(--stage-pad);
+  border-radius: var(--radius-l);
+  background: #0a0b10;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  color: #eaedf2;
+}
+.sp-stage__screen {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: calc(var(--radius-l) - 2px);
+  background: #000000;
+  isolation: isolate;
+}
+.sp-stage__glow {
+  position: absolute;
+  inset: -10%;
+  inline-size: 120%;
+  block-size: 120%;
+  object-fit: cover;
+  filter: blur(36px) saturate(1.2) brightness(0.55);
+  transform: scale(1.1);
+  z-index: -1;
+}
+.sp-stage__screen > .sp-video {
+  block-size: 100%;
+  background: transparent;
+}
+.sp-stage__screen .sp-video__el {
+  object-fit: contain;
+}
+.sp-stage__screen video:fullscreen {
+  object-fit: contain;
+}
+.sp-stage__full {
+  position: absolute;
+  inset-block-start: 0.75rem;
+  inset-inline-end: 0.75rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.5);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  cursor: pointer;
+}
+.sp-stage__full:focus-visible,
+.sp-strip__item:focus-visible {
+  outline: 2px solid #8fb4ff;
+  outline-offset: 3px;
+}
+.sp-stage__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin: 0;
+}
+.sp-stage__title {
+  font-size: clamp(1.05rem, 0.9rem + 0.5vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+.sp-stage__meta {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: #9aa3b8;
+}
+/* The strip: every film at its own shape, all one height. */
+.sp-strip {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.25rem 0 0.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.2) transparent;
+  list-style: none;
+}
+.sp-strip > li {
+  flex: none;
+  inline-size: calc(var(--strip-h, 8.5rem) * var(--r));
+  scroll-snap-align: start;
+}
+.sp-strip__item {
+  position: relative;
+  display: block;
+  block-size: var(--strip-h, 8.5rem);
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-m);
+  background: #000000;
+  cursor: pointer;
+  opacity: 0.55;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08);
+  transition:
+    opacity var(--dur-base) var(--ease-out-quart),
+    box-shadow var(--dur-base) var(--ease-out-quart);
+}
+.sp-strip__item img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.sp-strip__item:hover,
+.sp-strip__item[aria-current='true'] {
+  opacity: 1;
+}
+.sp-strip__item[aria-current='true'] {
+  box-shadow: 0 0 0 2px #8fb4ff;
+}
+.sp-strip__time {
+  position: absolute;
+  inset-block-end: 0.35rem;
+  inset-inline-end: 0.35rem;
+  padding: 0.1em 0.45em;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.6);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: #ffffff;
+}
+/* Phones: the screen takes the film's shape, no taller than the viewport. */
+@media (max-width: 40rem) {
+  .sp-stage {
+    --strip-h: 6.5rem;
+  }
+  .sp-stage__screen {
+    aspect-ratio: var(--r);
+    max-block-size: 72svh;
+    margin-inline: auto;
+    inline-size: min(100%, calc(72svh * var(--r)));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp-strip__item {
+    transition: none;
+  }
+}

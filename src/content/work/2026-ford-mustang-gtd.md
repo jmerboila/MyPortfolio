@@ -3,7 +3,7 @@ title: "2026 Ford Mustang GTD"
 shortTitle: "2026 Ford Mustang GTD"
 summary: "A two-post Instagram launch: a smoke Reel Reveal, then a Seamless Carousel."
 seoTitle: "2026 Ford Mustang GTD Instagram Launch"
-description: "A two-post Instagram launch for the 2026 Ford Mustang GTD: a smoke Reel reveal and a seamless carousel, with the plan, captions and measured results."
+description: "A two-post Instagram launch for the 2026 Ford Mustang GTD: a smoke Reel reveal and a seamless carousel, with the plan, the build, and the captions and timing."
 intro: "A self-initiated launch campaign for the 2026 Ford Mustang GTD: a smoke Reel Reveal as the teaser, then a Seamless Carousel one hour later as the payoff."
 category: "Launch campaign"
 cats:
@@ -117,13 +117,13 @@ campaign:
         items:
           - { label: "Reel Reveal", time: "Tuesday, 8:00 AM", text: "Coming Soon! #StreetLegalButJustBarely" }
           - { label: "Seamless Carousel", time: "Tuesday, 9:00 AM", text: "Ford 2026 Mustang GTD\n#Ford #2026 #Mustang #GTD #StreetLegalButJustBarely" }
-    - heading: "Results and what I learned"
+    # His call (2026-10-28): no social stats on the page while the account is
+    # new; show how it was made. The counts stay in `results` below as the record.
+    - heading: "What I learned"
       anchor: "measure"
       body:
-        - "The account was two months old, so these are small numbers. What matters is what they say."
-        - "The Reel did the reaching: 26 times the carousel's reach. The carousel reached almost no one new but got a like from nearly everyone who saw it: the reach and depth split the research predicted."
-      visual:
-        kind: results
+        - "Two formats with two jobs: a Reel built to reach new people, then a carousel built to hold them. Planning them as a teaser and a payoff, an hour apart, is the part I'd keep."
+        - "The seamless artboard was the hardest part. It took three versions before the smoke and the horizon lined up across every swipe, and that is the version that ran."
   results:
     source: "Instagram Insights via Buffer, one month after posting"
     pieces:

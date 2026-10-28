@@ -9,6 +9,7 @@
 import type { CollectionEntry } from 'astro:content';
 import SocialPost from './SocialPost.astro';
 import PostRow from './PostRow.astro';
+import TrendShowcase from './TrendShowcase.astro';
 import { groupShelves } from '../../config/social';
 import Shelf from '../v3/Shelf.astro';
 import WorkCover from '../v3/WorkCover.astro';
@@ -66,6 +67,8 @@ const bands: Band[] = [
             Mustang, 2026-09-26, matching the Toolkit). */}
         {s.cover ? (
           <WorkCover entry={s.cover} size="large" />
+        ) : s.key === 'series:trends' ? (
+          <TrendShowcase posts={s.posts} label={s.title} />
         ) : s.posts.length > 1 ? (
           <PostRow posts={s.posts} label={s.title} />
         ) : (

@@ -33,8 +33,8 @@ export const TYPE_COPY: Partial<Record<WorkCategory, TypeCopy>> = {
   print: {
     title: 'Posters that',
     accent: 'stop',
-    lede: 'Posters, one project at a time, each as a still and in motion. Open any one for the full artwork.',
-    blurb: 'Posters for car launches and campus screens, still and animated.',
+    lede: 'Posters and animated posters, one project at a time. Open any one for the full artwork.',
+    blurb: 'Posters for car launches and campus screens, each as a still and an animated version.',
   },
   social: {
     title: 'Made for the',

@@ -1,0 +1,152 @@
+---
+/* ============================================================================
+   TrendShowcase.astro: the "Exploring viral trends" shelf as a stage and a
+   filmstrip (his brief, 2026-10-28: clean, one video at a time, plays right
+   away or full screen, no download).
+
+   One stage, one <video>: picking a film in the strip swaps it onto the
+   stage and plays it, so only one can ever play. The stage is a 16:9 screen
+   on wide layouts; a 9:16 Reel sits in the middle of it over a blurred glow
+   of its own poster. On phones the stage takes the film's own shape.
+
+   The stage is a SocialVideo, so social.ts runs play and pause (tap to play
+   with sound, and starting it stops any other video on the page).
+   "No download" is a deterrent only: no download button, no right-click
+   menu, no picture-in-picture. The file itself stays a public URL.
+   ========================================================================= */
+import type { CollectionEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
+import SocialVideo from './SocialVideo.astro';
+
+interface Props {
+  posts: CollectionEntry<'social'>[];
+  label: string;
+}
+const { posts, label } = Astro.props;
+
+type Piece = { title: string; src: string; poster: ImageMetadata; alt: string; wide: boolean; time?: string; tools: string[] };
+
+/* "PT1M30S" -> "1:30" */
+const clock = (iso?: string) => {
+  const m = iso?.match(/PT(?:(\d+)M)?(?:(\d+)S)?/);
+  return m ? `${Number(m[1] ?? 0)}:${String(m[2] ?? 0).padStart(2, '0')}` : undefined;
+};
+
+const pieces: Piece[] = posts.flatMap(({ data }): Piece[] => {
+  if (data.type === 'instagram-reel') {
+    const v = data.video;
+    return [{ title: data.title, src: v.src, poster: v.poster, alt: v.alt, wide: false, time: clock(v.durationISO), tools: data.tools }];
+  }
+  const v = data.type === 'instagram-post' ? data.slides[0] : undefined;
+  return v?.video && v.poster ? [{ title: data.title, src: v.video, poster: v.poster, alt: v.alt, wide: true, time: clock(v.durationISO), tools: data.tools }] : [];
+});
+const shots = await Promise.all(pieces.map((p) => getImage({ src: p.poster, width: 720, format: 'webp' })));
+const meta = (p: Piece) => [p.wide ? '16:9 film' : '9:16 Reel', p.time, p.tools.join(', ')].filter(Boolean).join(' · ');
+const first = pieces[0];
+---
+
+{
+  first && (
+    <div class="sp-stage" role="region" aria-label={label} data-sp-stage data-wide={first.wide ? '' : undefined} style={`--r: ${first.wide ? 16 / 9 : 9 / 16}`}>
+      <div class="sp-stage__screen" data-sp-screen>
+        <img class="sp-stage__glow" src={shots[0].src} alt="" aria-hidden="true" data-sp-glow />
+        <SocialVideo src={first.src} poster={first.poster} alt={first.alt} label={first.title} />
+        <button type="button" class="sp-stage__full" data-sp-full aria-label="Watch full screen">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+          </svg>
+        </button>
+      </div>
+
+      <p class="sp-stage__caption" aria-live="polite">
+        <span class="sp-stage__title" data-sp-title>{first.title}</span>
+        <span class="sp-stage__meta" data-sp-meta>{meta(first)}</span>
+      </p>
+
+      <ul class="sp-strip" role="list" aria-label={`${label}: pick a video`}>
+        {pieces.map((p, i) => (
+          <li style={`--r: ${p.wide ? 16 / 9 : 9 / 16}`}>
+            <button
+              type="button"
+              class="sp-strip__item"
+              aria-current={i === 0 ? 'true' : undefined}
+              aria-label={`Play ${p.title}`}
+              data-sp-pick
+              data-src={p.src}
+              data-poster={shots[i].src}
+              data-alt={p.alt}
+              data-title={p.title}
+              data-meta={meta(p)}
+              data-wide={p.wide ? '' : undefined}
+            >
+              <img src={shots[i].src} alt="" loading="lazy" decoding="async" />
+              {p.time && <span class="sp-strip__time">{p.time}</span>}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+<script>
+  type IOSVideo = HTMLVideoElement & { webkitEnterFullscreen?: () => void };
+  type Lockable = ScreenOrientation & { lock?: (o: string) => Promise<void> };
+
+  for (const stage of document.querySelectorAll<HTMLElement>('[data-sp-stage]')) {
+    const root = stage.querySelector<HTMLElement>('[data-sp-video]');
+    const video = root?.querySelector('video') as IOSVideo | null | undefined;
+    const source = video?.querySelector('source');
+    if (!root || !video || !source) continue;
+    const glow = stage.querySelector<HTMLImageElement>('[data-sp-glow]')!;
+    const title = stage.querySelector<HTMLElement>('[data-sp-title]')!;
+    const meta = stage.querySelector<HTMLElement>('[data-sp-meta]')!;
+    let wide = 'wide' in stage.dataset;
+
+    video.setAttribute('controlslist', 'nodownload noplaybackrate noremoteplayback');
+    stage.querySelector('[data-sp-screen]')!.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    /* Pick: swap the film onto the stage and play it straight away. The
+       'play' event reaches social.ts, which stops every other video. */
+    for (const pick of stage.querySelectorAll<HTMLButtonElement>('[data-sp-pick]')) {
+      pick.addEventListener('click', () => {
+        const d = pick.dataset;
+        if (pick.getAttribute('aria-current') !== 'true') {
+          video.pause();
+          source.src = d.src!;
+          video.poster = glow.src = d.poster!;
+          video.setAttribute('aria-label', d.alt!);
+          root.dataset.label = title.textContent = d.title!;
+          meta.textContent = d.meta!;
+          wide = 'wide' in d;
+          stage.toggleAttribute('data-wide', wide);
+          stage.style.setProperty('--r', String(wide ? 16 / 9 : 9 / 16));
+          stage.querySelector('[aria-current]')?.removeAttribute('aria-current');
+          pick.setAttribute('aria-current', 'true');
+          video.load();
+        }
+        video.play().catch(() => {});
+      });
+    }
+
+    /* Full screen with native controls; 16:9 asks to turn to landscape. */
+    stage.querySelector('[data-sp-full]')!.addEventListener('click', async () => {
+      video.controls = true;
+      video.play().catch(() => {});
+      try {
+        if (video.requestFullscreen) {
+          await video.requestFullscreen();
+          if (wide) await (screen.orientation as Lockable).lock?.('landscape').catch(() => {});
+        } else video.webkitEnterFullscreen?.();
+      } catch {
+        video.controls = false;
+      }
+    });
+    const leave = () => {
+      if (document.fullscreenElement !== video) video.controls = false;
+    };
+    video.addEventListener('fullscreenchange', leave);
+    video.addEventListener('pause', leave);
+    video.addEventListener('webkitendfullscreen', () => (video.controls = false));
+  }
+</script>

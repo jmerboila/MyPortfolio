@@ -13,6 +13,7 @@ ratio: "16x9"
 slides:
   - video: "./video.mp4"
     poster: "./cover.jpg"
+    durationISO: "PT8S"
     alt: "An eight-second montage with sound: a highway at night, then daytime drives past fields, traffic cones and a yellow school bus, with the UNF wave logo floating over the road; a street arch over a small downtown; and it ends on the illuminated UNF sign at the corner of a glass office building."
 ---
 

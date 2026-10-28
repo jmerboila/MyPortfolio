@@ -3,7 +3,7 @@
    ToolkitCase.astro: the Safe-Zone Toolkit as a case study (spec
    2026-10-02-toolkit-case-design.md), replacing its launch story.
    01 the interactive viewer, 02 the problem, 03 the research, 04 the tool,
-   05 the series (the ten posted Reels), 06 captions and timing, 07 results.
+   05 the series (the ten posted Reels), 06 captions and timing, 07 what I learned (no stats, 2026-10-28).
    07 keeps id="measure": the home page's "14x" tile links there.
    One presentation for every case page (2026-10-02): the shell is
    styles/case.css, and the table, gallery, captions and results are drawn by
@@ -41,7 +41,6 @@ const table = {
 };
 const gallery = { kind: 'gallery' as const, items: t.tool.shots.map((s) => ({ src: s.src, alt: s.alt, note: s.caption })) };
 const captions = { kind: 'captions' as const, items: t.captions.items };
-const results = { kind: 'results' as const };
 ---
 
 <div class="case container">
@@ -127,10 +126,9 @@ const results = { kind: 'results' as const };
   </section>
 
   <section class="case-sec" id="measure" aria-labelledby="case-h-07">
-    <h2 id="case-h-07" class="case-h"><span class="case-num">{n(7)}</span> Results and what I learned</h2>
-    <div class="case-body case-body--split">
+    <h2 id="case-h-07" class="case-h"><span class="case-num">{n(7)}</span> What I learned</h2>
+    <div class="case-body">
       <div class="case-text">{t.results.body.map((p) => <p class="case-lede">{p}</p>)}</div>
-      <div class="case-visual"><StoryVisual visual={results} results={t.results} /></div>
     </div>
     {t.results.next.length > 0 && (
       <div class="case-next">

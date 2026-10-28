@@ -2,7 +2,7 @@
 title: "Devsign8 Instagram Safe-Zone Toolkit"
 shortTitle: "Devsign8 Instagram Safe-Zone Toolkit"
 summary: "A ten-Reel series and a Photoshop template that keep designs clear of Instagram's buttons."
-description: "Ten Instagram Reels and a Photoshop template that keep designs clear of Instagram's buttons, with a safe-area spec sheet and the measured results."
+description: "Ten Instagram Reels and a Photoshop template that keep designs clear of Instagram's buttons, with a safe-area spec sheet and how the series was made."
 intro: "A research-led content series for Devsign8: every Instagram format, where the interface covers it, and a Photoshop script that builds each canvas with its safe zones marked."
 category: "Content series"
 cats:
@@ -78,10 +78,12 @@ toolkit:
 It has to work twice: full-screen at 9:16, and again as a 3:4 tile on your profile, where the top and bottom 240px are cropped away.
 
 Comment TOOLKIT for the script that builds the cover canvas with the grid crop already marked. Also at www.devsign8.com" }
+  # His call (2026-10-28): no social stats on the page while the account is
+  # new. `body` is section 07, "What I learned"; the counts stay as the record.
   results:
     body:
-      - "The first nine Reels, from an account with almost no followers yet, so these are small numbers. What matters is what they say."
-      - "Hooks that named a loss people could picture did best: the 4:5 grid crop, the Story bottom and the Reel cover you can't edit. The best reached 14 times more people than the weakest. Nobody commented TOOLKIT: I'm still early, without the followers a comment ask needs."
+      - "Hooks that named a loss people could picture did best: the 4:5 grid crop, the Story bottom and the Reel cover you can't edit. So a hook works best when it opens on a problem the viewer can see in their own feed."
+      - "Nobody commented TOOLKIT, which taught me that a comment ask needs an audience first."
     source: "Instagram Insights via Buffer"
     pieces:
       - name: "The whole series (9 Reels)"

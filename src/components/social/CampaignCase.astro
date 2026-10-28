@@ -67,7 +67,7 @@ const pick = (ids: string[]) => ids.map((id) => posts.find((p) => p.id === id ||
               <PostRow posts={shown} label={`${d.title}: ${s.heading}`} />
             </div>
           )}
-          {s.visual?.kind === 'results' && c.results && c.results.next.length > 0 && (
+          {(s.visual?.kind === 'results' || s.anchor === 'measure') && c.results && c.results.next.length > 0 && (
             <div class="case-next">
               <h3 class="case-sub">What I'd test next</h3>
               <ul>{c.results.next.map((x) => <li>{x}</li>)}</ul>

@@ -197,19 +197,15 @@ export const STAGE_PROOF: Record<string, Proof> = {
         source: 'Google Search Console',
         path: `${CASE}#measure`,
       },
+      /* His call (2026-10-28): no social stats on the site while the
+         accounts are new, so the 14x and 26x tiles are gone. This one is
+         the devsign8.com measure-then-improve loop, quoted from its page. */
       {
-        value: '14×',
-        label: 'A stronger hook',
-        line: 'A hook that named a loss people could picture reached 14 times more people than the weakest.',
-        source: 'Instagram Insights via Buffer',
-        path: '/work/social/devsign8-ig-safe-zone-toolkit/#measure',
-      },
-      {
-        value: '26×',
-        label: 'The right format',
-        line: 'My launch Reel reached 26 times more people than the carousel posted with it.',
-        source: 'Instagram Insights via Buffer',
-        path: '/work/social/2026-ford-mustang-gtd/#measure',
+        value: '+6',
+        label: 'One fix, measured',
+        line: 'A monthly check found a font file holding up the page. Serving it from the site itself took mobile speed from 90 to 96.',
+        source: 'PageSpeed Insights',
+        path: `${CASE}#measure`,
       },
     ],
     link: { label: 'See how I measure and improve', path: `${CASE}#measure` },

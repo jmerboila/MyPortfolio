@@ -66,7 +66,7 @@ export const CATEGORY_LABELS: Record<WorkCategory, string> = {
   web: 'Web Design',
   mobile: 'Mobile',
   social: 'Social Media',
-  print: 'Print Media',
+  print: 'Posters & Animated Posters',
   marketing: 'Digital Marketing',
 };
 
@@ -516,6 +516,7 @@ const social = defineCollection({
         video: mediaPath.optional(),
         poster: image().optional(),
         alt: z.string(),
+        durationISO: z.string().optional(),
       })
       .refine((s) => Boolean(s.image) !== Boolean(s.video), {
         message: 'A slide needs exactly one of `image` or `video`.',

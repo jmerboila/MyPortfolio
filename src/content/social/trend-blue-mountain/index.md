@@ -13,5 +13,6 @@ ratio: "16x9"
 slides:
   - video: "/media/works/blue-mountain.mp4"
     poster: "./cover.jpg"
+    durationISO: "PT48S"
     alt: "48 seconds of colour-graded footage of Blue Mountain village, with sound: chalet-style buildings in the foreground and the green ski runs on the hill behind them under an evening sky."
 ---
