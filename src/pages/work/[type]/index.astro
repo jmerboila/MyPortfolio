@@ -39,7 +39,8 @@ const entries = (await getCollection('work', ({ data }) => !data.draft))
   );
 
 const copy = TYPE_COPY[type] ?? { title: label, accent: 'work', lede: '' };
-const description = `${label} projects by ${PERSON.name}. ${copy.lede}`.trim();
+const name = copy.name ?? label;
+const description = `${name} projects by ${PERSON.name}. ${copy.lede}`.trim();
 
 const crumbs = [{ label: 'Home', path: '/' }, { label: 'Work', path: '/work/' }, { label }];
 
@@ -47,7 +48,7 @@ const schema = [
   {
     '@type': 'CollectionPage',
     '@id': `${absoluteUrl(path)}#collection`,
-    name: label,
+    name,
     description,
     isPartOf: { '@id': `${absoluteUrl('/')}#website` },
     about: { '@id': `${absoluteUrl('/')}#person` },

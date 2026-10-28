@@ -77,7 +77,7 @@ const schema = [
             <Shelf
               index={i}
               id={`shelf-${t}`}
-              title={label}
+              title={TYPE_COPY[t]?.name ?? label}
               idea={TYPE_COPY[t]?.blurb}
               link={{ text: `See all ${label.toLowerCase()}`, path: typePath(t) }}
             >

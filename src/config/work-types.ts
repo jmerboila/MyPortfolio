@@ -9,6 +9,11 @@
 import type { WorkCategory } from '../content.config';
 
 export interface TypeCopy {
+  /** The full name: the type's shelf title on /work/, its schema name and
+      meta description (his call, 2026-10-28). The menu, footer, breadcrumbs
+      and browser tab keep the short CATEGORY_LABELS name, so they fit on a
+      phone and in a search result. */
+  name?: string;
   /** Heading before the accent word, e.g. "Marks that". */
   title: string;
   /** The serif accent word, e.g. "last". */
@@ -19,10 +24,11 @@ export interface TypeCopy {
 
 export const TYPE_COPY: Partial<Record<WorkCategory, TypeCopy>> = {
   logo: {
+    name: 'Logo Design & Logo Reveal Animation',
     title: 'Marks that',
     accent: 'last',
-    lede: 'Logos and brand marks, one project at a time. Open any one for the full artwork.',
-    blurb: 'Logos and brand marks for studios, apps and people.',
+    lede: 'Each mark from construction to usage, and logo reveals animated in After Effects.',
+    blurb: 'Brand marks built in Illustrator, from construction lines to usage rules, and logo reveals animated in After Effects.',
   },
   web: {
     title: 'Sites that',
@@ -37,9 +43,10 @@ export const TYPE_COPY: Partial<Record<WorkCategory, TypeCopy>> = {
     blurb: 'Posters for car launches and campus screens, each as a still and an animated version.',
   },
   social: {
+    name: 'Social Media: Viral Trends, Campaigns, Series & Tutorials',
     title: 'Made for the',
     accent: 'feed',
-    lede: 'Social campaigns, one project at a time. Tap any video to play it, and open a story to see how it was made.',
-    blurb: 'Instagram campaigns, each with the story of how it was made.',
+    lede: 'Viral trends, campaigns, a content series and tutorials for Instagram, one project at a time. Tap any video to play it, and open a story to see how it was made.',
+    blurb: 'Viral trend experiments, launch campaigns, a content series and how-to tutorials for Instagram, each showing how it was planned and made.',
   },
 };
