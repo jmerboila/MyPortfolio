@@ -32,8 +32,9 @@ const shelves = groupShelves(shown, social);
 const posted = new Set(shown.map((e) => e.data.work?.id));
 const unposted = social.filter((p) => !posted.has(p.id));
 type Band = { key: string; title: string; label?: string; idea?: string; note?: string; storyPath?: string; posts: CollectionEntry<'social'>[]; cover?: CollectionEntry<'work'> };
-/* His order (2026-10-27). Anything not listed follows, in post order. */
-const ORDER = ['series:trends', 'work:unf', 'work:2026-ford-mustang-gtd', 'series:getfound', 'series:tutorials', 'work:devsign8-ig-safe-zone-toolkit'];
+/* His order (2026-10-27); the two teaching campaigns join next to How-to
+   (2026-11-02). Anything not listed follows, in post order. */
+const ORDER = ['series:trends', 'work:unf', 'work:2026-ford-mustang-gtd', 'series:getfound', 'series:tutorials', 'series:firstlight', 'series:kinetic', 'work:devsign8-ig-safe-zone-toolkit'];
 const rank = (k: string) => (ORDER.includes(k) ? ORDER.indexOf(k) : ORDER.length);
 const bands: Band[] = [
   ...shelves,

@@ -41,6 +41,18 @@ export const SOCIAL_SERIES = {
     label: 'Tutorials',
     idea: 'Short lessons that show a tool step by step, with real screen recordings.',
   },
+  /* Launch weeks for DevSign Hacks (2026-11-02, his pick for the shelf). */
+  firstlight: {
+    title: 'First Light',
+    label: 'Campaign',
+    idea: 'A launch week for DevSign Hacks: a sunrise drive where every word slips behind the bridges, then a five-step tutorial that teaches the trick in After Effects.',
+    note: 'Self-initiated. Not affiliated with University of Niagara Falls Canada.',
+  },
+  kinetic: {
+    title: 'Kinetic Typography Tutorial',
+    label: 'Campaign',
+    idea: 'A launch week for DevSign Hacks: a 30-second film built word by word, then a tutorial that teaches it by hand in After Effects, no plugins.',
+  },
 } satisfies Record<string, SeriesCopy>;
 
 export type SeriesId = keyof typeof SOCIAL_SERIES;
