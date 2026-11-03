@@ -18,8 +18,7 @@ import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import SocialIcon from './SocialIcon.astro';
 import SocialVideo from './SocialVideo.astro';
-import JMMark from '../JMMark.astro';
-import { SOCIAL_ACCOUNTS, captionParts, compactCount, postDate } from '../../config/social';
+import { captionParts, compactCount, postDate } from '../../config/social';
 
 type Data = Extract<CollectionEntry<'social'>['data'], { type: 'instagram-post' }>;
 
@@ -29,7 +28,6 @@ interface Props {
 }
 
 const { data, id } = Astro.props;
-const account = SOCIAL_ACCOUNTS.instagram;
 const n = data.slides.length;
 const RATIOS = { '1x1': '1 / 1', '4x5': '4 / 5', '3x4': '3 / 4', '16x9': '16 / 9', '191x100': '1.91 / 1' };
 const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
@@ -37,12 +35,10 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
 
 <article class="sp-ig" aria-label={`Instagram post: ${data.title}`}>
   <header class="sp-ig__head">
-    <span class="sp-avatar">
-      {account.monogram ? <JMMark /> : account.avatar && <Image src={account.avatar} alt="" width={64} height={64} loading="lazy" />}
-    </span>
     <p class="sp-ig__who">
       {/* The piece's name where Instagram shows the account (his call,
-          2026-09-26, as the Reels already do); the caption keeps the handle. */}
+          2026-09-26, as the Reels already do). No avatar and no account
+          name before the caption since 2026-11-02 (his call). */}
       <span class="sp-ig__handle sp-ig__name">{data.piece ?? data.title}</span>
       {
         data.date && (
@@ -140,7 +136,6 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
       data.caption && (
         <div class="sp-caption" data-sp-caption>
           <p class="sp-caption__text" id={`cap-${id}`}>
-            <span class="sp-ig__handle">{account.name}</span>{' '}
             {captionParts(data.caption).map((p) => (p.tag ? <span class="sp-tag">{p.text}</span> : p.text))}
           </p>
           <button type="button" class="sp-caption__more" data-sp-more aria-controls={`cap-${id}`} hidden>
