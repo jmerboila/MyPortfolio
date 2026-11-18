@@ -5,7 +5,7 @@
    Loaded last and deliberately not in <head>. In v1 it was a blocking script
    above the content. Rendering it after the page keeps a third-party request
    off the critical path to first paint, which is the single cheapest Core Web
-   Vitals win available.
+   Vitals win available. Since 2026-11-17 it also waits for load + idle (see below).
 
    Shared by BaseLayout and V3Layout since v3 became the homepage (2026-09-24).
    Still no consent banner in front of it — that is Phase B (docs/v3-todo.md),
@@ -18,12 +18,19 @@ import { ANALYTICS } from '../config/site';
   (function (w, d, s, l, i) {
     w[l] = w[l] || [];
     w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-    var f = d.getElementsByTagName(s)[0],
-      j = d.createElement(s),
-      dl = l != 'dataLayer' ? '&l=' + l : '';
-    j.async = true;
-    j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-    f.parentNode.insertBefore(j, f);
+    function add() {
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    }
+    // GTM's ~150 KB of script ran during start-up and slowed the first tap (PageSpeed TBT, 2026-11-17).
+    // It now loads once the page has finished loading and the browser is idle; the queued
+    // gtm.start keeps the real page-start time, so the page view still counts from the first moment.
+    function later() { (w.requestIdleCallback || setTimeout)(add, { timeout: 2000 }); }
+    if (d.readyState == 'complete') later(); else w.addEventListener('load', later, { once: true });
   })(window, document, 'script', 'dataLayer', gtmId);
 </script>
 <noscript>

@@ -311,6 +311,16 @@ async function ready(el) {
       lb.style.inlineSize = H + 'px';   // box = number height; the spacing after the last letter overflows unseen at the top
     }
   }
+  // shadows far off screen bake later, one per idle moment: baking all eleven at load blocked a phone for ~0.4 s
+  // (PageSpeed TBT). render() bakes any still waiting the moment its panel nears the screen.
+  const unbaked = new Map(), idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 50));
+  let idleId = 0;
+  function bakeNow(i) { const job = unbaked.get(i); if (job) { unbaked.delete(i); live[i] = job(); } }
+  function bakeIdle() {
+    const [i] = unbaked.keys();
+    bakeNow(i);
+    idleId = unbaked.size ? idle(bakeIdle, { timeout: 3000 }) : 0;
+  }
   let lastSig = '';
   function layout() {
     fitLabels();
@@ -340,7 +350,8 @@ async function ready(el) {
       p.style.setProperty('--lift', lifted.toFixed(1) + 'px');   // short panels float mid-wall, not on the floor
       // every shadow, the hero's too, is matched to the same darkness (DARK), lighter or darker
       const geo = { t: lo, P, A: d, sb: pct('--sb'), oy: pct('--hz') };
-      live[i] = noShadows ? null : bake(el, shadows[i], w, h, f, (gapPx + lifted) / f, DARK, geo).live;
+      live[i] = null;
+      if (!noShadows) unbaked.set(i, () => bake(el, shadows[i], w, h, f, (gapPx + lifted) / f, DARK, geo).live);
       return x;
     });
     maxX = xs[xs.length - 1];
@@ -353,7 +364,8 @@ async function ready(el) {
     // 1px of vertical scroll = 1px sideways; dvh keeps the end reachable while a phone's address bar comes and goes
     document.body.style.height = `calc(100vh + ${maxX}px)`; document.body.style.height = `calc(100dvh + ${maxX}px)`;
     document.getElementById('snaps').innerHTML = xs.map((v) => `<i class="snap" style="top:${v}px"></i>`).join('');
-    target = scrollY; render();
+    target = scrollY; render();   // bakes the shadows on screen now
+    idleId ||= unbaked.size ? idle(bakeIdle, { timeout: 3000 }) : 0;
     root.classList.remove('room-wait');   // panels are placed: show the rest (see V4Layout)
   }
 
@@ -365,13 +377,13 @@ async function ready(el) {
       + '[data-stage-card], .v3-proof__intro, .v3-points, .v3-proof__note, .v3-proof__visit, .v3-proof__link, '
       + '.covers > li, .stage__link';   // v4 Work gallery
     panels.forEach((p, k) => {
-      const lines = p.querySelectorAll(RV);
+      // the first panel shows at once: hiding it until this script runs made it the page's slowest paint (PageSpeed LCP)
+      const lines = k === 0 ? [] : p.querySelectorAll(RV);
       lines.forEach((n, i) => { n.classList.add('rv'); n.style.setProperty('--i', i); });
       // the shadow sweeps in over the same time the lines take to appear (90ms stagger + about 1s to settle)
       shadows[k].style.setProperty('--rv-dur', Math.min(2600, lines.length * 90 + 1100) + 'ms');
     });
-    // the outline title lies exactly on the solid one, so each outline word moves with its solid twin
-    hero.querySelectorAll('.v3-hero__title--outline .v3-hero__word').forEach((n, i) => { n.classList.add('rv'); n.style.setProperty('--i', i); });
+    // (the hero's outline title stays put with its solid twin: neither rises in)
   }
 
   /* ---- the hand-drawn loop: sketch() from MyPortfolio src/scripts/v3-motion.ts, ported to plain JS.
@@ -503,7 +515,7 @@ async function ready(el) {
     root.style.setProperty('--mx', mx.toFixed(4)); root.style.setProperty('--my', my.toFixed(4));
     root.style.setProperty('--p', maxX ? (sx / maxX).toFixed(4) : 0);
     const far = innerWidth * 1.3;
-    shadows.forEach((s, i) => s.classList.toggle('off', Math.abs(xs[i] - sx) > far));
+    shadows.forEach((s, i) => { const off = Math.abs(xs[i] - sx) > far; s.classList.toggle('off', off); if (!off) bakeNow(i); });
     // reveal as a section's centre comes within 45% of a screen; hide it again once it is 60% away
     // (the gap between the two stops a section flickering when the scroll stops near the edge)
     if (xs.length) panels.forEach((p, i) => {
