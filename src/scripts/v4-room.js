@@ -52,7 +52,8 @@ async function ready(el) {
   const shadows = panels.map(() => floor3d.appendChild(Object.assign(document.createElement('div'), { className: 'shadow-plane' })));
 
   /* ---- shadows, baked per layout into a small canvas (moving them costs nothing); parts that change on their own
-     (the typed words, the pen drawing and erasing the loop) are redrawn live, so their shadows come and go with them:
+     (the pen drawing and erasing the loop) are redrawn live, so their shadows come and go with them. The typed line
+     casts the shadow of its longest phrase, baked once: redrawing it per letter kept phones busy forever (PageSpeed):
      1. mass: everything in the section that blocks light (cards, images, pen lines, lines of text) drawn as solid
         shapes, then grown a little so a paragraph or a drawing casts one shadow, like one real object;
      2. soft shadow: under a big softbox a part that floats higher casts a wider, fainter shadow. The mass is blurred
@@ -171,8 +172,8 @@ async function ready(el) {
         sc.globalAlpha = Math.min(1, o); box(sc, t.getBoundingClientRect());
       }
       sc.globalAlpha = 1;
-      // the typed words as far as they are typed; whole = the longest phrase (its invisible sizer copy)
-      for (const t of typed) { const z = whole && t.parentElement.querySelector('.v3-type__sizer'); textBoxes(sc, z || t, !!z); }
+      // the typed words: always the longest phrase (its invisible sizer copy), so typing never needs a redraw
+      for (const t of typed) { const z = t.parentElement.querySelector('.v3-type__sizer'); textBoxes(sc, z || t, !!z); }
     }
 
     // 2. grow by G (a disc dilation, so lines of a paragraph join into one mass), then the soft shadow by height
@@ -310,8 +311,14 @@ async function ready(el) {
       lb.style.inlineSize = H + 'px';   // box = number height; the spacing after the last letter overflows unseen at the top
     }
   }
+  let lastSig = '';
   function layout() {
     fitLabels();
+    // load fires layout up to four times (first run, resize observer, fonts, portrait); re-baking every shadow
+    // costs about a quarter second on a phone, so skip it when no size and no font has changed since the last one
+    const sig = [innerWidth, innerHeight, document.fonts.status, ...panels.map((p) => p.firstElementChild.offsetWidth + 'x' + p.firstElementChild.offsetHeight)].join();
+    if (sig === lastSig) return;
+    lastSig = sig;
     const base = pct('--base'), d = pct('--sb') - pct('--hz'), P = innerHeight * 1.2;
     const navH = document.querySelector('.v3-nav').offsetHeight;
     root.style.setProperty('--foot-h', document.querySelector('.v3-footer').offsetHeight + 'px');
@@ -583,7 +590,6 @@ async function ready(el) {
     lastW = innerWidth; lastH = innerHeight; layout();
   });
   new ResizeObserver(layout).observe(panels[0].firstElementChild);
-  const typedAt = panels.findIndex((p) => p.querySelector('.v3-type__live'));
-  ready(hero).then(() => { layout(); typewriter(() => refresh(typedAt)); });
+  ready(hero).then(() => { layout(); typewriter(); });   // no shadow redraw per letter (see the shadows note)
   document.fonts.ready.then(layout);   // label fitting needs the real font metrics
   layout();
