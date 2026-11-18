@@ -311,10 +311,14 @@ async function ready(el) {
       lb.style.inlineSize = H + 'px';   // box = number height; the spacing after the last letter overflows unseen at the top
     }
   }
-  // shadows far off screen bake later, one per idle moment: baking all eleven at load blocked a phone for ~0.4 s
-  // (PageSpeed TBT). render() bakes any still waiting the moment its panel nears the screen.
+  // shadows far off screen bake later, one per idle moment, and only once the visitor first scrolls, taps or types:
+  // baking all eleven at load blocked a phone for ~0.4 s, and baking them in idle time right after load still
+  // counted as eleven long tasks on PageSpeed's slow CPU (TBT 4 s). render() bakes any still waiting as its panel nears.
   const unbaked = new Map(), idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 50));
-  let idleId = 0;
+  let idleId = 0, engaged = false;
+  const bakeRest = () => { idleId ||= unbaked.size ? idle(bakeIdle, { timeout: 3000 }) : 0; };
+  for (const e of ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'])
+    addEventListener(e, () => { engaged = true; bakeRest(); }, { once: true, passive: true });
   function bakeNow(i) { const job = unbaked.get(i); if (job) { unbaked.delete(i); live[i] = job(); } }
   function bakeIdle() {
     const [i] = unbaked.keys();
@@ -365,7 +369,7 @@ async function ready(el) {
     document.body.style.height = `calc(100vh + ${maxX}px)`; document.body.style.height = `calc(100dvh + ${maxX}px)`;
     document.getElementById('snaps').innerHTML = xs.map((v) => `<i class="snap" style="top:${v}px"></i>`).join('');
     target = scrollY; render();   // bakes the shadows on screen now
-    idleId ||= unbaked.size ? idle(bakeIdle, { timeout: 3000 }) : 0;
+    if (engaged) bakeRest();
     root.classList.remove('room-wait');   // panels are placed: show the rest (see V4Layout)
   }
 
