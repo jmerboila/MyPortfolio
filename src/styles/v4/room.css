@@ -79,6 +79,13 @@
   .brief { display: grid; justify-items: center; text-align: center; }
   .brief h1, .brief h2 { font-size: clamp(2.5rem, 1.3rem + 5.2vw, 6rem); font-weight: 600; letter-spacing: -0.035em; line-height: 1; }
   .brief p { margin-top: var(--space-m); font-size: clamp(1.75rem, 1.1rem + 2.8vw, 3.5rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; max-inline-size: 24ch; text-wrap: pretty; }
+  /* the intro line: every version sits in one grid cell, so the panel keeps the tallest one's size and nothing jumps;
+     the others are visibility:hidden, so screen readers and the floor shadow only see the one on show */
+  .brief__lines { display: grid; align-items: center; }   /* a shorter line sits mid-cell while they take turns */
+  .brief__lines.is-fixed .brief__line:not(.is-on) { display: none; }   /* a ?for= link: one line, no empty space */
+  .brief__line { grid-area: 1 / 1; opacity: 0; visibility: hidden; translate: 0 .3em; transition: opacity .5s, translate .5s, visibility 0s .5s; }
+  .brief__line.is-on { opacity: 1; visibility: visible; translate: 0 0; transition: opacity .5s .25s, translate .5s .25s, visibility 0s; }
+  .brief .brief__tail { margin-top: var(--space-s); }
 
   /* Stages — editorial layout: a hairline-thin cobalt index number with the stage name running up
      beside it (bottom to top), then the headline, the body in softer ink, a hairline, and what you get */

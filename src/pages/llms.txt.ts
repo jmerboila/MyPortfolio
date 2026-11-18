@@ -80,7 +80,7 @@ export const GET: APIRoute = async () => {
     '## Quick answers',
     '',
     `- **Who is ${PERSON.name}?** A ${PERSON.jobTitle.toLowerCase()} and designer in ${city}, ${region}, and the founder of the creative studio ${DEVSIGN8.name}.`,
-    `- **What does Jayson do?** Plans, makes and measures social media content, and designs logos, websites and posters. Each project on this site shows the brief, the build and what was learned.`,
+    `- **What does Jayson do?** Works out why a post grabs attention, plans the right post type for each platform from a playbook built on research and experience, designs it and reviews how it did. Also designs logos, websites and posters. Each project on this site shows the brief, the build and what was learned.`,
     `- **Where is Jayson based?** ${city}, ${region}, ${country}.`,
     `- **How do I contact Jayson?** Email ${PERSON.email}, or book a 30-minute discovery call: ${CONTACT_HREF}`,
     `- **What is ${DEVSIGN8.name}?** Jayson's creative studio for brand, web and digital marketing: ${DEVSIGN8.url}`,

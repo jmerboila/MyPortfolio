@@ -19,6 +19,13 @@ import Contact from '../components/v3/Contact.astro';
 import V4Layout from '../layouts/V4Layout.astro';
 
 const words = PERSON.name.split(' ');
+const INTRO_LINES = [
+  { key: 'social', line: 'I find what stops the scroll, then plan the right post for each platform and learn from every result.' },
+  { key: 'content', line: 'I shoot, edit and shape short videos and posts that people stop for.' },
+  { key: 'marketing', line: 'I turn a goal into a plan, the plan into content, and the results into a smarter next move.' },
+  { key: 'design', line: 'I design posts, posters and brand pieces that look sharp and say one thing clearly.' },
+  { key: 'web', line: 'I build fast websites that people, search engines and AI answers all understand.' },
+];
 ---
 
 <V4Layout pageType="ProfilePage" ogType="profile" stops={STAGES} startId="top" railHome railLabel="Project stages">
@@ -52,7 +59,12 @@ const words = PERSON.name.split(' ');
       <section class="panel" id="about" aria-labelledby="brief-title">
         <div class="sec brief">
           <h2 id="brief-title">Hi, I'm Jayson.</h2>
-          <p>I plan social content before it's posted, make it in Adobe Creative Cloud and check what it did. Every project here shows the brief, the build and what I learned.</p>
+          {/* one line per kind of role Jayson applies for (JobHunt 2026 tracker, 2026-11-17). They take turns;
+              a link with ?for=social|content|marketing|design|web (sent with an application) shows just that one. */}
+          <p class="brief__lines">
+            {INTRO_LINES.map(({ key, line }, i) => <span class:list={['brief__line', { 'is-on': i === 0 }]} data-for={key}>{line}</span>)}
+          </p>
+          <p class="brief__tail">Every project shows the brief, the build and the lessons.</p>
         </div>
       </section>
 
@@ -100,3 +112,18 @@ const words = PERSON.name.split(' ');
         <div class="sec contact"><Contact /></div>
       </div>
 </V4Layout>
+
+<script>
+  // the intro line: the role a ?for= link names (kept for the visit), otherwise each in turn; reduced motion keeps the first
+  const lines = [...document.querySelectorAll<HTMLElement>('.brief__line')];
+  const ALIAS: Record<string, string> = { smm: 'social', video: 'content', creator: 'content', graphic: 'design', seo: 'web', ux: 'web' };
+  let want = new URLSearchParams(location.search).get('for')?.toLowerCase() ?? '';
+  try { if (want) sessionStorage.setItem('intro-for', want); else want = sessionStorage.getItem('intro-for') ?? ''; } catch {}
+  const pick = lines.findIndex((l) => l.dataset.for === (ALIAS[want] ?? want));
+  const show = (k: number) => lines.forEach((l, i) => l.classList.toggle('is-on', i === k));
+  if (pick >= 0) { show(pick); lines[0].parentElement!.classList.add('is-fixed'); }
+  else if (lines.length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let k = 0;
+    setInterval(() => { if (!document.hidden) show((k = (k + 1) % lines.length)); }, 4500);
+  }
+</script>
