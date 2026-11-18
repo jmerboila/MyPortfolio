@@ -1,0 +1,70 @@
+/* v4 hero styles, from White Room Scene/heroes.css (portfolio hero only). */
+
+.hero-root { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+.hero-root *, .hero-root *::before, .hero-root *::after { box-sizing: border-box; }
+.pf-hero {
+  --space-xs: .75rem; --space-m: 1.5rem; --space-l: 2.25rem; --leading-snug: 1.25;
+  --text: #12131a; --text-dim: #5a5f6e; --accent: #2340FF;
+  width: min(1248px, 100vw); padding: 0 clamp(16px, 3.7vw, 37.6px);
+  font: 400 18px/1.6 var(--font-ui); color: var(--text);
+}
+.v3-hero__defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.v3-hero__namewrap { display: grid; grid-template-areas: "stage" "role" "line"; row-gap: var(--space-l); container-type: inline-size; }
+.v3-hero__title, .v3-hero__head { grid-area: stage; }
+.v3-hero__role { grid-area: role; }
+.v3-hero__line { grid-area: line; }
+.v3-hero__title {
+  position: relative; z-index: 0; align-self: end; margin: 0 0 4rem;
+  font: 600 clamp(3.6rem, -0.3rem + 20.3vw, 13rem)/0.85 var(--font-ui);
+  letter-spacing: -0.04em; text-transform: uppercase; text-align: center; color: var(--text);
+}
+.v3-hero__word { display: block; }
+.v3-hero__head { position: relative; z-index: 1; place-self: end center; block-size: min(55svh, 34rem); }
+.v3-hero__head-img { display: block; block-size: 100%; inline-size: auto; position: relative; }
+.v3-hero__title--outline { z-index: 2; filter: url(#v3-hero-outline); pointer-events: none; }
+.v3-hero__role {
+  position: relative; z-index: 3; justify-self: center; margin: 0;
+  font-size: clamp(1rem, 0.85rem + 0.6vw, 1.25rem); line-height: var(--leading-snug);
+  text-align: center; color: var(--text-dim);
+}
+.v3-hero__line {
+  --type-col: 100cqi;
+  position: relative; z-index: 3; justify-self: center; margin: 0;
+  font-size: max(1.125rem, min(2.25rem, var(--type-col) / 13.2)); line-height: var(--leading-snug);
+  text-align: center; text-wrap: balance;
+}
+@media (width >= 64rem) {
+  .v3-hero__namewrap { grid-template: 1fr auto auto auto 1fr / 54.5fr 7.5fr 38fr; row-gap: 0; }
+  .v3-hero__title { grid-area: 2 / 1 / 3 / 3; align-self: auto; margin: 0; text-align: right; font-size: 13.4cqi; }
+  .v3-hero__head { grid-area: 1 / 2 / 6 / 4; place-self: center start; block-size: min(74svh, 46rem, 70cqi); }
+  .v3-hero__role { grid-area: 3 / 1 / 4 / 3; justify-self: end; inline-size: 48.8296cqi; margin-block-start: var(--space-m); }
+  .v3-hero__line { --type-col: 62cqi; grid-area: 4 / 1 / 5 / 3; justify-self: end; inline-size: 48.8296cqi; margin-block-start: var(--space-l); }
+}
+@media (width <= 39.99rem) {
+  .v3-hero__namewrap { grid-template-areas: "head" "name" "role" "line"; row-gap: 0; }
+  .v3-hero__head { grid-area: head; block-size: min(40svh, 22rem); }
+  .v3-hero__title { grid-area: name; align-self: start; margin: -1.1em 0 0; }
+  .v3-hero__line { margin-block-start: var(--space-l); }
+  .v3-hero__role { margin-block-start: var(--space-xs); }
+}
+/* typewriter: full sentence stays in the DOM for search + screen readers, the typed copy is aria-hidden */
+.v3-type__ending { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 1.12em; letter-spacing: 0; color: var(--accent); }
+.v3-type__anim { display: none; }
+/* room-js (set in the head, V4Layout): lay the line out as the typewriter will before it starts, so the hero
+   does not re-centre when typing begins (layout shift). Reduced motion keeps the full sentence. */
+@media (prefers-reduced-motion: no-preference) {
+  .room-js .v3-type .v3-type__full { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .room-js .v3-type .v3-type__anim { display: inline-grid; text-align: start; }
+}
+.v3-type.is-typing .v3-type__full { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.v3-type.is-typing .v3-type__anim { display: inline-grid; text-align: start; }
+.v3-type__sizer, .v3-type__live { grid-area: 1 / 1; }
+.v3-type__sizer { visibility: hidden; padding-inline-end: 0.15em; }
+.v3-type__caret { display: inline-block; vertical-align: -0.12em; inline-size: 0.08em; block-size: 1em; margin-inline-start: 0.06em; background: var(--accent); animation: v3-caret 1s step-end infinite; }
+@keyframes v3-caret { 50% { opacity: 0; } }
+
+/* ---------- hero switcher (same on both rooms) ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-type__caret { animation: none; }
+}

@@ -4,7 +4,7 @@ summary: "A wordmark that joins code and design: Dev in a heavy sans, sign8 in a
 seoTitle: "Devsign8 Logo and Wordmark Design"
 description: "The Devsign8 wordmark: Dev in a heavy sans for code, sign8 in a high-contrast serif for design, and an 8 that turns on its side into infinity."
 intro: "The wordmark for Devsign8, my creative studio for brand, web and digital marketing."
-category: "Logo & Identity"
+category: "Logo & Branding"
 cats:
   - "logo"
 tags:

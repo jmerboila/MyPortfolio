@@ -1,0 +1,80 @@
+/* v4 chrome shared by every v4 page (room galleries and reading pages): copy protection, the studio cove
+   behind everything, the top menu and the footer. Split out of room.css on 2026-11-17. */
+:root { --hz: 70%; }   /* horizon; room.css and read.css tune it */
+/* Copy protection: a deterrent, not a lock (from the White Room preview). */
+  body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }   /* no select, no iOS long-press menu */
+  input, textarea, [contenteditable], a[href^="mailto:"], a[href^="tel:"] { -webkit-user-select: text; user-select: text; }
+  img, svg { -webkit-user-drag: none; }
+  @media print { body > * { display: none !important; } body::after { content: "© JM Design. All rights reserved."; display: block; padding: 2rem; font: 16px/1.4 system-ui, sans-serif; } }
+
+  /* ---- room: a seamless white studio cove (one surface bending from wall into floor, so there is
+     no seam), lit by a big softbox above and in front of the camera. It never moves. ---- */
+  .room > * { position: fixed; inset: 0; pointer-events: none; }
+  .cove {
+    background:
+      /* key light: a broad bright patch on the wall behind the sections, and its spill on the floor */
+      radial-gradient(ellipse 60% 48% at 50% 38%, rgba(255,255,255,.95), transparent 72%),
+      radial-gradient(ellipse 75% 22% at 50% calc(var(--hz) + 14%), rgba(255,255,255,.8), transparent 75%),
+      /* light falls off up the wall, a faint shade where the cove bends, the floor faces the light
+         so it is brighter, then the front edge drops off a touch */
+      linear-gradient(180deg, #dcdee3 0%, #e8eaed 28%, #edeef1 calc(var(--hz) - 14%),
+        #e7e9ec calc(var(--hz) - 3%), #e5e7ea var(--hz), #e9ebee calc(var(--hz) + 5%),
+        #eff0f2 calc(var(--hz) + 15%), #f0f1f3 90%, #e7e9ec 100%);
+  }
+  .vignette { background: radial-gradient(ellipse 115% 95% at 50% 46%, transparent 58%, rgba(36, 40, 52, .11)); }
+  /* film grain: breaks up gradient banding and reads as a photo, not a flat fill */
+  .grain { opacity: .5; mix-blend-mode: soft-light; background-size: 220px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* Top menu and footer: fixed, they never move with the scroll or the pointer */
+  .v3-nav { position: fixed; inset: 0 0 auto; z-index: 30; background: none; border: 0; }
+  .v3-nav__bar { position: relative; padding-inline: clamp(16px, 3vw, 32px); }
+  /* the Work link: centred in the bar, a different line on every visit (set by the script) */
+  /* glow: an Electric Cobalt light runs round the pill's edge (the live site's beam), with a soft blue halo */
+  .v3-nav .v3-navlink--work { position: absolute; left: 50%; translate: -50% 0; z-index: 0; white-space: nowrap; color: var(--text) !important;
+    font-size: .9375rem; letter-spacing: -0.005em; text-decoration: none !important; padding-inline: 1.15rem; border-radius: 999px;
+    border: 1px solid rgba(35, 64, 255, .18); box-shadow: 0 0 22px -6px rgba(35, 64, 255, .45); transition: box-shadow .3s; }
+  .v3-navlink--work::before { content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; padding: 1.5px; pointer-events: none;
+    background: conic-gradient(from var(--v3-beam), transparent 0 70%, #2340FF 85%, #7d8fff 92%, transparent 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    animation: v3-beam 1.6s linear infinite; }
+  .v3-navlink--work:hover, .v3-navlink--work:focus-visible { box-shadow: 0 0 28px -4px rgba(35, 64, 255, .6); }
+  @media (prefers-reduced-motion: reduce) { .v3-navlink--work::before { animation: none; } }
+  @media (max-width: 30rem) { .v3-navlink--work { font-size: .8125rem; padding-inline: .8rem; } }
+  .v3-footer { position: fixed; inset: auto 0 0; z-index: 30; display: flex; align-items: center; justify-content: space-between;
+    gap: 0 16px; padding: 4px clamp(16px, 3vw, 32px) !important; color: var(--text-dim); }
+  .v3-footer__credit { margin: 0; font-size: .75rem; border: 0 !important; padding: 0 !important; }   /* no rule line above it */
+  .v3-footer__socials { margin: 0 !important; }
+  .v3-nav__brand { color: var(--text); }                 /* the JM mark in ink (it inherits link colour) */
+  /* narrow screens: socials on top (44px tap targets kept), the credit centred under them */
+  @media (max-width: 48rem) { .v3-footer { flex-direction: column-reverse; padding-block: 2px 6px !important; }
+    .v3-footer__credit { font-size: .6875rem; text-align: center; } }
+
+  /* Book a call: a black phone in a plain circle (no glow). Each ring it shakes, turns Electric Cobalt and
+     grows a little, then settles back to black. Label in aria-label + tooltip */
+  .v3-nav .v3-talk { inline-size: var(--tap-min); block-size: var(--tap-min); padding: 0; color: var(--text); border: 0; background: none; }   /* just the phone, no circle */
+  .v3-nav .v3-talk::before { content: none; }
+  .v3-talk__icon { inline-size: 20px; block-size: 20px; overflow: visible; transform-origin: 50% 55%; animation: v3-ring 2.6s ease-in-out infinite; }
+  .v3-talk__waves { animation: v3-waves 2.6s ease-out infinite; }
+  @keyframes v3-ring {
+    0%, 34%, 100% { rotate: 0deg; scale: 1; color: var(--text); }
+    4%, 12%, 20% { rotate: -16deg; }
+    6%, 26% { scale: 1.2; color: #2340FF; }
+    8%, 16%, 24% { rotate: 16deg; }
+    28% { rotate: -6deg; }
+  }
+  @keyframes v3-waves { 0%, 34%, 100% { opacity: 0; } 6%, 26% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .v3-talk__icon, .v3-talk__waves { animation: none; } }
+
+/* Skip link (WCAG 2.4.1): hidden until focused, then pinned top-left (as base.css; the gallery pages do not load base.css) */
+.skip-link { position: absolute; top: .75rem; left: .75rem; z-index: 100; padding: .4rem .9rem; background: #2340FF; color: #fff;
+  font-weight: 700; text-decoration: none; border-radius: 8px; transform: translateY(-200%); transition: transform .2s; }
+.skip-link:focus-visible { transform: none; }
+
+/* footer Explore: one link per type of work, between the credit and the socials */
+.v4-explore ul { display: flex; flex-wrap: wrap; gap: 0 1.1rem; margin: 0; padding: 0; list-style: none; }
+.v4-explore a { display: inline-flex; align-items: center; min-block-size: 44px; font-size: .75rem; font-weight: 500; color: inherit; text-decoration: none; }
+.v4-explore a:hover, .v4-explore a:focus-visible { color: var(--text); text-decoration: underline; text-underline-offset: .3em; }
+@media (max-width: 64rem) { .v4-explore { display: none; } }   /* the fixed bar has no room on small screens */
+.v4-read .v4-explore { display: block; }                       /* the reading pages' footer sits at the end: room for it */

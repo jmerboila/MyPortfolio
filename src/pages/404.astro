@@ -16,9 +16,7 @@
    IT OFFERS ROUTES, NOT AN APOLOGY. Whoever lands here wanted something; the
    three links are the three things they could plausibly have been after.
    ========================================================================= */
-import BaseLayout from '../layouts/BaseLayout.astro';
-import SiteHeader from '../components/SiteHeader.astro';
-import SiteFooter from '../components/SiteFooter.astro';
+import V4ReadLayout from '../layouts/V4ReadLayout.astro';
 import { href } from '../lib/url';
 
 const LINKS = [
@@ -28,14 +26,11 @@ const LINKS = [
 ];
 ---
 
-<BaseLayout
+<V4ReadLayout
   title="Page not found"
   description="That page does not exist. Links back to the work and the contact details."
   noindex
 >
-  <SiteHeader slot="header" />
-  <SiteFooter slot="footer" />
-
   <div class="notfound container">
     {/* Decorative: the accessible page title is the h1 below, and a screen
         reader announcing "four zero four" before it is pure noise. */}
@@ -56,7 +51,7 @@ const LINKS = [
       }
     </ul>
   </div>
-</BaseLayout>
+</V4ReadLayout>
 
 <style>
   .notfound {

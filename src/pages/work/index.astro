@@ -1,47 +1,39 @@
 ---
 /* ============================================================================
-   /work: the hub. One shelf per type of work (Logo Design, Web Design, Social
-   Media), each with its projects' covers and a link to the type's page.
-   ----------------------------------------------------------------------------
-   2026-09-26 (his call): every page under Work shares the Social page's
-   layout, the big heading and the shelves, so this replaced the old
-   filterable card grid; the type pages do the filtering now.
-
-   It is also an SEO asset in its own right: "/work/" can rank, be linked to
-   and carry its own title and description, unlike a "/#work" fragment.
+   /work: the hub as a gallery in the White Room (v4, 2026-11-17).
+   An intro panel, then one panel per type of work (number and name on the
+   left, its project covers on the right, like a home stage with its proof),
+   then contact. The rail jumps between the types. Projects, order, names and
+   blurbs come from the same content and config as /work/, so the two agree.
+   No project counts (his call, 2026-10-02).
    ========================================================================= */
 import { getCollection } from 'astro:content';
-import V3Layout from '../../layouts/V3Layout.astro';
-import PageHead from '../../components/v3/PageHead.astro';
-import Shelf from '../../components/v3/Shelf.astro';
+import V4Layout from '../../layouts/V4Layout.astro';
 import WorkCover from '../../components/v3/WorkCover.astro';
+import Contact from '../../components/v3/Contact.astro';
+import Arrow from '../../components/v3/Arrow.astro';
 import { TYPE_COPY } from '../../config/work-types';
 import { CATEGORY_LABELS, WORK_CATEGORIES } from '../../content.config';
 import { absoluteUrl, PERSON } from '../../config/site';
+import { href } from '../../lib/url';
 import { inType, liveTypes, projectPath, typePath } from '../../lib/work-path';
+import '../../styles/shelves.css';
 
 const entries = await getCollection('work', ({ data }) => !data.draft);
 const sorted = entries.sort((a, b) =>
-  a.data.order !== b.data.order
-    ? a.data.order - b.data.order
-    : a.data.title.localeCompare(b.data.title),
+  a.data.order !== b.data.order ? a.data.order - b.data.order : a.data.title.localeCompare(b.data.title),
 );
-
 const types = liveTypes(WORK_CATEGORIES, sorted);
 const labels = types.map((t) => CATEGORY_LABELS[t].toLowerCase());
 const across = labels.length > 1 ? `${labels.slice(0, -1).join(', ')} and ${labels.at(-1)}` : (labels[0] ?? '');
+/* written for a hiring manager skimming: what is here, and what each case shows */
+const lede = `${across.charAt(0).toUpperCase()}${across.slice(1)}. Each case shows the brief, the build and what I learned.`;
 
-/* No project counts (2026-10-02, his call). */
-const lede = `${across.charAt(0).toUpperCase()}${across.slice(1)}. Pick a type, or open any one.`;
 const description = `Selected projects by ${PERSON.name}: ${across}.`;
-
-/* An ItemList of the projects in the order they appear. This is what lets a
-   search result show the collection rather than a single page, and what an
-   answer engine walks when asked what work exists. Each item points at the
-   same URL /work/[slug] declares its CreativeWork @id against, so the two
-   descriptions of the collection agree. */
 const crumbs = [{ label: 'Home', path: '/' }, { label: 'Work' }];
 
+/* An ItemList of the projects in the order they appear: lets a search result
+   show the collection, and is what an answer engine walks for "what work exists". */
 const schema = [
   {
     '@type': 'CollectionPage',
@@ -62,42 +54,61 @@ const schema = [
     },
   },
 ];
+
+const shelves = types.map((t, i) => ({
+  t,
+  id: `type-${t}`,
+  n: String(i + 1).padStart(2, '0'),
+  label: CATEGORY_LABELS[t],
+  /* the vertical name beside the number runs as tall as the number: "Posters & Animated Posters" is too long */
+  short: CATEGORY_LABELS[t].split(' & ')[0],
+  copy: TYPE_COPY[t],
+  projects: sorted.filter((e) => inType(e, t)),
+}));
 ---
 
-<V3Layout title="Work" description={description} path="/work/" schema={schema} breadcrumbs={crumbs}>
-  <div class="work-page container">
-    <PageHead crumbs={crumbs} title="Every" accent="project" lede={lede} />
-
-    <div class="shelves">
-      {
-        types.map((t, i) => {
-          const projects = sorted.filter((e) => inType(e, t));
-          const label = CATEGORY_LABELS[t];
-          return (
-            <Shelf
-              index={i}
-              id={`shelf-${t}`}
-              title={TYPE_COPY[t]?.name ?? label}
-              idea={TYPE_COPY[t]?.blurb}
-              link={{ text: `See all ${label.toLowerCase()}`, path: typePath(t) }}
-            >
-              <ul class="covers" role="list">
-                {projects.map((e) => (
-                  <li>
-                    <WorkCover entry={e} name={e.data.shortTitle ?? e.data.title} size="small" type={t} />
-                  </li>
-                ))}
-              </ul>
-            </Shelf>
-          );
-        })
-      }
+<V4Layout
+  title="Work: Social Media, Logo and Web Design"
+  description={description}
+  path="/work/"
+  schema={schema}
+  breadcrumbs={crumbs}
+  stops={shelves.map(({ id, n, short }) => ({ id, n, label: short }))}
+  startId="work-top"
+  nav="work"
+  railLabel="Types of work"
+>
+  <section class="panel" id="work-top" aria-labelledby="work-title">
+    <div class="sec brief">
+      <h1 id="work-title">Planned, made and <em>measured</em></h1>
+      <p>{lede}</p>
     </div>
-  </div>
-</V3Layout>
+  </section>
 
-<style>
-  .work-page {
-    padding-block: var(--space-m) var(--space-section);
-  }
-</style>
+  {shelves.map(({ t, id, n, label, short, copy, projects }) => (
+    <section class="panel" id={id} aria-labelledby={`${id}-label ${id}-title`}>
+      <div class="sec stage stage--proof">
+        <div class="stage__text">
+          <div class="stage__head"><span class="stage__n" aria-hidden="true">{n}</span><span class="stage__label" id={`${id}-label`}>{short}</span></div>
+          {/* his call (2026-10-28): the full type names here; short names in the menu, footer and rail */}
+          <h2 id={`${id}-title`} class="stage__title">{copy?.name ?? label}</h2>
+          {copy?.blurb && <p class="stage__body">{copy.blurb}</p>}
+          <hr class="stage__rule" />
+          <a class="stage__link v3-proof__link" href={href(typePath(t))}>See all {label.toLowerCase()} <Arrow /></a>
+        </div>
+        <div class="stage__proof">
+          <ul class="covers" role="list">
+            {projects.map((e) => (
+              <li><WorkCover entry={e} name={e.data.shortTitle ?? e.data.title} size="small" type={t} /></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  {/* Contact renders its own <section id="contact">, so this panel is a plain wrapper */}
+  <div class="panel">
+    <div class="sec contact"><Contact /></div>
+  </div>
+</V4Layout>

@@ -1,0 +1,91 @@
+---
+/* ============================================================================
+   V4Layout.astro: the White Room gallery shell (2026-11-17). Home, /work/
+   and the Logo, Web and Posters pages scroll sideways through floating
+   panels with soft floor shadows. Every direct child of <main> with class
+   "panel" floats in the room; the rail jumps between the panels in `stops`.
+   Pages that are read top to bottom (Social, every case page) use
+   V4ReadLayout instead. Both share V4Chrome, V4Footer and SeoHead.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import meshPortrait from '../assets/jayson-mesh-portrait.webp';
+import type { Props as SeoProps } from '../components/SeoHead.astro';
+import SeoHead from '../components/SeoHead.astro';
+import GoogleTagManager from '../components/GoogleTagManager.astro';
+import V4Chrome from '../components/v4/V4Chrome.astro';
+import V4Footer from '../components/v4/V4Footer.astro';
+import { SEO } from '../config/site';
+// preloaded so the hero is set in its real fonts before the room measures it (no late re-flow)
+import interTight from '@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2?url';
+import serifItalic from '@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2?url';
+
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource-variable/inter-tight/wght-italic.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource-variable/caveat/wght.css';
+import '../styles/v4/hero.css';
+import '../styles/v4/live.css';
+import '../styles/v4/chrome.css';
+import '../styles/v4/room.css';
+
+type Props = SeoProps & {
+  /** Rail stops, in panel order; each id is a panel's id. */
+  stops: readonly { id: string; n: string; label: string }[];
+  /** The first panel's id: the rail's portrait takes you back to it. */
+  startId: string;
+  nav?: 'home' | 'work';
+  /** The portrait at the start of the rail (home only: it is his head). */
+  railHome?: boolean;
+  /** The rail's accessible name. */
+  railLabel?: string;
+};
+
+const { stops, startId, nav = 'home', railHome = false, railLabel = 'Sections', ...seo } = Astro.props;
+---
+
+<!doctype html>
+<html lang={SEO.lang} class="v3" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <SeoHead {...seo} />
+    <meta name="theme-color" content="#eceef1" />
+    <link rel="preload" href={interTight} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={serifItalic} as="font" type="font/woff2" crossorigin />
+    {/* until the room engine has placed the panels, only the first one shows (no layout shift);
+        the engine lifts this, and the timer is a fail-safe if its script never runs */}
+    <script is:inline>document.documentElement.classList.add('room-wait', 'room-js'); setTimeout(() => document.documentElement.classList.remove('room-wait'), 8000);</script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#track">Skip to main content</a>
+    <V4Chrome nav={nav} />
+
+    <main id="track" tabindex="-1">
+      <slot />
+    </main>
+
+    <V4Footer />
+
+    <nav class="rail" aria-label={railLabel}>
+      {railHome && (
+        <a class="rail__home" href={`#${startId}`} aria-label="Back to the start" title="Back to the start"><Image src={meshPortrait} width={60} alt="" /></a>
+      )}
+      <span class="rail__line" aria-hidden="true"><i></i></span>
+      <ol class="rail__stops" role="list">
+        {stops.map(({ id, n, label }) => (
+          <li><a class="rail__stop" href={`#${id}`}><span class="rail__n">{n}</span><span class="rail__name">{label}</span></a></li>
+        ))}
+      </ol>
+    </nav>
+    <span class="hint" aria-hidden="true">Scroll &rarr;</span>
+    <div id="snaps" aria-hidden="true"></div>
+
+    <script src="../scripts/v4-room.js"></script>
+    <script>
+      import '../scripts/track';
+    </script>
+    <GoogleTagManager />
+  </body>
+</html>

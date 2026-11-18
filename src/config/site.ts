@@ -26,10 +26,12 @@ export const SITE_URL = `${SITE_ORIGIN}${BASE_PATH}`;
 export const PERSON = {
   name: 'Jayson Mercado Erboila',
   firstName: 'Jayson',
-  jobTitle: 'Digital Marketing Specialist',
+  /* 2026-11-17 (v4): one role everywhere (title tag, schema, llms.txt, hero), so search and
+     answer engines resolve one entity. It matches the hero line. */
+  jobTitle: 'Social Media and Digital Marketing Specialist',
   /* The positioning line. Your research is emphatic that a named service beats
      a job title — Grellier sells "pixel-perfect precision", not "developer". */
-  tagline: 'Digital Marketing Specialist & Designer',
+  tagline: 'Social Media & Digital Marketing Specialist',
   /* The published contact address — confirmed by Jayson 2026-09-24 over
      hello.devsign8@gmail.com (his account email, never published). */
   email: 'jmerboila@gmail.com',
@@ -119,8 +121,8 @@ export const SEO = {
      readers he wants, hiring managers and clients, in the words they search
      (about 150 characters, so Google shows it whole). */
   defaultDescription:
-    'Jayson Mercado Erboila, digital marketing specialist and designer in ' +
-    'Toronto: SEO, social media, web design and analytics, with measured results.',
+    'Jayson Mercado Erboila, social media and digital marketing specialist and ' +
+    'designer in Toronto: campaigns, logos and websites, each planned, made and measured.',
   defaultOgImage: '/images/og-preview.jpg',
   defaultOgImageAlt:
     'Jayson Mercado Erboila, digital marketing specialist and designer, Toronto, Canada.',

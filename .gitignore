@@ -36,5 +36,5 @@ README.md
 docs/
 .claude/
 .vscode/
-scripts/
+/scripts/
 tests/

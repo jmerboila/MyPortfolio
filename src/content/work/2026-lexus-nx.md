@@ -49,7 +49,7 @@ campaign:
       body:
         - "I made this series to show two skills in one project: designing a poster from a blank page in InDesign, and animating it in After Effects. It is the first of an NX line, with more variants to follow."
         - "My 2026 Ford Mustang GTD launch had already shown me what each format is for: a Reel to reach new people, a carousel to hold them."
-        - "So this time one design gets three posts: a still for detail, a Reel for reach, and the build itself, because showing the process is what earns trust."
+        - "So this time one design gets three posts: a still for detail, a Reel for reach, and the build itself."
         - "Three posts a day apart, and never more than one Reel a day, so each gets its own moment in the feed."
     - heading: "The layout"
       body:

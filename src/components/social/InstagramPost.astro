@@ -56,7 +56,8 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
     data-sp-carousel
     style={`--sp-ratio: ${RATIOS[data.ratio]}`}
   >
-    <ul
+    {/* divs, not a list: each slide is a labelled group (WAI carousel pattern), which a list may not hold */}
+    <div
       class="sp-carousel__track"
       data-sp-track
       tabindex={n > 1 ? 0 : undefined}
@@ -64,7 +65,7 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
     >
       {
         data.slides.map((slide, i) => (
-          <li
+          <div
             class="sp-carousel__slide"
             aria-roledescription={n > 1 ? 'slide' : undefined}
             aria-label={n > 1 ? `${i + 1} of ${n}` : undefined}
@@ -81,10 +82,10 @@ const sizes = '(min-width: 78rem) 24rem, (min-width: 44rem) 45vw, 100vw';
                 progress={false}
               />
             )}
-          </li>
+          </div>
         ))
       }
-    </ul>
+    </div>
 
     {
       n > 1 && (

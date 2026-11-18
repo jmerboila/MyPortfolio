@@ -44,15 +44,8 @@ export const GET: APIRoute = async () => {
       }),
   ]);
 
-  /* Measured results, each with its source, from the project stories. An
-     answer engine quotes numbers it can attribute; it skips ones it cannot. */
-  const results = entries.flatMap((e) => {
-    /* Stories, campaign and toolkit case studies share one results shape. */
-    const r = e.data.story?.results ?? e.data.campaign?.results ?? e.data.toolkit?.results;
-    if (!r) return [];
-    const reach = r.pieces.map((p) => `${p.name}: reach ${p.reach}`).join('; ');
-    return [`- ${e.data.title}: ${r.insight} (${reach}. Source: ${r.source}.)`];
-  });
+  /* No Results section (2026-11-17): the 2026-10-28 call keeps raw social reach off the
+     site while the accounts are new, and the pages already hide it; llms.txt is public too. */
 
   const body = [
     `# ${PERSON.name}`,
@@ -83,7 +76,15 @@ export const GET: APIRoute = async () => {
     '## Work',
     ...work,
     '',
-    ...(results.length ? ['## Results', '', ...results, ''] : []),
+    /* Answer engines lift short question-and-answer pairs; every answer is a fact stated elsewhere on the site. */
+    '## Quick answers',
+    '',
+    `- **Who is ${PERSON.name}?** A ${PERSON.jobTitle.toLowerCase()} and designer in ${city}, ${region}, and the founder of the creative studio ${DEVSIGN8.name}.`,
+    `- **What does Jayson do?** Plans, makes and measures social media content, and designs logos, websites and posters. Each project on this site shows the brief, the build and what was learned.`,
+    `- **Where is Jayson based?** ${city}, ${region}, ${country}.`,
+    `- **How do I contact Jayson?** Email ${PERSON.email}, or book a 30-minute discovery call: ${CONTACT_HREF}`,
+    `- **What is ${DEVSIGN8.name}?** Jayson's creative studio for brand, web and digital marketing: ${DEVSIGN8.url}`,
+    '',
     '## Profiles',
     '',
     ...ENTITY.sameAs.map((u) => `- ${u}`),
@@ -92,6 +93,7 @@ export const GET: APIRoute = async () => {
     '## Optional',
     '',
     `- [Home](${absoluteUrl('/')}): the portfolio's one-page overview`,
+    `- [All work](${absoluteUrl('/work/')}): every project, by type`,
     `- [Sitemap](${absoluteUrl('/sitemap-index.xml')})`,
     '',
     `Usage: ${RIGHTS_NOTICE}`,

@@ -14,7 +14,7 @@
    Full notes: C:\dev\JobHunt 2026\applications\caswells_fine_menswear_social_media_content_creator\website-audit.md
    No em dashes, no visible dates (the PageSpeed link carries the run date).
    ========================================================================= */
-import V3Layout from '../layouts/V3Layout.astro';
+import V4ReadLayout from '../layouts/V4ReadLayout.astro';
 import PageHead from '../components/v3/PageHead.astro';
 import Shelf from '../components/v3/Shelf.astro';
 
@@ -57,7 +57,7 @@ const stages = [
 const crumbs = [{ label: 'Home', path: '/' }, { label: 'Caswell\'s audit' }];
 ---
 
-<V3Layout
+<V4ReadLayout
   title="Caswell's website audit"
   description="An outside review of caswellsclothing.com by Jayson Mercado Erboila: Google PageSpeed results, a step-by-step shopping path check and five quick wins."
   path="/caswells/"
@@ -155,7 +155,7 @@ const crumbs = [{ label: 'Home', path: '/' }, { label: 'Caswell\'s audit' }];
       </Shelf>
     </div>
   </div>
-</V3Layout>
+</V4ReadLayout>
 
 <style>
   .audit__body {

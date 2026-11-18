@@ -1,0 +1,45 @@
+/* ============================================================================
+   v4 reading pages (V4ReadLayout: Social and every case page, 2026-11-17).
+   The page scrolls down as before, in the White Room: the studio cove fixed
+   behind everything (chrome.css), a frosted top menu that stays, sections at
+   full size, each with a soft contact shadow on the floor under it. The
+   shadow is a flat radial gradient: no 3D layers or filters (iPhone Safari).
+   ========================================================================= */
+
+/* the v4 accent, Electric Cobalt, instead of v3's purple (6.5:1 on the paper ground) */
+html.v3 {
+  --raw-light-accent: #2340FF;
+  --raw-light-accent-strong: #1a30cc;
+  --raw-light-accent-dim: #7d8fff;
+  --raw-light-border: rgb(35 64 255 / 0.18);
+  --raw-light-border-strong: rgb(35 64 255 / 0.38);
+  --hz: 82%;
+}
+
+.v4-read { background: #eceef1; }
+.v4-read main { position: relative; z-index: 1; }
+
+/* the menu stays at the top, frosted so text never runs under it unreadably */
+.v4-read .v3-nav {
+  position: sticky; top: 0;
+  background: rgb(236 238 241 / 0.78);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgb(18 19 26 / 0.06);
+}
+.v4-read .v3-nav__bar { min-block-size: 64px; display: flex; align-items: center; justify-content: space-between; }
+
+/* the footer sits at the end of the page, not over it */
+.v4-read .v3-footer { position: relative; margin-top: var(--space-section, 6rem); padding-block: 16px !important; z-index: 1; }
+
+/* each shelf floats a little above the floor: a soft shadow pooled under it */
+.v4-read .shelf { position: relative; }
+.v4-read .shelf::after {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  inset-inline: 6%; inset-block-end: -28px; block-size: 56px;
+  background: radial-gradient(closest-side, rgb(38 42 54 / 0.16), rgb(38 42 54 / 0.06) 60%, transparent);
+}
+/* phones: the footer stacks centred, and leaves room under it for the Back to top pill */
+@media (max-width: 64rem) {
+  .v4-read .v4-explore ul { justify-content: center; }
+  .v4-read .v3-footer { padding-bottom: 72px !important; }
+}

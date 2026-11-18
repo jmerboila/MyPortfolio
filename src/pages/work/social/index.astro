@@ -24,7 +24,7 @@
    ========================================================================= */
 import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
-import V3Layout from '../../../layouts/V3Layout.astro';
+import V4ReadLayout from '../../../layouts/V4ReadLayout.astro';
 import PageHead from '../../../components/v3/PageHead.astro';
 import SocialShelves from '../../../components/social/SocialShelves.astro';
 import { withMediaUrls } from '../../../lib/social-media';
@@ -79,7 +79,7 @@ const schema = [
 ];
 ---
 
-<V3Layout title={CATEGORY_LABELS.social} description={description} path="/work/social/" schema={schema} breadcrumbs={crumbs}>
+<V4ReadLayout title={CATEGORY_LABELS.social} description={description} path="/work/social/" schema={schema} breadcrumbs={crumbs}>
   <div class="v3-social container">
     <PageHead
       crumbs={crumbs}
@@ -97,7 +97,7 @@ const schema = [
     }
   </div>
 
-</V3Layout>
+</V4ReadLayout>
 
 <style>
   .v3-social {

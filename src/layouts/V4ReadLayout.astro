@@ -1,0 +1,58 @@
+---
+/* ============================================================================
+   V4ReadLayout.astro: the White Room shell for pages read top to bottom
+   (Social and every case page, 2026-11-17). A drop-in for V3Layout: the same
+   props, SeoHead, Analytics, global CSS and scripts, so the case components
+   render as before, but in the v4 room (chrome.css + read.css) with the v4
+   menu and footer. Light theme only: the room is a white studio.
+   ========================================================================= */
+import type { Props as SeoProps } from '../components/SeoHead.astro';
+import SeoHead from '../components/SeoHead.astro';
+import GoogleTagManager from '../components/GoogleTagManager.astro';
+import V4Chrome from '../components/v4/V4Chrome.astro';
+import V4Footer from '../components/v4/V4Footer.astro';
+import BackToTop from '../components/v3/BackToTop.astro';
+import { SEO } from '../config/site';
+
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource-variable/inter-tight/wght-italic.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/instrument-serif/400.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/v3.css';
+import '../styles/v4/chrome.css';
+import '../styles/v4/read.css';
+
+type Props = SeoProps;
+const seo = Astro.props;
+---
+
+<!doctype html>
+<html lang={SEO.lang} class="v3" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <SeoHead {...seo} />
+    <meta name="theme-color" content="#eceef1" />
+  </head>
+
+  <body class="v4-read" id="top">
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <V4Chrome nav="work" />
+
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+
+    <V4Footer />
+    <BackToTop />
+
+    <script>
+      import '../scripts/v3-motion';
+      import '../scripts/track';
+      import '../scripts/video';
+    </script>
+    <GoogleTagManager />
+  </body>
+</html>

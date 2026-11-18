@@ -1,19 +1,102 @@
 ---
 /* ============================================================================
-   The homepage — the one-page scroll portfolio (was the /v3 preview until
-   2026-09-24; /v3 now redirects here, see astro.config.mjs).
-   Spec: docs/superpowers/specs/2026-09-22-v3-scroll-portfolio-design.md
+   The homepage, v4: the White Room (live at / since the v4 swap; v3 is in git history).
+   Ported 2026-11-17 from the hand-built preview in C:\dev\White Room Scene
+   (portfolio.html). The copy now comes from the real config and components
+   (lifecycle.ts, stage-proof.ts, StoryLoop, StageProof, Contact), so it can
+   no longer drift from the live site.
+   Spec: docs/superpowers/specs/2026-11-17-v4-rebuild-design.md
    ========================================================================= */
-import V3Layout from '../layouts/V3Layout.astro';
-import Hero from '../components/v3/Hero.astro';
-import Brief from '../components/v3/Brief.astro';
-import Story from '../components/v3/Story.astro';
+import { Image } from 'astro:assets';
+import meshPortrait from '../assets/jayson-mesh-portrait.webp';
+import { PERSON } from '../config/site';
+import { STAGES } from '../config/lifecycle';
+import { STAGE_PROOF } from '../config/stage-proof';
+import StoryLoop from '../components/v3/StoryLoop.astro';
+import StageProof from '../components/v3/StageProof.astro';
 import Contact from '../components/v3/Contact.astro';
+
+import V4Layout from '../layouts/V4Layout.astro';
+
+const words = PERSON.name.split(' ');
 ---
 
-<V3Layout rail pageType="ProfilePage" ogType="profile">
-  <Hero />
-  <Brief />
-  <Story />
-  <Contact />
-</V3Layout>
+<V4Layout pageType="ProfilePage" ogType="profile" stops={STAGES} startId="top" railHome railLabel="Project stages">
+      <section class="panel" id="top">
+        <div class="hero-root pf-hero">
+          <svg class="v3-hero__defs" aria-hidden="true" focusable="false" width="0" height="0">
+            <filter id="v3-hero-outline" color-interpolation-filters="sRGB">
+              <feMorphology in="SourceAlpha" operator="erode" radius="1.25" result="core"></feMorphology>
+              <feComposite in="SourceGraphic" in2="core" operator="out"></feComposite>
+            </filter>
+          </svg>
+          <div class="v3-hero__namewrap">
+            <h1 class="v3-hero__title" aria-label={PERSON.name}>{words.map((w) => <span class="v3-hero__word" aria-hidden="true">{w}</span>)}</h1>
+            <div class="v3-hero__head">
+              <Image class="v3-hero__head-img" src={meshPortrait} widths={[480, 726]} sizes="(min-width: 64rem) 30rem, 70vw" loading="eager" fetchpriority="high"
+                alt="Jayson's head rendered as a grey 3D polygon mesh, a fine wireframe traced over his face beneath swept-back hair." />
+            </div>
+            <div class="v3-hero__title v3-hero__title--outline" aria-hidden="true">{words.map((w) => <span class="v3-hero__word">{w}</span>)}</div>
+            <p class="v3-hero__role">Social media, design and digital marketing in Toronto.</p>
+            <p class="v3-hero__line v3-type" data-endings='["look good.","get found.","grow online."]'>
+              <span class="v3-type__full">I help businesses look good, get found and grow online.</span>
+              <span class="v3-type__anim" aria-hidden="true">
+                <span class="v3-type__sizer">I help businesses <em class="v3-type__ending">grow online.</em></span>
+                <span class="v3-type__live">I help businesses <em class="v3-type__ending" data-type-text>look good.</em><span class="v3-type__caret"></span></span>
+              </span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="about" aria-labelledby="brief-title">
+        <div class="sec brief">
+          <h2 id="brief-title">Hi, I'm Jayson.</h2>
+          <p>I plan social content before it's posted, make it in Adobe Creative Cloud and check what it did. Every project here shows the brief, the build and what I learned.</p>
+        </div>
+      </section>
+
+      <section class="panel" id="story" aria-labelledby="v3-story-title">
+        <header class="v3-story__head">
+          <div class="v3-story__map">
+            <div class="v3-story__title">
+              <h2 id="v3-story-title">How a project runs</h2>
+              <p>Seven steps, from the first chat to real results.</p>
+            </div>
+            <StoryLoop />
+          </div>
+        </header>
+      </section>
+
+      {STAGES.map(({ id, n, label, headline, body, gets }) => {
+        const proof = STAGE_PROOF[id];
+        const head = (
+          <div class="stage__head"><span class="stage__n" aria-hidden="true">{n}</span><span class="stage__label" id={`${id}-label`}>{label}</span></div>
+        );
+        const text = (
+          <Fragment>
+            <h3 id={`${id}-title`} class="stage__title">{headline}</h3>
+            <p class="stage__body">{body}</p>
+            <hr class="stage__rule" />
+            <p class="stage__gets"><span>You get</span> {gets}</p>
+          </Fragment>
+        );
+        return (
+          <section class="panel" id={id} aria-labelledby={`${id}-label ${id}-title`}>
+            {proof ? (
+              <div class="sec stage stage--proof">
+                <div class="stage__text">{head}{text}</div>
+                <div class="stage__proof"><StageProof proof={proof} /></div>
+              </div>
+            ) : (
+              <div class="sec stage">{head}<div class="stage__text">{text}</div></div>
+            )}
+          </section>
+        );
+      })}
+
+      {/* Contact renders its own <section id="contact">, so this panel is a plain wrapper */}
+      <div class="panel">
+        <div class="sec contact"><Contact /></div>
+      </div>
+</V4Layout>
